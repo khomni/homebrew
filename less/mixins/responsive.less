@@ -1,0 +1,32 @@
+@screen-sm-min: 720px;
+@screen-md-min: 1080px;
+@screen-lg-min: 1200px;
+
+// * < 720px
+.xs(@rules) { // affects extra small displays
+  @media (max-width: (@screen-sm-min - 1)) {@rules();}
+}
+
+.sm-minus(@rules) { // affects small and extra small
+  @media (max-width: @screen-md-min -1){ @rules();}
+}
+.sm(@rules) { // affects small displays
+  @media (min-width: @screen-sm-min) and (max-width: @screen-md-min -1){ @rules();}
+}
+.sm-plus(@rules) { // affects all but extra small
+  @media (min-width: @screen-sm-min) { @rules();}
+}
+
+.md-minus(@rules) { // affects medium viewports and smaller
+  @media (max-width: @screen-lg-min -1){ @rules();}
+}
+.md(@rules) { // affects medium displays
+  @media (min-width: @screen-md-min) and (max-width: @screen-lg-min -1) { @rules();}
+}
+.md-plus(@rules) { // affects medium and larger
+  @media (min-width: @screen-md-min) { @rules();}
+}
+
+.lg(@rules) { // affects large displays
+  @media (min-width: @screen-md-lg) { @rules();}
+}

@@ -1,0 +1,60 @@
+@import '../mixins/mixins.less';
+
+#nav {
+	background: white;
+	color: @color-dark;
+	font-weight: 700;
+	height: 3em;
+
+	a,button {
+		font: inherit;
+		cursor: pointer;
+		background: none;
+		outline: none !important;
+		color: @color-dark;
+		font-size: 1em;
+		text-decoration: none;
+		display: flex;
+		flex: 1;
+		justify-content: center;
+		align-items: center;
+		padding: 1em;
+		transition: @transition;
+		border: 2px solid;
+		border-color: transparent;
+		&:hover {
+			color: inherit;
+			border-bottom-color: inherit;
+		}
+	}
+
+	ul.navlinks {
+		display: flex;
+		align-items: flex-end;
+		flex-direction: row;
+		height: 100%;
+		margin: 0;
+		list-style: none;
+		padding: 0;
+		li {
+			color: @color-primary;
+			display: flex;
+			align-items: stretch;
+			justify-content: center;
+			flex-basis: 100px;
+			transition: @transition;
+			& + li {
+				// border-left: 1px solid @color-ui;
+			}
+			&.dropdown {
+				color: @color-secondary;
+			}
+
+		}
+	}
+	.dropdown-menu {
+		display: none;
+		position: absolute;
+
+	}
+}

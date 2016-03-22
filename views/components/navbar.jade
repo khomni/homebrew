@@ -1,0 +1,24 @@
+mixin navlink(options)
+  case options.button
+    when true
+      li
+        form(action=options.url method="post")
+          button(type="submit")= options.text
+    default
+      li(style={color: options.color})&attributes(attributes)
+        a(href=options.url)= options.text
+        
+mixin dropdown(options)
+  li.dropdown(data-target=options.id)
+    a(href="#")= options.text
+  .dropdown-menu(id=options.id)
+    block
+  
+nav#nav
+  ul.navlinks
+    +navlink({url:'/',text:'home'})
+    //- +dropdown({id: 'playermenu', text: 'account'})
+      +navlink()
+    +dropdown({id: 'accountmenu', text: 'account'})
+      +navlink({url:'/account', text: 'my account'})
+      +navlink({button: true, url:'/logout', text: 'log out'})
