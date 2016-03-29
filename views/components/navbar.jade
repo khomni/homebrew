@@ -5,20 +5,32 @@ mixin navlink(options)
         form(action=options.url method="post")
           button(type="submit")= options.text
     default
-      li(style={color: options.color})&attributes(attributes)
+      li(style={color: options.color||""})&attributes(attributes)
         a(href=options.url)= options.text
         
 mixin dropdown(options)
-  li.dropdown(data-target=options.id)
+  li.dropdown(data-target=options.id style={color: options.color||""})
     a(href="#")= options.text
-  .dropdown-menu(id=options.id)
-    block
+    ul.dropdown-menu(id=options.id)
+      block
   
 nav#nav
   ul.navlinks
-    +navlink({url:'/',text:'home'})
+    +navlink({url:'/',text:'Home'})
+    +dropdown({id: 'campaignmenu', text: 'Campaign'})
+      +navlink({url:'/algus/quests',text:'Quest'})
+      +navlink({url:'/algus/maps',text:'Maps'})
+    +dropdown({id:'partymenu', text: 'Party'})
+      +navlink({url:'/pc/algernon',text:'Algernon'})
+      +navlink({url:'/pc/braun',text:'Braun'})
+      +navlink({url:'/pc/darvin',text:'Darvin'})
+      +navlink({url:'/pc/ferengar',text:'Ferengar'})
+      +navlink({url:'/pc/simma',text:'Simma'})
+    +dropdown({id:'charactermenu', text: 'Percival'})
+      +navlink({url:'/pc/percival',text:'Character Sheet'})
+      +navlink({url:'/pc/percival/inventory',text:'Inventory'})
+      +navlink({url:'/pc/percival/journal',text:'Journal'})
     //- +dropdown({id: 'playermenu', text: 'account'})
       +navlink()
     +dropdown({id: 'accountmenu', text: 'account'})
       +navlink({url:'/account', text: 'my account'})
-      +navlink({button: true, url:'/logout', text: 'log out'})

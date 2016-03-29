@@ -1,12 +1,16 @@
 @import '../mixins/mixins.less';
 
 #nav {
-	background: white;
 	color: @color-dark;
+	background-color: white;
 	font-weight: 700;
-	height: 3em;
+	z-index: 1000;
+	// .filter(drop-shadow(0 1px 2px fade(black,25%)));
 
 	a,button {
+		position:relative;
+		z-index: 2;
+		white-space: nowrap;
 		font: inherit;
 		cursor: pointer;
 		background: none;
@@ -29,14 +33,17 @@
 	}
 
 	ul.navlinks {
+		margin-left: auto;
+		margin-right: 0;
 		display: flex;
 		align-items: flex-end;
 		flex-direction: row;
-		height: 100%;
 		margin: 0;
 		list-style: none;
 		padding: 0;
-		li {
+		&>li {
+			position:relative;
+			z-index: 2;
 			color: @color-primary;
 			display: flex;
 			align-items: stretch;
@@ -48,13 +55,40 @@
 			}
 			&.dropdown {
 				color: @color-secondary;
+				flex-direction: column;
 			}
 
 		}
 	}
 	.dropdown-menu {
+		z-index: 1;
 		display: none;
 		position: absolute;
+		list-style: none;
+		padding: 0;
+		position: absolute;
+		background-color: white;
+		opacity: 0;
+		transform: translate3d(0,-100px,0);
+		.filter(blur(5px));
+		transition: 0.2s ease-in-out;
+		// .animation(dropdown 0.2s @bezier-bounce reverse ~"," fadeto 0.2s linear reverse);
+		// .animation(fadeto 0.2s reverse);
+		&.active{
+			display: block;
+			opacity: 1;
+			.filter(blur(0px));
+			transform: translate3d(0,0,0);
+			.animation(dropdown 0.2s ease-in-out ~"," fadeto 0.2s linear);
+			// .animation(fadeto 0.2s);
+		}
+
+		&>li {
+			display: flex;
+			&>*{
+				flex: 1;
+			}
+		}
 
 	}
 }

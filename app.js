@@ -25,13 +25,14 @@ app.set('view engine', 'jade');
 // });
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', '0.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-
+var browserify = require('browserify-middleware');
+app.use('/javascripts', browserify('./build'));
 
 app.use(lessMiddleware(path.join(__dirname, 'less', '_output'),{
   dest: path.join(__dirname,'public'),
@@ -47,9 +48,6 @@ app.use(lessMiddleware(path.join(__dirname, 'less', '_output'),{
 }));
 
 app.use(express.static(path.join(__dirname, 'public')));
-
-// var navigation = require('./middleware/navigation.js');
-// app.use(navigation)
 
 app.use('/', routes);
 app.use('/users', users);
