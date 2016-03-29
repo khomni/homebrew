@@ -16,9 +16,8 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
-        Party.hasOne(models.Character, {as: 'leader'})
-        Party.hasMany(models.Character);
-        Party.belongsTo(models.Campaign);
+        // Party.belongsTo(models.Character, {as: 'leader'})
+        // Party.belongsTo(models.Campaign);
       }
     }
   });

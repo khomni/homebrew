@@ -400,11 +400,6 @@ body {
   background-color: white;
   font-weight: 700;
   z-index: 1000;
-  -webkit-animation: forge 2s ease-out;
-  -moz-animation: forge 2s ease-out;
-  -ms-animation: forge 2s ease-out;
-  -o-animation: forge 2s ease-out;
-  animation: forge 2s ease-out;
 }
 #nav a,
 #nav button {
