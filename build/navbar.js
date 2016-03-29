@@ -5,6 +5,15 @@ var Navbar = {
   },
   setListeners: function(){
     var menus = document.getElementsByClassName('dropdown-menu');
+    for(i=0;i < menus.length; i++){
+      var thisMenu = menus[i];
+      (function(){
+        thisMenu.addEventListener('click',function(e){
+          e.stopImmediatePropagation();
+        })
+      })(thisMenu)
+    };
+
     var dropdowns = document.getElementsByClassName('dropdown');
     for(i=0;i < dropdowns.length;i++) {
       var thisDrop = i;
@@ -22,12 +31,12 @@ var Navbar = {
           }
         },false);
       })(thisDrop)
-
     };
+
     this.dom.addEventListener('click',function(e){
+      console.log('navbar click listener')
       // prevent menus from closing if navbar is clicked
       e.stopPropagation();
-      e.preventDefault();
     });
     document.addEventListener('click',function(e){
       e.preventDefault();

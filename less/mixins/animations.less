@@ -1,3 +1,4 @@
+@import 'mixins.less';
 @import 'brand.less';
 @import 'responsive.less';
 @import 'components.less';
@@ -10,6 +11,17 @@
   }
   100% {
     transform: translate3d(0,0,0);
+  }
+}
+
+@keyframes forge {
+  0% {
+    background-color: #ff9d55;
+    .filter(brightness(2) blur(1px) saturate(1) drop-shadow(0px 0px 20px #ff9d55));
+  }
+  100% {
+    background-color: none;
+    .filter(brightness(1) blur(0px) saturate(1) drop-shadow(0px 0px 0px fade(#ff9d55, 0%)));
   }
 }
 

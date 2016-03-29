@@ -3,13 +3,15 @@ mixin navlink(options)
     when true
       li
         form(action=options.url method="post")
+          block if block
           button(type="submit")= options.text
     default
-      li(style={color: options.color||""})&attributes(attributes)
+      li(style=options.color ? {color: options.color} :"")&attributes(attributes)
+        block if block
         a(href=options.url)= options.text
         
 mixin dropdown(options)
-  li.dropdown(data-target=options.id style={color: options.color||""})
+  li.dropdown(data-target=options.id style=options.color ? {color: options.color} :"")
     a(href="#")= options.text
     ul.dropdown-menu(id=options.id)
       block
@@ -17,20 +19,27 @@ mixin dropdown(options)
 nav#nav
   ul.navlinks
     +navlink({url:'/',text:'Home'})
-    +dropdown({id: 'campaignmenu', text: 'Campaign'})
-      +navlink({url:'/algus/quests',text:'Quest'})
-      +navlink({url:'/algus/maps',text:'Maps'})
-    +dropdown({id:'partymenu', text: 'Party'})
-      +navlink({url:'/pc/algernon',text:'Algernon'})
-      +navlink({url:'/pc/braun',text:'Braun'})
-      +navlink({url:'/pc/darvin',text:'Darvin'})
-      +navlink({url:'/pc/ferengar',text:'Ferengar'})
-      +navlink({url:'/pc/simma',text:'Simma'})
-    +dropdown({id:'charactermenu', text: 'Percival'})
-      +navlink({url:'/pc/percival',text:'Character Sheet'})
-      +navlink({url:'/pc/percival/inventory',text:'Inventory'})
-      +navlink({url:'/pc/percival/journal',text:'Journal'})
-    //- +dropdown({id: 'playermenu', text: 'account'})
-      +navlink()
-    +dropdown({id: 'accountmenu', text: 'account'})
-      +navlink({url:'/account', text: 'my account'})
+    +filter(user)
+      +filter(!user.mainChar)
+        +navlink({url:'user/' + user.id + '/characters', text: 'Select Character'})
+      +filter(user.mainChar)
+        +dropdown({id:'charactermenu', text: mainChar.name})
+          +navlink({url:'/pc/' + user.mainChar.id,text:'Character Sheet'})
+          +navlink({url:'/pc/'+ user.mainChar.id + '/inventory',text:'Inventory'})
+          +navlink({url:'/pc/' + + user.mainChar.id + '/journal',text:'Journal'})
+      +filter(!campaign)
+        +navlink({url: '/pc/new', text:'New Campaign'})
+      +filter(campaign)
+        +dropdown({id: 'campaignmenu', text: 'Campaign'})
+          +navlink({url:'/algus/quests',text:'Quest'})
+          +navlink({url:'/algus/maps',text:'Maps'})
+      +filter(!party)
+        +navlink({url: '/pc/new', text:'New Character'})
+      +filter(party)
+        +dropdown({id:'partymenu', text: 'Party'})
+          each member in party
+            +navlink({url:'/pc/' + member.id, text: member.name})
+      +dropdown({id: 'accountmenu', text: 'Account'})
+        +navlink({url:'/account', text: 'Settings'})
+    +filter(!user)
+      +navlink({url:'/signup', text: 'Sign Up'})

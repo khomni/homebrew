@@ -5,7 +5,9 @@
 	background-color: white;
 	font-weight: 700;
 	z-index: 1000;
+	// box-shadow: 0 1px 2px fade(black, 25%);
 	// .filter(drop-shadow(0 1px 2px fade(black,25%)));
+	.animation(forge 2s ease-out);
 
 	a,button {
 		position:relative;
@@ -62,6 +64,7 @@
 	}
 	.dropdown-menu {
 		z-index: 1;
+		min-width:150px;
 		display: none;
 		position: absolute;
 		list-style: none;
@@ -69,6 +72,8 @@
 		position: absolute;
 		background-color: white;
 		opacity: 0;
+		box-shadow: 0 1px 2px fade(black, 25%);
+		border-top: 1px solid #eee;
 		transform: translate3d(0,-100px,0);
 		.filter(blur(5px));
 		transition: 0.2s ease-in-out;
