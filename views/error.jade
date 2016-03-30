@@ -1,6 +1,9 @@
 extends layout
 
+block header
+  +header('#993333')
+    .page-title= message
+
 block content
-  h1= message
   h2= error.status
   pre #{error.stack}
