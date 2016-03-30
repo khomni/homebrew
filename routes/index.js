@@ -5,7 +5,6 @@ var models = require('../models');
 /* GET home page. */
 router.get('/', function(req, res, next) {
   models.User.findAll({
-    include: [ models.Character]
   }).then(function(users){
     console.log(users);
     res.render('index', {users: users})

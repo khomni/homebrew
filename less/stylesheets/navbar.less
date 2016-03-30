@@ -1,30 +1,32 @@
 @import '../mixins/mixins.less';
 
 #nav {
-	color: @color-dark;
-	background-color: white;
-	font-weight: 700;
-	z-index: 1000;
+	color: @color-ui;
+	// background-color: @color-dark;
+	font-weight: 500;
+	position: fixed;
+	width: 100%;
 	// box-shadow: 0 1px 2px fade(black, 25%);
+	z-index: 1000;
+	font-size: @navbar-size/3;
 	// .filter(drop-shadow(0 1px 2px fade(black,25%)));
 	// .animation(forge 2s ease-out);
 
 	a,button {
-		position:relative;
-		z-index: 2;
 		white-space: nowrap;
-		font: inherit;
 		cursor: pointer;
 		background: none;
 		outline: none !important;
-		color: @color-dark;
-		font-size: 1em;
+		color: @color-ui;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		line-height: 1em;
 		text-decoration: none;
 		display: flex;
 		flex: 1;
 		justify-content: center;
 		align-items: center;
-		padding: 1em;
+		padding: ~"calc(1em - 2px)";
 		transition: @transition;
 		border: 2px solid;
 		border-color: transparent;
@@ -38,17 +40,17 @@
 		margin-left: auto;
 		margin-right: 0;
 		display: flex;
-		align-items: flex-end;
+		justify-content: flex-start;
+		align-items: stretch;
 		flex-direction: row;
 		margin: 0;
 		list-style: none;
 		padding: 0;
 		&>li {
-			position:relative;
-			z-index: 2;
 			color: @color-primary;
 			display: flex;
 			align-items: stretch;
+			flex-direction: column;
 			justify-content: center;
 			flex-basis: 100px;
 			transition: @transition;
@@ -57,41 +59,72 @@
 			}
 			&.dropdown {
 				color: @color-secondary;
-				flex-direction: column;
+				&.active {
+					&>a,&>button {
+						color: inherit;
+						border-bottom-color: inherit;
+					}
+				}
 			}
 
 		}
 	}
 	.dropdown-menu {
-		z-index: 1;
 		min-width:150px;
-		display: none;
+		display: block;
 		position: absolute;
-		list-style: none;
-		padding: 0;
-		position: absolute;
-		background-color: white;
-		opacity: 0;
-		box-shadow: 0 1px 2px fade(black, 25%);
-		border-top: 1px solid #eee;
-		transform: translate3d(0,-100px,0);
-		.filter(blur(5px));
-		transition: 0.2s ease-in-out;
-		// .animation(dropdown 0.2s @bezier-bounce reverse ~"," fadeto 0.2s linear reverse);
-		// .animation(fadeto 0.2s reverse);
-		&.active{
-			display: block;
-			opacity: 1;
-			.filter(blur(0px));
-			transform: translate3d(0,0,0);
-			.animation(dropdown 0.2s ease-in-out ~"," fadeto 0.2s linear);
-			// .animation(fadeto 0.2s);
+		// transform: translateY(-100%);
+		overflow: hidden;
+		height: 0;
+
+		a,button {
+			color: @color-dark;
+			border-color: transparent;
+			&:hover {
+				color: inherit;
+				border-bottom-color: inherit;
+			}
 		}
 
-		&>li {
-			display: flex;
-			&>*{
-				flex: 1;
+		&.active{
+			height: auto;
+			transition: 0.2s @bezier-bounce;
+			&>ul{
+				transform:translateY(-5px);
+				box-shadow: 0px 1px 2px fade(black,25%);
+				opacity: 1;
+			}
+		}
+		&>ul {
+			transition: 0.2s @bezier-bounce;
+			padding-top: 1em;
+			background-color: white;
+			opacity: 0;
+			transform:translateY(-100px);
+			list-style: none;
+			padding: 0;
+			padding-top: 5px;
+			max-height:50vh;
+			overflow-y: auto;
+			&>li {
+				display: flex;
+				flex-direction: column;
+				&>*{
+					flex: 1;
+				}
+				&.dropdown {
+					color: @color-secondary;
+					background: white;
+					.dropdown-menu {
+						padding-top: 0;
+						z-index: 1;
+						display: none;
+						position: static;
+						&.active{
+							display: block;
+						}
+					}
+				}
 			}
 		}
 

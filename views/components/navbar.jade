@@ -11,17 +11,19 @@ mixin navlink(options)
         a(href=options.url)= options.text
         
 mixin dropdown(options)
-  li.dropdown(data-target=options.id style=options.color ? {color: options.color} :"")
+  li.dropdown(data-target=options.id style=options.color ? {color: options.color} :"")&attributes(attributes)
     a(href="#")= options.text
-    ul.dropdown-menu(id=options.id)
-      block
+    .dropdown-menu(id=options.id)
+      ul
+        block
   
 nav#nav
   ul.navlinks
-    +navlink({url:'/',text:'Home'})
     +filter(user)
       +filter(!user.mainChar)
-        +navlink({url:'user/' + user.id + '/characters', text: 'Select Character'})
+        +dropdown({id:'charselect',text:user.name})
+          +navlink({url:'user/' + user.id + '/characters', text: 'Select Character'})
+          +navlink({url:'user/' + user.id + '/characters/new', text: 'Create a Character'})
       +filter(user.mainChar)
         +dropdown({id:'charactermenu', text: mainChar.name})
           +navlink({url:'/pc/' + user.mainChar.id,text:'Character Sheet'})
@@ -42,4 +44,7 @@ nav#nav
       +dropdown({id: 'accountmenu', text: 'Account'})
         +navlink({url:'/account', text: 'Settings'})
     +filter(!user)
-      +navlink({url:'/signup', text: 'Sign Up'})
+      +navlink({url:'/about',text:'About'})
+      +dropdown({id: '/', text:'Log In / Sign Up'})(class="signup")
+        +navlink({url:'/login', text: 'Log In'})
+        +navlink({url:'/signup', text: 'Sign Up'})

@@ -34,7 +34,6 @@ var Navbar = {
     };
 
     this.dom.addEventListener('click',function(e){
-      console.log('navbar click listener')
       // prevent menus from closing if navbar is clicked
       e.stopPropagation();
     });

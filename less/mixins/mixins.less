@@ -3,9 +3,26 @@
 @import 'components.less';
 @import 'animations.less';
 
+@navbar-size: 36px;
+
 .filter(@rules) {
   -webkit-filter: @rules;
   filter: @rules;
+}
+
+.tint(@opacity) {
+  background-blend-mode: overlay;
+  &::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background-color: inherit;
+    opacity: @opacity;
+    z-index: 2;
+    top: -100%;
+  }
 }
 
 .animation(@rules) {

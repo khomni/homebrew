@@ -1,9 +1,9 @@
 @keyframes dropdown {
   0% {
-    transform: translate3d(0, -100px, 0);
+    transform: translateY(-100%);
   }
   100% {
-    transform: translate3d(0, 0, 0);
+    transform: translateY(-5px);
   }
 }
 @keyframes forge {
@@ -26,11 +26,32 @@
     opacity: 1;
   }
 }
+@keyframes fadeDown {
+  0% {
+    transform: translate3d(0, -20%, 0);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+@keyframes vignette {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.25);
+  }
+}
 /*! normalize.css v4.0.0 | MIT License | github.com/necolas/normalize.css */
 /**
  * 1. Change the default font family in all browsers (opinionated).
  * 2. Prevent adjustments of font size after orientation changes in IE and iOS.
  */
+* {
+  box-sizing: border-box;
+}
 html {
   font-family: sans-serif;
   /* 1 */
@@ -395,29 +416,113 @@ body {
   font-family: Lato, sans serif;
   background-color: #eee;
 }
+.logo .text {
+  opacity: 0;
+  -webkit-filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.5));
+  -webkit-animation: fadeDown 2s ease-out 0.5s forwards;
+  -moz-animation: fadeDown 2s ease-out 0.5s forwards;
+  -ms-animation: fadeDown 2s ease-out 0.5s forwards;
+  -o-animation: fadeDown 2s ease-out 0.5s forwards;
+  animation: fadeDown 2s ease-out 0.5s forwards;
+  position: absolute;
+  z-index: 2;
+}
+.logo .cube {
+  opacity: 0;
+  -webkit-animation: fadeDown 2s ease-out forwards;
+  -moz-animation: fadeDown 2s ease-out forwards;
+  -ms-animation: fadeDown 2s ease-out forwards;
+  -o-animation: fadeDown 2s ease-out forwards;
+  animation: fadeDown 2s ease-out forwards;
+  position: absolute;
+  z-index: 1;
+}
+header#header {
+  height: 400px;
+  background: #333;
+  overflow: hidden;
+  background-blend-mode: overlay;
+}
+header#header .header-content {
+  color: white;
+  -webkit-filter: drop-shadow(0px 1px 1px black);
+  filter: drop-shadow(0px 1px 1px black);
+  padding: 1rem;
+  padding-top: 36px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-direction: column-reverse;
+}
+header#header .header-content .page-title {
+  font-size: 2em;
+  text-transform: uppercase;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+}
+header#header .vignettes {
+  z-index: 1;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  top: -100%;
+}
+header#header .vignettes .vignette {
+  opacity: 0.75;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-size: cover;
+  background-color: inherit;
+  background-position: center;
+  background-blend-mode: luminosity;
+  -webkit-animation: vignette 30s forwards;
+  -moz-animation: vignette 30s forwards;
+  -ms-animation: vignette 30s forwards;
+  -o-animation: vignette 30s forwards;
+  animation: vignette 30s forwards;
+}
+header#header::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-color: inherit;
+  opacity: 0.5;
+  z-index: 2;
+  top: -100%;
+}
 #nav {
-  color: #333;
-  background-color: white;
-  font-weight: 700;
+  color: #eee;
+  font-weight: 500;
+  position: fixed;
+  width: 100%;
   z-index: 1000;
+  font-size: 12px;
 }
 #nav a,
 #nav button {
-  position: relative;
-  z-index: 2;
   white-space: nowrap;
-  font: inherit;
   cursor: pointer;
   background: none;
   outline: none !important;
-  color: #333;
-  font-size: 1em;
+  color: #eee;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1em;
   text-decoration: none;
   display: flex;
   flex: 1;
   justify-content: center;
   align-items: center;
-  padding: 1em;
+  padding: calc(1em - 2px);
   transition: 0.25s;
   border: 2px solid;
   border-color: transparent;
@@ -431,57 +536,85 @@ body {
   margin-left: auto;
   margin-right: 0;
   display: flex;
-  align-items: flex-end;
+  justify-content: flex-start;
+  align-items: stretch;
   flex-direction: row;
   margin: 0;
   list-style: none;
   padding: 0;
 }
 #nav ul.navlinks > li {
-  position: relative;
-  z-index: 2;
   color: #91d2e7;
   display: flex;
   align-items: stretch;
+  flex-direction: column;
   justify-content: center;
   flex-basis: 100px;
   transition: 0.25s;
 }
 #nav ul.navlinks > li.dropdown {
   color: #ed9360;
-  flex-direction: column;
+}
+#nav ul.navlinks > li.dropdown.active > a,
+#nav ul.navlinks > li.dropdown.active > button {
+  color: inherit;
+  border-bottom-color: inherit;
 }
 #nav .dropdown-menu {
-  z-index: 1;
   min-width: 150px;
-  display: none;
-  list-style: none;
-  padding: 0;
+  display: block;
   position: absolute;
-  background-color: white;
-  opacity: 0;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-  border-top: 1px solid #eee;
-  transform: translate3d(0, -100px, 0);
-  -webkit-filter: blur(5px);
-  filter: blur(5px);
-  transition: 0.2s ease-in-out;
+  overflow: hidden;
+  height: 0;
+}
+#nav .dropdown-menu a,
+#nav .dropdown-menu button {
+  color: #333;
+  border-color: transparent;
+}
+#nav .dropdown-menu a:hover,
+#nav .dropdown-menu button:hover {
+  color: inherit;
+  border-bottom-color: inherit;
 }
 #nav .dropdown-menu.active {
-  display: block;
+  height: auto;
+  transition: 0.2s cubic-bezier(0.5, 0.2, 0.5, 1.25);
+}
+#nav .dropdown-menu.active > ul {
+  transform: translateY(-5px);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
   opacity: 1;
-  -webkit-filter: blur(0px);
-  filter: blur(0px);
-  transform: translate3d(0, 0, 0);
-  -webkit-animation: dropdown 0.2s ease-in-out , fadeto 0.2s linear;
-  -moz-animation: dropdown 0.2s ease-in-out , fadeto 0.2s linear;
-  -ms-animation: dropdown 0.2s ease-in-out , fadeto 0.2s linear;
-  -o-animation: dropdown 0.2s ease-in-out , fadeto 0.2s linear;
-  animation: dropdown 0.2s ease-in-out , fadeto 0.2s linear;
 }
-#nav .dropdown-menu > li {
+#nav .dropdown-menu > ul {
+  transition: 0.2s cubic-bezier(0.5, 0.2, 0.5, 1.25);
+  padding-top: 1em;
+  background-color: white;
+  opacity: 0;
+  transform: translateY(-100px);
+  list-style: none;
+  padding: 0;
+  padding-top: 5px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+#nav .dropdown-menu > ul > li {
   display: flex;
+  flex-direction: column;
 }
-#nav .dropdown-menu > li > * {
+#nav .dropdown-menu > ul > li > * {
   flex: 1;
+}
+#nav .dropdown-menu > ul > li.dropdown {
+  color: #ed9360;
+  background: white;
+}
+#nav .dropdown-menu > ul > li.dropdown .dropdown-menu {
+  padding-top: 0;
+  z-index: 1;
+  display: none;
+  position: static;
+}
+#nav .dropdown-menu > ul > li.dropdown .dropdown-menu.active {
+  display: block;
 }

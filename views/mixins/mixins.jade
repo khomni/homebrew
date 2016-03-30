@@ -1,1 +1,24 @@
 include filters
+
+mixin logo
+  .logo
+    img.text(src="/images/logo-text.svg")
+    img.cube(src="/images/logo-d6.svg")
+
+mixin header(color)
+  unless color
+    -var colors = []
+    -for(i=0;i<3;i++){colors.push(Math.floor((Math.random()*127.5)+63.75))}
+    -console.log(colors)
+    -var color = '#'+(Math.random()*0xFFFFFF<<0).toString(16)
+  header#header
+    .header-content
+      block
+    .vignettes&attributes({"style":{"background-color": "rgb("+colors+")"}})
+      if vignettes
+        -var randomChoice = Math.floor(Math.random()*vignettes.length)
+        -console.log("random choice: ", randomChoice)
+        -var vignette = vignettes[randomChoice]
+        .vignette&attributes({"style":{"background-image": "url(/images/vignettes/"+vignette+")"}})
+        //- each v in vignettes
+          .vignette&attributes({"style":{"background-image": "url(/images/vignettes/"+v+")"}})
