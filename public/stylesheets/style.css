@@ -464,6 +464,7 @@ body {
 }
 header#header {
   height: 400px;
+  min-height: 400px;
   background: #333;
   overflow: hidden;
   transition: 0.5s;
@@ -471,6 +472,10 @@ header#header {
 }
 header#header.fullscreen {
   height: 100vh;
+  max-height: 100vh;
+}
+header#header.fullscreen .header-content {
+  justify-content: center;
 }
 header#header .header-content {
   color: white;
@@ -546,7 +551,8 @@ header#header::after {
   position: fixed;
   width: 100%;
   z-index: 1000;
-  font-size: 12px;
+  transform: translateY(calc(-100% + 44px));
+  text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.8);
 }
 #nav a,
 #nav button {
@@ -560,102 +566,41 @@ header#header::after {
   line-height: 1em;
   text-decoration: none;
   display: flex;
-  flex: 1;
   justify-content: center;
   align-items: center;
   padding: calc(1em - 2px);
   transition: 0.25s;
-  border: 2px solid;
-  border-color: transparent;
 }
 #nav a:hover,
 #nav button:hover {
   color: inherit;
-  border-bottom-color: inherit;
 }
 #nav ul.navlinks {
-  margin-left: auto;
-  margin-right: 0;
-  display: flex;
-  justify-content: flex-start;
-  align-items: stretch;
-  flex-direction: row;
+  list-style: none;
+  padding: 0;
   margin: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 0 2em;
+}
+#nav .dropdown {
+  display: flex;
+  flex-direction: column-reverse;
+  transition: 0.2s;
+}
+#nav .dropdown:hover {
+  background: rgba(0, 0, 0, 0.25);
+  transform: translateY(5px);
+}
+#nav .dropdown.active {
+  transform: translateY(calc(100% - 44px));
+  background: rgba(0, 0, 0, 0.5);
+}
+#nav .dropdown.active .toggle {
+  color: rgba(238, 238, 238, 0.5);
+}
+#nav .dropdown .dropdown-menu {
   list-style: none;
   padding: 0;
-}
-#nav ul.navlinks > li {
-  color: #91d2e7;
-  display: flex;
-  align-items: stretch;
-  flex-direction: column;
-  justify-content: center;
-  flex-basis: 100px;
-  transition: 0.25s;
-}
-#nav ul.navlinks > li.dropdown {
-  color: #ed9360;
-}
-#nav ul.navlinks > li.dropdown.active > a,
-#nav ul.navlinks > li.dropdown.active > button {
-  color: inherit;
-  border-bottom-color: inherit;
-}
-#nav .dropdown-menu {
-  min-width: 150px;
-  display: block;
-  position: absolute;
-  overflow: hidden;
-  height: 0;
-}
-#nav .dropdown-menu a,
-#nav .dropdown-menu button {
-  color: #333;
-  border-color: transparent;
-}
-#nav .dropdown-menu a:hover,
-#nav .dropdown-menu button:hover {
-  color: inherit;
-  border-bottom-color: inherit;
-}
-#nav .dropdown-menu.active {
-  height: auto;
-  transition: 0.2s cubic-bezier(0.5, 0.2, 0.5, 1.25);
-}
-#nav .dropdown-menu.active > ul {
-  transform: translateY(-5px);
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
-  opacity: 1;
-}
-#nav .dropdown-menu > ul {
-  transition: 0.2s cubic-bezier(0.5, 0.2, 0.5, 1.25);
-  padding-top: 1em;
-  background-color: white;
-  opacity: 0;
-  transform: translateY(-100px);
-  list-style: none;
-  padding: 0;
-  padding-top: 5px;
-  max-height: 50vh;
-  overflow-y: auto;
-}
-#nav .dropdown-menu > ul > li {
-  display: flex;
-  flex-direction: column;
-}
-#nav .dropdown-menu > ul > li > * {
-  flex: 1;
-}
-#nav .dropdown-menu > ul > li.dropdown {
-  color: #ed9360;
-  background: white;
-}
-#nav .dropdown-menu > ul > li.dropdown .dropdown-menu {
-  padding-top: 0;
-  z-index: 1;
-  display: none;
-  position: static;
-}
-#nav .dropdown-menu > ul > li.dropdown .dropdown-menu.active {
-  display: block;
 }

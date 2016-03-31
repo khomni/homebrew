@@ -21,14 +21,15 @@ var Navbar = {
         var target = document.getElementById(dropdowns[thisDrop].dataset.target);
         dropdowns[thisDrop].addEventListener('click',function(e){
           e.preventDefault();
-          for(i=0;i< menus.length; i++) {
-            if(menus[i] !== target) {
-              menus[i].classList.remove('active');
-            }
-            else {
-              target.classList.toggle('active');
-            }
-          }
+          this.classList.toggle('active')
+          // for(i=0;i< menus.length; i++) {
+          //   if(menus[i] !== target) {
+          //     menus[i].classList.remove('active');
+          //   }
+          //   else {
+          //     target.classList.toggle('active');
+          //   }
+          // }
         },false);
       })(thisDrop)
     };
@@ -39,8 +40,8 @@ var Navbar = {
     });
     document.addEventListener('click',function(e){
       e.preventDefault();
-      for(i=0;i< menus.length; i++) {
-        menus[i].classList.remove('active');
+      for(i=0;i< dropdowns.length; i++) {
+        dropdowns[i].classList.remove('active');
       }
     },false);
   }

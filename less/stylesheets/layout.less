@@ -49,11 +49,16 @@ body {
 
 header#header {
 	height: 400px;
+	min-height: 400px;
 	background: @color-dark;
 	overflow: hidden;
 	transition: 0.5s;
 	&.fullscreen {
 		height: 100vh;
+		max-height: 100vh;
+		.header-content {
+			justify-content: center;
+		};
 	}
 	.header-content {
 		color: white;

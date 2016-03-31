@@ -12,14 +12,17 @@ mixin navlink(options)
         
 mixin dropdown(options)
   li.dropdown(data-target=options.id style=options.color ? {color: options.color} :"")&attributes(attributes)
-    a(href="#")= options.text
-    .dropdown-menu(id=options.id)
-      ul
-        block
+    a.toggle(href="#")= options.text
+    ul.dropdown-menu(id=options.id)
+      block
   
 nav#nav
   ul.navlinks
     +navlink({url:"/", text: "Home"})
+    +dropdown({id:"dummymenu", text: "Dropdown"})
+      +navlink({url:"/",text:"Option"})
+      +navlink({url:"/",text:"Option"})
+      +navlink({url:"/",text:"Option"})
     +filter(user)
       +filter(!user.mainChar)
         +dropdown({id:'charselect',text:user.name})
