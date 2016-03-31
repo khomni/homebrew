@@ -466,6 +466,7 @@ header#header {
   height: 400px;
   background: #333;
   overflow: hidden;
+  transition: 0.5s;
   background-blend-mode: overlay;
 }
 header#header.fullscreen {

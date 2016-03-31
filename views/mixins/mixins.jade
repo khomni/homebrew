@@ -26,10 +26,10 @@ mixin vignettes(vignettes, color)
   -console.log(vignetteAttributes)
   .vignettes&attributes(vignetteAttributes)
     each vignette,i in vignettes
-      +vignette(vignette,i, color)
+      +vignette(vignette,i,color)
 
-mixin vignette(path,i,color)
-  -var vignetteAttributes = {'data-order': i, style: {"background-image": "url(/images/vignettes/"+path+")", "z-index": i, "top": (-i*100) + "%", "display": i>0?"none":"block"}}
+mixin vignette(vignette,i,color)
+  -var vignetteAttributes = {'data-order': i, style: {"background-image": "url("+vignette.path+")", "z-index": i, "top": (-i*100) + "%", "display": i>0?"none":"block"}}
   if !color
     -var color = []
     -for(i=0;i<3;i++){color.push(Math.floor((Math.random()*127.5)+63.75))}
@@ -45,6 +45,11 @@ mixin header(options)
     .header-content
       block
     if vignettes
+      -var vignetteKeys = Object.keys(vignettes)
       -var subSet = []
-      -for(i=0;i<options.vignettes;i++){subSet.push(vignettes.shift(Math.floor(Math.random()*vignettes.length)))}
+      -for(i=0;i<options.vignettes;i++){
+      - randomChoice = Math.floor(Math.random()*vignetteKeys.length)
+      - subSet.push(vignettes[vignetteKeys.splice(randomChoice,1)])
+      -}
+      -console.log("subset:",subSet)
       +vignettes(subSet, options.color)

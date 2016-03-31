@@ -1,8 +1,20 @@
 var fs = require('fs');
 
-// var express = require('express');
-
 var vignette = {
+  jsonify: function(cb){
+    var vignetteMeta = require(appRoot + "/data/vignettes.json");
+
+    this.getVignettes(function(files){
+      for(i=0;i<files.length;i++) {
+        vignetteMeta[files[i]] = vignetteMeta[files[i]] || {path: '/images/vignettes/' + files[i], focus: [50,50], attribution: ""}
+      }
+      var vignettes = JSON.stringify(vignetteMeta,null,"\t")
+      fs.writeFile(appRoot + '/data/vignettes.json', vignettes, function(err){
+        if(err){return cb(err)};
+        cb(null)
+      })
+    })
+  },
   getVignettes: function(cb){
     fs.readdir(appRoot + '/public/images/vignettes',function(err,files){
       if(err){
