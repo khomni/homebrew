@@ -31,15 +31,17 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(function(req,res,next){
+
   if (!app.locals.vignettes) {
     var vignette = require('./middleware/vignette.js');
     vignette.getVignettes(function(files){
       app.locals.vignettes = files
-      console.log("Loading "+files.length+" vignettes")
       return next();
     });
   }
-  next();
+  else {
+    next();
+  }
 })
 
 var browserify = require('browserify-middleware');
@@ -74,7 +76,7 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
+if (app.get('env') === 'development'||app.get('env') === 'local') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {

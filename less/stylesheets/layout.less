@@ -10,19 +10,40 @@ body {
 }
 
 .logo {
+	&.inline {
+		display: inline-block;
+		position:relative;
+		vertical-align: text-bottom;
+		margin: 0 0.2em;
+		&:first-child {
+			margin-left: 0;
+		};
+		img {
+			opacity: 1;
+			display: block;
+			position: static;
+			height: 1em;
+			width: auto;
+			.animation(none);
+		}
+	}
+	img {
+		position: absolute;
+    max-width: 100%;
+    max-height: 100%;
+	}
 	.text {
 		opacity: 0;
 		.filter(drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.5)));
 		.animation(fadeDown 2s ease-out 0.5s forwards);
-		position: absolute;
 		z-index: 2;
 	}
 	.cube {
 		opacity: 0;
 		// .filter(drop-shadow(0px 2px 1px rgba(0, 0, 0, 0.5)));
 		.animation(fadeDown 2s ease-out forwards);
-		position: absolute;
 		z-index: 1;
+
 	}
 }
 
@@ -30,10 +51,13 @@ header#header {
 	height: 400px;
 	background: @color-dark;
 	overflow: hidden;
+	&.fullscreen {
+		height: 100vh;
+	}
 	.header-content {
 		color: white;
 		.filter(drop-shadow(0px 1px 1px black));
-		padding: 1rem;
+		padding-bottom: 1rem;
 		padding-top: @navbar-size;
 		position: relative;
 		width: 100%;
@@ -42,12 +66,21 @@ header#header {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		flex-direction: column-reverse;
+		justify-content: flex-end;
+		.header-item {
+			background: rgba(0,0,0,0.5);
+			padding: 0.5rem;
+			padding-left: 1rem;
+			& + .header-item {
+				margin: 0.5rem 0;
+			}
+		}
 		.page-title {
+			font-weight: 300;
 			font-size: 2em;
 			text-transform: uppercase;
-			font-weight: 300;
 			letter-spacing: 0.1em;
+			.no-select();
 		}
 	}
 	.vignettes {
@@ -58,7 +91,6 @@ header#header {
 		position:relative;
 		top: -100%;
 		.vignette {
-			opacity:0.75;
 			width: 100%;
 			height: 100%;
 			position: relative;
@@ -66,7 +98,7 @@ header#header {
 			background-color: inherit;
 			background-position: center;
 			background-blend-mode: luminosity;
-			.animation(vignette 30s forwards);
+			.animation(vignette 20s forwards);
 		}
 	}
 

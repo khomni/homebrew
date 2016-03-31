@@ -5,6 +5,19 @@
 
 @navbar-size: 36px;
 
+.no-select() {
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  .cursor(default);
+}
+
+.cursor(@cursor) {
+  cursor: ~"-webkit-@{cursor}";
+  cursor: ~"-moz-@{cursor}";
+  cursor: @cursor;
+}
+
 .filter(@rules) {
   -webkit-filter: @rules;
   filter: @rules;

@@ -1,28 +1,50 @@
 include filters
 
-mixin logo
-  .logo
-    img.text(src="/images/logo-text.svg")
-    img.cube(src="/images/logo-d6.svg")
+mixin logo(options)
+  -options = options || {}
+  -options.inline = options.inline || true
+  -options.text = options.text || false
+  -options.cube = options.cube || true
+  if options.inline
+    .logo.inline&attributes(attributes)
+      if options.text
+        img.text(src="/images/logo-text.svg")
+      if options.cube
+        img.cube(src="/images/logo-d6.svg")
+  else
+    .logo&attributes(attributes)
+      if options.text
+        img.text(src="/images/logo-text.svg")
+      if options.cube
+        img.cube(src="/images/logo-d6.svg")
 
 
 mixin vignettes(vignettes, color)
-  .vignettes&attributes({"style":{"background-color": color}})
-    each vignette in vignettes
-      +vignette(vignette, color)
+  -var vignetteAttributes = {}
+  if color
+    -vignetteAttributes['style'] = {"background-color": color}
+  -console.log(vignetteAttributes)
+  .vignettes&attributes(vignetteAttributes)
+    each vignette,i in vignettes
+      +vignette(vignette,i, color)
 
-mixin vignette(path, color)
+mixin vignette(path,i,color)
+  -var vignetteAttributes = {'data-order': i, style: {"background-image": "url(/images/vignettes/"+path+")", "z-index": i, "top": (-i*100) + "%", "display": i>0?"none":"block"}}
   if !color
     -var color = []
     -for(i=0;i<3;i++){color.push(Math.floor((Math.random()*127.5)+63.75))}
-    .vignette&attributes({"style":{"background-image": "url(/images/vignettes/"+path+")", "background-color": "rgb("+color+")"}})
+    -vignetteAttributes['style']['background-color'] = "rgb("+color+")"
   else
-    .vignette&attributes({"style":{"background-image": "url(/images/vignettes/"+path+")"}})
     
-mixin header(color)
-  header#header
+  .vignette&attributes(vignetteAttributes)
+    
+mixin header(options)
+  -options = options || {}
+  -options.vignettes = options.vignettes || 1
+  header#header&attributes(attributes)
     .header-content
       block
-    -var subSet = []
-    -for(i=0;i<1;i++){subSet.push(vignettes.shift(Math.floor(Math.random()*vignettes.length)))}
-    +vignettes(subSet, color)
+    if vignettes
+      -var subSet = []
+      -for(i=0;i<options.vignettes;i++){subSet.push(vignettes.shift(Math.floor(Math.random()*vignettes.length)))}
+      +vignettes(subSet, options.color)

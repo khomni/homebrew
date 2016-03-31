@@ -1,9 +1,7 @@
 extends layout
 
 block header
-  +header('#993333')
-    .page-title= message
-
-block content
-  h2= error.status
-  pre #{error.stack}
+  +header({vignettes:3, color:error.status==404?"#333":"#933"})(class="fullscreen")
+    .header-item.page-title= error.status + " " + message
+    pre.header-item #{error.stack}
+  

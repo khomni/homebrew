@@ -19,6 +19,7 @@ mixin dropdown(options)
   
 nav#nav
   ul.navlinks
+    +navlink({url:"/", text: "Home"})
     +filter(user)
       +filter(!user.mainChar)
         +dropdown({id:'charselect',text:user.name})
