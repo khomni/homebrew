@@ -2,6 +2,8 @@
 
 html {
 	height: 100%;
+	max-width: 100vw;
+  overflow-x: hidden;
 }
 
 body {
@@ -87,6 +89,7 @@ header#header {
 		.header-item {
 			.darkbox();
 			padding: 0.5rem 1rem;
+			max-width: 100vw;
 			& + .header-item {
 				margin: 0.5rem 0;
 			}
@@ -191,7 +194,7 @@ h1,h2,h3,h4,h5,h6 {
 		width:100%;
 	});
 	.sm({
-		width:720px;
+		width:700px;
 	});
 	.md-plus({
 		width:1080px
