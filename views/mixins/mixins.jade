@@ -18,7 +18,6 @@ mixin logo(options)
       if options.cube
         img.cube(src="/images/logo-d6.svg")
 
-
 mixin vignettes(vignettes, color)
   -var vignetteAttributes = {}
   if color
@@ -28,7 +27,7 @@ mixin vignettes(vignettes, color)
       +vignette(vignette,i,color)
 
 mixin vignette(vignette,i,color)
-  -var vignetteAttributes = {'data-order': i, 'data-focus': vignette.focus, style: {"background-image": "url("+vignette.path+")", "background-position-x":vignette.focus[0]+"%","background-position-y":vignette.focus[1]+"%","z-index": i, "top": (-i*100) + "%", "display": i>0?"none":"block"}}
+  -var vignetteAttributes = {'data-order': i, 'data-focus': vignette.focus, style: {"background-image": "url("+vignette.path+")", "transform-origin":vignette.focus[0]+"% "+vignette.focus[1]+"%","z-index": i, "top": (-i*100) + "%", "display": i>0?"none":"block"}}
   if !color
     -var color = []
     -for(i=0;i<3;i++){color.push(Math.floor((Math.random()*127.5)+63.75))}
