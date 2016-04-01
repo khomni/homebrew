@@ -7,6 +7,7 @@ html {
 }
 
 body {
+	height: 100%;
 	font-family: @font-stack;
 	background-color: @color-dark;
 	color: @color-ui;
@@ -133,6 +134,8 @@ header#header {
 		position: relative;
 		z-index: 2;
 		box-shadow: 0px 0px 30px black;
+		background-image: linear-gradient(to bottom, #333 0%, black 100%);
+		background-attachment: fixed;
 		flex: 1;
 	}
 
