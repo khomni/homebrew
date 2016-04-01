@@ -39,7 +39,6 @@ var Navbar = {
       e.stopPropagation();
     });
     document.addEventListener('click',function(e){
-      e.preventDefault();
       for(i=0;i< dropdowns.length; i++) {
         dropdowns[i].classList.remove('active');
       }

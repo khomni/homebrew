@@ -11,6 +11,8 @@ mixin navlink(options)
         a(href=options.url)= options.text
         
 mixin dropdown(options)
+  if !block
+    -attributes.class = "disabled"
   li.dropdown(data-target=options.id style=options.color ? {color: options.color} :"")&attributes(attributes)
     a.toggle(href="#")= options.text
     ul.dropdown-menu(id=options.id)
@@ -19,10 +21,6 @@ mixin dropdown(options)
 nav#nav
   ul.navlinks
     +navlink({url:"/", text: "Home"})
-    +dropdown({id:"dummymenu", text: "Dropdown"})
-      +navlink({url:"/",text:"Option"})
-      +navlink({url:"/",text:"Option"})
-      +navlink({url:"/",text:"Option"})
     +filter(user)
       +filter(!user.mainChar)
         +dropdown({id:'charselect',text:user.name})
@@ -30,7 +28,7 @@ nav#nav
           +navlink({url:'user/' + user.id + '/characters/new', text: 'Create a Character'})
       +filter(user.mainChar)
         +dropdown({id:'charactermenu', text: mainChar.name})
-          +navlink({url:'/pc/' + user.mainChar.id,text:'Character Sheet'})
+          +navlink({url:'/pc/' + user.mainChar.id,text:'Status'})
           +navlink({url:'/pc/'+ user.mainChar.id + '/inventory',text:'Inventory'})
           +navlink({url:'/pc/' + + user.mainChar.id + '/journal',text:'Journal'})
       +filter(!campaign)

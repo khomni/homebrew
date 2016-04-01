@@ -11,7 +11,8 @@ html
   body
     block navigation
       include components/navbar
-    block header
-      +header(headerColor||null)
-    block content
-    block footer
+    #content-wrapper
+      block header
+        +header(headerColor||null)
+      block content
+      block footer

@@ -8,11 +8,7 @@
 	z-index: 1000;
 	transform: translateY(~"calc(-100% + 44px)");
 	text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.8);
-	// font-size: @navbar-size/3;
-	// background-color: @color-dark;
-	// box-shadow: 0 1px 2px fade(black, 25%);
-	// .filter(drop-shadow(0 1px 2px fade(black,25%)));
-	// .animation(forge 2s ease-out);
+	.no-select();
 
 	a,button {
 		white-space: nowrap;
@@ -42,23 +38,34 @@
     align-items: flex-end;
 		justify-content: flex-end;
 		padding: 0 2em;
+
+		li {
+			&.disabled {
+				pointer-events: none;
+				a,button{
+					color: fade(@color-ui,50%);
+				}
+			}
+		}
 	}
 
 	.dropdown {
 		display: flex;
 		flex-direction: column-reverse;
-		transition: 0.2s;
-		&:hover{
-			background: fade(black,25%);
-			transform: translateY(5px);
-		}
-		&.active{
-			transform: translateY(~"calc(100% - 44px)");
-			background: fade(black,50%);
-			.toggle{
-				color: fade(@color-ui,50%);
+		transition: 0.5s;
+		&:not(.disabled){
+			&:hover {
+				background: fade(black,25%);
+				transform: translateY(5px);
 			}
+			&.active{
+				transform: translateY(~"calc(100% - 44px)");
+				.darkbox();
+				.toggle{
+					color: darken(@color-ui,50%);
+				}
 
+			}
 		}
 		.dropdown-menu {
 			list-style: none;

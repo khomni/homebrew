@@ -1,32 +1,87 @@
 @screen-sm-min: 720px;
-@screen-md-min: 1080px;
-@screen-lg-min: 1200px;
+@screen-md-min: 1200px;
+@screen-lg-min: 1600px;
+
+@debug: false;
 
 // * < 720px
 .xs(@rules) { // affects extra small displays
-  @media (max-width: (@screen-sm-min - 1)) {@rules();}
+  @media only screen and (max-width: (@screen-sm-min - 1)) {
+    @rules();
+   &  when (@debug = true) {
+     outline: 1px dashed fade(red,50%);
+     outline-offset: -1px;
+   }
+
+  }
 }
 
 .sm-minus(@rules) { // affects small and extra small
-  @media (max-width: @screen-md-min -1){ @rules();}
+  @media (max-width: (@screen-md-min - 1)){
+    @rules();
+    & when (@debug = true) {
+      outline: 1px dashed fade(orange,50%);
+      outline-offset: -1px;
+    }
+  }
 }
+
 .sm(@rules) { // affects small displays
-  @media (min-width: @screen-sm-min) and (max-width: @screen-md-min -1){ @rules();}
+  @media only screen and (min-width: @screen-sm-min) and (max-width: (@screen-md-min - 1)){
+    @rules();
+    & when (@debug = true) {
+      outline: 1px dashed fade(yellow,50%);
+      outline-offset: -1px;
+    }
+  }
 }
+
 .sm-plus(@rules) { // affects all but extra small
-  @media (min-width: @screen-sm-min) { @rules();}
+  @media (min-width: @screen-sm-min) {
+    @rules();
+    & when (@debug = true) {
+      outline: 1px dashed fade(yellowgreen,50%);
+      outline-offset: -1px;
+    }
+  }
 }
 
 .md-minus(@rules) { // affects medium viewports and smaller
-  @media (max-width: @screen-lg-min -1){ @rules();}
+  @media (max-width: (@screen-lg-min - 1)){
+    @rules();
+    & when (@debug = true) {
+      outline: 1px dashed fade(green,50%);
+      outline-offset: -1px;
+    }
+  }
 }
+
 .md(@rules) { // affects medium displays
-  @media (min-width: @screen-md-min) and (max-width: @screen-lg-min -1) { @rules();}
+  @media only screen and (min-width: @screen-md-min) and (max-width: (@screen-lg-min - 1)) {
+    @rules();
+    & when (@debug = true) {
+      outline: 1px dashed fade(teal,50%);
+      outline-offset: -1px;
+    }
+  }
 }
+
 .md-plus(@rules) { // affects medium and larger
-  @media (min-width: @screen-md-min) { @rules();}
+  @media (min-width: @screen-md-min) {
+    @rules();
+    & when (@debug = true) {
+      outline: 1px dashed fade(blue,50%);
+      outline-offset: -1px;
+    }
+  }
 }
 
 .lg(@rules) { // affects large displays
-  @media (min-width: @screen-md-lg) { @rules();}
+  @media only screen and (min-width: @screen-lg-min) {
+    @rules();
+    & when (@debug = true) {
+      outline: 1px dashed fade(violet,50%);
+      outline-offset: -1px;
+    }
+  }
 }
