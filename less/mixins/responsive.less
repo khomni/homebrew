@@ -2,10 +2,10 @@
 @screen-md-min: 1200px;
 @screen-lg-min: 1600px;
 
-@debug: true;
+@debug: 0.2;
 
-.debug-lines(@text,@color) when (@debug = true) {
-  outline: 1px dashed @color;
+.debug-lines(@text,@color) when (@debug > 0) {
+  outline: 1px dashed fade(@color,(@debug) * 100) ;
   outline-offset: -1px;
   &::before {
     content: @text;
@@ -13,11 +13,12 @@
     color: @color;
     z-index: 1000;
     position: absolute;
-    opacity: 0.25;
+    opacity: @debug;
     transform: translateY(-100%);
     transition: 0.2s;
   }
   &:hover {
+    outline: 1px dashed @color;
     &::before {
       opacity: 1;
     }

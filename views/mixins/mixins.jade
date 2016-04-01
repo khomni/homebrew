@@ -32,9 +32,15 @@ mixin vignette(vignette,i,color)
     -var color = []
     -for(i=0;i<3;i++){color.push(Math.floor((Math.random()*127.5)+63.75))}
     -vignetteAttributes['style']['background-color'] = "rgb("+color+")"
-  else
-    
   .vignette&attributes(vignetteAttributes)
+    
+mixin section(title)
+  .section
+    if title
+      .section-title
+        h2= title
+    .section-body
+      block
     
 mixin header(options)
   -options = options || {}

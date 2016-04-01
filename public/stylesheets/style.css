@@ -599,10 +599,16 @@ h6 {
   font-weight: 300;
   margin: 0;
 }
+p {
+  margin: 0;
+}
+p + p {
+  margin-top: 1em;
+}
 @media (min-width: 720px) {
   .content-body {
-    padding: 1em;
-    outline: 1px dashed rgba(154, 205, 50, 0.5);
+    padding: 1em 0;
+    outline: 1px dashed rgba(154, 205, 50, 0.2);
     outline-offset: -1px;
   }
   .content-body::before {
@@ -611,21 +617,69 @@ h6 {
     color: rgba(154, 205, 50, 0.5);
     z-index: 1000;
     position: absolute;
-    opacity: 0.25;
+    opacity: 0.2;
     transform: translateY(-100%);
     transition: 0.2s;
+  }
+  .content-body:hover {
+    outline: 1px dashed rgba(154, 205, 50, 0.5);
   }
   .content-body:hover::before {
     opacity: 1;
   }
 }
 .section {
-  padding: 15px;
   margin: auto;
   border: 0px;
   color: #eee;
   text-shadow: rgba(0, 0, 0, 0.75);
   background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.25) 100%);
+}
+@media only screen and (max-width: 719px) {
+  .section {
+    width: 100%;
+    outline: 1px dashed rgba(255, 0, 0, 0.2);
+    outline-offset: -1px;
+  }
+  .section::before {
+    content: "Extra Small";
+    display: block;
+    color: rgba(255, 0, 0, 0.5);
+    z-index: 1000;
+    position: absolute;
+    opacity: 0.2;
+    transform: translateY(-100%);
+    transition: 0.2s;
+  }
+  .section:hover {
+    outline: 1px dashed rgba(255, 0, 0, 0.5);
+  }
+  .section:hover::before {
+    opacity: 1;
+  }
+}
+@media only screen and (min-width: 720px) and (max-width: 1199px) {
+  .section {
+    width: 720px;
+    outline: 1px dashed rgba(255, 255, 0, 0.2);
+    outline-offset: -1px;
+  }
+  .section::before {
+    content: "Small";
+    display: block;
+    color: rgba(255, 255, 0, 0.5);
+    z-index: 1000;
+    position: absolute;
+    opacity: 0.2;
+    transform: translateY(-100%);
+    transition: 0.2s;
+  }
+  .section:hover {
+    outline: 1px dashed rgba(255, 255, 0, 0.5);
+  }
+  .section:hover::before {
+    opacity: 1;
+  }
 }
 @media (min-width: 720px) {
   .section {
@@ -633,7 +687,7 @@ h6 {
     border-image: linear-gradient(to bottom, #eee 0%, rgba(238, 238, 238, 0) 100%);
     border-image-slice: 1;
     border-image-outset: 5;
-    outline: 1px dashed rgba(154, 205, 50, 0.5);
+    outline: 1px dashed rgba(154, 205, 50, 0.2);
     outline-offset: -1px;
   }
   .section::before {
@@ -642,9 +696,35 @@ h6 {
     color: rgba(154, 205, 50, 0.5);
     z-index: 1000;
     position: absolute;
-    opacity: 0.25;
+    opacity: 0.2;
     transform: translateY(-100%);
     transition: 0.2s;
+  }
+  .section:hover {
+    outline: 1px dashed rgba(154, 205, 50, 0.5);
+  }
+  .section:hover::before {
+    opacity: 1;
+  }
+}
+@media (min-width: 1200px) {
+  .section {
+    width: 1080px;
+    outline: 1px dashed rgba(100, 149, 237, 0.2);
+    outline-offset: -1px;
+  }
+  .section::before {
+    content: ">= Medium";
+    display: block;
+    color: rgba(100, 149, 237, 0.5);
+    z-index: 1000;
+    position: absolute;
+    opacity: 0.2;
+    transform: translateY(-100%);
+    transition: 0.2s;
+  }
+  .section:hover {
+    outline: 1px dashed rgba(100, 149, 237, 0.5);
   }
   .section:hover::before {
     opacity: 1;
@@ -653,8 +733,12 @@ h6 {
 .section + .section {
   margin-top: 1em;
 }
+.section .section-title {
+  padding: 1rem;
+  padding-bottom: 0;
+}
 .section .section-title > * {
-  padding-bottom: 10px;
+  padding-bottom: 1rem;
 }
 .section .section-title::after {
   content: "";
@@ -668,7 +752,7 @@ h6 {
 @media only screen and (max-width: 719px) {
   .section .section-title::after {
     transform: translateX(-15px);
-    outline: 1px dashed rgba(255, 0, 0, 0.5);
+    outline: 1px dashed rgba(255, 0, 0, 0.2);
     outline-offset: -1px;
   }
   .section .section-title::after::before {
@@ -677,73 +761,19 @@ h6 {
     color: rgba(255, 0, 0, 0.5);
     z-index: 1000;
     position: absolute;
-    opacity: 0.25;
+    opacity: 0.2;
     transform: translateY(-100%);
     transition: 0.2s;
+  }
+  .section .section-title::after:hover {
+    outline: 1px dashed rgba(255, 0, 0, 0.5);
   }
   .section .section-title::after:hover::before {
     opacity: 1;
   }
 }
-@media only screen and (max-width: 719px) {
-  .section {
-    width: 100%;
-    outline: 1px dashed rgba(255, 0, 0, 0.5);
-    outline-offset: -1px;
-  }
-  .section::before {
-    content: "Extra Small";
-    display: block;
-    color: rgba(255, 0, 0, 0.5);
-    z-index: 1000;
-    position: absolute;
-    opacity: 0.25;
-    transform: translateY(-100%);
-    transition: 0.2s;
-  }
-  .section:hover::before {
-    opacity: 1;
-  }
-}
-@media only screen and (min-width: 720px) and (max-width: 1199px) {
-  .section {
-    width: 700px;
-    outline: 1px dashed rgba(255, 255, 0, 0.5);
-    outline-offset: -1px;
-  }
-  .section::before {
-    content: "Small";
-    display: block;
-    color: rgba(255, 255, 0, 0.5);
-    z-index: 1000;
-    position: absolute;
-    opacity: 0.25;
-    transform: translateY(-100%);
-    transition: 0.2s;
-  }
-  .section:hover::before {
-    opacity: 1;
-  }
-}
-@media (min-width: 1200px) {
-  .section {
-    width: 1080px;
-    outline: 1px dashed rgba(100, 149, 237, 0.5);
-    outline-offset: -1px;
-  }
-  .section::before {
-    content: ">= Medium";
-    display: block;
-    color: rgba(100, 149, 237, 0.5);
-    z-index: 1000;
-    position: absolute;
-    opacity: 0.25;
-    transform: translateY(-100%);
-    transition: 0.2s;
-  }
-  .section:hover::before {
-    opacity: 1;
-  }
+.section .section-body {
+  padding: 1rem;
 }
 #nav {
   color: #eee;
