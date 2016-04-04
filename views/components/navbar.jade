@@ -48,5 +48,5 @@ nav#nav
     +filter(!user)
       +navlink({url:'/about',text:'About'})
       +dropdown({id: '/', text:'Log In / Sign Up'})(class="signup")
-        +navlink({url:'/login', text: 'Log In'})
-        +navlink({url:'/signup', text: 'Sign Up'})
+        +navlink({url:'/login', text: 'Log In'})(data-modal='/users/_login')
+        +navlink({url:'/signup', text: 'Sign Up'})(data-modal='/users/_signup')

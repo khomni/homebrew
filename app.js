@@ -48,27 +48,20 @@ app.use(lessMiddleware(path.join(__dirname, 'less', '_output'),{
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(function(req,res,next){
+app.use((req,res,next) => {
   if (!app.locals.vignettes) {
-    console.log("processing vignettes");
+    console.log("Processing Vignettes");
     var vignette = require('./middleware/vignette.js');
-    vignette.jsonify(function(err){
+    vignette.jsonify((err) => {
       if(err){
         next(err);
       }
       var vignettes = require('./data/vignettes.json');
       app.locals.vignettes = vignettes;
-      console.log(app.locals.vignettes)
       next();
     })
-    // console.log("Loading Vignettes...")
-    // vignette.getVignettes(function(files){
-    //   app.locals.vignettes = files
-    //   return next();
-    // });
   }
   else {
-    console.log("Vignettes:", app.locals.vignettes.length)
     next();
   }
 })

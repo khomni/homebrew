@@ -3,11 +3,11 @@ var router = express.Router();
 var models = require('../models');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', (req, res, next) => {
   res.render('index');
 });
 
-router.get('/about', function(req, res, next) {
+router.get('/about', (req, res, next) => {
   res.render('about');
 });
 

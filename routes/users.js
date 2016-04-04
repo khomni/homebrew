@@ -5,29 +5,41 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get('/', (req, res, next) => {
+  var users = models.User.findAll({})
+  .then( users => {
+    console.log(users)
+    res.render('users/', {users:users})
+  })
+  .catch(err => next(err));
 });
 
-router.post('/create', function(req,res,next){
+router.get('/_login',(req,res,next)=>{
+  res.render('users/_login');
+});
+
+router.get('/_signup',(req,res,next)=>{
+  res.render('users/_signup');
+});
+
+router.post('/create', (req,res,next) => {
   console.log(req.body);
   var user = models.User.create({
     username: req.body.username,
     email: req.body.email,
   })
-  .then(function(user){
+  .then(user => {
     console.log('[model.User]', user)
     res.render('/'+user.id,{user: user})
   })
-  .catch(function(err) {
-    next(err);// Ooops, do some error-handling
-  })
+  .catch(err => next(err));
 })
 
-router.post('/login', function(req,res,next){
-  passport.authenticate('local',function(err,user,info){
-
-  })
+router.post('/login', (req,res,next) => {
+  var origin = req.headers.referer
+  console.log(req.headers)
+  console.log("ORIGIN: ", origin)
+  res.redirect(origin)
 })
 
 module.exports = router;

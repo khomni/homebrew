@@ -1,0 +1,13 @@
+extends ../layout
+
+block title
+  title= "Users"
+  
+block header
+  +header
+    .header-item.page-title 
+      span Users
+
+block content
+  for user in users
+    +section(user.name) 
