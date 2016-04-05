@@ -431,6 +431,11 @@ textarea {
 [type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
 }
+::selection,
+::-webkit-selection {
+  color: white;
+  background-color: #ff9d55;
+}
 html {
   height: 100%;
   max-width: 100vw;
@@ -850,6 +855,11 @@ p + p {
 .section .section-body {
   padding: 1rem;
 }
+::selection,
+::-webkit-selection {
+  color: white;
+  background-color: #ff9d55;
+}
 input {
   border: none;
   display: block;
@@ -859,13 +869,17 @@ input {
 }
 button {
   border: none;
-  background: #111;
-  color: #eee;
+  background: #ddd;
+  color: #111;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+  padding: 0.5em;
 }
 input:focus,
 button:focus,
 select:focus,
 textarea:focus {
+  -webkit-filter: drop-shadow(0px 0px 2px #ff9d55);
+  filter: drop-shadow(0px 0px 2px #ff9d55);
   outline: none;
 }
 body.modal-open {

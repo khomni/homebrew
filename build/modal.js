@@ -5,9 +5,12 @@ var Modal = {
     for(i=0;i<this.triggers.length;i++){
       this.triggers[i].addEventListener('click',function(e){
         e.preventDefault();
-        console.log(this);
-        Modal.loadModal(this.dataset.modal,function(){
-          Modal.showModal();
+        Modal.loadModal(this.dataset.modal,function(err){
+          if(!err) {
+            Modal.showModal();
+            var firstInput = Modal.dom.getElementsByTagName('input')[0]
+            if(firstInput) firstInput.focus().select();
+          }
         });
       },true)
     }
@@ -22,12 +25,15 @@ var Modal = {
     xhr.onreadystatechange = function (e) {
      if (xhr.readyState == 4 && xhr.status == 200) {
       Modal.dom.innerHTML = xhr.responseText;
+      callback();
+     }
+     else {
+       callback(new Error(xhr))
      }
     }
     xhr.open("GET", url, true);
     xhr.setRequestHeader('Content-type', 'text/html');
     xhr.send();
-    callback();
   },
   showModal: function(){
     Modal.dom.classList.add('open');

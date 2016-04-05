@@ -2,3 +2,9 @@
   .modal-content
     .modal-title Sign Up
     .modal-body 
+      form(name='signup' action='/users/signup' method='post')
+        input(type='text' require name='username' placeholder='username')
+        input(type='email' required name='email' placeholder='email')
+        input(type='password' required name='password' placeholder='password' autocomplete='off')
+        input(type='password' required name='confirm' placeholder='confirm' autocomplete='off')
+        button(type='submit') Sign Up

@@ -3,6 +3,10 @@
     "dialect": "sqlite",
     "storage": "/data/development.sqlite"
   },
+  "development": {
+    "dialect": "sqlite",
+    "storage": "/data/development.sqlite"
+  },
   "production": {
     "username": "root",
     "password": null,

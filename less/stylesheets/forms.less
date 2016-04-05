@@ -1,5 +1,10 @@
 @import '../mixins/mixins.less';
 
+::selection,::-webkit-selection {
+	color: white;
+	background-color: @color-primary;
+}
+
 input {
 	border: none;
   display: block;
@@ -11,8 +16,10 @@ input {
 
 button {
 	border: none;
-	background: @color-dark;
-	color: @color-ui;
+	background: #ddd;
+	color: @color-dark;
+	box-shadow: 0px 1px 1px fade(black,50%);
+	padding: 0.5em;
 	&:focus {
 
 	}
@@ -20,6 +27,7 @@ button {
 
 input,button,select,textarea {
 	&:focus {
+		.filter(drop-shadow(0px 0px 2px @color-primary));
 		outline: none;
 	}
 }

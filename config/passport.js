@@ -1,20 +1,39 @@
-var passport = require('passport');
-var LocalStrategy = require('passport-local');
+var passport = require('passport')
+  , LocalStrategy = require('passport-local').Strategy
+  , db = require('../models')
 
-module.exports = function(done) {
-  console.log('setting up passport')
-  passport.use(new LocalStrategy(
-    function(username, password, done) {
-      User.findOne({ username: username }, function(err, user) {
-        if (err) { return done(err); }
-        if (!user) {
-          return done(null, false, { message: 'Incorrect username.' });
-        }
-        if (!user.validPassword(password)) {
-          return done(null, false, { message: 'Incorrect password.' });
-        }
-        return done(null, user);
-      });
-    }
-  ));
-}
+// Serialize Sessions
+passport.serializeUser(function(user, done){
+  console.log("[Log in] serializing user: ", user.get({plain:true}));
+  done(null, user);
+});
+
+//Deserialize Sessions
+passport.deserializeUser(function(user, done){
+  console.log("[Log out] deserializing user...");
+  db.User.find({where: {id: user.id}})
+  .then(user => done(null, user))
+  .catch(err => done(err, null))
+});
+
+// For Authentication Purposes
+passport.use(new LocalStrategy({usernameField: 'email', passwordField: 'password',passReqToCallback: true},
+  function(req, email, password, done){
+    console.log("[Passport] Using Local Strategy")
+    var user = db.User.find({where: {email: email}})
+    .then(user => {
+      if(!user) {
+        console.log('╨ user does not exist');
+        return done(null)
+      }
+      console.log("  ╠═ user: ", user.get({plain:true}))
+      passwd = user ? user.password : ''
+      console.log("  ╚═ passwd: ", passwd)
+      db.User.validPassword(password, passwd, done, user)
+    })
+    .catch(err => {
+      console.error(err);
+      done(err, null);
+    })
+  }
+));

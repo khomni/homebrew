@@ -9,5 +9,9 @@ block header
       span Users
 
 block content
-  for user in users
-    +section(user.name) 
+  .content-body
+    for user in users
+      +section(user.username) 
+        p= user.username
+        p= user.email
+        p= user.password

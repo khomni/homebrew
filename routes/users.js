@@ -1,14 +1,17 @@
 var express = require('express');
 var router = express.Router();
-var models = require('../models');
+var db = require('../models');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
-  var users = models.User.findAll({})
+  var users = db.User.findAll({})
   .then( users => {
-    console.log(users)
+    console.log("[5.0] ACCESSING AFTER CREATION")
+    for(i=0;i<users.length;i++){
+      console.log(" [5."+i+"] user instance: ", users[i].get({plain:true}))
+    }
     res.render('users/', {users:users})
   })
   .catch(err => next(err));
@@ -24,22 +27,50 @@ router.get('/_signup',(req,res,next)=>{
 
 router.post('/create', (req,res,next) => {
   console.log(req.body);
-  var user = models.User.create({
-    username: req.body.username,
-    email: req.body.email,
-  })
-  .then(user => {
-    console.log('[model.User]', user)
-    res.render('/'+user.id,{user: user})
-  })
-  .catch(err => next(err));
+
 })
 
 router.post('/login', (req,res,next) => {
-  var origin = req.headers.referer
-  console.log(req.headers)
-  console.log("ORIGIN: ", origin)
-  res.redirect(origin)
-})
+  var origin = req.headers.referer || '/';
+  console.log(req.body)
+  passport.authenticate('local',(err,user,info) => {
+    if (err) {
+      console.error('[Log in] ', err);
+      return next(err);
+    };
+    if (!user) {
+      console.log('[Log in] no user found')
+      return res.redirect(origin);
+    };
+    console.log('[Log in] logging in user...')
+    req.logIn(user, err => {
+      if (err) {
+        return next(err)
+      };
+      console.log("[Log in] as user: ", req.user.get({plain:true}));
+      return res.redirect(origin);
+    })
+  })(req, res, next)
+});
+
+router.post('/signup', (req,res,next) => {
+  var origin = req.headers.referer || '/';
+  var user = db.User.create({
+    username: req.body.username,
+    email: req.body.email,
+    password: req.body.password
+  })
+  .then(user => {
+    req.logIn(user, err => {
+      if (err) {
+        console.error(err);
+        return next(err);
+      };
+      console.log("[Log in] as user: ", req.user.get({plain:true}));
+      return res.redirect(origin);
+    })
+  })
+  .catch(err => next(err));
+});
 
 module.exports = router;
