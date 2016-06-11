@@ -44,7 +44,7 @@ module.exports = function(sequelize, DataTypes) {
     ],
     classMethods: {
       associate: function(models) {
-        User.hasMany(models.Character);
+        User.hasMany(models.Character, {as: 'characters'});
         // User.belongsTo(models.Character, {as: 'mainChar'});
       },
       validPassword: function(password, passwd, done, user){

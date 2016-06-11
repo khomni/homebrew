@@ -6,13 +6,12 @@ var LocalStrategy = require('passport-local').Strategy;
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
-  var users = db.User.findAll({})
-  .then( users => {
-    console.log("[5.0] ACCESSING AFTER CREATION")
-    for(i=0;i<users.length;i++){
-      console.log(" [5."+i+"] user instance: ", users[i].get({plain:true}))
+  var characters = db.Character.findAll({})
+  .then( characters => {
+    for(i=0;i<characters.length;i++){
+      console.log(characters[i].get({plain:true}))
     }
-    res.render('users/', {users:users})
+    res.render('characters/', {characters:characters})
   })
   .catch(err => next(err));
 });
@@ -27,8 +26,7 @@ router.get('/_signup',(req,res,next)=>{
 
 router.post('/create', (req,res,next) => {
   console.log(req.body);
-
-})
+});
 
 router.post('/login', (req,res,next) => {
   var origin = req.headers.referer || '/';
@@ -38,6 +36,7 @@ router.post('/login', (req,res,next) => {
       console.error('[Log in] ', err);
       return next(err);
     };
+    debugger;
     if (!user) {
       console.log('[Log in] no user found')
       return res.redirect(origin);
@@ -71,6 +70,11 @@ router.post('/signup', (req,res,next) => {
     })
   })
   .catch(err => next(err));
+});
+
+router.get('/logout',(req,res,next) => {
+  req.logout();
+  res.redirect('/');
 });
 
 module.exports = router;

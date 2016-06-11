@@ -1,0 +1,14 @@
+extends ../layout
+
+block title
+  title= "Characters"
+  
+block header
+  +header
+    .header-item.page-title 
+      span Characters
+
+block content
+  .content-body
+    for character in characters
+      +section(character.name) 

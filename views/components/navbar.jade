@@ -21,32 +21,43 @@ mixin dropdown(options)
 nav#nav
   ul.navlinks
     +navlink({url:"/", text: "Home"})
+    
     +filter(user)
+    
+      //- Character Menu
       +filter(!user.mainChar)
-        +dropdown({id:'charselect',text:user.name})
-          +navlink({url:'user/' + user.id + '/characters', text: 'Select Character'})
-          +navlink({url:'user/' + user.id + '/characters/new', text: 'Create a Character'})
+        +dropdown({id:'charselect',text:"Character"})
+          +navlink({url:'/pc', text: 'Select Character'})
+          +navlink({url:'/pc/new', text: 'Create a Character'})
       +filter(user.mainChar)
-        +dropdown({id:'charactermenu', text: mainChar.name})
+        +dropdown({id:'charactermenu', text: user.mainChar.name})
           +navlink({url:'/pc/' + user.mainChar.id,text:'Status'})
           +navlink({url:'/pc/'+ user.mainChar.id + '/inventory',text:'Inventory'})
           +navlink({url:'/pc/' + + user.mainChar.id + '/journal',text:'Journal'})
-      +filter(!campaign)
-        +navlink({url: '/pc/new', text:'New Campaign'})
+          
+      //- Campaign Menu
+      +filter(user.mainChar && !campaign)
+        +navlink({url: '/pc/new', text:'Join Campaign'})
       +filter(campaign)
         +dropdown({id: 'campaignmenu', text: 'Campaign'})
-          +navlink({url:'/algus/quests',text:'Quest'})
-          +navlink({url:'/algus/maps',text:'Maps'})
-      +filter(!party)
-        +navlink({url: '/pc/new', text:'New Character'})
+          +navlink({url:'/c/'+campaign.id+'/quests',text:'Quest'})
+          +navlink({url:'/c/'+campaign.id+'/maps',text:'Maps'})
+          
+      //- Party Menu
+      +filter(user.mainChar && campaign && !party)
+        +navlink({url: '/p', text:'Join Party'})
       +filter(party)
         +dropdown({id:'partymenu', text: 'Party'})
           each member in party
             +navlink({url:'/pc/' + member.id, text: member.name})
+            
       +dropdown({id: 'accountmenu', text: 'Account'})
-        +navlink({url:'/account', text: 'Settings'})
+        +navlink({url:'/u/settings', text: 'Settings'})
+        +navlink({url:'/u/logout', text: 'Log Out'})
     +filter(!user)
       +navlink({url:'/about',text:'About'})
-      +dropdown({id: '/', text:'Log In / Sign Up'})(class="signup")
-        +navlink({url:'/login', text: 'Log In'})(data-modal='/users/_login')
-        +navlink({url:'/signup', text: 'Sign Up'})(data-modal='/users/_signup')
+      +dropdown({id: 'account', text:'Log In / Sign Up'})(class="signup")
+        +navlink({url:'/u/login', text: 'Log In'})(data-modal='/u/_login')
+        +navlink({url:'/u/signup', text: 'Sign Up'})(data-modal='/u/_signup')
+    +filter(user)
+      

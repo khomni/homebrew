@@ -9,7 +9,10 @@ var Modal = {
           if(!err) {
             Modal.showModal();
             var firstInput = Modal.dom.getElementsByTagName('input')[0]
-            if(firstInput) firstInput.focus().select();
+            if(firstInput) {
+              firstInput.focus();
+              firstInput.select();
+            }
           }
         });
       },true)
