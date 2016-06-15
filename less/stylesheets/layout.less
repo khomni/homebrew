@@ -14,8 +14,8 @@ html {
 body {
 	height: 100%;
 	font-family: @font-stack;
-	background-color: @color-dark;
-	color: @color-ui;
+	background-color: @color-ui;
+	color: @color-dark;
 }
 
 a {
@@ -65,11 +65,13 @@ a {
 	}
 }
 
-header#header {
-	height: 400px;
-	min-height: 400px;
+header {
+	height: 200px;
 	background: @color-dark;
 	overflow: hidden;
+	&.large {
+		height: 400px;
+	}
 	&.fullscreen {
 		height: 100vh;
 		max-height: 100vh;
@@ -136,12 +138,30 @@ header#header {
 	flex-direction: column;
 
 	#content-main {
+		perspective: 400px;
+		perspective-origin: center;
 		position: relative;
 		z-index: 2;
-		box-shadow: 0px 0px 30px black;
-		background-image: linear-gradient(to bottom, #333 0%, black 100%);
-		background-attachment: fixed;
+		box-shadow: 0px 0px 30px black, inset 0px 4px 6px fade(black,50%);
+		border-top: 19px solid transparent;
+		border-image: url('/images/textures/bricktop.png') 19 0 round;
+		background-image: url('/images/textures/brick.jpg'), @spotlight;
+		background-position: 50% 0%;
+		background-blend-mode: multiply;
+		background-attachment: local, fixed;
 		flex: 1;
+
+		// hr {
+		// 	border: none;
+	  //   border-top: 2px solid transparent;
+	  //   border-bottom: 2px solid transparent;
+	  //   border-image: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, black 50%, #333 50%, rgba(100,100,100,0.5) 100%) 2 2 round;
+		// }
+		hr {
+			border: none;
+		  border-top: 73px solid transparent;
+		  border-image: url('/images/textures/crack.png') 73 0 round;
+		}
 	}
 
 	#footer {
@@ -152,7 +172,6 @@ header#header {
 h1,h2,h3,h4,h5,h6 {
 	text-transform: uppercase;
 	letter-spacing: 0.1rem;
-	font-weight: 300;
 	margin: 0;
 }
 
@@ -170,11 +189,25 @@ p {
 	});
 }
 
+.copy {
+	overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  white-space: normal;
+}
+
 .section {
+	position: relative;
+	z-index: 2;
 	margin: auto;
-	.darkbox();
-	// border: 0px;
-	// background-image: linear-gradient(135deg, fade(black,95%) 0%, fade(black,5%) 100%);
+	background-image: url('/images/textures/marble.jpg'), radial-gradient(ellipse 100% 200% at 50% 0, white 0%, #ccc 100%);
+	background-size: 127px, 100%;
+	background-position: 50% 50%;
+	background-blend-mode: overlay;
+	color: @color-dark;
+	box-shadow: 0px 1px 5px fade(black,50%);
+	border: 1px solid fade(black,50%);
+	overflow: hidden;
 
 	.xs({
 		width:100%;
@@ -197,25 +230,14 @@ p {
 	}
 
 	.section-title {
+		color: @color-dark;
 		padding:1rem;
-		padding-bottom: 0;
-		&>*{
-			padding-bottom:1rem;
-		}
-		&::after {
-			content: "";
-			display: block;
-			position: absolute;
-			width: 400px;
-			transform: translateX(-60px);
-			.xs({
-				transform: translateX(-15px);
-			});
-			height: 2px;
-			background-image: linear-gradient(to right, @color-ui 0%, fade(@color-ui,0) 100%);
-		}
+		border-bottom: 1px solid #ddd;
+		.inset-text();
+		&:extend(.copy);
 	}
 	.section-body {
 		padding: 1rem;
+		&:extend(.copy);
 	}
 }

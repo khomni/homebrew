@@ -20,6 +20,18 @@ button {
 	color: @color-dark;
 	box-shadow: 0px 1px 1px fade(black,50%);
 	padding: 0.5em;
+	background: url('/images/textures/marble.jpg'), @spotlight;
+  background-blend-mode: soft-light;
+  border-radius: 2px;
+  border: 1px solid fade(black,25%);
+	.inset-text();
+	transition: 0.25s;
+
+	&:hover {
+		color: @color-primary;
+	}
+
+
 	&:focus {
 
 	}
