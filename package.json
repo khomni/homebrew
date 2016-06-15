@@ -24,6 +24,7 @@
     "passport-local": "^1.0.0",
     "pg": "^4.5.1",
     "pg-hstore": "^2.3.2",
+    "promise": "^7.1.1",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
     "sequelize": "^3.19.3",
