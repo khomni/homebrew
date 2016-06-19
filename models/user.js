@@ -45,7 +45,8 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         User.hasMany(models.Character, {as: 'characters'});
-        // User.belongsTo(models.Character, {as: 'mainChar'});
+        User.hasOne(models.Character, {as: 'mainChar'})
+
       },
       validPassword: function(password, passwd, done, user){
         bcrypt.compare(password, passwd, function(err, isMatch){
