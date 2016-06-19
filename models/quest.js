@@ -2,22 +2,20 @@
 
 module.exports = function(sequelize, DataTypes) {
   var Quest = sequelize.define("Quest", {
-    identifier: {
-      type: DataTypes.STRING,
-      primaryKey: true
-    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         len: [1,32]
       }
-    }
+    },
+    description: {
+      type: DataTypes.TEXT
+    },
   }, {
     classMethods: {
       associate: function(models) {
-        Quest.belongsTo(models.Party);
-        Quest.belongsTo(models.Campaign);
+        Quest.hasMany(models.Quest, {as: 'subQuest'})
       }
     }
   });

@@ -14,11 +14,19 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.ENUM,
       allowNull: false,
       values: ['slotless']
-    }
+    },
+    baseSize: {
+      type: DataTypes.ENUM,
+      values: ['fine','diminutive','tiny','small','medium','large','huge','gargantuan','colossal']
+    },
+    baseWeight: {
+      type: DataTypes.INTEGER,
+      values: ['fine','diminutive','tiny','small','medium','large','huge','gargantuan','colossal']
+    },
   }, {
     classMethods: {
       associate: function(models) {
-        // Item.belongsTo(models.Character, {as: 'owner',foreignKey:'userId'})
+        Blueprint.hasMany(models.Bonus) // bonuses inherent to the item type (armor bonus, etc)
       }
     }
   });

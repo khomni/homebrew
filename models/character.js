@@ -15,7 +15,6 @@ module.exports = function(sequelize, DataTypes) {
     },
     last_name: {
       type: DataTypes.STRING,
-      allowNull: false,
       validate: {
         len: [1,32]
       }
@@ -34,18 +33,24 @@ module.exports = function(sequelize, DataTypes) {
     },
     title: {
       type: DataTypes.STRING,
-      allowNull: false,
       validate: {
         len: [1,64]
       }
     },
   }, {
+    getterMethods: {
+      name: function(){
+        return this.first_name + ' ' + this.last_name
+      }
+    },
     classMethods: {
       associate: function(models) {
-        Character.belongsTo(models.User, {as: 'owner'})
         Character.belongsTo(models.Campaign);
-        Character.belongsTo(models.Party);
+        // Character.belongsTo(models.Party);
+        Character.belongsToMany(models.Character, {as: 'relationship',through: models.Relationship})
         Character.hasMany(models.Item);
+        Character.hasOne(models.Race);
+
       }
     }
   });

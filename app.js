@@ -2,6 +2,8 @@ require('dotenv').config();
 var express = require('express');
 var path = require('path');
 global.appRoot = path.resolve(__dirname);
+global.CONFIG = require('./config');
+
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');

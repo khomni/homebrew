@@ -1,0 +1,39 @@
+extends ../layout
+
+block title
+  title Create a Character
+  
+block header
+  +header
+    .header-item.page-title 
+      span Create a Character
+
+block content
+  .content-body
+    +section()
+      form(method="post" action="/pc/create")
+        label Name
+        .input-group
+          input(name="first_name" required)
+          input(name="last_name")
+        label Race
+        select(name="race" required)
+          option(disabled selected) Select a Race
+          each race in races
+            option(value=race.name)= race.display_name + " ("+race.rp+")"
+        //- label Class
+        //- select(name="class" required)
+          option(disabled selected) Select a Class
+          each class in classes
+            option(value=race.name)= race.display_name + " ("+race.rp+")"
+        label Sex
+        label
+          input(type="radio" name="sex" value="male" required)
+          span Male
+        label
+          input(type="radio" name="sex" value="female" required)
+          span Female
+        label
+          input(type="radio" name="sex" value="n/a" required)
+          span N/A
+        button(type="submit") Create Character

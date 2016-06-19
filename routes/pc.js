@@ -16,65 +16,46 @@ router.get('/', (req, res, next) => {
   .catch(err => next(err));
 });
 
-router.get('/_login',(req,res,next)=>{
-  res.render('users/_login');
+router.get('/create', (req, res, next) => {
+  if(!req.user) {
+    err = new Error();
+    err.message = "You must be logged in"
+    err.status = 403
+    return next(err);
+  }
+  var races = require(appRoot + '/system/races')
+  res.render('characters/new', {races:races})
 });
 
-router.get('/_signup',(req,res,next)=>{
-  res.render('users/_signup');
-});
+router.post('/create',(req,res,next) => {
+  var pc = db.Character.create({
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    race: req.body.race,
+    sex: req.body.sex
+  })
+  .then(pc => {
+    req.user.addCharacter(pc)
+  })
+  .then(() => {
+    console.log('[PC] Character created:',pc.get({plain:true}))
+    return res.redirect('/pc/'+pc.id);
+  })
+  .catch(err => next(err));
+})
 
 router.post('/create', (req,res,next) => {
   console.log(req.body);
 });
 
-router.post('/login', (req,res,next) => {
-  var origin = req.headers.referer || '/';
-  console.log(req.body)
-  passport.authenticate('local',(err,user,info) => {
-    if (err) {
-      console.error('[Log in] ', err);
-      return next(err);
-    };
-    debugger;
-    if (!user) {
-      console.log('[Log in] no user found')
-      return res.redirect(origin);
-    };
-    console.log('[Log in] logging in user...')
-    req.logIn(user, err => {
-      if (err) {
-        return next(err)
-      };
-      console.log("[Log in] as user: ", req.user.get({plain:true}));
-      return res.redirect(origin);
-    })
-  })(req, res, next)
-});
-
-router.post('/signup', (req,res,next) => {
-  var origin = req.headers.referer || '/';
-  var user = db.User.create({
-    username: req.body.username,
-    email: req.body.email,
-    password: req.body.password
+router.get('/:id',(req,res,next) => {
+  db.Character.findOne({id:req.params.id})
+  .then(character => {
+    return res.render('characters/detail',{character:character.get({plain:true})})
   })
-  .then(user => {
-    req.logIn(user, err => {
-      if (err) {
-        console.error(err);
-        return next(err);
-      };
-      console.log("[Log in] as user: ", req.user.get({plain:true}));
-      return res.redirect(origin);
-    })
+  .catch(err => {
+    return next(err);
   })
-  .catch(err => next(err));
-});
-
-router.get('/logout',(req,res,next) => {
-  req.logout();
-  res.redirect('/');
-});
+})
 
 module.exports = router;

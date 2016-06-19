@@ -1,0 +1,14 @@
+extends ../layout
+
+block title
+  title= character.name
+  
+block header
+  +header
+    .header-item.page-title 
+      span= character.name
+
+block content
+  .content-body
+    +section()
+      

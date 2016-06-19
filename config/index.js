@@ -16,8 +16,8 @@ fs.readdirSync(__dirname+'/settings').filter(function(file) {
     if(allEnv[env]||allEnv['default']||allEnv['universal']) {
       var fileConfig = allEnv[env] || allEnv['default']
       index[fileName] = fileConfig;
-      for(key in allEnv['universal']) {
-        if(!index[fileName][key]) index[fileName][key] = allEnv['universal'][key]
+      for(key in allEnv['default']) {
+        if(!index[fileName][key]) index[fileName][key] = allEnv['default'][key]
       }
     }
   });

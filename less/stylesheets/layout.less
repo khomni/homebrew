@@ -141,14 +141,18 @@ header {
 		perspective: 400px;
 		perspective-origin: center;
 		position: relative;
-		z-index: 2;
-		box-shadow: 0px 0px 30px black, inset 0px 4px 6px fade(black,50%);
-		border-top: 19px solid transparent;
-		border-image: url('/images/textures/bricktop.png') 19 0 round;
-		background-image: url('/images/textures/brick.jpg'), @spotlight;
-		background-position: 50% 0%;
-		background-blend-mode: multiply;
-		background-attachment: local, fixed;
+
+		// z-index: 2;
+		// box-shadow: 0px 0px 30px black, inset 0px 4px 6px fade(black,50%);
+		// background-image: url('/images/textures/brick.jpg'), @spotlight;
+		// background-position: 50% 0%;
+		// background-blend-mode: multiply;
+		// background-attachment: local, fixed;
+		//
+		// .sm-plus({
+		// 	border-top: 19px solid transparent;
+		// 	border-image: url('/images/textures/bricktop.png') 19 0 repeat;
+		// });
 		flex: 1;
 
 		// hr {
@@ -160,7 +164,7 @@ header {
 		hr {
 			border: none;
 		  border-top: 73px solid transparent;
-		  border-image: url('/images/textures/crack.png') 73 0 round;
+		  border-image: url('/images/textures/crack.png') 73 0 repeat;
 		}
 	}
 
@@ -208,22 +212,9 @@ p {
 	box-shadow: 0px 1px 5px fade(black,50%);
 	border: 1px solid fade(black,50%);
 	overflow: hidden;
-
-	.xs({
-		width:100%;
-	});
-	.sm({
-		width:720px;
-	});
-	// .sm-plus({
-	// 	border-left: 2px solid transparent;
-	// 	border-image: linear-gradient(to bottom, @color-ui 0%, fade(@color-ui,0%) 100%);
-	// 	border-image-slice: 1;
-	// 	border-image-outset: 5;
-	// });
-	.md-plus({
-		width:1080px
-	});
+	.xs({width:100%});
+	.sm({width:720px});
+	.md-plus({width:1080px});
 
 	& + .section {
 		margin-top: 1em;

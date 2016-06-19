@@ -16,8 +16,10 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
+        Campaign.hasMany(models.Race);
+        Campaign.hasMany(models.Quest);
         // Campaign.hasMany(models.Character);
-        // Campaign.belongsTo(models.User, {as: 'GM'});
+        Campaign.hasOne(models.User, {as: 'GM'});
       }
     }
   });
