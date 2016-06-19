@@ -10,7 +10,6 @@ passport.serializeUser(function(user, done){
 
 //Deserialize Sessions
 passport.deserializeUser(function(user, done){
-  console.log("[Log out] deserializing user...");
   db.User.find({where: {id: user.id}})
   .then(user => done(null, user))
   .catch(err => done(err, null))

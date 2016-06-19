@@ -25,10 +25,6 @@ router.get('/_signup',(req,res,next)=>{
   res.render('users/_signup');
 });
 
-router.post('/create', (req,res,next) => {
-  console.log(req.body);
-});
-
 router.post('/login', (req,res,next) => {
   var origin = req.headers.referer || '/';
   console.log(req.body)
@@ -62,10 +58,6 @@ router.post('/signup', (req,res,next) => {
   })
   .then(user => {
     req.logIn(user, err => {
-      if (err) {
-        console.error(err);
-        return next(err);
-      };
       console.log("[Log in] as user: ", req.user.get({plain:true}));
       return res.redirect(origin);
     })
