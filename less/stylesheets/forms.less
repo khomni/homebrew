@@ -6,36 +6,96 @@
 }
 
 input {
-	border: none;
-  display: block;
-  width: 100%;
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
+
+	&.form-input {
+
+	}
 
 }
+
+
+.form-input {
+	background: white;
+	border: none;
+	padding: 0.5rem;
+	width: 100%;
+	display: block;
+
+	&[type='radio'],&[type='checkbox'] {
+
+	}
+
+	& + .form-input {
+		margin-top: 0.5rem;
+	}
+
+}
+
+.form-group {
+	margin: 1rem auto;
+}
+
+.checkbox {
+	line-height: 1em;
+	input[type='radio'],input[type='checkbox'] {
+		display: block;
+		width: 1px;
+		height: 1px;
+		opacity: 0;
+	}
+	span {
+		.cursor(pointer);
+		display: inline-block;
+		vertical-align: middle;
+		&:before {
+			content: "✓";
+			.marble-ui();
+			color: fade(black,20%);
+			margin-right: 1em;
+			text-align: center;
+			display: inline-block;
+			width: 1em;
+			height: 1em;
+			vertical-align: middle;
+
+		}
+	}
+	:checked + span {
+		color: @color-primary;
+		&:before {
+			color: @color-primary;
+		}
+	}
+}
+
+
+
 
 button {
-	border: none;
-	background: #ddd;
-	color: @color-dark;
-	box-shadow: 0px 1px 1px fade(black,50%);
+	.marble-ui();
 	padding: 0.5em;
-	background: url('/images/textures/marble.jpg'), @spotlight;
-  background-blend-mode: soft-light;
-  border-radius: 2px;
-  border: 1px solid fade(black,25%);
-	.inset-text();
-	transition: 0.25s;
 
-	&:hover {
-		color: @color-primary;
-	}
-
-
-	&:focus {
-
-	}
+	// border: none;
+	// background: #ddd;
+	// color: @color-dark;
+	// box-shadow: 0px 1px 1px fade(black,50%);
+	// padding: 0.5em;
+	// background: url('/images/textures/marble.jpg'), @spotlight;
+  // background-blend-mode: soft-light;
+  // border-radius: 2px;
+  // border: 1px solid fade(black,25%);
+	// .inset-text();
+	// transition: 0.25s;
+	//
+	// &:hover {
+	// 	color: @color-primary;
+	// }
+	//
+	// &:focus {}
 }
+
+
+
 
 input,button,select,textarea {
 	&:focus {

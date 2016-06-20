@@ -811,25 +811,77 @@ p + p {
   color: white;
   background-color: #ff9d55;
 }
-input {
+.form-input {
+  background: white;
   border: none;
-  display: block;
-  width: 100%;
   padding: 0.5rem;
-  margin-bottom: 0.5rem;
+  width: 100%;
+  display: block;
+}
+.form-input + .form-input {
+  margin-top: 0.5rem;
+}
+.form-group {
+  margin: 1rem auto;
+}
+.checkbox {
+  line-height: 1em;
+}
+.checkbox input[type='radio'],
+.checkbox input[type='checkbox'] {
+  display: block;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.checkbox span {
+  cursor: -webkit-pointer;
+  cursor: -moz-pointer;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+}
+.checkbox span:before {
+  content: "✓";
+  border: none;
+  background: #ddd;
+  color: #111;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+  background: url('/images/textures/marble.jpg'), radial-gradient(ellipse 200% 200% at 50% 0%, #ddd 0%, #333 100%);
+  background-blend-mode: soft-light;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.5), 0px -1px 1px rgba(0, 0, 0, 0.5);
+  transition: 0.25s;
+  color: rgba(0, 0, 0, 0.2);
+  margin-right: 1em;
+  text-align: center;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+}
+.checkbox span:before:hover {
+  color: #ff9d55;
+}
+.checkbox :checked + span {
+  color: #ff9d55;
+}
+.checkbox :checked + span:before {
+  color: #ff9d55;
 }
 button {
   border: none;
   background: #ddd;
   color: #111;
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
-  padding: 0.5em;
-  background: url('/images/textures/marble.jpg'), radial-gradient(ellipse 100% 200% at 50% 0%, #ddd 0%, #333 100%);
+  background: url('/images/textures/marble.jpg'), radial-gradient(ellipse 200% 200% at 50% 0%, #ddd 0%, #333 100%);
   background-blend-mode: soft-light;
   border-radius: 2px;
   border: 1px solid rgba(0, 0, 0, 0.25);
   text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.5), 0px -1px 1px rgba(0, 0, 0, 0.5);
   transition: 0.25s;
+  padding: 0.5em;
 }
 button:hover {
   color: #ff9d55;

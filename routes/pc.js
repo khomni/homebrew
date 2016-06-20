@@ -28,20 +28,28 @@ router.get('/create', (req, res, next) => {
 });
 
 router.post('/create',(req,res,next) => {
+  if(!req.user) {
+    err = new Error();
+    err.message = "You must be logged in"
+    err.status = 403
+  }
   var pc = db.Character.create({
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     race: req.body.race,
     sex: req.body.sex
-  })
-  .then(pc => {
-    req.user.addCharacter(pc)
-  })
-  .then(() => {
+  }).then(pc => {
+    return req.user.addCharacter(pc)
+  }).then(user => {
+    return user.hasCharacter(pc)
+  }).then(hasCharacter => {
+    console.log("hasCharacter?:", hasCharacter)
     console.log('[PC] Character created:',pc.get({plain:true}))
     return res.redirect('/pc/'+pc.id);
-  })
-  .catch(err => next(err));
+  }).catch(err => {
+    console.error(err)
+    return next(err)
+  });
 })
 
 router.post('/create', (req,res,next) => {
@@ -51,6 +59,7 @@ router.post('/create', (req,res,next) => {
 router.get('/:id',(req,res,next) => {
   db.Character.findOne({id:req.params.id})
   .then(character => {
+    if(!character) return next();
     return res.render('characters/detail',{character:character.get({plain:true})})
   })
   .catch(err => {

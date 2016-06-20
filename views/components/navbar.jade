@@ -28,7 +28,7 @@ nav#nav
       +filter(!user.mainChar)
         +dropdown({id:'charselect',text:"Character"})
           +navlink({url:'/pc', text: 'Select Character'})
-          +navlink({url:'/pc/new', text: 'Create a Character'})
+          +navlink({url:'/pc/create', text: 'Create a Character'})
       +filter(user.mainChar)
         +dropdown({id:'charactermenu', text: user.mainChar.name})
           +navlink({url:'/pc/' + user.mainChar.id,text:'Status'})
