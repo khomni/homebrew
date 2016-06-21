@@ -1,3 +1,6 @@
+var Promise = require('promise');
+var Ajax = require('./ajax');
+
 var Modal = {
   init: function(){
     this.dom = document.getElementById('mainModal');
@@ -24,19 +27,14 @@ var Modal = {
     })
   },
   loadModal: function(url,callback) {
-    let xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function (e) {
-     if (xhr.readyState == 4 && xhr.status == 200) {
-      Modal.dom.innerHTML = xhr.responseText;
-      callback();
-     }
-     else {
-       callback(new Error(xhr))
-     }
-    }
-    xhr.open("GET", url, true);
-    xhr.setRequestHeader('Content-type', 'text/html');
-    xhr.send();
+    Ajax.html({method:"GET",url:url})
+      .then((xhr) => {
+        Modal.dom.innerHTML = xhr.responseText;
+        return callback();
+      })
+      .catch(err =>{
+        return callback(err);
+      })
   },
   showModal: function(){
     Modal.dom.classList.add('open');

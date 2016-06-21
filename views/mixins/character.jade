@@ -1,18 +1,23 @@
 mixin characterCard(character)
-  .character-card-container
-    a.character-card(href="/pc/"+character.id)
+  .character-card-container(id="character-"+character.id data-characterId=character.id)
+    .character-card
       .character-portrait
         if character.portrait
           img(src=character.portrait.src)
       .character-stats
         .name(href="/pc/"+character.id)= character.name
-        .bar
-          .hilt HP
-          .data-bar.red
-            .value(data-display='bar' data-max=100 data-value=character.hp||0)
-              span=character.hp||0
-        .bar
-          .hilt XP
-          .data-bar.gold
-            .value(data-display='bar' data-max=100 data-value=character.hp||0)
-              span=character.xp||0
+        if currentUser.id === character.UserId
+          .bar
+            .hilt HP
+            .data-bar.red
+              .value(data-display='bar' data-max=100 data-value=character.hp||100)
+                span=character.hp||100
+          .bar
+            .hilt XP
+            .data-bar.gold
+              .value(data-display='bar' data-max=100 data-value=character.hp||100)
+                span=character.xp||100
+          form.btn-group
+            a.btn(href="/pc/"+character.id) Character Sheet
+            button.btn(type="submit" formMethod="POST" formAction="/pc/"+character.id+"/makeMain") Set As Main
+            button.btn(type="submit" formMethod="POST" formAction="/pc/"+character.id+"/delete") Delete

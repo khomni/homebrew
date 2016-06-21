@@ -44,9 +44,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use((req,res,next) => {
-  if(req.user) {
-    res.locals.user = req.user
-  }
+  res.locals.currentUser = req.user || false
   next();
 });
 
@@ -86,7 +84,6 @@ app.use((req,res,next) => {
 });
 
 app.use('/', routes);
-// app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

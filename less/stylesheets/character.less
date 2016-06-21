@@ -8,7 +8,7 @@
 		.marble-ui();
 		.sm-plus({
 			height: 150px;
-			border-radius: 75px 0 75px 75px;
+			border-radius: 75px 25px 0 75px;
 		});
 
 		display: flex;
@@ -101,7 +101,11 @@
 		background-image: linear-gradient(to bottom, fade(white,0%) 0%, fade(white,50%) 50%, fade(black,25%) 50%, fade(white,0%) 100%);
 		transition: 1s ease-in-out;
 		text-align: right;
-		color: black;
+		color: white;
+
+		&.overflow {
+			background-image: linear-gradient(to bottom, fade(goldenrod,0%) 0%, fade(goldenrod,50%) 50%, fade(black,25%) 50%, fade(goldenrod,0%) 100%);;
+		}
 
 		span {
 			padding: 0.5em;

@@ -1,3 +1,3 @@
-var common = {};
+module.exports = {
 
-module.exports = common;
+};
