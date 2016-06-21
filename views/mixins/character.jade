@@ -1,6 +1,6 @@
 mixin characterCard(character)
   .character-card-container
-    a.character-card.grid(href="/pc/"+character.id)
+    a.character-card(href="/pc/"+character.id)
       .character-portrait
         if character.portrait
           img(src=character.portrait.src)

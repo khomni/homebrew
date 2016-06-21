@@ -1,24 +1,34 @@
 @import '../mixins/mixins.less';
 
 .character-card-container {
-	padding: 1em;
+	padding: 0.5em;
+	max-width: 500px;
+	margin: auto;
 	.character-card {
 		.marble-ui();
-		border-radius: 5em 0 0 5em;
+		.sm-plus({
+			height: 150px;
+			border-radius: 75px 0 75px 75px;
+		});
+
 		display: flex;
 		text-decoration: none;
 		color: #333;
-		height: 10em;
 		overflow: hidden;
 
 		.character-portrait {
 	    height: 100%;
-	    width: 10em;
+	    width: 150px;
 	    overflow: hidden;
-	    padding: 1em;
+	    border-right: 1px solid rgba(0, 0, 0, 0.25);
+    	border-radius: 75px;
+			background: fade(white,25%);
+			.xs({display: none});
+
 		}
 		.character-stats {
 			flex:1;
+			padding: 1em;
 		}
 
 	}
