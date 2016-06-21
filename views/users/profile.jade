@@ -15,6 +15,4 @@ block content
       p= user.email
     +section("Characters")
       each character in characters
-        h2= character.name
-        p= character.sex
-        p= character.race
+        +characterCard(character)

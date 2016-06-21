@@ -41,8 +41,7 @@ router.post('/create',(req,res,next) => {
   }).then(pc => {
     console.log("PC:",pc)
     return req.user.addCharacter(pc)
-  }).finally(promise => {
-    console.log("Promise:",promise);
+  }).finally(() => {
     return res.redirect('/pc/');
   }).catch(err => {
     console.error(err)
@@ -55,7 +54,7 @@ router.post('/create', (req,res,next) => {
 });
 
 router.get('/:id',(req,res,next) => {
-  db.Character.findOne({id:req.params.id})
+  db.Character.findOne({where: {id:req.params.id}})
   .then(character => {
     if(!character) return next();
     return res.render('characters/detail',{character:character.get({plain:true})})

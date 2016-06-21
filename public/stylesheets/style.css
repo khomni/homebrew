@@ -801,6 +801,9 @@ p + p {
 .section .section-body {
   padding: 1rem;
 }
+.text-center {
+  text-align: center;
+}
 ::selection,
 ::-webkit-selection {
   color: white;
@@ -890,10 +893,6 @@ p + p {
   height: 1em;
   vertical-align: middle;
 }
-.checkbox span:before:hover,
-.radio span:before:hover {
-  color: #ff9d55;
-}
 .checkbox :checked + span,
 .radio :checked + span {
   color: #ff9d55;
@@ -929,9 +928,6 @@ p + p {
   text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.5), 0px -1px 1px rgba(0, 0, 0, 0.5);
   transition: 0.25s;
   padding: 0.5em;
-}
-.btn:hover {
-  color: #ff9d55;
 }
 .btn:focus {
   color: #ff9d55;
@@ -1066,6 +1062,118 @@ body.modal-open {
 }
 .modal .modal-dialog .modal-content .modal-body {
   padding: 1rem;
+}
+.character-card-container {
+  padding: 1em;
+}
+.character-card-container .character-card {
+  border: none;
+  background: #ddd;
+  color: #111;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+  background: url('/images/textures/marble.jpg'), radial-gradient(ellipse 200% 200% at 50% 0%, #ddd 0%, #333 100%);
+  background-blend-mode: soft-light;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.5), 0px -1px 1px rgba(0, 0, 0, 0.5);
+  transition: 0.25s;
+  border-radius: 5em 0 0 5em;
+  display: flex;
+  text-decoration: none;
+  color: #333;
+  height: 10em;
+  overflow: hidden;
+}
+.character-card-container .character-card .character-portrait {
+  height: 100%;
+  width: 10em;
+  overflow: hidden;
+  padding: 1em;
+}
+.character-card-container .character-card .character-stats {
+  flex: 1;
+}
+.bar {
+  display: flex;
+  border-radius: 4px 0.75em 0.75em 4px;
+  height: 1.5em;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #333;
+  box-shadow: 0px -1px 1px rgba(0, 0, 0, 0.5), 0px 1px 1px rgba(255, 255, 255, 0.5);
+  margin: 4px 0;
+}
+.bar .hilt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  padding: 0 0.5em;
+  border-right: 1px solid;
+  font-weight: 700;
+  background: radial-gradient(ellipse at 100% 50%, #ffeecc 0%, #8c713d 50%, #3e2d0a 100%), url('/images/textures/bronze.jpg');
+  background-blend-mode: hard-light;
+}
+.bar .data-bar {
+  box-shadow: none;
+  flex: 1;
+  border-radius: 0;
+  border: 0;
+  height: 100%;
+}
+.data-bar {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(to bottom, #333 0%, #000 50%, #222 100%);
+  height: 1.5em;
+  border-radius: 0.5em;
+  overflow: hidden;
+  box-shadow: 0px -1px 1px rgba(0, 0, 0, 0.5), 0px 1px 1px rgba(255, 255, 255, 0.5);
+  border: 1px solid #333;
+  display: flex;
+  width: 100%;
+}
+.data-bar.red .value {
+  background-color: #900;
+}
+.data-bar.blue .value {
+  background-color: #0066ff;
+}
+.data-bar.green .value {
+  background-color: #449900;
+}
+.data-bar.gold .value {
+  background-color: #ffab2e;
+}
+.data-bar .value {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0%;
+  background-color: #ccc;
+  line-height: 1.5em;
+  word-break: initial;
+  height: 100%;
+  border-radius: 0.1em;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.9);
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 50%, rgba(0, 0, 0, 0.25) 50%, rgba(255, 255, 255, 0) 100%);
+  transition: 1s ease-in-out;
+  text-align: right;
+  color: black;
+}
+.data-bar .value span {
+  padding: 0.5em;
+}
+.data-bar .value.red {
+  background-color: #900;
+}
+.data-bar .value.blue {
+  background-color: #0066ff;
+}
+.data-bar .value.green {
+  background-color: #449900;
+}
+.data-bar .value.gold {
+  background-color: #ffab2e;
 }
 #nav {
   color: #eee;

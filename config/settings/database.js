@@ -11,7 +11,7 @@ module.exports = {
 		}
 	},
 	default: {
-		forcesync: true,
+		forcesync: false,
 		options: {
 			dialect: "sqlite",
 			storage: "/data/development.sqlite",

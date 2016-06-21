@@ -1,0 +1,113 @@
+@import '../mixins/mixins.less';
+
+.character-card-container {
+	padding: 1em;
+	.character-card {
+		.marble-ui();
+		border-radius: 5em 0 0 5em;
+		display: flex;
+		text-decoration: none;
+		color: #333;
+		height: 10em;
+		overflow: hidden;
+
+		.character-portrait {
+	    height: 100%;
+	    width: 10em;
+	    overflow: hidden;
+	    padding: 1em;
+		}
+		.character-stats {
+			flex:1;
+		}
+
+	}
+}
+
+.bar {
+	display: flex;
+	border-radius: 4px 0.75em 0.75em 4px;
+	height: 1.5em;
+	width:100%;
+	overflow: hidden;
+	border: 1px solid #333;
+	box-shadow: 0px -1px 1px fade(black,50%), 0px 1px 1px fade(white,50%);
+	margin: 4px 0;
+	.hilt{
+		display: flex;
+    align-items: center;
+		justify-content: center;
+		font-size: 10px;
+		padding: 0 0.5em;
+		border-right: 1px solid;
+		font-weight: 700;
+		background: radial-gradient(ellipse at 100% 50%, #ffeecc 0%, #8c713d 50%, #3e2d0a 100%), url('/images/textures/bronze.jpg');
+		background-blend-mode: hard-light;
+	}
+	.data-bar {
+		box-shadow:none;
+		flex: 1;
+		border-radius: 0;
+		border:0;
+		height: 100%;
+	}
+}
+
+.data-bar {
+	position: relative;
+	z-index: 1;
+	background: linear-gradient(to bottom, #333 0%, #000 50%, #222 100%);
+	height: 1.5em;
+	border-radius: 0.5em;
+	overflow:hidden;
+	box-shadow: 0px -1px 1px fade(black,50%), 0px 1px 1px fade(white,50%);
+	border: 1px solid #333;
+	display: flex;
+	width:100%;
+
+	&.red{
+		.value {background-color: #900;}
+	}
+	&.blue{
+		.value {background-color: #0066ff;}
+	}
+	&.green{
+		.value {background-color: #449900;}
+	}
+	&.gold{
+		.value {background-color: #ffab2e;}
+	}
+
+	.value {
+		width:100%;
+		max-width:100%;
+		min-width:0%;
+		background-color: #ccc;
+		line-height: 1.5em;
+		word-break: initial;
+		height: 100%;
+		border-radius: 0.1em;
+		box-shadow: inset 0 0 2px fade(black,90%);
+		background-image: linear-gradient(to bottom, fade(white,0%) 0%, fade(white,50%) 50%, fade(black,25%) 50%, fade(white,0%) 100%);
+		transition: 1s ease-in-out;
+		text-align: right;
+		color: black;
+
+		span {
+			padding: 0.5em;
+		}
+
+		&.red {
+			background-color: #900;
+		}
+		&.blue {
+			background-color: #0066ff;
+		}
+		&.green {
+			background-color: #449900;
+		}
+		&.gold {
+			background-color: #ffab2e;
+		}
+	}
+}
