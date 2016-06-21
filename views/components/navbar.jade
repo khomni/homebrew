@@ -52,6 +52,7 @@ nav#nav
             +navlink({url:'/pc/' + member.id, text: member.name})
             
       +dropdown({id: 'accountmenu', text: 'Account'})
+        +navlink({url:'/u/'+user.username, text: 'Profile'})
         +navlink({url:'/u/settings', text: 'Settings'})
         +navlink({url:'/u/logout', text: 'Log Out'})
     +filter(!user)

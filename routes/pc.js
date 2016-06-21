@@ -39,13 +39,11 @@ router.post('/create',(req,res,next) => {
     race: req.body.race,
     sex: req.body.sex
   }).then(pc => {
+    console.log("PC:",pc)
     return req.user.addCharacter(pc)
-  }).then(user => {
-    return user.hasCharacter(pc)
-  }).then(hasCharacter => {
-    console.log("hasCharacter?:", hasCharacter)
-    console.log('[PC] Character created:',pc.get({plain:true}))
-    return res.redirect('/pc/'+pc.id);
+  }).finally(promise => {
+    console.log("Promise:",promise);
+    return res.redirect('/pc/');
   }).catch(err => {
     console.error(err)
     return next(err)

@@ -20,23 +20,61 @@ input {
 	padding: 0.5rem;
 	width: 100%;
 	display: block;
+	margin: 0.5em;
 
 	&[type='radio'],&[type='checkbox'] {
 
 	}
 
 	& + .form-input {
-		margin-top: 0.5rem;
+		// margin-top: 0.5rem;
 	}
 
 }
 
 .form-group {
 	margin: 1rem auto;
+	display: flex;
+	margin: -0.5em;
+	margin-bottom: 0.5em;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: stretch;
+
+	.form-input, {
+		flex: 1;
+		margin: 0.5em;
+		width: initial;
+		min-width: 0;
+	}
+
+	.checkbox,.radio {
+		margin: 0.5em;
+	}
+
+	.form-group-label {
+		margin: 0.5em;
+		flex-basis: 100%;
+		text-align: center;
+	}
+
+	&.horz {
+		flex-flow: row wrap;
+	}
+
+	&.center {
+		justify-content: center;
+	}
+
+	&.distribute {
+		justify-content: space-around;
+	}
+
 }
 
-.checkbox {
+.checkbox,.radio {
 	line-height: 1em;
+	margin-right: 0.5em;
 	input[type='radio'],input[type='checkbox'] {
 		display: block;
 		width: 1px;
@@ -51,7 +89,7 @@ input {
 			content: "✓";
 			.marble-ui();
 			color: fade(black,20%);
-			margin-right: 1em;
+			margin-right: 0.5em;
 			text-align: center;
 			display: inline-block;
 			width: 1em;
@@ -66,32 +104,53 @@ input {
 			color: @color-primary;
 		}
 	}
+	:focus + span {
+		text-shadow+: 0 0 2px @color-primary;
+		&:before {
+			box-shadow+: 0 0 2px @color-primary;
+		}
+	}
+}
+
+.radio {
+	line-height: 1em;
+	span {
+		&:before {
+			content: "•";
+			border-radius:0.5em;
+		}
+	}
 }
 
 
 
 
-button {
+.btn {
 	.marble-ui();
 	padding: 0.5em;
 
-	// border: none;
-	// background: #ddd;
-	// color: @color-dark;
-	// box-shadow: 0px 1px 1px fade(black,50%);
-	// padding: 0.5em;
-	// background: url('/images/textures/marble.jpg'), @spotlight;
-  // background-blend-mode: soft-light;
-  // border-radius: 2px;
-  // border: 1px solid fade(black,25%);
-	// .inset-text();
-	// transition: 0.25s;
-	//
-	// &:hover {
-	// 	color: @color-primary;
-	// }
-	//
-	// &:focus {}
+	&:focus {
+		color: @color-primary;
+	}
+
+	&.block {
+		display: block;
+    margin: auto;
+		&.full {
+			width: 100%;
+		}
+	}
+
+}
+
+.btn-group {
+	display: flex;
+	flex-flow: row wrap;
+
+	.btn {
+		flex: 1;
+		border-radius: 0;
+	}
 }
 
 

@@ -640,11 +640,6 @@ header::after {
   position: relative;
   flex: 1;
 }
-#content-wrapper #content-main hr {
-  border: none;
-  border-top: 73px solid transparent;
-  border-image: url('/images/textures/crack.png') 73 0 repeat;
-}
 h1,
 h2,
 h3,
@@ -817,31 +812,65 @@ p + p {
   padding: 0.5rem;
   width: 100%;
   display: block;
-}
-.form-input + .form-input {
-  margin-top: 0.5rem;
+  margin: 0.5em;
 }
 .form-group {
   margin: 1rem auto;
+  display: flex;
+  margin: -0.5em;
+  margin-bottom: 0.5em;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
 }
-.checkbox {
+.form-group .form-input {
+  flex: 1;
+  margin: 0.5em;
+  width: initial;
+  min-width: 0;
+}
+.form-group .checkbox,
+.form-group .radio {
+  margin: 0.5em;
+}
+.form-group .form-group-label {
+  margin: 0.5em;
+  flex-basis: 100%;
+  text-align: center;
+}
+.form-group.horz {
+  flex-flow: row wrap;
+}
+.form-group.center {
+  justify-content: center;
+}
+.form-group.distribute {
+  justify-content: space-around;
+}
+.checkbox,
+.radio {
   line-height: 1em;
+  margin-right: 0.5em;
 }
 .checkbox input[type='radio'],
-.checkbox input[type='checkbox'] {
+.radio input[type='radio'],
+.checkbox input[type='checkbox'],
+.radio input[type='checkbox'] {
   display: block;
   width: 1px;
   height: 1px;
   opacity: 0;
 }
-.checkbox span {
+.checkbox span,
+.radio span {
   cursor: -webkit-pointer;
   cursor: -moz-pointer;
   cursor: pointer;
   display: inline-block;
   vertical-align: middle;
 }
-.checkbox span:before {
+.checkbox span:before,
+.radio span:before {
   content: "✓";
   border: none;
   background: #ddd;
@@ -854,23 +883,41 @@ p + p {
   text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.5), 0px -1px 1px rgba(0, 0, 0, 0.5);
   transition: 0.25s;
   color: rgba(0, 0, 0, 0.2);
-  margin-right: 1em;
+  margin-right: 0.5em;
   text-align: center;
   display: inline-block;
   width: 1em;
   height: 1em;
   vertical-align: middle;
 }
-.checkbox span:before:hover {
+.checkbox span:before:hover,
+.radio span:before:hover {
   color: #ff9d55;
 }
-.checkbox :checked + span {
+.checkbox :checked + span,
+.radio :checked + span {
   color: #ff9d55;
 }
-.checkbox :checked + span:before {
+.checkbox :checked + span:before,
+.radio :checked + span:before {
   color: #ff9d55;
 }
-button {
+.checkbox :focus + span,
+.radio :focus + span {
+  text-shadow: 0 0 2px #ff9d55;
+}
+.checkbox :focus + span:before,
+.radio :focus + span:before {
+  box-shadow: 0 0 2px #ff9d55;
+}
+.radio {
+  line-height: 1em;
+}
+.radio span:before {
+  content: "•";
+  border-radius: 0.5em;
+}
+.btn {
   border: none;
   background: #ddd;
   color: #111;
@@ -883,8 +930,26 @@ button {
   transition: 0.25s;
   padding: 0.5em;
 }
-button:hover {
+.btn:hover {
   color: #ff9d55;
+}
+.btn:focus {
+  color: #ff9d55;
+}
+.btn.block {
+  display: block;
+  margin: auto;
+}
+.btn.block.full {
+  width: 100%;
+}
+.btn-group {
+  display: flex;
+  flex-flow: row wrap;
+}
+.btn-group .btn {
+  flex: 1;
+  border-radius: 0;
 }
 input:focus,
 button:focus,

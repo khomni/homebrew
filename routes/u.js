@@ -70,4 +70,17 @@ router.get('/logout',(req,res,next) => {
   res.redirect('/');
 });
 
+router.get('/:username',(req,res,next) => {
+  db.User.findOne({where: {username:req.params.username}, include:{model: db.Character, as: 'characters'}})
+  .then(user => {
+    if(user) {
+      console.log("User:",user.get({plain:true}))
+      return res.render('users/profile',{user:user,characters:user.characters})
+    }
+    return next();
+  }).catch(err => {
+    return next(err);
+  })
+});
+
 module.exports = router;

@@ -12,29 +12,30 @@ block content
   .content-body
     +section()
       form(method="post" action="/pc/create")
-        label Name
-        .input-group
-          input.form-input(name="first_name" required)
-          input.form-input(name="last_name")
-        label Race
-        select.form-input(name="race" required)
-          option(disabled selected) Select a Race
-          each race in races
-            option(value=race.name)= race.display_name + " ("+race.rp+")"
+        .form-group.horz
+          label.form-group-label Name
+          input.form-input(name="first_name" placeholder="First Name" required)
+          input.form-input(name="last_name" placeholder="Last Name" )
+        .form-group
+          label.form-group-label Race
+          select.form-input(name="race" required)
+            option(disabled selected) Select a Race
+            each race in races
+              option(value=race.name)= race.display_name + " ("+race.rp+")"
         //- label Class
         //- select(name="class" required)
           option(disabled selected) Select a Class
           each class in classes
             option(value=race.name)= race.display_name + " ("+race.rp+")"
-        .form-group
-          label Sex
-          label.checkbox
+        .form-group.horz.distribute
+          label.form-group-label Sex
+          label.radio
             input(type="radio" name="sex" value="male" required)
             span Male
-          label.checkbox
+          label.radio
             input(type="radio" name="sex" value="female" required)
             span Female
-          label.checkbox
+          label.radio
             input(type="radio" name="sex" value="n/a" required)
             span N/A
-        button(type="submit") Create Character
+        button.btn.block(type="submit") Create Character
