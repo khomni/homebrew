@@ -1,8 +1,9 @@
 require('dotenv').config();
 var express = require('express');
 var path = require('path');
-global.appRoot = path.resolve(__dirname);
+global.APPROOT = path.resolve(__dirname);
 global.CONFIG = require('./config');
+global.Common = require('./common');
 
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -83,6 +84,12 @@ app.use((req,res,next) => {
   }
 });
 
+app.use(function(req,res,next){
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Origin", "http://127.0.0.1:3000");
+  next();
+})
+
 app.use('/', routes);
 
 // catch 404 and forward to error handler
@@ -98,11 +105,15 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development'||app.get('env') === 'local') {
   app.use(function(err, req, res, next) {
+
     res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
+
+    Common.handleRequest(req, {
+      json:() => {return res.status(err.status).send(err)},
+      xhr:() => {return res.render('modals/_error', {message: err.message, error: err})},
+      default:() => {return res.render('error', {message: err.message, error: err})}
+    })();
+
   });
 }
 

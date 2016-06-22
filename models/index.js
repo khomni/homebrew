@@ -7,7 +7,7 @@ var basename  = path.basename(module.filename);
 var env       = process.env.NODE_ENV || 'development';
 var db        = {};
 
-// var config = require(appRoot + '/config');
+// var config = require(APPROOT + '/config');
 
 var sequelize = new Sequelize(CONFIG.database.name, CONFIG.database.username, CONFIG.database.password, CONFIG.database.options)
 

@@ -27,9 +27,11 @@ body.modal-open {
 		max-width: 720px;
 		margin: 0 auto;
 		vertical-align: middle;
-		.xs({
-			max-width: 100vw;
-		});
+		max-width: 100vw;
+		.xs({width:480px});
+		.sm-plus({width:720px});
+		.md-plus({width:960px});
+		.lg({width:1080px});
 
 		.modal-content {
 			.animation(forge 2s forwards~"," fadeDown 0.5s @bezier-bounce forwards);

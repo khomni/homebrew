@@ -1,3 +1,5 @@
+/*jslint node: true */
+
 var Promise = require('promise');
 var Ajax = require('./ajax');
 var Navbar = require('./navbar');

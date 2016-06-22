@@ -2,6 +2,7 @@ var Promise = require('promise');
 var Ajax = require('./ajax');
 
 var Modal = {
+
   init: function(){
     this.dom = document.getElementById('mainModal');
     this.triggers = document.querySelectorAll('[data-modal]');
@@ -26,20 +27,29 @@ var Modal = {
       }
     })
   },
+
   loadModal: function(url,callback) {
+    console.log(Ajax)
     Ajax.html({method:"GET",url:url})
-      .then((xhr) => {
-        Modal.dom.innerHTML = xhr.responseText;
+      .then(text => {
+        Modal.dom.innerHTML = text;
         return callback();
       })
       .catch(err =>{
         return callback(err);
       })
   },
+
+  createModal: function(html,callback) {
+    Modal.dom.innerHTML = html;
+    Modal.showModal();
+  },
+
   showModal: function(){
     Modal.dom.classList.add('open');
     document.body.classList.add('modal-open');
   },
+
   hideModal: function(){
     Modal.dom.classList.remove('open');
     document.body.classList.remove('modal-open')
