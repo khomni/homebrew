@@ -457,6 +457,7 @@ body {
   font-family: Lato, sans serif;
   background-color: #eee;
   color: #111;
+  overflow-y: overlay;
 }
 a {
   color: #ff9d55;
@@ -642,6 +643,13 @@ header::after {
   perspective-origin: center;
   position: relative;
   flex: 1;
+}
+#content-wrapper #content-main .content-body {
+  box-shadow: 0px 0px 30px black, inset 0px 4px 6px rgba(0, 0, 0, 0.5);
+  background-image: url('/images/textures/brick.jpg'), radial-gradient(ellipse 200% 200% at 50% 0%, #ddd 0%, #333 100%);
+  background-position: 50% 0%;
+  background-blend-mode: multiply;
+  background-attachment: local, fixed;
 }
 h1,
 h2,
