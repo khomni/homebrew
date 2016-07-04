@@ -17,7 +17,9 @@ mixin characterCard(character)
             .data-bar.gold
               .value(data-display='bar' data-max=100 data-value=character.hp||100)
                 span=character.xp||100
-          form.btn-group
+          .btn-group
             a.btn(href="/pc/"+character.id) Character Sheet
-            button.btn(type="submit" formMethod="POST" formAction="/pc/"+character.id+"/makeMain") Set As Main
-            button.btn(type="submit" formMethod="POST" formAction="/pc/"+character.id+"/delete") Delete
+            form(action="/pc/"+character.id+"/makeMain" method="POST")
+              button.btn(type="submit") Set As Main
+            form(action="/pc/"+character.id+"/delete" method="POST")
+              button.btn(type="submit") Delete

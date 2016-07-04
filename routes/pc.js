@@ -29,7 +29,7 @@ router.get('/create', (req, res, next) => {
 
 router.post('/create',(req,res,next) => {
   console.log("req.body",req.body)
-  console.log("req.session",req.session)
+  console.log("req.headers",req.headers)
   if(!req.user) {
     err = new Error();
     err.message = "You must be logged in"
@@ -37,19 +37,19 @@ router.post('/create',(req,res,next) => {
     return next(err);
   }
 
-  var pc = db.Character.create({
+  db.Character.create({
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     race: req.body.race,
     sex: req.body.sex
   }).then(pc => {
-    return req.user.addCharacter(pc)
-  }).then(() => {
-    Common.handleRequest(req,{
-      json:() => {return res.send(pc.get({plain:true}))},
-      xhr:() => {return res.render('characters/detail',{character:pc.get({plain:true})})},
-      default:() => {return res.redirect('/pc/'+pc.id)}
-    })();
+    return req.user.addCharacter(pc).then((user)=>{
+      Common.handleRequest(req,{
+        json:() => {return res.send(pc.get({plain:true}))},
+        xhr:() => {return res.render('modals/_success', {title: "Character Created", body:"Good job", redirect:'/pc/'+pc.id})},
+        default:() => {return res.redirect('/pc/'+pc.id)}
+      })();
+    })
   }).catch(err => {
     console.error(err)
     return next(err)
@@ -95,7 +95,11 @@ router.post('/:id/delete',(req,res,next) => {
       return err
     }
   }).then(() => {
-    return res.redirect('/pc')
+    Common.handleRequest(req,{
+      json:function(){return res.send(character)},
+      xhr:function(){return res.render('modals/_success', {title:"Character Deleted", redirect:"/pc"})},
+      default:function() {return res.redirect('/pc')}
+    })();
   })
   .catch(err => {
     return next(err);

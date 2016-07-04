@@ -28,15 +28,12 @@ var Ajax = {
     for(i=0; i<forms.length;i++) {
       (function(j){forms[j].addEventListener('submit',function(e){
         e.preventDefault();
-        console.log(e);
-        var Modal = require('./modal')
-        Ajax.html({method: e.target.method, url: e.target.action, data:forms[j]})
+        var Modal = require('./modal');
+        Ajax.html({method: e.target.method, url: e.target.action, body:forms[j]})
           .then(response =>{
-            console.log(response)
             Modal.createModal(response);
           })
           .catch(err =>{
-            console.error(err);
             Modal.createModal(err);
           })
       })})(i);
@@ -65,17 +62,15 @@ var Ajax = {
       xhr.setRequestHeader('Content-type', args.contentType || 'text/html');
       xhr.setRequestHeader('Accept', args.accept || 'text/html');
       if (typeof args.beforeSend === "function") args.beforeSend();
-      console.log(args.data)
       xhr.send(args.data);
     })
   },
 
   fetch: function(args) {
-    if(args.data) {
-      if(args.data.nodeName === "FORM") {
-        args.headers['Content-Type'] = 'x-www-form-urlencoded'
-        var data = new FormData(args.data)
-        console.log("FormData:", data)
+    if(args.body) {
+      if(args.body.nodeName === "FORM") {
+        args.headers['Content-Type'] = 'application/json'
+        var data = JSON.stringify(serialize(args.body))
       }
       else if(typeof args.data === 'object') {
         args.headers['Content-Type'] = 'application/json'
@@ -97,8 +92,6 @@ var Ajax = {
     for(key in args.headers) {
       init.headers[key] = args.headers[key]
     }
-
-    console.log(init)
 
     return fetch(args.url,init);
 

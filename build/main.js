@@ -17,5 +17,6 @@ document.onreadystatechange = function(){
   // Favicon.startSpin();
   Ajax.setListeners();
   window.Ajax = Ajax
+  window.Modal = Modal
 
 }
