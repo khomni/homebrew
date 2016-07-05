@@ -11,9 +11,10 @@ module.exports = function(sequelize, DataTypes) {
         len: [1,32]
       }
     },
-    description: { //
+    description: { // general description of the race
       type: DataTypes.TEXT,
-    }
+    },
+
 
   }, {
     classMethods: {

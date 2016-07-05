@@ -47,6 +47,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         Character.belongsTo(models.Campaign);
+        Character.hasOne(models.User, {as: 'mainChar'});
         // Character.belongsTo(models.Party);
         Character.belongsToMany(models.Character, {as: 'relationship',through: models.Relationship})
         Character.hasMany(models.Item);

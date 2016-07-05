@@ -16,6 +16,8 @@ html
     block navigation
       include components/navbar
     #content-wrapper
+      //- .overlay
+        +characterCard(activeChar)
       block header
         +header(headerColor||null)
       #content-main

@@ -71,11 +71,12 @@ router.get('/logout',(req,res,next) => {
 });
 
 router.get('/:username',(req,res,next) => {
-  db.User.findOne({where: {username:req.params.username}, include:{model: db.Character, as: 'characters'}})
+  console.log(req.user)
+  db.User.findOne({where: {username:req.params.username}, include:[{model: db.Character, as: 'characters'},{model: db.Character, as: 'MainChar'}]})
   .then(user => {
     if(user) {
       console.log("User:",user.get({plain:true}))
-      return res.render('users/profile',{user:user,characters:user.characters})
+      return res.render('users/profile',{user:user,mainchar:user.MainChar, characters:user.characters})
     }
     return next();
   }).catch(err => {

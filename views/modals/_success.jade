@@ -6,15 +6,4 @@
       if links
         .btn-group
           each link in links
-            a.btn(href=link.href)= link.text
-script.
-  (function(){
-    redirect = document.querySelector('.modal-dialog').dataset.redirect
-    console.log(redirect)
-    if(redirect) {
-      document.getElementById('mainModal').addEventListener('hide',function(e){
-        window.location = redirect
-      })
-    }
-  })()
-      
+            a.btn(href=link.href)= link.text    

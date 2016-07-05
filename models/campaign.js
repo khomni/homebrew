@@ -18,7 +18,6 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Campaign.hasMany(models.Race);
         Campaign.hasMany(models.Quest);
-        // Campaign.hasMany(models.Character);
         Campaign.hasOne(models.User, {as: 'GM'});
       }
     }

@@ -36,7 +36,7 @@ app.use(session({
   secret: 'brulesrules',
   resave: false,
   saveUninitialized: true
-}))
+}));
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -88,6 +88,23 @@ app.use(function(req,res,next){
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Origin", "http://127.0.0.1:3000");
   next();
+});
+
+app.use((req,res,next) => {
+  if(req.user && req.user.MainCharId && (!req.session.activeChar || req.session.activeChar.id != req.user.MainCharId)) {
+      console.log("retrieving activeChar")
+      db.Character.findOne({where: {id: req.user.MainCharId}}).then(pc =>{
+        req.session.activeChar = pc.get({plain:true})
+        res.locals.activeChar = req.session.activeChar
+        next();
+      })
+  } else if(req.session.activeChar && req.user.MainCharId){
+    res.locals.activeChar = req.session.activeChar
+    next()
+  } else {
+    res.locals.activeChar = null
+    next()
+  }
 })
 
 app.use('/', routes);

@@ -6,7 +6,9 @@ var LocalStrategy = require('passport-local').Strategy;
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
-  var characters = db.Character.findAll({})
+  db.Character.findAll({
+    where: {UserId: req.user.id}
+  })
   .then( characters => {
     for(i=0;i<characters.length;i++){
       console.log(characters[i].get({plain:true}))
@@ -71,6 +73,25 @@ router.get('/:id',(req,res,next) => {
   })
 })
 
+router.post('/:id/select',(req,res,next) => {
+  db.Character.findOne({where: {id:req.params.id}})
+  .then(pc => {
+    return req.user.setMainChar(pc)
+    .then(user => {return user.save()})
+    .then(user => {
+      console.log(user.mainChar)
+      Common.handleRequest(req,{
+        json:() => {return res.send(pc.get({plain:true}))},
+        xhr:() => {return res.render('modals/_success',{title: pc.name + " selected"})},
+        default:() => {return res.redirect('pc/'+pc.id,{character:pc.get({plain:true})})}
+      })();
+    })
+  })
+  .catch(err => {
+    return next(err)
+  })
+})
+
 router.post('/:id/delete',(req,res,next) => {
   if(!req.user) {
     var err = new Error();
@@ -97,7 +118,7 @@ router.post('/:id/delete',(req,res,next) => {
   }).then(() => {
     Common.handleRequest(req,{
       json:function(){return res.send(character)},
-      xhr:function(){return res.render('modals/_success', {title:"Character Deleted", redirect:"/pc"})},
+      xhr:function(){return res.render('modals/_success', {title:"Character Deleted", redirect:req.headers.referer || "/pc"})},
       default:function() {return res.redirect('/pc')}
     })();
   })

@@ -25,18 +25,19 @@ nav#nav
     +filter(currentUser)
     
       //- Character Menu
-      +filter(!currentUser.mainChar)
+      +filter(!activeChar)
         +dropdown({id:'charselect',text:"Character"})
           +navlink({url:'/pc', text: 'Select Character'})
           +navlink({url:'/pc/create', text: 'Create a Character'})
-      +filter(currentUser.mainChar)
-        +dropdown({id:'charactermenu', text: currentUser.mainChar.name})
-          +navlink({url:'/pc/' + currentUser.mainChar.id,text:'Status'})
-          +navlink({url:'/pc/'+ currentUser.mainChar.id + '/inventory',text:'Inventory'})
-          +navlink({url:'/pc/' + + currentUser.mainChar.id + '/journal',text:'Journal'})
+      +filter(activeChar)
+        -console.log(activeChar)
+        +dropdown({id:'charactermenu', text: activeChar.name})
+          +navlink({url:'/pc/' + activeChar.id,text:'Status'})
+          +navlink({url:'/pc/'+ activeChar.id + '/inventory',text:'Inventory'})
+          +navlink({url:'/pc/' + + activeChar.id + '/journal',text:'Journal'})
           
       //- Campaign Menu
-      +filter(currentUser.mainChar && !campaign)
+      +filter(activeChar && !campaign)
         +navlink({url: '/pc/new', text:'Join Campaign'})
       +filter(campaign)
         +dropdown({id: 'campaignmenu', text: 'Campaign'})

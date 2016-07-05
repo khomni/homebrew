@@ -1,25 +1,16 @@
 mixin characterCard(character)
-  .character-card-container(id="character-"+character.id data-characterId=character.id)
-    .character-card
-      .character-portrait
-        if character.portrait
-          img(src=character.portrait.src)
-      .character-stats
-        .name(href="/pc/"+character.id)= character.name
-        if currentUser.id === character.UserId
-          .bar
-            .hilt HP
-            .data-bar.red
-              .value(data-display='bar' data-max=100 data-value=character.hp||100)
-                span=character.hp||100
-          .bar
-            .hilt XP
-            .data-bar.gold
-              .value(data-display='bar' data-max=100 data-value=character.hp||100)
-                span=character.xp||100
-          .btn-group
-            a.btn(href="/pc/"+character.id) Character Sheet
-            form(action="/pc/"+character.id+"/makeMain" method="POST")
-              button.btn(type="submit") Set As Main
-            form(action="/pc/"+character.id+"/delete" method="POST")
-              button.btn(type="submit") Delete
+  if character
+    .character-card-container(id="character-"+character.id data-characterId=character.id)
+      .character-card
+        .character-portrait
+          if character.portrait
+            img(src=character.portrait.src)
+        .character-stats
+          .name(href="/pc/"+character.id)= character.name
+          if currentUser.id === character.UserId
+            .btn-group
+              a.btn(href="/pc/"+character.id) Character Sheet
+              form(action="/pc/"+character.id+"/select" method="POST")
+                button.btn(type="submit") Set As Main
+              form(action="/pc/"+character.id+"/delete" method="POST")
+                button.btn(type="submit") Delete
