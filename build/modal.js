@@ -59,7 +59,7 @@ var Modal = {
         Modal.dom.innerHTML = ""
         var newdiv = document.createElement('div');
         newdiv.innerHTML = text;
-        Modal.dom.appendChild(newdiv);
+        Modal.dom.appendChild(newdiv.childNodes[0]);
         return callback();
       })
       .catch(err =>{
@@ -71,7 +71,7 @@ var Modal = {
     Modal.dom.innerHTML = ""
     var newdiv = document.createElement('div');
     newdiv.innerHTML = html;
-    Modal.dom.appendChild(newdiv);
+    Modal.dom.appendChild(newdiv.childNodes[0]);
     Modal.showModal();
   },
 

@@ -17,7 +17,8 @@ body.modal-open {
 	align-items: center;
 	perspective: 100px;
 	&.open {
-		display: flex;
+		display: block;
+		overflow-y: auto;
 		.animation(modalOpen 0.5s forwards);
 	}
 
@@ -28,7 +29,10 @@ body.modal-open {
 		margin: 0 auto;
 		vertical-align: middle;
 		max-width: 100vw;
-		.xs({width:480px});
+		.xs({
+			width:480px;
+			max-width: 100%
+		});
 		.sm-plus({width:720px});
 		.md-plus({width:960px});
 		.lg({width:1080px});

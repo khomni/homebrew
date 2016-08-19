@@ -462,6 +462,19 @@ a {
   color: #ff9d55;
   transition: 0.5s;
 }
+hr {
+  border: none;
+  border-bottom: 1px solid #ddd;
+}
+.script {
+  font-style: italic;
+  font-family: baskerville;
+  font-size: 18px;
+  line-height: 24px;
+  color: #666;
+  border-left: 2px solid #ddd;
+  padding-left: 1em;
+}
 .logo.inline {
   display: inline-block;
   position: relative;
@@ -1030,7 +1043,8 @@ body.modal-open {
   perspective: 100px;
 }
 .modal.open {
-  display: flex;
+  display: block;
+  overflow-y: auto;
   -webkit-animation: modalOpen 0.5s forwards;
   -moz-animation: modalOpen 0.5s forwards;
   -ms-animation: modalOpen 0.5s forwards;
@@ -1048,6 +1062,7 @@ body.modal-open {
 @media only screen and (max-width: 719px) {
   .modal .modal-dialog {
     width: 480px;
+    max-width: 100%;
     outline: 1px dashed rgba(255, 0, 0, 0);
     outline-offset: -1px;
     transition: 0.2s;

@@ -4,6 +4,7 @@ var path = require('path');
 global.APPROOT = path.resolve(__dirname);
 global.CONFIG = require('./config');
 global.Common = require('./common');
+global.Promise = require('promise');
 
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -27,7 +28,6 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', '0.ico')));
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -66,6 +66,8 @@ app.use(lessMiddleware(path.join(__dirname, 'less', '_output'),{
 }));
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(logger('dev'));
 
 app.use((req,res,next) => {
   if (!app.locals.vignettes) {

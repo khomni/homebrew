@@ -1,0 +1,76 @@
+extends ../layout
+
+block title
+	title= creature.name
+	
+block header
+	+header
+		.header-item.page-title 
+			span= creature.name
+		
+block content
+	.content-body
+		+section(creature.name)
+			div.script= creature.description
+			hr
+			div #[strong CR:] #{" " + creature.CR} #[strong XP:] #{" " + creature.XP}
+			div= creature.alignment + " " + creature.size + " " + creature.type
+			div #[strong Init:] #{creature.init} #[strong Senses:] #{creature.senses.join(', ')}
+			if creature.Aura
+				div #[strong Aura:] #{creature.Aura} #[strong Senses:] #{creature.senses.join(', ')}
+			hr
+			h4 Defense
+			hr
+			div #[strong AC:] #{creature.AC.join(", ")}
+			div #[strong HP:] #{creature.HP} (#{creature.HD})
+			hr
+			h4 Offense
+			hr
+			div #[strong Speed:] #{creature.speed.all.join(", ")}
+			if creature.attack.melee
+				div #[strong Melee:] #{creature.attack.melee}
+			if creature.attack.ranged
+				div #[strong Ranged:] #{creature.attack.ranged}
+			if creature.attack.special
+				div #[strong Special:] #{creature.attack.special}
+			if creature.spells
+				if creature.spells.spellLike
+					div #[strong Spell-like Abilities:] #{creature.spells.spellLike}
+				if creature.spells.prepared
+					div #[strong Spell-like Abilities:] #{creature.spells.prepared}
+			hr
+			h4 Statistics
+			hr
+			div
+				each ability in creature.abilities.all
+					span #[strong= ability.split(" ")[0]] #{ability.split(" ")[1]+" "}
+			div 
+				span #[strong Base Atk:] +#{creature.baseAttack+" "}
+				span #[strong CMB:] +#{creature.CMB+" "}
+				span #[strong CMD:] #{creature.CMD+" "}
+			if creature.feats
+				div #[strong Feats:] #{creature.feats.join(", ")}
+			if creature.skills
+				div #[strong Skills:] #{creature.skills.join(", ")}
+			if creature.languages
+				div #[strong Languages:] #{creature.languages.join(", ")}
+			if creature.SQ
+				div #[strong SQ:] #{creature.SQ.join(", ")}
+			if creature.SpecialAbilities
+				hr
+				h4 Special Abilities
+				hr
+				-abilities = creature.SpecialAbilities.match(/([^\.]*?\(.{2}\))/gi)
+				-descriptions = creature.SpecialAbilities.split(/[^\.]*?\(.{2}\)/gi).slice(1)
+				each ability, i in abilities
+					div #[strong= ability] #{descriptions[i]}
+			hr
+			div.script= creature.detail
+			if creature.LinkText
+				hr
+				div
+					a(href=creature.LinkText[0])= creature.source
+			else if creature.source
+				hr
+				div= creature.source
+			
