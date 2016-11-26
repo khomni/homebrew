@@ -98,17 +98,14 @@ var Ajax = {
   },
 
   json: function(args) {
-    args.headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    };
+    args.headers = args.headers || {}
+    Object.assign(args.headers, {'Content-Type': 'application/json', 'Accept': 'application/json'});
+
     return this.fetch(args).then(response => {return response.json()});
   },
   html: function(args) {
-    args.headers = {
-      'Content-Type': 'text/html',
-      'Accept': 'text/html'
-    };
+    args.headers = args.headers || {}
+    Object.assign(args.headers, {'Content-Type': 'text/html', 'Accept': 'text/html'});
 
     return this.fetch(args).then(response => {return response.text()});
   },

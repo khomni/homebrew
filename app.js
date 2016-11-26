@@ -1,10 +1,9 @@
 require('dotenv').config();
+require('./config/globals');
+
 var express = require('express');
 var path = require('path');
 global.APPROOT = path.resolve(__dirname);
-global.CONFIG = require('./config');
-global.Common = require('./common');
-global.Promise = require('promise');
 
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -19,6 +18,7 @@ var db = require('./models');
 
 var app = express();
 
+app.use(require(APPROOT+'/middleware/requests'));
 
 SALT_WORK_FACTOR = 12;
 
@@ -69,22 +69,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(logger('dev'));
 
-app.use((req,res,next) => {
-  if (!app.locals.vignettes) {
-    var vignette = require('./middleware/vignette.js');
-    vignette.jsonify((err) => {
-      if(err){
-        next(err);
-      }
-      var vignettes = require('./data/vignettes.json');
-      app.locals.vignettes = vignettes;
-      next();
-    })
-  }
-  else {
-    next();
-  }
-});
+// set up the vignettes for the header and homepage
+app.use(require('./middleware/vignette'));
+
+app.use(require('./middleware/plantSeeds'));
+
 
 app.use(function(req,res,next){
   res.header("Access-Control-Allow-Credentials", "true");
@@ -127,11 +116,9 @@ if (app.get('env') === 'development'||app.get('env') === 'local') {
 
     res.status(err.status || 500);
 
-    Common.handleRequest(req, {
-      json:() => {return res.status(err.status).send(err)},
-      xhr:() => {return res.render('modals/_error', {message: err.message, error: err})},
-      default:() => {return res.render('error', {message: err.message, error: err})}
-    })();
+    if(req.requestType('json')) return res.status(err.status).send(err)
+    if(req.requestType('modal')) return res.render('modals/_error', {message: err.message, error: err})
+    return res.render('error', {message: err.message, error: err})
 
   });
 }

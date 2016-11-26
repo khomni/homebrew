@@ -32,6 +32,14 @@ var vignette = {
     });
   }
 }
-// use this to populate the default links in the navbar
 
-module.exports = vignette;
+module.exports = (req,res,next) => {
+  if(req.app.locals.vignettes) return next();
+  vignette.jsonify((err) => {
+    if(err) return next(err);
+    var vignettes = require(APPROOT+'/data/vignettes.json');
+    req.app.locals.vignettes = vignettes;
+    next();
+  })
+
+}

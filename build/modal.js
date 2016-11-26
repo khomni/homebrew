@@ -54,17 +54,21 @@ var Modal = {
 
   loadModal: function(url,callback) {
     console.log(Ajax)
-    Ajax.html({method:"GET",url:url})
-      .then(text => {
-        Modal.dom.innerHTML = ""
-        var newdiv = document.createElement('div');
-        newdiv.innerHTML = text;
-        Modal.dom.appendChild(newdiv.childNodes[0]);
-        return callback();
-      })
-      .catch(err =>{
-        return callback(err);
-      })
+    Ajax.html({
+      method:"GET",
+      url:url,
+      headers: {modal:true}
+    })
+    .then(text => {
+      Modal.dom.innerHTML = ""
+      var newdiv = document.createElement('div');
+      newdiv.innerHTML = text;
+      Modal.dom.appendChild(newdiv.childNodes[0]);
+      return callback();
+    })
+    .catch(err =>{
+      return callback(err);
+    })
   },
 
   createModal: function(html,callback) {

@@ -13,20 +13,20 @@ body.modal-open {
 	z-index: 10000;
 	background-color: fade(black,50%);
 	display: none;
-	justify-content: center;
+	justify-content: space-around;
 	align-items: center;
 	perspective: 100px;
 	&.open {
-		display: block;
+		display: flex;
 		overflow-y: auto;
 		.animation(modalOpen 0.5s forwards);
 	}
 
 	.modal-dialog {
 		display: block;
+		margin:auto;
 		width: 480px;
 		max-width: 720px;
-		margin: 0 auto;
 		vertical-align: middle;
 		max-width: 100vw;
 		.xs({

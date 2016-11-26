@@ -1,8 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var db = require('../models');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
@@ -11,7 +8,7 @@ router.get('/', (req, res, next) => {
   })
   .then( characters => {
     for(i=0;i<characters.length;i++){
-      console.log(characters[i].get({plain:true}))
+      console.log(colors.magenta(characters[i].get({plain:true})))
     }
     res.render('characters/', {characters:characters})
   })

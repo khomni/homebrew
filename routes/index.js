@@ -15,11 +15,8 @@ router.get('/about', (req, res, next) => {
   res.render('about');
 });
 
-fs.readdirSync(__dirname+'/').filter(function(file) {
-    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-})
-.forEach(function(file) {
-  router.use('/'+file.slice(0,-3) ,require(__dirname + '/' + file));
-});
+router.use('/u',require('./user'));
+router.use('/pc',require('./character'));
+router.use('/reference',require('./reference'));
 
 module.exports = router;

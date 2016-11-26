@@ -16,7 +16,6 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
-        Campaign.hasMany(models.Race);
         Campaign.hasMany(models.Quest);
         Campaign.hasOne(models.User, {as: 'GM'});
       }

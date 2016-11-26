@@ -1,11 +1,11 @@
 
 var fs = require('fs');
 var path = require('path')
-var read = Promise.denodeify(fs.readFile);
-var write = Promise.denodeify(fs.writeFile);
+var read = Promise.promisify(fs.readFile);
+var write = Promise.promisify(fs.writeFile);
 
 var dataParser = require(APPROOT+"/system/dataParser")
-var parse = Promise.denodeify(dataParser.toSchemaObject)
+var parse = Promise.promisify(dataParser.toSchemaObject)
 
 try {
 	stats = fs.lstatSync(APPROOT+"/system/bestiary/bestiary.json");
