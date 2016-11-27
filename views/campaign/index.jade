@@ -1,0 +1,17 @@
+extends ../layout
+
+block title
+  title= "Campaigns"
+  
+//- block header
+  +header
+    .header-item.page-title 
+      span Characters
+
+block content
+  .content-body
+    for campaign in campaigns
+      +section(campaign.name) 
+        a(href='/campaign/'+campaign.id) See this Campaign
+    a(href='/campaign/new' data-modal='/campaign/new') Start a Campaign
+    

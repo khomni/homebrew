@@ -1,20 +1,17 @@
 require('dotenv').config();
 require('./config/globals');
-
-var express = require('express');
 var path = require('path');
 global.APPROOT = path.resolve(__dirname);
+
+var express = require('express');
 
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var session = require('express-session')
+var session = require('express-session');
 
-var routes = require('./routes/index');
 var lessMiddleware = require('less-middleware');
-
-var db = require('./models');
 
 var app = express();
 
@@ -72,9 +69,6 @@ app.use(logger('dev'));
 // set up the vignettes for the header and homepage
 app.use(require('./middleware/vignette'));
 
-app.use(require('./middleware/plantSeeds'));
-
-
 app.use(function(req,res,next){
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Origin", "http://127.0.0.1:3000");
@@ -98,6 +92,7 @@ app.use((req,res,next) => {
   }
 })
 
+var routes = require('./routes/index');
 app.use('/', routes);
 
 // catch 404 and forward to error handler
@@ -115,6 +110,8 @@ if (app.get('env') === 'development'||app.get('env') === 'local') {
   app.use(function(err, req, res, next) {
 
     res.status(err.status || 500);
+
+    console.error(err.stack)
 
     if(req.requestType('json')) return res.status(err.status).send(err)
     if(req.requestType('modal')) return res.render('modals/_error', {message: err.message, error: err})

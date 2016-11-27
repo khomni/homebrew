@@ -9,11 +9,11 @@ function serialize(form) {
         if (field.type == 'select-multiple') {
           for (j=form.elements[i].options.length-1; j>=0; j--) {
             if(field.options[j].selected) {
-              obj[encodeURIComponent(field.name)] = encodeURIComponent(field.options[j].value);
+              obj[encodeURIComponent(field.name)] = field.options[j].value;
             }
           }
         } else if ((field.type != 'checkbox' && field.type != 'radio') || field.checked) {
-          obj[encodeURIComponent(field.name)] = encodeURIComponent(field.value);
+          obj[encodeURIComponent(field.name)] = field.value;
         }
       }
     }
@@ -29,13 +29,20 @@ var Ajax = {
       (function(j){forms[j].addEventListener('submit',function(e){
         e.preventDefault();
         var Modal = require('./modal');
-        Ajax.html({method: e.target.method, url: e.target.action, body:forms[j]})
-          .then(response =>{
-            Modal.createModal(response);
-          })
-          .catch(err =>{
-            Modal.createModal(err);
-          })
+        Ajax.html({
+          method: e.target.method,
+          url: e.target.action,
+          headers:{
+            modal:true,
+          },
+          body:forms[j]
+        })
+        .then(response =>{
+          Modal.createModal(response);
+        })
+        .catch(err =>{
+          Modal.createModal(err);
+        })
       })})(i);
     }
   },
@@ -67,10 +74,13 @@ var Ajax = {
   },
 
   fetch: function(args) {
+
     if(args.body) {
       if(args.body.nodeName === "FORM") {
         args.headers['Content-Type'] = 'application/json'
         var data = JSON.stringify(serialize(args.body))
+        console.log(serialize(args.body))
+        console.log('->',data)
       }
       else if(typeof args.data === 'object') {
         args.headers['Content-Type'] = 'application/json'
@@ -106,7 +116,6 @@ var Ajax = {
   html: function(args) {
     args.headers = args.headers || {}
     Object.assign(args.headers, {'Content-Type': 'text/html', 'Accept': 'text/html'});
-
     return this.fetch(args).then(response => {return response.text()});
   },
 

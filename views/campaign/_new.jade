@@ -1,0 +1,7 @@
+.modal-dialog
+  .modal-content
+    .modal-title Create a New Campaign
+    .modal-body 
+      form(name='campaign' action='/campaign/' method='post')
+        input.form-input(type='text' required name='name' placeholder="Campaign Name")
+        button.btn.block(type='submit') New Campaign

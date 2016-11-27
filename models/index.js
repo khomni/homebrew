@@ -27,6 +27,19 @@ Object.keys(db).forEach(function(modelName) {
   }
 });
 
+sequelize.authenticate()
+.then(function(results){
+
+  if(!CONFIG.database.forcesync) return;
+
+  var seeds = require('../data/seeds');
+  var promises = {}
+
+  // TODO: seed database
+
+})
+.catch(console.error)
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

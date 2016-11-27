@@ -9,10 +9,6 @@ var LocalStrategy = require('passport-local').Strategy;
 router.get('/', (req, res, next) => {
   var users = db.User.findAll({})
   .then( users => {
-    console.log("[5.0] ACCESSING AFTER CREATION")
-    for(i=0;i<users.length;i++){
-      console.log(" [5."+i+"] user instance: ", users[i].get({plain:true}))
-    }
     res.render('users/', {users:users})
   })
   .catch(err => next(err));
@@ -62,14 +58,13 @@ router.post('/signup', (req,res,next) => {
 
 router.get('/logout',(req,res,next) => {
   req.logout();
-  res.redirect('/');
+  return res.redirect('/');
 });
 
 router.get('/:username',(req,res,next) => {
   db.User.findOne({where: {username:req.params.username}, include:[{model: db.Character, as: 'characters'},{model: db.Character, as: 'MainChar'}]})
   .then(user => {
     if(!user) return next();
-    console.log("User:",user.get({plain:true}))
     return res.render('users/profile',{user:user,mainchar:user.MainChar, characters:user.characters})
   }).catch(next);
 });

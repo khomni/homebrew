@@ -11,17 +11,13 @@ block title
 block content
   .content-body
     +section()
-      form(method="post" action="/pc/create")
+      form(method="post" action="/pc/")
         .form-group.horz
           label.form-group-label Name
-          input.form-input(name="first_name" placeholder="First Name" required)
-          input.form-input(name="last_name" placeholder="Last Name" )
+          input.form-input(name="name" placeholder="Name" required)
         .form-group
           label.form-group-label Race
-          select.form-input(name="race" required)
-            option(disabled selected) Select a Race
-            each race in races
-              option(value=race.name)= race.display_name + " ("+race.rp+")"
+          input.form-input(name="race" required)
         //- label Class
         //- select(name="class" required)
           option(disabled selected) Select a Class

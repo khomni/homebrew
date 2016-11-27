@@ -3,17 +3,20 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
-  if(!req.user) return next();
-  db.Character.findAll({
-    where: {UserId: req.user.id},
+  db.Campaign.findAll({
     include: [
-      {model: db.Lore, as: 'lore'},
+      {model: db.User, as: 'Owner'},
     ],
   })
-  .then( characters => {
-    res.render('characters/', {characters:characters})
+  .then( campaigns => {
+    return res.render('campaign/index', {campaigns: campaigns})
   })
   .catch(next);
+});
+
+router.get('/new', (req, res, next) => {
+  if(req.requestType('modal')) return res.render('campaign/_new')
+  return res.render('campaign/new')
 });
 
 router.post('/',(req,res,next) => {
@@ -24,48 +27,32 @@ router.post('/',(req,res,next) => {
     return next(err);
   }
 
-  console.log(req.body)
+  campaign = db.Campaign.build(req.body)
 
-  db.Character.create({
-    npc: false,
-    name: req.body.name,
-    race: req.body.race,
-    sex: req.body.sex
-  }).then(pc => {
-    console.log(pc.get({plain:true}))
-    return req.user.addCharacter(pc)
-    .then((user)=>{
-      if(req.requestType('json')) return res.send(pc.get({plain:true}))
-      if(req.requestType('modal')) return res.render('modals/_success', {title: "Character Created", body:"Good job", redirect:'/pc/'+pc.id})
-      return res.redirect('/pc/'+pc.id);
-    })
-  }).catch(next);
+  console.log(campaign)
+
+  campaign.setOwner(req.user)
+  campaign.save()
+  .then((campaign) => {
+    console.log(campaign)
+    return res.send({campaign:campaign})
+  })
+  .catch(next)
+
 });
-
-router.get('/create', (req, res, next) => {
-  if(!req.user) {
-    err = new Error();
-    err.message = "You must be logged in"
-    err.status = 403
-    return next(err);
-  }
-  var races = require(APPROOT + '/system/races')
-  res.render('characters/new', {races:races})
-});
-
-
 
 router.get('/:id',(req,res,next) => {
-  db.Character.findOne({
+  db.Campaign.findOne({
     where: {id:req.params.id},
     include: [
-      {model: db.Item},
-      {model: db.Lore, as: 'lore'}
+      {model: db.User, as: 'GM'},
     ],
   })
-  .then(character => {
-    if(!character) return next();
-    
+  .then(campaign => {
+    if(!campaign) return next();
+
+    return res.send({campaign:campaign})
+
     if(req.requestType('json')) return res.send(character.get({plain:true}))
     if(req.requestType('modal')) return res.render('characters/detail',{character:character.get({plain:true})})
     return res.render('characters/detail',{character:character.get({plain:true})})

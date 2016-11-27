@@ -1,19 +1,34 @@
-module.exports = (req, res, next) => {
+var seeds = require('../data/seeds');
+var create = 0
+var update = 0
 
-  var seeds = require(APPROOT+'/data/seeds');
+var promises = {}
 
-  var promises = []
-
-  for(key in seeds) {
-    var recordsToSeed = seeds[key]
-
-    console.log('adding '+recordsToSeed.length+' records to '+key)
-    promises.push(db[key].bulkCreate(recordsToSeed))
-
-  }
-
-  Promise.all(promises)
-  .catch(console.error)
-  .finally(next)
-
+for(key in seeds) {
+  promises[key] = seeds[key].map(function(r){
+    var query = {}
+    var uniqueFields = Object.keys(db[key].uniqueKeys).map(function(k){
+      var field = db[key].uniqueKeys[k].column
+      query[field] = r[field]
+    })
+    return db[key].findOne({where: query||r})
+    .then(record =>{
+      if(record) {
+        update++
+        return record.update(r);
+      }
+      create++
+      return db[key].create(r)
+    })
+  })
+  promises[key] = Promise.all(promises[key])
 }
+
+
+return Promise.props(promises)
+.then( results => {
+  console.log('seeded '+create+' records')
+  console.log('updated '+update+' records')
+  return;
+})
+.catch(console.error)

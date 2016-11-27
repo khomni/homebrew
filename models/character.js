@@ -12,13 +12,6 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
     },
-    last_name: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      validate: {
-        len: [1,32]
-      }
-    },
     race: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -44,7 +37,8 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     getterMethods: {
       name: function(){
-        return this.name.split(' ');
+        var nameArray = this.getDataValue('name')
+        if(nameArray) return nameArray.join(' ');
       }
     },
     setterMethods : {
@@ -55,9 +49,9 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         // a character is part of a campaign, so it contains a reference to that campaign
-        Character.belongsTo(models.Campaign);
+        Character.belongsTo(models.Campaign, {constraints: false});
         // a user account has a designated main character
-        Character.hasOne(models.User, {as: 'mainChar'});
+        // Character.hasOne(models.User, {as: 'mainChar'});
 
         // a character is a locable thing, so it has a location record
         Character.hasOne(models.Location);

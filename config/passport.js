@@ -4,7 +4,6 @@ var passport = require('passport')
 
 // Serialize Sessions
 passport.serializeUser(function(user, done){
-  console.log("[Log in] serializing user: ", user.get({plain:true}));
   done(null, user);
 });
 
@@ -21,13 +20,8 @@ passport.use(new LocalStrategy({usernameField: 'email', passwordField: 'password
     console.log("[Passport] Using Local Strategy")
     var user = db.User.find({where: {email: email}})
     .then(user => {
-      if(!user) {
-        console.log('╨ user does not exist');
-        return done(null)
-      }
-      console.log("  ╠═ user: ", user.get({plain:true}))
+      if(!user) return done(null)
       passwd = user ? user.password : ''
-      console.log("  ╚═ passwd: ", passwd)
       db.User.validPassword(password, passwd, done, user)
     })
     .catch(err => {

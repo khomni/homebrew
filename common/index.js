@@ -1,4 +1,5 @@
 module.exports = {
+  error: require('./errors'),
   hashString: function(string){
     if (Array.prototype.reduce){
       return string.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
@@ -12,11 +13,5 @@ module.exports = {
     }
     return hash;
   },
-
-  handleRequest: function(req, object) {
-    if(/application\/json/.test(req.get('accept'))) return object['json'] || object['default']
-    if(req.xhr) return object['xhr'] || object['default']
-    else return object['default']
-  }
 
 };

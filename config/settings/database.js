@@ -14,7 +14,7 @@ module.exports = {
     name: "dmtools",
     username: "omni",
     password: "g04tzDATAsource",
-    forcesync: true,
+    forcesync: false,
     options: {
       dialect: "postgres",
       host: "127.0.0.1",

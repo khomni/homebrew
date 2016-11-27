@@ -2,10 +2,6 @@
 
 module.exports = function(sequelize, DataTypes) {
   var Campaign = sequelize.define("Campaign", {
-    identifier: {
-      type: DataTypes.STRING,
-      primaryKey: true
-    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -17,7 +13,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         Campaign.hasMany(models.Quest);
-        Campaign.hasOne(models.User, {as: 'GM'});
+        Campaign.belongsTo(models.User, {as: 'Owner'});
       }
     }
   });

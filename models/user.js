@@ -31,10 +31,6 @@ module.exports = function(sequelize, DataTypes) {
         notEmpty: true
       }
     },
-    userType: {
-      type: DataTypes.ENUM('gm','player'),
-      defaultValue: 'player'
-    }
   }, {
     indexes: [
       {
@@ -50,14 +46,9 @@ module.exports = function(sequelize, DataTypes) {
       },
       validPassword: function(password, passwd, done, user){
         bcrypt.compare(password, passwd, function(err, isMatch){
-          if (err) {
-            return done(err);
-          }
-          if (isMatch) {
-            done(null, user)
-          } else {
-            done(null, false)
-          }
+          if(err) return done(err);
+          if(isMatch) return done(null,user)
+          return done(null,false)
         })
       }
     }
