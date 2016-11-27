@@ -32,6 +32,11 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
   }, {
+    scopes: {
+      public: {
+        attributes: {exclude: ['password','email']}
+      }
+    },
     indexes: [
       {
         unique: true,

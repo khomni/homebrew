@@ -30,19 +30,18 @@ nav#nav
           +navlink({url:'/pc', text: 'Select Character'})
           +navlink({url:'/pc/create', text: 'Create a Character'})
       +filter(activeChar)
-        -console.log(activeChar)
         +dropdown({id:'charactermenu', text: activeChar.name})
           +navlink({url:'/pc/' + activeChar.id,text:'Status'})
           +navlink({url:'/pc/'+ activeChar.id + '/inventory',text:'Inventory'})
           +navlink({url:'/pc/' + + activeChar.id + '/journal',text:'Journal'})
           
       //- Campaign Menu
-      +filter(activeChar && !campaign)
+      +filter(activeChar && !activeChar.campaign)
         +navlink({url: '/pc/new', text:'Join Campaign'})
-      +filter(campaign)
+      +filter(activeChar && activeChar.campaign)
         +dropdown({id: 'campaignmenu', text: 'Campaign'})
-          +navlink({url:'/c/'+campaign.id+'/quests',text:'Quest'})
-          +navlink({url:'/c/'+campaign.id+'/maps',text:'Maps'})
+          +navlink({url:'/c/'+activeChar.campaign.id+'/quests',text:'Quest'})
+          +navlink({url:'/c/'+activeChar.campaign.id+'/maps',text:'Maps'})
           
       //- Party Menu
       +filter(currentUser.mainChar && campaign && !party)

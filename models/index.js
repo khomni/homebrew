@@ -9,9 +9,11 @@ var db        = {};
 
 // var config = require(APPROOT + '/config');
 
-var sequelize = new Sequelize(CONFIG.database.name, CONFIG.database.username, CONFIG.database.password, CONFIG.database.options)
+var sequelize = require(APPROOT+'/config/database')
 
-fs
+sequelize.authenticate().then(()=>{
+
+  fs
   .readdirSync(__dirname)
   .filter(function(file) {
     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
@@ -21,11 +23,16 @@ fs
     db[model.name] = model;
   });
 
-Object.keys(db).forEach(function(modelName) {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
+  Object.keys(db).forEach(function(modelName) {
+    if (db[modelName].associate) {
+      db[modelName].associate(db);
+    }
+  });
+
+  global.db = db
+
+})
+
 
 sequelize.authenticate()
 .then(function(results){

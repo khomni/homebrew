@@ -1,0 +1,15 @@
+extends /layout
+
+block title
+  title= campaign.name
+  
+block header
+  +header
+    .header-item.page-title 
+      span= campaign.name
+
+block content
+  .content-body
+    +section()
+      a(href="/pc/create?campaign="+campaign.id) Create a character in this campaign
+      

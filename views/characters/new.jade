@@ -12,6 +12,8 @@ block content
   .content-body
     +section()
       form(method="post" action="/pc/")
+        each value,key in context
+          input(type="hidden" name=key value=value)
         .form-group.horz
           label.form-group-label Name
           input.form-input(name="name" placeholder="Name" required)

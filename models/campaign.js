@@ -8,6 +8,12 @@ module.exports = function(sequelize, DataTypes) {
       validate: {
         len: [1,32]
       }
+    },
+    url: {
+      type: DataTypes.STRING,
+      validate: {
+        len: [1,32]
+      }
     }
   }, {
     classMethods: {

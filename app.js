@@ -1,7 +1,7 @@
 require('dotenv').config();
-require('./config/globals');
 var path = require('path');
 global.APPROOT = path.resolve(__dirname);
+require('./config/globals');
 
 var express = require('express');
 
@@ -11,9 +11,20 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 
-var lessMiddleware = require('less-middleware');
+var sequelize = require(APPROOT+'/config/database')
+var SequelizeStore = require('connect-sequelize')(session)
 
 var app = express();
+
+app.use(cookieParser());
+
+app.use(session({
+  secret: 'brulesrules',
+  store: new SequelizeStore(sequelize,{},'Session'),
+  proxy:true,
+  resave:true,
+  saveUninitialized: false,
+}))
 
 app.use(require(APPROOT+'/middleware/requests'));
 
@@ -27,7 +38,7 @@ app.set('view engine', 'jade');
 app.use(favicon(path.join(__dirname, 'public', '0.ico')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+
 
 app.use(session({
   secret: 'brulesrules',
@@ -41,6 +52,8 @@ require('./config/passport');
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.locals.basedir = APPROOT+'/views'
+
 app.use((req,res,next) => {
   res.locals.currentUser = req.user || false
   next();
@@ -49,6 +62,8 @@ app.use((req,res,next) => {
 var browserify = require('browserify-middleware');
 app.use('/javascripts', browserify('./build'));
 
+// stylesheets
+var lessMiddleware = require('less-middleware');
 app.use(lessMiddleware(path.join(__dirname, 'less', '_output'),{
   dest: path.join(__dirname,'public'),
   preprocess: {
@@ -76,20 +91,31 @@ app.use(function(req,res,next){
 });
 
 app.use((req,res,next) => {
-  if(req.user && req.user.MainCharId && (!req.session.activeChar || req.session.activeChar.id != req.user.MainCharId)) {
-      console.log("retrieving activeChar")
-      db.Character.findOne({where: {id: req.user.MainCharId}}).then(pc =>{
-        req.session.activeChar = pc.get({plain:true})
-        res.locals.activeChar = req.session.activeChar
-        next();
-      })
-  } else if(req.session.activeChar && req.user.MainCharId){
-    res.locals.activeChar = req.session.activeChar
-    next()
-  } else {
-    res.locals.activeChar = null
-    next()
+  // if there is no user or main character, remove them from the session
+  if(!req.user || !req.user.MainCharId) {
+    delete req.session.activeChar
+    return next();
   }
+
+  // if there's already a character in the session, reload it and continue using that
+  if(req.session.activeChar && req.session.activeChar.id != req.user.MainCharId) {
+    console.log("[db.Character] reloading activeChar:", req.session.activeChar.id)
+    req.session.activeChar.reload(function(){
+      res.locals.activeChar = req.session.activeChar
+      return next()
+    })
+  }
+
+
+  db.Character.findOne({
+    where: {id: req.user.MainCharId},
+    include: [{model:db.Campaign}]
+  }).then(pc =>{
+    console.log("[db.Character] Retrieving activeChar:",pc.get({plain:true}))
+    req.session.activeChar = pc
+    res.locals.activeChar = req.session.activeChar
+    next();
+  }).catch(next)
 })
 
 var routes = require('./routes/index');

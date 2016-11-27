@@ -17,7 +17,7 @@ router.get('/about', (req, res, next) => {
 
 router.use('/u',require('./user'));
 router.use('/pc',require('./character'));
-router.use('/reference',require('./reference'));
-router.use('/campaign',require('./campaign'));
+router.use('/r',require('./reference'));
+router.use('/c',require('./campaign'));
 
 module.exports = router;

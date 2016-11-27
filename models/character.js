@@ -36,18 +36,21 @@ module.exports = function(sequelize, DataTypes) {
     },
   }, {
     getterMethods: {
-      name: function(){
+      name: function(input){
+        console.log('this:',this)
+        console.log('input:',input)
         var nameArray = this.getDataValue('name')
         if(nameArray) return nameArray.join(' ');
       }
     },
     setterMethods : {
-      name: function(string) {
-        this.setDataValue('name', string.split(' '))
+      name: (string) => {
+        return string.split(' ')
+        // this.setDataValue('name', string.split(' '))
       }
     },
     classMethods: {
-      associate: function(models) {
+      associate: (models) => {
         // a character is part of a campaign, so it contains a reference to that campaign
         Character.belongsTo(models.Campaign, {constraints: false});
         // a user account has a designated main character
@@ -75,6 +78,16 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   });
+
+    Character.hook('beforeSave', (character, options) => {
+      return character.getCampaign()
+      .then((campaign)=>{
+        console.log('NPC?', campaign.OwnerId == character.UserId)
+        if(campaign.OwnerId == character.UserId) character.npc = true
+        return Promise.resolve(character);
+      })
+
+    })
 
   return Character;
 };

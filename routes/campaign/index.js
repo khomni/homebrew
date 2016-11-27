@@ -29,8 +29,6 @@ router.post('/',(req,res,next) => {
 
   campaign = db.Campaign.build(req.body)
 
-  console.log(campaign)
-
   campaign.setOwner(req.user)
   campaign.save()
   .then((campaign) => {
@@ -42,23 +40,23 @@ router.post('/',(req,res,next) => {
 });
 
 router.get('/:id',(req,res,next) => {
+  console.log(req.params.id.replace(/-/gi,' '))
+  var query = isNaN(req.params.id) ? {url:req.params.id} : {id:req.params.id}
   db.Campaign.findOne({
-    where: {id:req.params.id},
+    where: query,
     include: [
-      {model: db.User, as: 'GM'},
+      {model: db.User.scope('public'), as: 'Owner'},
     ],
   })
   .then(campaign => {
     if(!campaign) return next();
 
-    return res.send({campaign:campaign})
-
-    if(req.requestType('json')) return res.send(character.get({plain:true}))
-    if(req.requestType('modal')) return res.render('characters/detail',{character:character.get({plain:true})})
-    return res.render('characters/detail',{character:character.get({plain:true})})
+    if(req.requestType('json')) return res.send(campaign.get({plain:true}))
+    if(req.requestType('modal')) return res.render('campaign/_detail',{campaign:campaign.get({plain:true})})
+    return res.render('campaign/detail',{campaign:campaign.get({plain:true})})
   })
   .catch(next)
-})
+});
 
 router.post('/:id', (req,res,next) => {
   db.Character.findOne({where: {id:req.params.id}})

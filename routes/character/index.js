@@ -26,12 +26,15 @@ router.post('/',(req,res,next) => {
 
   console.log(req.body)
 
-  db.Character.create({
+  var character = db.Character.create({
     npc: false,
     name: req.body.name,
     race: req.body.race,
-    sex: req.body.sex
-  }).then(pc => {
+    sex: req.body.sex,
+    CampaignId: req.body.campaign,
+    UserId: req.user.id
+  })
+  .then(pc => {
     console.log(pc.get({plain:true}))
     return req.user.addCharacter(pc)
     .then((user)=>{
@@ -50,7 +53,7 @@ router.get('/create', (req, res, next) => {
     return next(err);
   }
   var races = require(APPROOT + '/system/races')
-  res.render('characters/new', {races:races})
+  res.render('characters/new', {context:req.query})
 });
 
 
@@ -65,7 +68,7 @@ router.get('/:id',(req,res,next) => {
   })
   .then(character => {
     if(!character) return next();
-    
+
     if(req.requestType('json')) return res.send(character.get({plain:true}))
     if(req.requestType('modal')) return res.render('characters/detail',{character:character.get({plain:true})})
     return res.render('characters/detail',{character:character.get({plain:true})})
@@ -88,7 +91,7 @@ router.post('/:id/select',(req,res,next) => {
   db.Character.findOne({where: {id:req.params.id}})
   .then(pc => {
     return req.user.setMainChar(pc)
-    .then(user.save)
+    .then(req.user.save)
     .then(user => {
 
       if(req.requestType('json')) return res.send(pc.get({plain:true}))
