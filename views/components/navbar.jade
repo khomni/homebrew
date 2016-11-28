@@ -29,6 +29,9 @@ nav#nav
         +dropdown({id:'charselect',text:"Character"})
           +navlink({url:'/pc', text: 'Select Character'})
           +navlink({url:'/pc/create', text: 'Create a Character'})
+        +dropdown({id:'campaignmenu',text:"Campaign"})
+          +navlink({url:'/c', text: 'Find Campaign'})
+          +navlink({url:'/c/new', text: 'Create Campaign'})(data-modal="/c/new")
       +filter(activeChar)
         +dropdown({id:'charactermenu', text: activeChar.name})
           +navlink({url:'/pc/' + activeChar.id,text:'Status'})
@@ -37,7 +40,7 @@ nav#nav
           
       //- Campaign Menu
       +filter(activeChar && !activeChar.campaign)
-        +navlink({url: '/pc/new', text:'Join Campaign'})
+        +navlink({url: '/c/', text:'Find Campaign'})
       +filter(activeChar && activeChar.campaign)
         +dropdown({id: 'campaignmenu', text: 'Campaign'})
           +navlink({url:'/c/'+activeChar.campaign.id+'/quests',text:'Quest'})
@@ -58,7 +61,7 @@ nav#nav
     +filter(!currentUser)
       +navlink({url:'/about',text:'About'})
       +dropdown({id: 'account', text:'Log In / Sign Up'})(class="signup")
-        +navlink({url:'/u/login', text: 'Log In'})(data-modal='/u/login')
-        +navlink({url:'/u/signup', text: 'Sign Up'})(data-modal='/u/signup')
+        +navlink({url:'/login', text: 'Log In'})(data-modal='/login')
+        +navlink({url:'/signup', text: 'Sign Up'})(data-modal='/signup')
     +filter(currentUser)
       

@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/', (req, res, next) => {
+router.get('/', Common.middleware.requireUser, (req, res, next) => {
   db.Campaign.findAll({
     include: [
       {model: db.User, as: 'Owner'},
@@ -14,33 +14,26 @@ router.get('/', (req, res, next) => {
   .catch(next);
 });
 
-router.get('/new', (req, res, next) => {
+router.get('/new', Common.middleware.requireUser, (req, res, next) => {
   if(req.requestType('modal')) return res.render('campaign/_new')
   return res.render('campaign/new')
 });
 
-router.post('/',(req,res,next) => {
-  if(!req.user) {
-    err = new Error();
-    err.message = "You must be logged in"
-    err.status = 403
-    return next(err);
-  }
+router.post('/',Common.middleware.requireUser, (req,res,next) => {
 
-  campaign = db.Campaign.build(req.body)
+  var campaign = db.Campaign.build(req.body)
 
   campaign.setOwner(req.user)
   campaign.save()
   .then((campaign) => {
-    console.log(campaign)
-    return res.send({campaign:campaign})
+    return res.redirect('/c/'+campaign.url)
   })
   .catch(next)
 
 });
 
 router.get('/:id',(req,res,next) => {
-  console.log(req.params.id.replace(/-/gi,' '))
+  //
   var query = isNaN(req.params.id) ? {url:req.params.id} : {id:req.params.id}
   db.Campaign.findOne({
     where: query,
@@ -50,6 +43,8 @@ router.get('/:id',(req,res,next) => {
   })
   .then(campaign => {
     if(!campaign) return next();
+    // campaign.Owner.id == req.user.id
+    console.log(campaign.get({plain:true}))
 
     if(req.requestType('json')) return res.send(campaign.get({plain:true}))
     if(req.requestType('modal')) return res.render('campaign/_detail',{campaign:campaign.get({plain:true})})
@@ -58,9 +53,9 @@ router.get('/:id',(req,res,next) => {
   .catch(next)
 });
 
-router.post('/:id', (req,res,next) => {
-  db.Character.findOne({where: {id:req.params.id}})
-  .then(character => {
+router.post('/:id', Common.middleware.requireUser, (req,res,next) => {
+  db.Campaign.findOne({where: {id:req.params.id}})
+  .then(campaign => {
     if(!req.user.hasCharacter(character)) throw Common.error.authorization("You don't have permission to modify that character");
     return res.redirect('/'+req.params.id)
   })
@@ -69,17 +64,18 @@ router.post('/:id', (req,res,next) => {
   return next();
 })
 
-router.post('/:id/select',(req,res,next) => {
-  db.Character.findOne({where: {id:req.params.id}})
-  .then(pc => {
-    return req.user.setMainChar(pc)
-    .then(user.save)
-    .then(user => {
+router.delete('/:id',Common.middleware.requireUser, (req,res,next) => {
 
-      if(req.requestType('json')) return res.send(pc.get({plain:true}))
-      if(req.requestType('modal')) return res.render('modals/_success',{title: pc.name + " selected"})
-      return res.redirect('pc/'+pc.id,{character:pc.get({plain:true})})
-    })
+  db.Campaign.findOne({where: {id:req.params.id}})
+  .then(campaign => {
+    if(!req.user.controls(campaign)) throw Common.error.authorization('You do not have permission to delete this campaign')
+    return campaign.destroy()
+  })
+  .then(() => {
+
+    if(req.requestType('json')) return res.send(character.get({plain:true}))
+    if(req.requestType('modal')) return res.render('modals/_success', {title:"Character Deleted", redirect:req.headers.referer || "/pc"})
+    return res.redirect('/pc')
   })
   .catch(next)
 })

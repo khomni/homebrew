@@ -10,6 +10,15 @@ module.exports = function(sequelize, DataTypes) {
     // a character many have a name of any length
     name: {
       type: DataTypes.ARRAY(DataTypes.STRING),
+      get: function() {
+        console.log(this)
+        var nameArray = this.getDataValue('name') || []
+        return nameArray.join(' ')
+      },
+      set: function(val) {
+        console.log(this)
+        this.setDataValue('name',val.split(' '))
+      },
       allowNull: false,
     },
     race: {
@@ -35,20 +44,6 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: true,
     },
   }, {
-    getterMethods: {
-      name: function(input){
-        console.log('this:',this)
-        console.log('input:',input)
-        var nameArray = this.getDataValue('name')
-        if(nameArray) return nameArray.join(' ');
-      }
-    },
-    setterMethods : {
-      name: (string) => {
-        return string.split(' ')
-        // this.setDataValue('name', string.split(' '))
-      }
-    },
     classMethods: {
       associate: (models) => {
         // a character is part of a campaign, so it contains a reference to that campaign

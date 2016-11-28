@@ -7,12 +7,10 @@ var basename  = path.basename(module.filename);
 var env       = process.env.NODE_ENV || 'development';
 var db        = {};
 
-// var config = require(APPROOT + '/config');
-
 var sequelize = require(APPROOT+'/config/database')
 
-sequelize.authenticate().then(()=>{
-
+sequelize.authenticate()
+.then(() =>{
   fs
   .readdirSync(__dirname)
   .filter(function(file) {
@@ -28,24 +26,18 @@ sequelize.authenticate().then(()=>{
       db[modelName].associate(db);
     }
   });
-
+  
+  console.log('[database] ready')
   global.db = db
 
-})
-
-
-sequelize.authenticate()
-.then(function(results){
-
-  if(!CONFIG.database.forcesync) return;
-
-  var seeds = require('../data/seeds');
-  var promises = {}
+  return;
 
   // TODO: seed database
 
 })
-.catch(console.error)
+.catch((err) => {
+  console.error('[database]',err.stack)
+})
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

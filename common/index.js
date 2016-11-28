@@ -1,5 +1,6 @@
 module.exports = {
   error: require('./errors'),
+  middleware: require('./middleware'),
   hashString: function(string){
     if (Array.prototype.reduce){
       return string.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);

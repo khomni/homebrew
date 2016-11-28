@@ -3,5 +3,8 @@
     .modal-title Create a New Campaign
     .modal-body 
       form(name='campaign' action='/c/' method='post')
-        input.form-input(type='text' required name='name' placeholder="Campaign Name")
+        label Campaign Name
+        input.form-input(type='text' required name='name')
+        label URL (Optional)
+        input.form-input(type='text' name='url' placeholder="Allowed characters: a-z A-Z 0-9 _-" pattern=(/^[a-zA-Z0-9_-]*$/) maxlength=32)
         button.btn.block(type='submit') New Campaign
