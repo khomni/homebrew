@@ -90,10 +90,11 @@ app.use(function(req,res,next){
   next();
 });
 
-app.use(require(APPROOT+'/middleware/activeChar'))
+// set the user's main character if applicable
+app.use(require(APPROOT+'/middleware/activeChar'));
 
-var routes = require('./routes/index');
-app.use('/', routes);
+// router
+app.use('/', require(APPROOT+'./routes/index'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

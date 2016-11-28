@@ -14,48 +14,6 @@ router.get('/', (req, res, next) => {
   .catch(err => next(err));
 });
 
-router.get('/login',(req,res,next)=>{
-  if(req.requestType('modal')) return res.render('users/_login');
-  return res.render('users/login');
-});
-
-router.post('/login', (req,res,next) => {
-  var origin = req.headers.referer || '/';
-  passport.authenticate('local',(err,user,info) => {
-    if (err) return next(err);
-    if (!user) {
-      // TODO: indicate login failure
-      return res.redirect(origin);
-    }
-
-    req.logIn(user, err => {
-      if (err) return next(err);
-      return res.redirect(origin);
-    })
-  })(req, res, next)
-});
-
-router.get('/signup',(req,res,next)=>{
-  if(req.requestType('modal')) return res.render('users/_signup');
-  return res.render('users/signup');
-});
-
-router.post('/signup', (req,res,next) => {
-  var origin = req.headers.referer || '/';
-  var user = db.User.create({
-    username: req.body.username,
-    email: req.body.email,
-    password: req.body.password
-  })
-  .then(user => {
-    req.logIn(user, err => {
-      console.log("[Log in] as user: ", req.user.get({plain:true}));
-      return res.redirect(origin);
-    })
-  })
-  .catch(next);
-});
-
 router.get('/logout',(req,res,next) => {
   req.logout();
   return res.redirect('/');
