@@ -1,4 +1,4 @@
-var Promise = require('promise');
+var Promise = require('bluebird');
 var Ajax = require('./ajax');
 
 var Modal = {
@@ -10,7 +10,6 @@ var Modal = {
 
       (function(){
         redirect = document.querySelector('.modal-dialog').dataset.redirect
-        console.log(redirect)
         if(redirect) {
           document.getElementById('mainModal').addEventListener('hide',function(e){
             window.location = redirect
@@ -53,7 +52,6 @@ var Modal = {
   },
 
   loadModal: function(url,callback) {
-    console.log(Ajax)
     Ajax.html({
       method:"GET",
       url:url,

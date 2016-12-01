@@ -17,14 +17,13 @@ var SequelizeStore = require('connect-sequelize')(session)
 var app = express();
 
 app.use(cookieParser());
-
-app.use(session({
+var sessionMiddleware = session({
   secret: 'brulesrules',
   store: new SequelizeStore(sequelize,{},'Session'),
   proxy:true,
-  resave:true,
-  saveUninitialized: false,
-}))
+  resave:false,
+  saveUninitialized: true,
+})
 
 app.use(require(APPROOT+'/middleware/requests'));
 
@@ -40,11 +39,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 
-app.use(session({
-  secret: 'brulesrules',
-  resave: false,
-  saveUninitialized: true
-}));
+app.use(sessionMiddleware);
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -85,6 +80,9 @@ app.use(logger('dev'));
 app.use(require('./middleware/vignette'));
 
 app.use(function(req,res,next){
+  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+  res.header('Expires', '-1');
+  res.header('Pragma', 'no-cache');
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Origin", "http://127.0.0.1:3000");
   next();
@@ -94,7 +92,7 @@ app.use(function(req,res,next){
 app.use(require(APPROOT+'/middleware/activeChar'));
 
 // router
-app.use('/', require(APPROOT+'./routes/index'));
+app.use('/', require(APPROOT+'/routes/index'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

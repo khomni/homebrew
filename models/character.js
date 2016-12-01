@@ -11,12 +11,10 @@ module.exports = function(sequelize, DataTypes) {
     name: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       get: function() {
-        console.log(this)
         var nameArray = this.getDataValue('name') || []
         return nameArray.join(' ')
       },
       set: function(val) {
-        console.log(this)
         this.setDataValue('name',val.split(' '))
       },
       allowNull: false,
@@ -69,6 +67,9 @@ module.exports = function(sequelize, DataTypes) {
 
         // items tend to belong to characters, so they can have an owner in their record
         Character.hasMany(models.Item);
+
+        // a acharacter owns their journal entries
+        Character.hasMany(models.Journal);
 
       }
     }

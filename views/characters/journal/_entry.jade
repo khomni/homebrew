@@ -1,0 +1,8 @@
+.modal-dialog
+  .modal-content
+    .modal-title New Journal Entry
+    .modal-body 
+      form(name='journal' action='/pc/'+character.id+'/journal' method='post')
+        input.form-input(type='text' required name='title' value=entry.title)
+        textarea.form-input(type='text' name='body' value=entry.body)
+        button.btn.block(type='submit') Add Journal Entry

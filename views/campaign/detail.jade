@@ -10,6 +10,9 @@ block header
 
 block content
   .content-body
-    +section()
-      a(href="/pc/create?campaign="+campaign.id) Create a character in this campaign
-      
+    +section('Actions')
+      .btn-group
+        a.btn(href="/pc/create?campaign="+campaign.id) Create a character in this campaign
+        if currentUser.id == campaign.Owner.id
+          form(action="/c/"+campaign.id, method="DELETE")
+            button.btn(type="submit") Delete This Campaign

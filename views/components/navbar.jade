@@ -56,8 +56,8 @@ nav#nav
             
       +dropdown({id: 'accountmenu', text: 'Account'})
         +navlink({url:'/u/'+currentUser.username, text: 'Profile'})
-        +navlink({url:'/u/settings', text: 'Settings'})
-        +navlink({url:'/u/logout', text: 'Log Out'})
+        +navlink({url:'/settings', text: 'Settings'})
+        +navlink({url:'/logout', text: 'Log Out'})
     +filter(!currentUser)
       +navlink({url:'/about',text:'About'})
       +dropdown({id: 'account', text:'Log In / Sign Up'})(class="signup")

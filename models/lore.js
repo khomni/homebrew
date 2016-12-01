@@ -17,10 +17,6 @@ module.exports = function(sequelize, DataTypes) {
     },
     content: {
       type: DataTypes.TEXT,
-      defaultValue: 0,
-      validate: {
-        len: [-100,100]
-      }
     },
     // lore obscurity represents the likelihood of a person knowning it
     // a piece of lore with an obscurity of 0 is common knowledge

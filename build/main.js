@@ -1,6 +1,6 @@
 /*jslint node: true */
 
-var Promise = require('promise');
+var Promise = require('bluebird');
 var Ajax = require('./ajax');
 var Navbar = require('./navbar');
 var Favicon = require('./favicon');

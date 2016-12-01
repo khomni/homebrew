@@ -14,10 +14,12 @@ module.exports = (req,res,next) => {
       andArgs = true
 
       if(Array.isArray(args.or)) {
-        orArgs = args['or'].map(req.requestType).reduce(function(a,b){console.log('a:',a,'; b:',b);return a || b})
+        orArgs = args['or'].map(req.requestType)
+        .reduce(function(a,b){return a || b})
       }
       if(Array.isArray(args.and)) {
-        andArgs = args['and'].map(req.requestType).reduce(function(a,b){console.log('a:',a,'; b:',b);return a && b})
+        andArgs = args['and'].map(req.requestType)
+        .reduce(function(a,b){return a && b})
       }
       return orArgs && andArgs
     }

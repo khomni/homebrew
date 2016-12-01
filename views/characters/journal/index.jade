@@ -1,0 +1,18 @@
+extends /layout
+
+block title
+  title Journal
+  
+block header
+  +header
+    .header-item.page-title 
+      span #{character.name}'s Journal
+
+block content
+  .content-body
+    each entry in character.Journals
+      +section(entry.title)
+        div= entry.body
+    +section()
+      a.btn(href="/pc/"+character.id+"/journal/new" data-modal="/pc/"+character.id+"/journal/new") New Entry
+      

@@ -15,7 +15,6 @@ var Favicon = {
   },
   rotate: function(deg) {
     var newDegree = '/' + ((this.getDegree() + deg) % 90) + '.ico';
-    console.log(newDegree);
     Favicon.newFrame(newDegree);
     // this.dom.href = newDegree;
   },

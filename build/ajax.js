@@ -27,11 +27,12 @@ var Ajax = {
     var forms = document.getElementsByTagName('form')
     for(i=0; i<forms.length;i++) {
       (function(j){forms[j].addEventListener('submit',function(e){
+        var thisForm = this
         e.preventDefault();
         var Modal = require('./modal');
         Ajax.html({
-          method: e.target.method,
-          url: e.target.action,
+          method: thisForm.getAttribute('method'),
+          url: this.action,
           headers:{
             modal:true,
           },
@@ -74,13 +75,10 @@ var Ajax = {
   },
 
   fetch: function(args) {
-
     if(args.body) {
       if(args.body.nodeName === "FORM") {
         args.headers['Content-Type'] = 'application/json'
         var data = JSON.stringify(serialize(args.body))
-        console.log(serialize(args.body))
-        console.log('->',data)
       }
       else if(typeof args.data === 'object') {
         args.headers['Content-Type'] = 'application/json'

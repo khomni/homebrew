@@ -56,9 +56,23 @@ router.get('/create', (req, res, next) => {
   res.render('characters/new', {context:req.query})
 });
 
+var characterRouter = express.Router({mergeParams: true});
 
+// character router handles individual subpages that pertain to the individual character
+router.use('/:id', (req,res,next) => {
+  return db.Character.findOne({
+    where: {id: req.params.id},
+    include: [{all: true, nested: true}]
+  })
+  .then((character) => {
+    req.character = character
+    return next()
+  })
+  .catch(next)
+}, characterRouter)
 
-router.get('/:id',(req,res,next) => {
+characterRouter.get('/',(req,res,next) => {
+  console.log(req.params)
   db.Character.findOne({
     where: {id:req.params.id},
     include: [
@@ -76,7 +90,7 @@ router.get('/:id',(req,res,next) => {
   .catch(next)
 })
 
-router.post('/:id', (req,res,next) => {
+characterRouter.post('/', Common.middleware.requireUser, (req,res,next) => {
   db.Character.findOne({where: {id:req.params.id}})
   .then(character => {
     if(!req.user.hasCharacter(character)) throw Common.error.authorization("You don't have permission to modify that character");
@@ -87,7 +101,7 @@ router.post('/:id', (req,res,next) => {
   return next();
 })
 
-router.post('/:id/select',(req,res,next) => {
+characterRouter.post('/select', Common.middleware.requireUser, (req,res,next) => {
   db.Character.findOne({where: {id:req.params.id}})
   .then(pc => {
     return req.user.setMainChar(pc)
@@ -102,7 +116,7 @@ router.post('/:id/select',(req,res,next) => {
   .catch(next)
 })
 
-router.post('/:id/delete',(req,res,next) => {
+characterRouter.delete('/', Common.middleware.requireUser, (req,res,next) => {
   if(!req.user) {
     var err = new Error();
     err.status = 403;
@@ -131,6 +145,8 @@ router.post('/:id/delete',(req,res,next) => {
     return res.redirect('/pc')
   })
   .catch(next)
-})
+});
+
+characterRouter.use('/journal',require('./journal'))
 
 module.exports = router;

@@ -25,6 +25,7 @@ router.post('/login', (req,res,next) => {
     if (err) return next(err);
     if (!user) {
       // TODO: indicate login failure
+      return res.send('user not found')
       return res.redirect(origin);
     }
 
@@ -33,6 +34,14 @@ router.post('/login', (req,res,next) => {
       return res.redirect(origin);
     })
   })(req, res, next)
+});
+
+router.use('/logout',(req,res,next) => {
+  req.logOut();
+  req.session.destroy(()=>{
+    res.clearCookie('Session');
+    return res.redirect('/');
+  })
 });
 
 router.get('/signup',(req,res,next)=>{
