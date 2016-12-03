@@ -75,15 +75,22 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
 
-    Character.hook('beforeSave', (character, options) => {
-      return character.getCampaign()
-      .then((campaign)=>{
-        console.log('NPC?', campaign.OwnerId == character.UserId)
-        if(campaign.OwnerId == character.UserId) character.npc = true
-        return Promise.resolve(character);
-      })
-
+  Character.hook('beforeSave', (character, options) => {
+    return character.getCampaign()
+    .then((campaign)=>{
+      console.log('NPC?', campaign.OwnerId == character.UserId)
+      if(campaign.OwnerId == character.UserId) character.npc = true
+      return Promise.resolve(character);
     })
+  })
+
+  Character.Instance.prototype.getName = function(string) {
+    switch (string) {
+      case "first": return this.getDataValue('name')[0]
+      case "formal": return this.title + " " + this.name
+      default: return this.name
+    }
+  }
 
   return Character;
 };

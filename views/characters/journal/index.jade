@@ -1,18 +1,28 @@
 extends /layout
 
 block title
-  title Journal
+  title #{character.getName('first')}'s Journal
   
 block header
   +header
     .header-item.page-title 
-      span #{character.name}'s Journal
+      span #{character.getName('first')}'s Journal
 
 block content
   .content-body
     each entry in character.Journals
-      +section(entry.title)
-        div= entry.body
+      section
+        .section-title
+          .float.left= entry.title
+          .float.right
+            .timestamp= entry.updatedAt.toLocaleString()
+        .section-body!= markdown(entry.body)
+        .section-footer
+          .flex.center.pad(data-pad="1em")
+            a.btn(href="/pc/"+character.id+"/journal/"+entry.id data-modal="/pc/"+character.id+"/journal/"+entry.id) Edit Entry
+            form(action="/pc/"+character.id+"/journal/"+entry.id method="delete" data-response="modal")
+              button.btn Delete Entry
     +section()
-      a.btn(href="/pc/"+character.id+"/journal/new" data-modal="/pc/"+character.id+"/journal/new") New Entry
+      .btn-group
+        a.btn(href="/pc/"+character.id+"/journal/new" data-modal="/pc/"+character.id+"/journal/new") New Entry
       

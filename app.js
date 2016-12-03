@@ -12,7 +12,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 
 var sequelize = require(APPROOT+'/config/database')
-var SequelizeStore = require('connect-sequelize')(session)
+var SequelizeStore = require('connect-sequelize')(session);
 
 var app = express();
 
@@ -47,10 +47,14 @@ require('./config/passport');
 app.use(passport.initialize());
 app.use(passport.session());
 
+var marked = require('marked');
+
 app.locals.basedir = APPROOT+'/views'
+app.locals.markdown = marked
 
 app.use((req,res,next) => {
   res.locals.currentUser = req.user || false
+  res.locals.THEME = req.session.theme || 'default'
   next();
 });
 
@@ -101,33 +105,7 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-// error handlers
-
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development'||app.get('env') === 'local') {
-  app.use(function(err, req, res, next) {
-
-    res.status(err.status || 500);
-
-    console.error(err.stack)
-
-    if(req.requestType('json')) return res.status(err.status).send(err)
-    if(req.requestType('modal')) return res.render('modals/_error', {message: err.message, error: err})
-    return res.render('error', {message: err.message, error: err})
-
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
-
+// error handler
+app.use(require(APPROOT+'/middleware/error'))
 
 module.exports = app;

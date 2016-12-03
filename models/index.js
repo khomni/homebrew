@@ -26,8 +26,15 @@ sequelize.authenticate()
       db[modelName].associate(db);
     }
   });
-  
-  console.log('[database] ready')
+
+  db.getInstanceMethods = function(doc) {
+    var methods = []
+    for(key in doc) {
+      if(typeof doc[key] == 'function') methods.push(key)
+    }
+    return methods
+  }
+
   global.db = db
 
   return;

@@ -466,7 +466,7 @@ hr {
   border: none;
   border-bottom: 1px solid #ddd;
 }
-.script {
+blockquote {
   font-style: italic;
   font-family: baskerville;
   font-size: 18px;
@@ -474,6 +474,12 @@ hr {
   color: #666;
   border-left: 2px solid #ddd;
   padding-left: 1em;
+}
+pre {
+  color: #333;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  padding: 0.5rem;
+  border-radius: 2px;
 }
 .logo.inline {
   display: inline-block;
@@ -748,6 +754,7 @@ section {
   position: relative;
   z-index: 2;
   margin: auto;
+  margin-bottom: 0.5rem;
   background-image: url('/images/textures/marble.jpg'), radial-gradient(ellipse 100% 200% at 50% 0, white 0%, #ccc 100%);
   background-size: 127px, 100%;
   background-position: 50% 50%;
@@ -760,6 +767,8 @@ section {
 @media only screen and (max-width: 719px) {
   section {
     width: 100%;
+    margin-bottom: 0;
+    border-top-width: 0px;
     outline: 1px dashed rgba(255, 0, 0, 0);
     outline-offset: -1px;
     transition: 0.2s;
@@ -852,6 +861,64 @@ section .section-title {
 }
 section .section-body {
   padding: 1rem;
+}
+section .section-footer {
+  padding: 1rem;
+}
+.float.left {
+  float: left;
+}
+.float.right {
+  float: right;
+}
+.timestamp {
+  opacity: 0.25;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  cursor: -webkit-default;
+  cursor: -moz-default;
+  cursor: default;
+  transition: 0.25s;
+}
+.timestamp:hover {
+  opacity: 0.5;
+}
+.flex {
+  display: flex;
+  flex-flow: row-wrap;
+}
+.flex.pad {
+  margin: -0.5rem;
+}
+.flex.pad > * {
+  margin: 0.5rem;
+}
+.flex.fill > * {
+  flex: 1;
+}
+.flex > .grow {
+  flex-grow: 1;
+}
+.flex > .no-size {
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+.flex.center {
+  justify-content: center;
+  align-items: center;
+}
+.flex.right {
+  justify-content: flex-end;
+}
+.flex.left {
+  justify-content: flex-start;
+}
+.flex.distribute {
+  justify-content: space-around;
+}
+.flex.vert {
+  flex-direction: column;
 }
 .text-center {
   text-align: center;
@@ -1021,6 +1088,10 @@ textarea:focus {
   -webkit-filter: drop-shadow(0px 0px 2px #ff9d55);
   filter: drop-shadow(0px 0px 2px #ff9d55);
   outline: none;
+}
+textarea {
+  min-height: 300px;
+  max-width: 100%;
 }
 body.modal-open {
   overflow: hidden;

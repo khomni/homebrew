@@ -14,15 +14,24 @@
 
 module.exports = function(sequelize, DataTypes) {
   var Journal = sequelize.define("Journal", {
-    // The body of the lore, this can be a body of text of any length
     title: {
       type: DataTypes.STRING
     },
     body: {
       type: DataTypes.TEXT,
     },
-
+    // an array of strings that describe what type of relation a user needs to read this entry. By default, journals are only visible to their owner character
+    // public: this entry is visible to all site users
+    // campaign: this journal is only visible to users whose active character is in the same campaign
+    // party: this journal is only visible to users whose active character is in the same party
+    visibleTo: {
+      type: DataTypes.ARRAY(DataTypes.ENUM),
+      values: ['public','party','campaign']
+    }
   }, {
+    defaultScope: {
+      order: [['updatedAt','DESC']]
+    },
     freezeTableName: true,
     classMethods: {
       associate: function(models) {
@@ -30,6 +39,20 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   });
+
+  Journal.hook('beforeSave', (journal,options) => {
+    console.log('saving journal')
+    // search through any pieces of lore that might be referenced in the journal entry and reformat it to be a link
+    var words = journal.body.replace(/[\.\!\?](?=\s)/,'').split(/\s+/)
+    return db.Character.findAll({
+      attributes: ['name'],
+      where: {name: {$in: words}}
+    }).then(characters => {
+      console.log('mentioned characters:',characters)
+      return;
+    })
+    // OR search for character names
+  })
 
   return Journal;
 };

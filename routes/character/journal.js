@@ -2,7 +2,15 @@ var express = require('express');
 var router = express.Router();
 
 // you can get back to the journal index from this module at any time by rediredting to req.baseURL
-
+router.use((req,res,next)=> {
+  res.locals.THEME = 'journal'
+  return req.character.getJournals()
+  .then(journals => {
+    console.log(journals)
+    return next();
+  })
+  .catch(next)
+})
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
@@ -30,7 +38,7 @@ router.post('/', (req,res,next) => {
 
 router.get('/new', (req,res,next) => {
 
-  if(req.requestType('modal')) return res.render('characters/journal/_entry',{character:req.character, entry:{}})
+  if(req.requestType('modal')) return res.render('characters/journal/_entry',{character:req.character, entry:null})
   return res.render('character/journal/new',{character:character})
 
 })
@@ -40,7 +48,29 @@ router.get('/:id', (req,res,next) => {
     where: {id:req.params.id}
   })
   .then(function(entry){
-    if(req.requestType('modal')) return res.render('characters/journal/_entry',{character:character, entry:{}})
+    if(req.requestType('modal')) return res.render('characters/journal/_entry',{character:req.character, entry:entry})
+    return res.redirect(req.baseUrl)
+  })
+});
+
+router.post('/:id', (req,res,next) => {
+  return db.Journal.findOne({where: {id:req.params.id}})
+  .then(entry => {
+    for(key in req.body) entry[key] = req.body[key]
+    return entry.save()
+  })
+  .then(entry => {
+    if(req.requestType('modal')) return res.render('characters/journal/_entry',{character:req.character, entry:entry})
+    return res.redirect(req.baseUrl)
+  })
+})
+
+router.delete('/:id', (req,res,next) => {
+  return db.Journal.findOne({where: {id:req.params.id}})
+  .then(entry => {
+    console.log(entry.get({plain:true}))
+    if(req.requestType('modal')) return res.render('characters/journal/_entry',{character:req.character, entry:entry})
+    return res.redirect(req.baseUrl);
   })
 })
 

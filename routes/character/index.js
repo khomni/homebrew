@@ -24,8 +24,6 @@ router.post('/',(req,res,next) => {
     return next(err);
   }
 
-  console.log(req.body)
-
   var character = db.Character.create({
     npc: false,
     name: req.body.name,
@@ -35,7 +33,6 @@ router.post('/',(req,res,next) => {
     UserId: req.user.id
   })
   .then(pc => {
-    console.log(pc.get({plain:true}))
     return req.user.addCharacter(pc)
     .then((user)=>{
       if(req.requestType('json')) return res.send(pc.get({plain:true}))
@@ -62,9 +59,9 @@ var characterRouter = express.Router({mergeParams: true});
 router.use('/:id', (req,res,next) => {
   return db.Character.findOne({
     where: {id: req.params.id},
-    include: [{all: true, nested: true}]
   })
   .then((character) => {
+    console.log('[character] instance methods:', db.getInstanceMethods(character).join(', ').grey)
     req.character = character
     return next()
   })
@@ -72,7 +69,6 @@ router.use('/:id', (req,res,next) => {
 }, characterRouter)
 
 characterRouter.get('/',(req,res,next) => {
-  console.log(req.params)
   db.Character.findOne({
     where: {id:req.params.id},
     include: [

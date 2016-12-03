@@ -22,6 +22,7 @@
     "jade": "~1.11.0",
     "less": "^2.7.1",
     "less-middleware": "^2.2.0",
+    "marked": "^0.3.6",
     "mocha": "^2.5.3",
     "morgan": "~1.6.1",
     "passport": "^0.3.2",

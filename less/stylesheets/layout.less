@@ -33,7 +33,7 @@ hr {
 	border-bottom: 1px solid #ddd;
 }
 
-.script {
+blockquote {
 	font-style: italic;
 	font-family:baskerville;
 	font-size:18px;
@@ -41,6 +41,16 @@ hr {
 	color: #666;
 	border-left: 2px solid #ddd;
 	padding-left: 1em;
+}
+
+pre {
+	color: #333;
+	border: 1px solid fade(black,25%);
+	padding: 0.5rem;
+	border-radius:2px;
+}
+
+code {
 
 }
 
@@ -216,6 +226,7 @@ section {
 	position: relative;
 	z-index: 2;
 	margin: auto;
+	margin-bottom: 0.5rem;
 	background-image: url('/images/textures/marble.jpg'), radial-gradient(ellipse 100% 200% at 50% 0, white 0%, #ccc 100%);
 	background-size: 127px, 100%;
 	background-position: 50% 50%;
@@ -224,7 +235,11 @@ section {
 	box-shadow: 0px 1px 5px fade(black,12.5%);
 	border: 1px solid fade(black,25%);
 	overflow: hidden;
-	.xs({width:100%});
+	.xs({
+		width:100%;
+		margin-bottom: 0;
+		border-top-width:0px;
+	});
 	.sm({width:720px});
 	.md-plus({width:1080px});
 
@@ -243,7 +258,80 @@ section {
 		padding: 1rem;
 		&:extend(.copy);
 	}
+
+	.section-footer {
+		padding: 1rem;
+	}
 }
+
+.float {
+	&.left {
+		float: left;
+	}
+	&.right {
+		float: right;
+	}
+}
+
+.timestamp {
+	opacity: 0.25;
+	.no-select();
+	transition: 0.25s;
+	&:hover {
+		opacity: 0.5;
+	}
+}
+
+// sets a generic flexbox
+.flex {
+	display: flex;
+	flex-flow: row-wrap;
+
+	&.pad{
+		margin: -0.5rem;
+		&>* {
+			margin: 0.5rem;
+		}
+	}
+
+	&.fill {
+		&>* {
+			flex:1;
+		}
+	}
+
+	&>.grow {
+		flex-grow:1;
+	}
+
+	&>.no-size {
+		flex-shrink:0;
+		flex-grow:0;
+	}
+
+	&.center {
+		justify-content: center;
+		align-items: center;
+	}
+
+	&.right {
+		justify-content: flex-end;
+	}
+
+	&.left {
+		justify-content: flex-start;
+	}
+
+	&.distribute {
+		justify-content: space-around;
+	}
+
+	&.vert {
+		flex-direction:column;
+	}
+
+}
+
 
 .text-center {
 	text-align:center;
