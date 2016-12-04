@@ -1,6 +1,5 @@
 var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
-  , db = require('../models')
 
 // Serialize Sessions
 passport.serializeUser(function(user, done){

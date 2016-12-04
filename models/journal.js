@@ -25,7 +25,7 @@ module.exports = function(sequelize, DataTypes) {
     // campaign: this journal is only visible to users whose active character is in the same campaign
     // party: this journal is only visible to users whose active character is in the same party
     visibleTo: {
-      type: DataTypes.ARRAY(DataTypes.ENUM),
+      type: DataTypes.ENUM,
       values: ['public','party','campaign']
     }
   }, {

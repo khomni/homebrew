@@ -9,7 +9,7 @@ var db        = {};
 
 var sequelize = require(APPROOT+'/config/database')
 
-sequelize.authenticate()
+module.exports = sequelize.authenticate()
 .then(() =>{
   fs
   .readdirSync(__dirname)
@@ -35,18 +35,15 @@ sequelize.authenticate()
     return methods
   }
 
-  global.db = db
-
-  return;
-
-  // TODO: seed database
-
+  return Promise.map(Object.keys(db),function(modelName){
+    if(db[modelName] instanceof Sequelize.Model) return db[modelName].sync()
+  })
+  .then(results => {
+    db.sequelize = sequelize
+    db.Sequelize = Sequelize
+    return db
+  })
 })
-.catch((err) => {
-  console.error('[database]',err.stack)
-})
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-
-module.exports = db;
+module.exports.sequelize = sequelize;
+module.exports.Sequelize = Sequelize;

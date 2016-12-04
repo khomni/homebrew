@@ -169,29 +169,20 @@ header {
 		bottom: 0;
 		right: 0;
 	}
+}
 
-	#content-main {
-		perspective: 400px;
-		perspective-origin: center;
-		position: relative;
-		background-position: 50% 0%;
-		background-blend-mode: multiply;
-		background-attachment: local, fixed;
-		flex: 1;
-
-		// z-index: 2;
-		.content-body {
-			.sm-plus({
-
-			});
-		}
-
-
-
-	}
-
-	#footer {
-
+#content-main {
+	perspective: 400px;
+	perspective-origin: center;
+	position: relative;
+	background-position: 50% 0%;
+	background-blend-mode: multiply;
+	background-attachment: local, fixed;
+	flex: 1;
+	// z-index: 2;
+	.content-body {
+		.sm-plus({
+		});
 	}
 }
 
@@ -248,9 +239,9 @@ section {
 	}
 
 	.section-title {
-		color: @color-dark;
 		padding:1rem;
 		border-bottom: 1px solid #ddd;
+		font-weight:600;
 		.inset-text();
 		&:extend(.copy);
 	}

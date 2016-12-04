@@ -1,9 +1,26 @@
 .modal-dialog
   .modal-content
-    if !entry
-      .modal-title New Journal Entry
-    .modal-body
-      form(name='journal' action='/pc/'+character.id+'/journal' + (entry?'/'+entry.id:'') method='post')
+    form(name='journal' action='/pc/'+character.id+'/journal' + (entry?'/'+entry.id:'') method='post')
+      if !entry
+        .modal-title New Journal Entry
+      .modal-body
         input.form-input(type='text' required name='title' value=entry?entry.title:false)
         textarea.form-input(type='text' name='body' height=300)= entry?entry.body:''
-        button.btn.block(type='submit')= entry ? 'Update Entry' : 'Add Journal Entry'
+        //- div
+          hr
+          label Visibility
+          .flex.distribute.pad
+            label.radio
+              input(type="radio" name="visibleTo" required)
+              span Just Me
+            label.radio
+              input(type="radio" name="visibleTo" value="party" required)
+              span My Party
+            label.radio
+              input(type="radio" name="visibleTo" value="campagin" required)
+              span The Campaign
+            label.radio
+              input(type="radio" name="visibleTo" value="public" required)
+              span Public
+      .modal-footer
+          button.btn.block(type='submit')= entry ? 'Update Entry' : 'Add Journal Entry'

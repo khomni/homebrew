@@ -12,61 +12,68 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 
 var sequelize = require(APPROOT+'/config/database')
-var SequelizeStore = require('connect-sequelize')(session);
 
 var app = express();
 
-app.use(cookieParser());
-var sessionMiddleware = session({
-  secret: 'brulesrules',
-  store: new SequelizeStore(sequelize,{},'Session'),
-  proxy:true,
-  resave:false,
-  saveUninitialized: true,
-})
+// connect to the databse before doing anything else
+sequelize.sync()
+.then(() => {return require(APPROOT+'/models')})
+.catch(err => {console.error('[database]',err.stack)})
+.then(db => {
+  global.db = db
 
-app.use(require(APPROOT+'/middleware/requests'));
+  var SequelizeStore = require('connect-sequelize')(session);
 
-SALT_WORK_FACTOR = 12;
+  app.use(cookieParser());
+  var sessionMiddleware = session({
+    secret: 'brulesrules',
+    store: new SequelizeStore(sequelize,{},'Session'),
+    proxy:true,
+    resave:false,
+    saveUninitialized: true,
+  })
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+  app.use(require(APPROOT+'/middleware/requests'));
 
-// uncomment after placing your favicon in /public
-app.use(favicon(path.join(__dirname, 'public', '0.ico')));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+  SALT_WORK_FACTOR = 12;
 
+  // view engine setup
+  app.set('views', path.join(__dirname, 'views'));
+  app.set('view engine', 'jade');
 
-app.use(sessionMiddleware);
+  // uncomment after placing your favicon in /public
+  app.use(favicon(path.join(__dirname, 'public', '0.ico')));
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: false }));
 
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-require('./config/passport');
-app.use(passport.initialize());
-app.use(passport.session());
+  app.use(sessionMiddleware);
 
-var marked = require('marked');
+  var passport = require('passport');
+  var LocalStrategy = require('passport-local').Strategy;
+  require('./config/passport');
+  app.use(passport.initialize());
+  app.use(passport.session());
 
-app.locals.basedir = APPROOT+'/views'
-app.locals.markdown = marked
+  var marked = require('marked');
 
-app.use((req,res,next) => {
-  res.locals.currentUser = req.user || false
-  res.locals.THEME = req.session.theme || 'default'
-  next();
-});
+  app.locals.basedir = APPROOT+'/views'
+  app.locals.markdown = marked
 
-var browserify = require('browserify-middleware');
-app.use('/javascripts', browserify('./build'));
+  app.use((req,res,next) => {
+    res.locals.currentUser = req.user || false
+    res.locals.THEME = req.session.theme || 'default'
+    next();
+  });
 
-// stylesheets
-var lessMiddleware = require('less-middleware');
-app.use(lessMiddleware(path.join(__dirname, 'less', '_output'),{
-  dest: path.join(__dirname,'public'),
-  preprocess: {
-    path: function(pathname, req) { // given a path, returns the same path with "/stylesheets/" replaced by "/"
+  var browserify = require('browserify-middleware');
+  app.use('/javascripts', browserify('./build'));
+
+  // stylesheets
+  var lessMiddleware = require('less-middleware');
+  app.use(lessMiddleware(path.join(__dirname, 'less', '_output'),{
+    dest: path.join(__dirname,'public'),
+    preprocess: {
+      path: function(pathname, req) { // given a path, returns the same path with "/stylesheets/" replaced by "/"
       return pathname.replace(path.sep + 'stylesheets' + path.sep, path.sep);
     }
   },
@@ -107,5 +114,8 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(require(APPROOT+'/middleware/error'))
+
+})
+
 
 module.exports = app;

@@ -16,7 +16,8 @@ block content
           .float.left= entry.title
           .float.right
             .timestamp= entry.updatedAt.toLocaleString()
-        .section-body!= markdown(entry.body)
+        .section-body
+          .journal-markup!= markdown(entry.body)
         .section-footer
           .flex.center.pad(data-pad="1em")
             a.btn(href="/pc/"+character.id+"/journal/"+entry.id data-modal="/pc/"+character.id+"/journal/"+entry.id) Edit Entry

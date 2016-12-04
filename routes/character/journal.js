@@ -6,7 +6,7 @@ router.use((req,res,next)=> {
   res.locals.THEME = 'journal'
   return req.character.getJournals()
   .then(journals => {
-    console.log(journals)
+    req.character.Journals = journals
     return next();
   })
   .catch(next)
@@ -49,7 +49,7 @@ router.get('/:id', (req,res,next) => {
   })
   .then(function(entry){
     if(req.requestType('modal')) return res.render('characters/journal/_entry',{character:req.character, entry:entry})
-    return res.redirect(req.baseUrl)
+    return res.render('characters/journal/entry',{character:req.character, entry:entry})
   })
 });
 
@@ -63,6 +63,7 @@ router.post('/:id', (req,res,next) => {
     if(req.requestType('modal')) return res.render('characters/journal/_entry',{character:req.character, entry:entry})
     return res.redirect(req.baseUrl)
   })
+  .catch(next)
 })
 
 router.delete('/:id', (req,res,next) => {

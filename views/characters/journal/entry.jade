@@ -1,0 +1,26 @@
+extends /layout
+
+block title
+  title= entry.title
+  
+block header
+  +header
+    .header-item.page-title 
+      span= entry.title
+    .header-item
+      
+
+block content
+  .content-body
+    section
+      .section-body
+        .journal-markup!= markdown(entry.body)
+      .section-footer
+        .flex.right
+          span — #[a(href='/pc/'+character.id)= character.name] #{entry.updatedAt.toLocaleString()}
+    +section('Actions')
+      .flex.center.pad(data-pad="1em")
+        a.btn(href="/pc/"+character.id+"/journal/"+entry.id data-modal="/pc/"+character.id+"/journal/"+entry.id) Edit Entry
+        form(action="/pc/"+character.id+"/journal/"+entry.id method="delete" data-response="modal")
+          button.btn Delete Entry
+      
