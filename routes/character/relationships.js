@@ -6,7 +6,8 @@ router.get('/', Common.middleware.requireCharacter, (req,res,next) => {
   return res.locals.character.getRelationship()
   .then(relationships => {
     res.locals.character.Relationships = relationships
-    return res.render('character/relationship/index')
+    console.log(res.locals.character.Relationships)
+    return res.render('characters/relationship/index')
   })
   .catch(next)
 
