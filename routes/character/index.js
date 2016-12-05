@@ -113,8 +113,8 @@ characterRouter.get('/connect', (req,res,next) => {
   .then(activeChar => {
     return db.Character.relationships([activeChar, res.locals.character])
     .then(relationships => {
-      console.log('active:',activeChar.Relationships[0])
-      console.log('character:',res.locals.character.Relationships[0])
+      console.log('active:',activeChar.Relationships[res.locals.character.id])
+      console.log('character:',res.locals.character.Relationships[activeChar.id])
       res.locals.activeChar = activeChar
 
       if(req.requestType('modal')) return res.render('characters/_connect.jade')

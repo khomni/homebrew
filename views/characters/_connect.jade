@@ -4,12 +4,12 @@
       if !entry
         .modal-title Connect With #{character.getName('first')}
       .modal-body
-        .flex.distribute
+        .flex.center.pad
           div
             label #{activeChar.getName('first')}' Attitude
-            input.form-input(type='number' min=-100 max=100 value=(activeChar.Relationships[0] ? activeChar.Relationships[0].quality : false) name="quality")
+            input.form-input(type='number' min=-100 max=100 value=(activeChar.Relationships[character.id] ? activeChar.Relationships[character.id].quality : false) name="quality")
           div
             label #{character.getName('first')}'s Attitude
-            input.form-input(type='number' min=-100 max=100 value=(character.Relationships[0] ? character.Relationships[0].quality : false) disabled)
+            input.form-input(type='number' min=-100 max=100 value=(character.Relationships[activeChar.id] ? character.Relationships[activeChar.id].quality : false) disabled)
       .modal-footer
           button.btn.block(type='submit') Update Relationship
