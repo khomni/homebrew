@@ -113,30 +113,10 @@ characterRouter.get('/connect', (req,res,next) => {
   .then(activeChar => {
     return db.Character.relationships([activeChar, res.locals.character])
     .then(relationships => {
-      console.log('active:',activeChar.Relationships[res.locals.character.id])
-      console.log('character:',res.locals.character.Relationships[activeChar.id])
       res.locals.activeChar = activeChar
 
       if(req.requestType('modal')) return res.render('characters/_connect.jade')
     })
-    // .catch(console.error)
-
-
-
-    // return Promise.props({
-    //   // get the active character's attitude towards the routed character
-    //   activeChar: activeChar.getRelationship({relationshipId:res.locals.character.id}).then(arr=>{return arr[0]}),
-    //   character: res.locals.character.getRelationship({CharacterId:activeChar.id}).then(arr=>{return arr[0]})
-    // })
-    // .then(results => {
-    //
-    //   res.locals.activeChar = activeChar
-    //   // console.log('active:',activeChar.get({plain:true}))
-    //   // console.log(results.activeChar.get({plain:true}))
-    //   // console.log('routed:',res.locals.character.get({plain:true}))
-    //   // console.log(!results.character || results.character.get({plain:true}))
-    //
-    // })
   })
   .catch(next)
 
@@ -149,19 +129,16 @@ characterRouter.post('/connect', Common.middleware.requireCharacter, (req,res,ne
     return activeChar.setRelationship(res.locals.character,{quality:req.body.quality})
   })
   .then(results => {
-    console.log(results)
     return res.send(results)
 
   })
   .catch(next)
-
   return next()
-
 })
-
 
 
 characterRouter.use('/journal', require('./journal'));
 characterRouter.use('/inventory', require('./items'));
+characterRouter.use('/relationship', require('./relationships'));
 
 module.exports = router;

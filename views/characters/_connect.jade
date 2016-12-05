@@ -1,6 +1,6 @@
 .modal-dialog
   .modal-content
-    form(name='connect' action='/pc/'+character.id+'/connect' method='post' data-response="none")
+    form(name='connect' action='/pc/'+character.id+'/relationship' method='post' data-response="none")
       if !entry
         .modal-title Connect With #{character.getName('first')}
       .modal-body
