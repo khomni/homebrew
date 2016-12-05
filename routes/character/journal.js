@@ -4,9 +4,9 @@ var router = express.Router();
 // you can get back to the journal index from this module at any time by rediredting to req.baseURL
 router.use((req,res,next)=> {
   res.locals.THEME = req.session.theme || 'journal'
-  return req.character.getJournals()
+  return res.locals.character.getJournals()
   .then(journals => {
-    req.character.Journals = journals
+    res.locals.character.Journals = journals
     return next();
   })
   .catch(next)
@@ -14,9 +14,8 @@ router.use((req,res,next)=> {
 
 /* GET users listing. */
 router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
-
-  return res.render('characters/journal/index',{character:req.character})
-  return res.send(req.character.Journals)
+  if(req.requestType('json')) return res.send(res.locals.character.Journals)
+  return res.render('characters/journal/index')
 });
 
 router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
@@ -25,10 +24,10 @@ router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
     title: req.body.title,
     body: req.body.body,
   })
-  .then(function(journal){
+  .then(journal => {
     return req.character.addJournal(journal)
   })
-  .then(function(){
+  .then(() => {
     return res.redirect(req.headers.referer || req.baseUrl)
   })
   .catch(next)
@@ -37,10 +36,13 @@ router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
 
 router.get('/new', Common.middleware.requireCharacter, (req,res,next) => {
 
-  if(req.requestType('modal')) return res.render('characters/journal/modals/edit',{character:req.character, entry:null})
+  if(req.requestType('modal')) return res.render('characters/journal/modals/edit')
   return res.render('character/journal/edit',{character:req.character})
 
 })
+
+// the following routers concern an individual journal entry, as referenced by the :id parameter
+// the journal entry will be queried by this middleware then added to res.locals.entry
 
 router.use('/:id', (req,res,next) => {
   return db.Journal.findOne({where: {CharacterId: req.character.id, id:req.params.id}})
@@ -53,12 +55,12 @@ router.use('/:id', (req,res,next) => {
 })
 
 router.get('/:id', (req,res,next) => {
-  if(req.requestType('modal')) return res.render('characters/journal/modals/entry',{character:req.character})
+  if(req.requestType('modal')) return res.render('characters/journal/modals/entry')
   return res.render('characters/journal/entry',{character:req.character})
 });
 
 router.get('/:id/edit', Common.middleware.requireCharacter, (req,res,next) => {
-  if(req.requestType('modal')) return res.render('characters/journal/modals/edit',{character:req.character})
+  if(req.requestType('modal')) return res.render('characters/journal/modals/edit')
   return res.render('characters/journal/edit',{character:req.character})
 });
 
@@ -69,7 +71,7 @@ router.post('/:id', Common.middleware.requireCharacter, (req,res,next) => {
   .then(entry => {
     res.locals.entry = entry
 
-    if(req.requestType('modal')) return res.render('characters/journal/_entry',{character:req.character, entry:entry})
+    if(req.requestType('modal')) return res.render('characters/journal/_entry')
     return res.redirect(req.baseUrl)
   })
   .catch(next)

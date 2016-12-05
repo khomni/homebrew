@@ -119,7 +119,7 @@ var Ajax = {
 
   json: function(args) {
     args.headers = args.headers || {}
-    Object.assign(args.headers, {'Content-Type': 'application/json', 'Accept': 'application/json'});
+    Object.assign({'Content-Type': 'application/json', 'Accept': 'application/json'}, args.headers);
 
     return this.fetch(args).then(response => {return response.json()});
   },

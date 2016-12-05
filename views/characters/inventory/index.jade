@@ -1,0 +1,19 @@
+extends /layout
+
+block title
+  title #{character.getName('first')}'s Inventory
+  
+block header
+  +header
+    .header-item.page-title 
+      span #{character.getName('first')}'s Inventory
+
+block content
+  .content-body
+    pre= JSON.stringify(character,null,'  ')
+    section
+      .section-body
+        .flex
+          each item in character.Items
+            pre= item
+      

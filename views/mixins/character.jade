@@ -12,5 +12,5 @@ mixin characterCard(character)
               a.btn(href="/pc/"+character.id) Character Sheet
               form(action="/pc/"+character.id+"/select" method="POST")
                 button.btn(type="submit") Set As Main
-              form(action="/pc/"+character.id+"/delete" method="POST")
+              form(action="/pc/"+character.id method="delete" data-response="modal")
                 button.btn(type="submit") Delete

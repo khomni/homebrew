@@ -10,9 +10,10 @@ block header
 
 block content
   .content-body
-    +section()
-      .btn-group
-        a.btn(href="/pc/"+character.id+"/journal/new" data-response="modal") New Entry
+    if character.active
+      +section()
+        .btn-group
+          a.btn(href="/pc/"+character.id+"/journal/new" data-response="modal") New Entry
     each entry in character.Journals
       section
         .section-title
@@ -21,10 +22,11 @@ block content
             .timestamp= entry.updatedAt.toLocaleString()
         .section-body
           .journal-markup!= markdown(entry.body.split('\n').slice(0,10).join('\n'))
-        .section-footer
-          .flex.center.pad(data-pad="1em")
-            a.btn(href="/pc/"+character.id+"/journal/"+entry.id data-response="modal") View Entry
-            a.btn(href="/pc/"+character.id+"/journal/"+entry.id+"/edit" data-response="modal") Edit Entry
-            form(action="/pc/"+character.id+"/journal/"+entry.id method="delete" data-response="json")
-              button.btn Delete Entry
+        if character.active
+          .section-footer
+            .flex.center.pad(data-pad="1em")
+              a.btn(href="/pc/"+character.id+"/journal/"+entry.id data-response="modal") View Entry
+              a.btn(href="/pc/"+character.id+"/journal/"+entry.id+"/edit" data-response="modal") Edit Entry
+              form(action="/pc/"+character.id+"/journal/"+entry.id method="delete" data-response="json")
+                button.btn Delete Entry
       

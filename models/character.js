@@ -41,6 +41,9 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
+    active: {
+      type: DataTypes.VIRTUAL,
+    },
   }, {
     classMethods: {
       associate: (models) => {

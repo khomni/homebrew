@@ -57,95 +57,57 @@ var characterRouter = express.Router({mergeParams: true});
 
 // character router handles individual subpages that pertain to the individual character
 router.use('/:id', (req,res,next) => {
-  return db.Character.findOne({
-    where: {id: req.params.id},
-  })
+  return db.Character.findOne({where: {id: req.params.id}})
   .then(character => {
+    if(!character) throw Common.error.notfound('Character')
     req.character = character
+    res.locals.character = character
     throw null
   })
   .catch(next)
 }, characterRouter)
 
 characterRouter.get('/',(req,res,next) => {
-  db.Character.findOne({
-    where: {id:req.params.id},
-    include: [
-      {model: db.Item},
-      {model: db.Lore, as: 'lore'}
-    ],
-  })
-  .then(character => {
-    if(!character) throw null
 
-    if(req.requestType('json')) return res.send(character.get({plain:true}))
-    if(req.requestType('modal')) return res.render('characters/detail',{character:character.get({plain:true})})
-    return res.render('characters/detail',{character:character.get({plain:true})})
-  })
-  .catch(next)
+  if(req.requestType('json')) return res.send(character.get({plain:true}))
+  if(req.requestType('modal')) return res.render('characters/detail')
+  return res.render('characters/detail')
+
 })
 
-characterRouter.post('/', Common.middleware.requireUser, (req,res,next) => {
-  db.Character.findOne({where: {id:req.params.id}})
-  .then(character => {
-    if(!character) throw null
-    if(!req.user.hasCharacter(character)) throw Common.error.authorization("You don't have permission to modify that character");
-    return res.redirect('/'+req.params.id)
-  })
-  .catch(next)
+characterRouter.post('/', Common.middleware.requireCharacter, (req,res,next) => {
 
-  return next();
+  // TODO: character editing interface
+
+  return res.redirect('/'+req.params.id)
 })
 
 characterRouter.post('/select', Common.middleware.requireCharacter, (req,res,next) => {
 
-  return req.user.setMainChar(req.character)
+  return req.user.setMainChar(res.locals.character)
   .then(req.user.save)
   .then(user => {
-    if(req.requestType('json')) return res.send(req.character.get({plain:true}))
-    if(req.requestType('modal')) return res.render('modals/_success',{title: req.character.name + " selected"})
+    if(req.requestType('json')) return res.send(res.locals.character.get({plain:true}))
+    if(req.requestType('modal')) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
     return res.redirect(req.headers.referer)
   })
   .catch(next)
 
-  // db.Character.findOne({where: {id:req.params.id}})
-  // .then(pc => {
-  //   return req.user.setMainChar(pc)
-  //   .then(req.user.save)
-  //   .then(user => {
-  //
-  //     if(req.requestType('json')) return res.send(pc.get({plain:true}))
-  //     if(req.requestType('modal')) return res.render('modals/_success',{title: pc.name + " selected"})
-  //     return res.redirect('pc/'+pc.id,{character:pc.get({plain:true})})
-  //   })
-  // })
-  // .catch(next)
 })
 
 characterRouter.delete('/', Common.middleware.requireCharacter, (req,res,next) => {
 
-  return req.character.destroy()
+  return res.locals.character.destroy()
   .then(character => {
-    if(req.requestType('json')) return res.send(req.character.get({plain:true}))
-    if(req.requestType('modal')) return res.render('modals/_success', {title:"Character Deleted", redirect:req.headers.referer || "/pc"})
+    if(req.requestType('json')) return res.send(res.locals.character.get({plain:true}))
+    if(req.requestType('modal')) return res.render('modals/_success', {title: res.locals.character.name + " deleted", redirect:req.headers.referer || "/pc"})
     return res.redirect('/pc')
   })
   .catch(next)
 
-  // db.Character.findOne({where: {id:req.params.id}})
-  // .then(character => {
-  //   throw null;
-  //   if(!req.user.hasCharacter(character)) throw Common.error.authorization('You are not authorized to delete this character')
-  //   return character.destroy();
-  // }).then(character => {
-  //   if(req.requestType('json')) return res.send(character.get({plain:true}))
-  //   if(req.requestType('modal')) return res.render('modals/_success', {title:"Character Deleted", redirect:req.headers.referer || "/pc"})
-  //   return res.redirect('/pc')
-  // })
-  // .catch(next)
 });
 
 characterRouter.use('/journal', require('./journal'));
-characterRouter.use('/items', require('./items'));
+characterRouter.use('/inventory', require('./items'));
 
 module.exports = router;
