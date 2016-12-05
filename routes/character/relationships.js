@@ -6,7 +6,6 @@ router.get('/', Common.middleware.requireCharacter, (req,res,next) => {
   return res.locals.character.getRelationship()
   .then(relationships => {
     res.locals.character.Relationships = relationships
-    console.log(res.locals.character.Relationships)
     return res.render('characters/relationship/index')
   })
   .catch(next)
@@ -20,7 +19,6 @@ router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
     return activeChar.addRelationship(res.locals.character,{quality:req.body.quality})
   })
   .then(results => {
-    console.log(results)
     return res.send(results)
 
   })
@@ -31,9 +29,6 @@ router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
 })
 
 router.get('/new', (req,res,next) => {
-
-  console.log(db.getInstanceMethods(res.locals.character))
-
   return req.user.getMainChar()
   .then(activeChar => {
     return db.Character.relationships([activeChar, res.locals.character])
