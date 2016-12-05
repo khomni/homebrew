@@ -150,5 +150,61 @@
 			20
 		],
 		"attribution": ""
+	},
+	"549774454_orig.jpg": {
+		"path": "/images/vignettes/549774454_orig.jpg",
+		"focus": [
+			50,
+			50
+		],
+		"attribution": ""
+	},
+	"artwork.age-of-conan-hyborian-adventures.2812x2000.2009-02-20.537.jpg": {
+		"path": "/images/vignettes/artwork.age-of-conan-hyborian-adventures.2812x2000.2009-02-20.537.jpg",
+		"focus": [
+			80,
+			40
+		],
+		"attribution": ""
+	},
+	"bogdan-marica-05-bogdanmrk-hell-knight.jpg": {
+		"path": "/images/vignettes/bogdan-marica-05-bogdanmrk-hell-knight.jpg",
+		"focus": [
+			30,
+			15
+		],
+		"attribution": "Marica Bogdan"
+	},
+	"library.png": {
+		"path": "/images/vignettes/library.png",
+		"focus": [
+			50,
+			50
+		],
+		"attribution": ""
+	},
+	"wolfenstein_the_old_blood-21.jpg": {
+		"path": "/images/vignettes/wolfenstein_the_old_blood-21.jpg",
+		"focus": [
+			50,
+			50
+		],
+		"attribution": ""
+	},
+	"fantasy_viking_village_by_aballom-d86wb89.jpg": {
+		"path": "/images/vignettes/fantasy_viking_village_by_aballom-d86wb89.jpg",
+		"focus": [
+			50,
+			50
+		],
+		"attribution": ""
+	},
+	"necromancer__s_call_by_athayar-d48u2vd.jpg": {
+		"path": "/images/vignettes/necromancer__s_call_by_athayar-d48u2vd.jpg",
+		"focus": [
+			25,
+			20
+		],
+		"attribution": ""
 	}
 }

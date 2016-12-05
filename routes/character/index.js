@@ -60,10 +60,9 @@ router.use('/:id', (req,res,next) => {
   return db.Character.findOne({
     where: {id: req.params.id},
   })
-  .then((character) => {
-    console.log('[character] instance methods:', db.getInstanceMethods(character).join(', ').grey)
+  .then(character => {
     req.character = character
-    return next()
+    throw null
   })
   .catch(next)
 }, characterRouter)
@@ -77,7 +76,7 @@ characterRouter.get('/',(req,res,next) => {
     ],
   })
   .then(character => {
-    if(!character) return next();
+    if(!character) throw null
 
     if(req.requestType('json')) return res.send(character.get({plain:true}))
     if(req.requestType('modal')) return res.render('characters/detail',{character:character.get({plain:true})})
@@ -89,6 +88,7 @@ characterRouter.get('/',(req,res,next) => {
 characterRouter.post('/', Common.middleware.requireUser, (req,res,next) => {
   db.Character.findOne({where: {id:req.params.id}})
   .then(character => {
+    if(!character) throw null
     if(!req.user.hasCharacter(character)) throw Common.error.authorization("You don't have permission to modify that character");
     return res.redirect('/'+req.params.id)
   })
@@ -97,52 +97,55 @@ characterRouter.post('/', Common.middleware.requireUser, (req,res,next) => {
   return next();
 })
 
-characterRouter.post('/select', Common.middleware.requireUser, (req,res,next) => {
-  db.Character.findOne({where: {id:req.params.id}})
-  .then(pc => {
-    return req.user.setMainChar(pc)
-    .then(req.user.save)
-    .then(user => {
+characterRouter.post('/select', Common.middleware.requireCharacter, (req,res,next) => {
 
-      if(req.requestType('json')) return res.send(pc.get({plain:true}))
-      if(req.requestType('modal')) return res.render('modals/_success',{title: pc.name + " selected"})
-      return res.redirect('pc/'+pc.id,{character:pc.get({plain:true})})
-    })
+  return req.user.setMainChar(req.character)
+  .then(req.user.save)
+  .then(user => {
+    if(req.requestType('json')) return res.send(req.character.get({plain:true}))
+    if(req.requestType('modal')) return res.render('modals/_success',{title: req.character.name + " selected"})
+    return res.redirect(req.headers.referer)
   })
   .catch(next)
+
+  // db.Character.findOne({where: {id:req.params.id}})
+  // .then(pc => {
+  //   return req.user.setMainChar(pc)
+  //   .then(req.user.save)
+  //   .then(user => {
+  //
+  //     if(req.requestType('json')) return res.send(pc.get({plain:true}))
+  //     if(req.requestType('modal')) return res.render('modals/_success',{title: pc.name + " selected"})
+  //     return res.redirect('pc/'+pc.id,{character:pc.get({plain:true})})
+  //   })
+  // })
+  // .catch(next)
 })
 
-characterRouter.delete('/', Common.middleware.requireUser, (req,res,next) => {
-  if(!req.user) {
-    var err = new Error();
-    err.status = 403;
-    err.message = "You must be logged in to delete characters"
-  }
-  db.Character.findOne({where: {id:req.params.id}})
+characterRouter.delete('/', Common.middleware.requireCharacter, (req,res,next) => {
+
+  return req.character.destroy()
   .then(character => {
-    if(!character) {
-      var err = new Error();
-      err.status = 404;
-      err.message = "Character does not exist"
-      return err
-    }
-    if(req.user.hasCharacter(character)) {
-      return character.destroy();
-    }
-    else {
-      var err = new Error();
-      err.status = 403;
-      err.message = "You are not authorized to delete this character"
-      return err
-    }
-  }).then(() => {
-    if(req.requestType('json')) return res.send(character.get({plain:true}))
+    if(req.requestType('json')) return res.send(req.character.get({plain:true}))
     if(req.requestType('modal')) return res.render('modals/_success', {title:"Character Deleted", redirect:req.headers.referer || "/pc"})
     return res.redirect('/pc')
   })
   .catch(next)
+
+  // db.Character.findOne({where: {id:req.params.id}})
+  // .then(character => {
+  //   throw null;
+  //   if(!req.user.hasCharacter(character)) throw Common.error.authorization('You are not authorized to delete this character')
+  //   return character.destroy();
+  // }).then(character => {
+  //   if(req.requestType('json')) return res.send(character.get({plain:true}))
+  //   if(req.requestType('modal')) return res.render('modals/_success', {title:"Character Deleted", redirect:req.headers.referer || "/pc"})
+  //   return res.redirect('/pc')
+  // })
+  // .catch(next)
 });
 
-characterRouter.use('/journal',require('./journal'))
+characterRouter.use('/journal', require('./journal'));
+characterRouter.use('/items', require('./items'));
 
 module.exports = router;

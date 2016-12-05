@@ -3,10 +3,10 @@ var router = express.Router();
 
 // you can get back to the journal index from this module at any time by rediredting to req.baseURL
 router.use((req,res,next)=> {
-  res.locals.THEME = req.session.theme || 'journal'
-  return req.character.getJournals()
-  .then(journals => {
-    req.character.Journals = journals
+  res.locals.THEME = req.session.theme || 'stone'
+  return req.character.getItems()
+  .then(items => {
+    req.character.Items = items
     return next();
   })
   .catch(next)
@@ -21,17 +21,18 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
 
 router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
 
-  return db.Journal.create({
+  db.Journal.create({
     title: req.body.title,
     body: req.body.body,
+
   })
   .then(function(journal){
     return req.character.addJournal(journal)
   })
   .then(function(){
+
     return res.redirect(req.headers.referer || req.baseUrl)
   })
-  .catch(next)
 
 })
 
@@ -42,45 +43,47 @@ router.get('/new', Common.middleware.requireCharacter, (req,res,next) => {
 
 })
 
-router.use('/:id', (req,res,next) => {
-  return db.Journal.findOne({where: {CharacterId: req.character.id, id:req.params.id}})
-  .then(entry => {
-    if(!entry) throw Common.error.notfound('Journal entry')
-    res.locals.entry = entry
-    throw null
-  })
-  .catch(next)
-})
-
 router.get('/:id', (req,res,next) => {
-  if(req.requestType('modal')) return res.render('characters/journal/modals/entry',{character:req.character})
-  return res.render('characters/journal/entry',{character:req.character})
+  db.Journal.findOne({
+    where: {id:req.params.id}
+  })
+  .then(function(entry){
+    if(req.requestType('modal')) return res.render('characters/journal/modals/entry',{character:req.character, entry:entry})
+    return res.render('characters/journal/entry',{character:req.character, entry:entry})
+  })
 });
 
 router.get('/:id/edit', Common.middleware.requireCharacter, (req,res,next) => {
-  if(req.requestType('modal')) return res.render('characters/journal/modals/edit',{character:req.character})
-  return res.render('characters/journal/edit',{character:req.character})
+  db.Journal.findOne({
+    where: {id:req.params.id}
+  })
+  .then(function(entry){
+    if(req.requestType('modal')) return res.render('characters/journal/modals/edit',{character:req.character, entry:entry})
+    return res.render('characters/journal/edit',{character:req.character, entry:entry})
+  })
 });
 
 router.post('/:id', Common.middleware.requireCharacter, (req,res,next) => {
-  for(key in req.body) res.locals.entry[key] = req.body[key]
-
-  return res.locals.entry.save()
+  return db.Journal.findOne({where: {id:req.params.id}})
   .then(entry => {
-    res.locals.entry = entry
-
+    for(key in req.body) entry[key] = req.body[key]
+    return entry.save()
+  })
+  .then(entry => {
     if(req.requestType('modal')) return res.render('characters/journal/_entry',{character:req.character, entry:entry})
     return res.redirect(req.baseUrl)
   })
   .catch(next)
-
 })
 
 router.delete('/:id', Common.middleware.requireCharacter, (req,res,next) => {
-
-  return req.character.hasJournal(res.locals.entry)
-  .then(owned => {
-    if(!owned) throw Common.error.authorization('You')
+  return db.Journal.findOne({where: {CharacterId: req.character.id, id:req.params.id}})
+  .then(entry => {
+    if(!entry) throw null
+    return req.character.hasJournal(entry)
+    .then(owned => {
+      if(!owned) throw Common.error.authorization('You')
+    })
 
     if(req.requestType('json')) return res.send(entry)
     if(req.requestType('modal')) return res.render('modals/_success')

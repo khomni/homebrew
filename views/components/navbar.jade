@@ -2,13 +2,13 @@ mixin navlink(options)
   case options.button
     when true
       li
-        form(action=options.url method="post")
+        form(action=options.url method="post")&attributes(attributes)
           block if block
           button(type="submit")= options.text
     default
-      li(style=options.color ? {color: options.color} :"")&attributes(attributes)
+      li(style=options.color ? {color: options.color} :"")
         block if block
-        a(href=options.url)= options.text
+        a(href=options.url)&attributes(attributes)= options.text
         
 mixin dropdown(options)
   if !block
@@ -31,7 +31,7 @@ nav#nav
           +navlink({url:'/pc/create', text: 'Create a Character'})
         +dropdown({id:'campaignmenu',text:"Campaign"})
           +navlink({url:'/c', text: 'Find Campaign'})
-          +navlink({url:'/c/new', text: 'Create Campaign'})(data-modal="/c/new")
+          +navlink({url:'/c/new', text: 'Create Campaign'})(data-response="modal")
       +filter(activeChar)
         +dropdown({id:'charactermenu', text: activeChar.name})
           +navlink({url:'/pc/' + activeChar.id,text:'Status'})
@@ -58,10 +58,11 @@ nav#nav
         +navlink({url:'/u/'+currentUser.username, text: 'Profile'})
         +navlink({url:'/settings', text: 'Settings'})
         +navlink({url:'/logout', text: 'Log Out'})
+        +navlink({url:'/settings/theme', text: 'Theme'})(data-response="modal")
     +filter(!currentUser)
       +navlink({url:'/about',text:'About'})
       +dropdown({id: 'account', text:'Log In / Sign Up'})(class="signup")
-        +navlink({url:'/login', text: 'Log In'})(data-modal='/login')
-        +navlink({url:'/signup', text: 'Sign Up'})(data-modal='/signup')
+        +navlink({url:'/login', text: 'Log In'})(data-response="modal")
+        +navlink({url:'/signup', text: 'Sign Up'})(data-response="modal")
     +filter(currentUser)
       

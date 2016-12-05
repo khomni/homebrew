@@ -1,0 +1,28 @@
+.modal-dialog
+  .modal-content
+    form#changeTheme(name='theme' action='/settings/theme' method='post' data-response="json")
+      .modal-title Set Default Theme
+      .modal-body
+        .flex.distribute.pad
+          label.radio
+            input(type="radio" name="theme" value="default" required checked=!THEME)
+            span Default
+          label.radio
+            input(type="radio" name="theme" value="marble" required checked=(THEME=='marble'))
+            span Marble
+          label.radio
+            input(type="radio" name="theme" value="stone" required checked=(THEME=='stone'))
+            span Stone
+          label.radio
+            input(type="radio" name="theme" value="wood" required checked=(THEME=='wood'))
+            span Wood
+          label.radio
+            input(type="radio" name="theme" value="journal" required checked=(THEME=='journal'))
+            span Journal
+      .modal-footer
+        button.btn.block(type='submit') Set Theme
+
+script.
+  document.getElementById('changeTheme').addEventListener('data',function(e){
+    document.getElementById('content-main').classList = e.detail.theme
+  })

@@ -34,6 +34,7 @@ mixin vignette(vignette,i,color)
     -for(i=0;i<3;i++){color.push(Math.floor((Math.random()*127.5)+63.75))}
     -vignetteAttributes['style']['background-color'] = "rgb("+color+")"
   .vignette&attributes(vignetteAttributes)
+  .attribution= vignette.attribution
     
 mixin section(title)
   section

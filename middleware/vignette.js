@@ -39,7 +39,7 @@ module.exports = (req,res,next) => {
     if(err) return next(err);
     var vignettes = require(APPROOT+'/data/vignettes.json');
     req.app.locals.vignettes = vignettes;
-    next();
+    return next();
   })
 
 }

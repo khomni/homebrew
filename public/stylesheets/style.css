@@ -640,6 +640,15 @@ header .vignettes .vignette {
   -o-animation: vignette 20s forwards;
   animation: vignette 20s forwards;
 }
+header .vignettes .attribution {
+  color: white;
+  opacity: 0.25;
+  padding: 0.5rem;
+  font-style: italic;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
 header::after {
   content: "";
   display: block;
@@ -1470,15 +1479,15 @@ body.modal-open {
   background: url('/images/textures/leather.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #da9 0%, #000 100%);
   background-blend-mode: multiply;
 }
-#content-main.journal a {
-  color: #d45a00;
-}
 #content-main.journal section {
   background-image: url('/images/textures/journal.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #eee 0%, #ddcC99 100%);
   background-blend-mode: soft-light;
   border-color: rgba(153, 138, 92, 0.5);
   border-radius: 3px;
   color: #986246;
+}
+#content-main.journal section a:not(.btn) {
+  color: #2da5cc;
 }
 #content-main.journal section :not(.btn) {
   border-color: rgba(153, 138, 92, 0.5);
@@ -1490,6 +1499,43 @@ body.modal-open {
 #content-main.journal section .journal-markup p,
 #content-main.journal section .journal-markup blockquote {
   color: #986246;
+}
+#content-main.stone {
+  background: url('/images/textures/brick.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #ddd 0%, #000 100%);
+  background-blend-mode: multiply;
+}
+#content-main.stone section {
+  background-image: url('/images/textures/brick.jpg'), linear-gradient(to bottom, #fff 0%, #ccc 100%);
+  background-blend-mode: multiply;
+  color: #eee;
+  border: 1px solid rgba(51, 51, 51, 0.5);
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+}
+#content-main.stone section :not(.btn):not(hr) {
+  border-color: rgba(0, 0, 0, 0.5);
+}
+#content-main.stone section hr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  border-top: 1px solid rgba(0, 0, 0, 0.25);
+}
+#content-main.stone section a:not(.btn) {
+  color: #2da5cc;
+}
+#content-main.wood {
+  background: url('/images/textures/wood.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #ddd 0%, #000 100%);
+  background-blend-mode: multiply;
+}
+#content-main.wood section {
+  background-image: url('/images/textures/marble.jpg'), linear-gradient(to bottom, #fff 0%, #ccc 100%);
+  background-blend-mode: multiply;
+  color: #eee;
+}
+#content-main.wood section :not(.btn) {
+  border-color: rgba(0, 0, 0, 0.5);
+}
+#content-main.wood section a:not(.btn) {
+  color: #2da5cc;
 }
 #nav {
   color: #eee;

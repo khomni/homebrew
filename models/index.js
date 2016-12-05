@@ -32,7 +32,7 @@ module.exports = sequelize.authenticate()
     for(key in doc) {
       if(typeof doc[key] == 'function') methods.push(key)
     }
-    return methods
+    return methods.sort()
   }
 
   return Promise.map(Object.keys(db),function(modelName){

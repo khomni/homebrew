@@ -24,28 +24,40 @@ function serialize(form) {
 var Ajax = {
   // set up the DOM listeners
   setListeners: function() {
-    var forms = document.getElementsByTagName('form')
-    for(i=0; i<forms.length;i++) {
-      (function(j){forms[j].addEventListener('submit',function(e){
-        var thisForm = this
-        e.preventDefault();
-        var Modal = require('./modal');
-        Ajax.html({
-          method: thisForm.getAttribute('method'),
-          url: this.action,
-          headers:{
-            modal:true,
-          },
-          body:forms[j]
-        })
-        .then(response =>{
-          Modal.createModal(response);
-        })
-        .catch(err =>{
-          Modal.createModal(err);
-        })
-      })})(i);
-    }
+    document.addEventListener('submit',function(e){
+      var thisForm = e.target;
+      if(!thisForm.dataset.response) return true;
+      e.preventDefault();
+      e.stopPropagation();
+
+      var Modal = require('./modal');
+
+      return Ajax.fetch({
+        method: thisForm.getAttribute('method'),
+        url: thisForm.action,
+        headers:{
+          modal:thisForm.dataset.response == 'modal',
+          Accept: thisForm.dataset.response == 'json' ? 'application/json' : undefined,
+        },
+        body:thisForm
+      })
+      .then(response =>{
+        //: TODO: figure out what the router sent and handle appropriately
+        if(thisForm.dataset.response == 'json') return response.json()
+        return response.text()
+      })
+      .then(response => {
+        if(thisForm.dataset.response == 'modal') Modal.createModal(response);
+        if(thisForm.dataset.response == 'json') {
+          var dataEvent = new CustomEvent('data',{detail: response})
+          thisForm.dispatchEvent(dataEvent)
+        }
+      })
+      .catch(err =>{
+        Modal.createModal(err);
+      })
+
+    })
   },
 
   promise: function(args){
@@ -113,7 +125,7 @@ var Ajax = {
   },
   html: function(args) {
     args.headers = args.headers || {}
-    Object.assign(args.headers, {'Content-Type': 'text/html', 'Accept': 'text/html'});
+    Object.assign({'Content-Type': 'text/html', 'Accept': 'text/html'}, args.headers);
     return this.fetch(args).then(response => {return response.text()});
   },
 
