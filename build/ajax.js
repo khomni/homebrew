@@ -47,7 +47,8 @@ var Ajax = {
         return response.text()
       })
       .then(response => {
-        if(thisForm.dataset.response == 'modal') Modal.createModal(response);
+        if(thisForm.dataset.response == 'none') return Modal.hideModal()
+        if(thisForm.dataset.response == 'modal') return Modal.createModal(response);
         if(thisForm.dataset.response == 'json') {
           var dataEvent = new CustomEvent('data',{detail: response})
           thisForm.dispatchEvent(dataEvent)

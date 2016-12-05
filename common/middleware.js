@@ -16,10 +16,7 @@ module.exports = {
 
     return req.user.hasCharacter(res.locals.character)
     .then(owned => {
-      if(owned) {
-        if(res.locals.character.id == req.user.MainCharId) res.locals.character.active = true
-        throw null // if the user owns the character, continue
-      }
+      if(owned) throw null // if the user owns the character, continue
 
       return res.locals.character.getCampaign()
       .then(campaign => {

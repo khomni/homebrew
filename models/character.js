@@ -46,6 +46,15 @@ module.exports = function(sequelize, DataTypes) {
     },
   }, {
     classMethods: {
+      relationships: (charArray) => {
+        return Promise.map(charArray, char => {
+          return char.getRelationship({relationshipId: {$in:charArray.map(c=>{return c.id})}})
+          .then(relationships => {
+            char.Relationships = relationships.map(function(r){return r.Relationship})
+            return char
+          })
+        })
+      },
       associate: (models) => {
         // a character is part of a campaign, so it contains a reference to that campaign
         Character.belongsTo(models.Campaign, {constraints: false});

@@ -10,5 +10,10 @@ block header
 
 block content
   .content-body
-    +section()
+    if character.active
+    if !character.active
+      section
+        .section-footer
+          .flex.pad.center
+            a.btn(href='/pc/'+character.id+'/connect' data-response="modal") Relate to #{character.getName('first')}
       

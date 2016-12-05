@@ -60,7 +60,7 @@ router.use('/:id', (req,res,next) => {
   return db.Character.findOne({where: {id: req.params.id}})
   .then(character => {
     if(!character) throw Common.error.notfound('Character')
-    req.character = character
+    if(character.id == req.user.MainCharId) character.active = true
     res.locals.character = character
     throw null
   })
@@ -82,6 +82,18 @@ characterRouter.post('/', Common.middleware.requireCharacter, (req,res,next) => 
   return res.redirect('/'+req.params.id)
 })
 
+characterRouter.delete('/', Common.middleware.requireCharacter, (req,res,next) => {
+
+  return res.locals.character.destroy()
+  .then(character => {
+    if(req.requestType('json')) return res.send(res.locals.character.get({plain:true}))
+    if(req.requestType('modal')) return res.render('modals/_success', {title: res.locals.character.name + " deleted", redirect:req.headers.referer || "/pc"})
+    return res.redirect('/pc')
+  })
+  .catch(next)
+
+});
+
 characterRouter.post('/select', Common.middleware.requireCharacter, (req,res,next) => {
 
   return req.user.setMainChar(res.locals.character)
@@ -95,17 +107,59 @@ characterRouter.post('/select', Common.middleware.requireCharacter, (req,res,nex
 
 })
 
-characterRouter.delete('/', Common.middleware.requireCharacter, (req,res,next) => {
+characterRouter.get('/connect', (req,res,next) => {
 
-  return res.locals.character.destroy()
-  .then(character => {
-    if(req.requestType('json')) return res.send(res.locals.character.get({plain:true}))
-    if(req.requestType('modal')) return res.render('modals/_success', {title: res.locals.character.name + " deleted", redirect:req.headers.referer || "/pc"})
-    return res.redirect('/pc')
+  return req.user.getMainChar()
+  .then(activeChar => {
+    return db.Character.relationships([activeChar, res.locals.character])
+    .then(relationships => {
+      console.log('active:',activeChar.Relationships[0])
+      console.log('character:',res.locals.character.Relationships[0])
+      res.locals.activeChar = activeChar
+
+      if(req.requestType('modal')) return res.render('characters/_connect.jade')
+    })
+    // .catch(console.error)
+
+
+
+    // return Promise.props({
+    //   // get the active character's attitude towards the routed character
+    //   activeChar: activeChar.getRelationship({relationshipId:res.locals.character.id}).then(arr=>{return arr[0]}),
+    //   character: res.locals.character.getRelationship({CharacterId:activeChar.id}).then(arr=>{return arr[0]})
+    // })
+    // .then(results => {
+    //
+    //   res.locals.activeChar = activeChar
+    //   // console.log('active:',activeChar.get({plain:true}))
+    //   // console.log(results.activeChar.get({plain:true}))
+    //   // console.log('routed:',res.locals.character.get({plain:true}))
+    //   // console.log(!results.character || results.character.get({plain:true}))
+    //
+    // })
   })
   .catch(next)
 
-});
+})
+
+characterRouter.post('/connect', Common.middleware.requireCharacter, (req,res,next) => {
+
+  return req.user.getMainChar()
+  .then(activeChar => {
+    return activeChar.setRelationship(res.locals.character,{quality:req.body.quality})
+  })
+  .then(results => {
+    console.log(results)
+    return res.send(results)
+
+  })
+  .catch(next)
+
+  return next()
+
+})
+
+
 
 characterRouter.use('/journal', require('./journal'));
 characterRouter.use('/inventory', require('./items'));

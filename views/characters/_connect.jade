@@ -1,0 +1,15 @@
+.modal-dialog
+  .modal-content
+    form(name='connect' action='/pc/'+character.id+'/connect' method='post' data-response="none")
+      if !entry
+        .modal-title Connect With #{character.getName('first')}
+      .modal-body
+        .flex.distribute
+          div
+            label #{activeChar.getName('first')}' Attitude
+            input.form-input(type='number' min=-100 max=100 value=(activeChar.Relationships[0] ? activeChar.Relationships[0].quality : false) name="quality")
+          div
+            label #{character.getName('first')}'s Attitude
+            input.form-input(type='number' min=-100 max=100 value=(character.Relationships[0] ? character.Relationships[0].quality : false) disabled)
+      .modal-footer
+          button.btn.block(type='submit') Update Relationship
