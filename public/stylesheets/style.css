@@ -895,7 +895,7 @@ section .section-footer {
 }
 .flex {
   display: flex;
-  flex-flow: row-wrap;
+  flex-flow: row wrap;
 }
 .flex.pad {
   margin: -0.5rem;
@@ -1478,13 +1478,17 @@ body.modal-open {
 #content-main.journal {
   background: url('/images/textures/leather.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #da9 0%, #000 100%);
   background-blend-mode: multiply;
+  perspective: 1000px;
+  perspective-origin: bottom;
 }
 #content-main.journal section {
   background-image: url('/images/textures/journal.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #eee 0%, #ddcC99 100%);
+  background-position: 50% 0%;
   background-blend-mode: soft-light;
-  border-color: rgba(153, 138, 92, 0.5);
+  border-color: #998a5c;
   border-radius: 3px;
   color: #986246;
+  box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.25);
 }
 #content-main.journal section a:not(.btn) {
   color: #2da5cc;

@@ -24,7 +24,10 @@ block content
             a(href="/c/"+character.Campaign.url)= character.Campaign.name
         .section-footer
           .flex.pad
-            if currentUser.hasCharacter(character) && currentUser.MainCharId != character.id
-              form(action="/pc/"+character.id+"/select" method="post")
-                button.btn Select
+            a.btn(href="/pc/"+character.id) Character Sheet
+            +charOwned(character,true)
+              +charActive(character,false)
+                form(action="/pc/"+character.id+"/select" method="post")
+                  button.btn Select
+            +charActive(character,false)
               a.btn(href="/pc/"+character.id+"/relationship/new" data-response="modal") relate

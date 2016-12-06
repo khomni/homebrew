@@ -25,7 +25,7 @@ router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
     body: req.body.body,
   })
   .then(journal => {
-    return req.character.addJournal(journal)
+    return res.locals.character.addJournal(journal)
   })
   .then(() => {
     return res.redirect(req.headers.referer || req.baseUrl)
@@ -37,7 +37,7 @@ router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
 router.get('/new', Common.middleware.requireCharacter, (req,res,next) => {
 
   if(req.requestType('modal')) return res.render('characters/journal/modals/edit')
-  return res.render('character/journal/edit',{character:req.character})
+  return res.render('character/journal/edit')
 
 })
 
@@ -45,7 +45,7 @@ router.get('/new', Common.middleware.requireCharacter, (req,res,next) => {
 // the journal entry will be queried by this middleware then added to res.locals.entry
 
 router.use('/:id', (req,res,next) => {
-  return db.Journal.findOne({where: {CharacterId: req.character.id, id:req.params.id}})
+  return db.Journal.findOne({where: {CharacterId: res.locals.character.id, id:req.params.id}})
   .then(entry => {
     if(!entry) throw Common.error.notfound('Journal entry')
     res.locals.entry = entry
@@ -56,12 +56,12 @@ router.use('/:id', (req,res,next) => {
 
 router.get('/:id', (req,res,next) => {
   if(req.requestType('modal')) return res.render('characters/journal/modals/entry')
-  return res.render('characters/journal/entry',{character:req.character})
+  return res.render('characters/journal/entry')
 });
 
 router.get('/:id/edit', Common.middleware.requireCharacter, (req,res,next) => {
   if(req.requestType('modal')) return res.render('characters/journal/modals/edit')
-  return res.render('characters/journal/edit',{character:req.character})
+  return res.render('characters/journal/edit')
 });
 
 router.post('/:id', Common.middleware.requireCharacter, (req,res,next) => {
@@ -80,11 +80,11 @@ router.post('/:id', Common.middleware.requireCharacter, (req,res,next) => {
 
 router.delete('/:id', Common.middleware.requireCharacter, (req,res,next) => {
 
-  return req.character.hasJournal(res.locals.entry)
+  return res.locals.character.hasJournal(res.locals.entry)
   .then(owned => {
-    if(!owned) throw Common.error.authorization('You')
+    if(!owned) throw Common.error.authorization('You cannot delete this')
 
-    if(req.requestType('json')) return res.send(entry)
+    if(req.requestType('json')) return res.send(res.locals.entry)
     if(req.requestType('modal')) return res.render('modals/_success')
     return res.redirect(req.baseUrl);
   })
