@@ -18,13 +18,11 @@ module.exports = {
     .then(owned => {
       if(owned) throw null // if the user owns the character, continue
 
+      // check to see what campaign the character belongs to
       return res.locals.character.getCampaign()
       .then(campaign => {
         if(!campaign) throw Common.error.authorization("You do not have permission to access this resource")
-        return campaign.hasOwner(req.user)
-      })
-      .then(owned => {
-        if(owned) throw null
+        if(campaign.OwnerId === req.user.id) throw null
         throw Common.error.authorization("You do not have permission to access this resource")
       })
     })
@@ -32,9 +30,12 @@ module.exports = {
   },
 
   requireGM: (req,res,next) => {
+    if(!res.locals.campaign) return next();
+    if(!req.user) return next(Common.error.authorization("You must be logged in as the GM to access this resource"));
+    if(req.user.admin) return next();
 
-
-    return next();
+    if(res.locals.campaign.OwnerId === req.user.id) return next();
+    return next(Common.error.authorization("You must be logged in as the GM to access this resource"))
   }
 
 

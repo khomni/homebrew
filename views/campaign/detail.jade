@@ -10,9 +10,14 @@ block header
 
 block content
   .content-body
+    +section('Contents')
+      .flex.center.pad
+        a.btn(href="/c/"+campaign.url+"/characters") Characters
+        a.btn(href="/c/"+campaign.url+"/quests") Quests
+        a.btn(href="/c/"+campaign.url+"/codex") Codex
     +section('Actions')
       .btn-group
-        a.btn(href="/pc/create?campaign="+campaign.id) Create a character in this campaign
+        a.btn(href="/c/"+campaign.url+"/characters/create") Create a character in this campaign
         if currentUser.id == campaign.Owner.id
-          form(action="/c/"+campaign.id, method="DELETE")
+          form(action="/c/"+campaign.url, method="DELETE")
             button.btn(type="submit") Delete This Campaign

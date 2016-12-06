@@ -1,14 +1,30 @@
 extends ../layout
 
 block title
-  title= "Characters"
+  title Characters
   
-//- block header
+block header
   +header
-    .header-item.page-title 
+    .header-item.page-title
       span Characters
+    if campaign
+      .header-item
+        a(href="/c/"+campaign.url)= campaign.name
 
 block content
   .content-body
     for character in characters
-      +section(character.name) 
+      section
+        .section-title
+          .float.left= character.name
+          .float.right
+            .timestamp= character.updatedAt.toLocaleString()
+        if character.Campaign
+          .section-body
+            a(href="/c/"+character.Campaign.url)= character.Campaign.name
+        .section-footer
+          .flex.pad
+            if currentUser.hasCharacter(character) && currentUser.MainCharId != character.id
+              form(action="/pc/"+character.id+"/select" method="post")
+                button.btn Select
+              a.btn(href="/pc/"+character.id+"/relationship/new" data-response="modal") relate

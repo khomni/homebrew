@@ -4,25 +4,20 @@ var router = express.Router();
 /* GET users listing. */
 router.get('/', (req, res, next) => {
   if(!req.user) return next();
-  db.Character.findAll({
-    where: {UserId: req.user.id},
-    include: [
-      {model: db.Lore, as: 'lore'},
-    ],
+  var query = {}
+  var include = []
+
+  return Promise.method(function(){
+    if(res.locals.campaign) return db.Character.findAll({where:{CampaignId:res.locals.campaign.id}})
+    return db.Character.findAll({include:[{model:db.Campaign}], order: [['CampaignId'],['name']]})
+  })()
+  .then(characters => {
+    return res.render('characters/', {characters:characters})
   })
-  .then( characters => {
-    res.render('characters/', {characters:characters})
-  })
-  .catch(next);
+  .catch(next)
 });
 
-router.post('/',(req,res,next) => {
-  if(!req.user) {
-    err = new Error();
-    err.message = "You must be logged in"
-    err.status = 403
-    return next(err);
-  }
+router.post('/', Common.middleware.requireUser, (req,res,next) => {
 
   var character = db.Character.create({
     npc: false,
@@ -42,15 +37,8 @@ router.post('/',(req,res,next) => {
   }).catch(next);
 });
 
-router.get('/create', (req, res, next) => {
-  if(!req.user) {
-    err = new Error();
-    err.message = "You must be logged in"
-    err.status = 403
-    return next(err);
-  }
-  var races = require(APPROOT + '/system/races')
-  res.render('characters/new', {context:req.query})
+router.get('/create', Common.middleware.requireUser, (req, res, next) => {
+  return res.render('characters/new')
 });
 
 var characterRouter = express.Router({mergeParams: true});
@@ -105,35 +93,6 @@ characterRouter.post('/select', Common.middleware.requireCharacter, (req,res,nex
   })
   .catch(next)
 
-})
-
-characterRouter.get('/connect', (req,res,next) => {
-
-  return req.user.getMainChar()
-  .then(activeChar => {
-    return db.Character.relationships([activeChar, res.locals.character])
-    .then(relationships => {
-      res.locals.activeChar = activeChar
-
-      if(req.requestType('modal')) return res.render('characters/_connect.jade')
-    })
-  })
-  .catch(next)
-
-})
-
-characterRouter.post('/connect', Common.middleware.requireCharacter, (req,res,next) => {
-
-  return req.user.getMainChar()
-  .then(activeChar => {
-    return activeChar.setRelationship(res.locals.character,{quality:req.body.quality})
-  })
-  .then(results => {
-    return res.send(results)
-
-  })
-  .catch(next)
-  return next()
 })
 
 

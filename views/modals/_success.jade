@@ -1,9 +1,9 @@
 .modal-dialog(data-redirect=redirect)
   .modal-content
     .modal-title= title || "Success"
-    .modal-body= body      
+    .modal-body= body
     .modal-footer
       if links
         .btn-group
           each link in links
-            a.btn(href=link.href)= link.text    
+            a.btn(href=link.href)= link.text

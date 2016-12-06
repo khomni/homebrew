@@ -32,52 +32,47 @@ router.post('/',Common.middleware.requireUser, (req,res,next) => {
 
 });
 
-router.get('/:id',(req,res,next) => {
-  //
+var campaignRouter = express.Router({mergeParams: true});
+
+router.use('/:id', (req,res,next) => {
   var query = isNaN(req.params.id) ? {url:req.params.id} : {id:req.params.id}
-  db.Campaign.findOne({
+  return db.Campaign.findOne({
     where: query,
-    include: [
-      {model: db.User.scope('public'), as: 'Owner'},
-    ],
+    include: [{model: db.User.scope('public'), as: 'Owner'}]
   })
   .then(campaign => {
-    if(!campaign) return next();
-    // campaign.Owner.id == req.user.id
-    console.log(campaign.get({plain:true}))
-
-    if(req.requestType('json')) return res.send(campaign.get({plain:true}))
-    if(req.requestType('modal')) return res.render('campaign/_detail',{campaign:campaign.get({plain:true})})
-    return res.render('campaign/detail',{campaign:campaign.get({plain:true})})
+    res.locals.campaign = campaign
+    return next()
   })
   .catch(next)
+
+}, campaignRouter)
+
+// get campaign info
+campaignRouter.get('/',(req,res,next) => {
+  if(req.requestType('json')) return res.send(res.locals.campaign.get({plain:true}))
+  if(req.requestType('modal')) return res.render('campaign/_detail')
+  return res.render('campaign/detail')
 });
 
-router.post('/:id', Common.middleware.requireUser, (req,res,next) => {
-  db.Campaign.findOne({where: {id:req.params.id}})
+// edit campaign
+campaignRouter.post('/', Common.middleware.requireGM, (req,res,next) => {
+
+  for(key in req.body) res.locals.campaign[key] = req.body[key]
+
+  return res.locals.campaign.save()
   .then(campaign => {
-    if(!req.user.hasCharacter(character)) throw Common.error.authorization("You don't have permission to modify that character");
-    return res.redirect('/'+req.params.id)
+
+    if(req.requestType('modal')) return res.send('modals/_success',{title:'Campaign Updated'})
+    return res.redirect(req.headers.referer)
   })
-  .catch(next)
 
-  return next();
-})
+});
 
-router.delete('/:id',Common.middleware.requireUser, (req,res,next) => {
+campaignRouter.delete('/', Common.middleware.requireGM, (req,res,next) =>{
+  return res.redirect(req.headers.referer)
+});
 
-  db.Campaign.findOne({where: {id:req.params.id}})
-  .then(campaign => {
-    if(!req.user.id==campaign.Owner.id) throw Common.error.authorization('You do not have permission to delete this campaign')
-    return campaign.destroy()
-  })
-  .then(() => {
-
-    if(req.requestType('json')) return res.sendStatus(200)
-    if(req.requestType('modal')) return res.render('modals/_success', {title:"Campaign Deleted", redirect:'/c'})
-    return res.redirect('/pc')
-  })
-  .catch(next)
-})
+campaignRouter.use('/characters', require('../character'))
 
 module.exports = router;
