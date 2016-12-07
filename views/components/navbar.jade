@@ -35,7 +35,7 @@ nav#nav
       +filter(currentUser.activeChar)
         +dropdown({id:'charactermenu', text: currentUser.activeChar.name})
           +navlink({url:'/pc/' + currentUser.activeChar.id,text:'Status'})
-          +navlink({url:'/pc/'+ currentUser.activeChar.id + '/inventory',text:'Inventory'})
+          +navlink({url: currentUser.activeChar.url + '/inventory',text:'Inventory'})
           +navlink({url:'/pc/' + + currentUser.activeChar.id + '/journal',text:'Journal'})
           
       //- Campaign Menu

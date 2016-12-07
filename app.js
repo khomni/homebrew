@@ -18,7 +18,6 @@ var app = express();
 // connect to the databse before doing anything else
 sequelize.sync()
 .then(() => {return require(APPROOT+'/models')})
-.catch(err => {console.error('[database]',err.stack)})
 .then(db => {
   global.db = db
 

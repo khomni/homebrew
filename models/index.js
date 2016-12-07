@@ -21,6 +21,19 @@ module.exports = sequelize.authenticate()
     db[model.name] = model;
   });
 
+  Promise.map(Object.keys(db), (modelName) => {
+    if (db[modelName].associate) db[modelName].associate(db);
+    if(!process.env.NODE_ENV == 'local') return Promise.resolve();
+    return db[modelName].findOne()
+    .catch(err =>{ // if table encounters an error, force sync it
+      console.error(colors.red('[database] model definition error:',err))
+      return db[modelName].sync({force:true}).then(results=>{
+        console.log(results,'has been resynced')
+      })
+    })
+  })
+
+
   Object.keys(db).forEach(function(modelName) {
     if (db[modelName].associate) {
       db[modelName].associate(db);
@@ -36,7 +49,12 @@ module.exports = sequelize.authenticate()
   }
 
   return Promise.map(Object.keys(db),function(modelName){
-    if(db[modelName] instanceof Sequelize.Model) return db[modelName].sync()
+    if(db[modelName] instanceof Sequelize.Model) {
+      return db[modelName].sync()
+      .catch(err => {
+        console.error(err)
+      })
+    }
   })
   .then(results => {
     db.sequelize = sequelize

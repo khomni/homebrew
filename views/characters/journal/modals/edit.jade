@@ -1,6 +1,6 @@
 .modal-dialog
   .modal-content
-    form(name='journal' action='/pc/'+character.id+'/journal' + (entry?'/'+entry.id:'') method='post')
+    form(name='journal' action=character.url+'/journal' + (entry?'/'+entry.id:'') method='post')
       if !entry
         .modal-title New Journal Entry
       .modal-body

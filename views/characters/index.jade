@@ -9,7 +9,7 @@ block header
       span Characters
     if campaign
       .header-item
-        a(href="/c/"+campaign.url)= campaign.name
+        a(href=campaign.url)= campaign.name
 
 block content
   .content-body
@@ -17,30 +17,30 @@ block content
       section
         .section-title
           .float.left
-            a(href=character.uri)= character.name
+            a(href=character.url)= character.name
           .float.right
             .timestamp= character.updatedAt.toLocaleString()
         if character.Campaign
           .section-body
-            a(href="/c/"+character.Campaign.url)= character.Campaign.name
+            a(href=character.Campaign.url)= character.Campaign.name
         .section-footer
           .flex.pad
             //- if character.isActiveChar(currentUser)
               .flex.vert.border.pad
                 .flex.center: label Active Actions
                 .flex.center
-                  form(action=character.uri+"/select" method="post")
+                  form(action=character.url+"/select" method="post")
                     button.btn Select
             if character.ownedBy(currentUser)
               .flex.vert.border.pad
                 .flex.center: label Owned Actions
                 .flex.center.pad
-                  form(action=character.uri+"/select" method="post")
+                  form(action=character.url+"/select" method="post")
                     button.btn(disabled=character.isActiveChar(currentUser)) Select
-                  a.btn(action=character.uri+"/edit" data-response="modal") Edit
+                  a.btn(href=character.url+"/edit" data-response="modal") Edit
             +charActive(character,false)
               .flex.vert.border.pad
                 .flex.center: label Interactions
                 .flex.center.pad
-                  a.btn(href=character.uri+"/relationship/new" data-response="modal") Relate
-                  a.btn(href=character.uri+"/chat" data-response="modal") Chat
+                  a.btn(href=character.url+"/relationship/new" data-response="modal") Relate
+                  a.btn(href=character.url+"/chat" data-response="modal") Chat

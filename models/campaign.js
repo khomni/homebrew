@@ -14,6 +14,9 @@ module.exports = function(sequelize, DataTypes) {
       unique: true,
       validate: {
         len: [0,32]
+      },
+      get: function() {
+        return '/c/' + (this.getDataValue('url') || this.id)
       }
     }
   }, {

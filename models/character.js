@@ -4,10 +4,14 @@ module.exports = function(sequelize, DataTypes) {
   var Character = sequelize.define("Character", {
     // virtual field for obtainin the character url
     // should only have forward slashes preceding the route
-    uri: { 
-      type: DataTypes.VIRTUAL,
+    url: {
+      type: DataTypes.STRING,
+      unique: true,
+      validate: {
+        len: [0,32]
+      },
       get: function() {
-        return '/pc/' + this.id
+        return '/pc/' + (this.getDataValue('url') || this.id)
       }
     },
     // character name is an array of strings

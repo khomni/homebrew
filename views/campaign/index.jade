@@ -12,6 +12,6 @@ block content
   .content-body
     for campaign in campaigns
       +section(campaign.name) 
-        a(href='/c/'+campaign.url) See this Campaign
+        a(href=campaign.url) See this Campaign
     a(href='/c/new' data-response='modal') Start a Campaign
     

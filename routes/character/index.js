@@ -28,11 +28,13 @@ router.post('/', Common.middleware.requireUser, (req,res,next) => {
     UserId: req.user.id
   })
   .then(pc => {
+    console.log(pc.url)
     return req.user.addCharacter(pc)
     .then((user)=>{
       if(req.requestType('json')) return res.send(pc.get({plain:true}))
-      if(req.requestType('modal')) return res.render('modals/_success', {title: "Character Created", body:"Good job", redirect:'/pc/'+pc.id})
-      return res.redirect('/pc/'+pc.id);
+      if(req.requestType('modal')) return res.render('modals/_success', {title: "Character Created", body:"Good job", redirect:pc.url})
+
+      return res.redirect(pc.url);
     })
   }).catch(next);
 });
