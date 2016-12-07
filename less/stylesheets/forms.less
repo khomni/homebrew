@@ -142,10 +142,14 @@ input {
 
 	&.block {
 		display: block;
-    margin: auto;
+		margin: auto;
 		&.full {
 			width: 100%;
 		}
+	}
+
+	&[disabled] {
+		color: #999;
 	}
 
 }

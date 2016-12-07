@@ -39,19 +39,25 @@
 }
 
 .marble-ui() {
-  	border: none;
-  	background: #ddd;
-  	color: @color-dark;
-  	box-shadow: 0px 1px 1px fade(black,50%);
-  	background: url('/images/textures/marble.jpg'), @spotlight;
-    background-blend-mode: soft-light;
-    border-radius: 2px;
-    border: 1px solid fade(black,25%);
-    .inset-text();
-  	transition: 0.25s;
-  	// &:hover {
-  	// 	color: @color-primary;
-  	// }
+  border: none;
+  background: #ddd;
+  color: @color-dark;
+  box-shadow: 0px 1px 1px fade(black,50%);
+  background: url('/images/textures/marble.jpg'), @spotlight;
+  background-blend-mode: soft-light;
+  border-radius: 2px;
+  border: 1px solid fade(black,25%);
+  .inset-text();
+  transition: 0.25s;
+  // &:hover {
+  // 	color: @color-primary;
+  // }
+  &[disabled] {
+    background: url('/images/textures/marble.jpg'), radial-gradient(ellipse 200% 200% at 50% 0%, #ddd 0%, #999 100%);
+    box-shadow: 0 0 1px fade(black,50%);
+    cursor: default;
+    transform: translateY(1px);
+  }
 }
 
 .animation(@rules) {

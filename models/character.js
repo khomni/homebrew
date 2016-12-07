@@ -2,10 +2,14 @@
 
 module.exports = function(sequelize, DataTypes) {
   var Character = sequelize.define("Character", {
-    // identifier: {
-    //   type: DataTypes.STRING,
-    //   primaryKey: true
-    // },
+    // virtual field for obtainin the character url
+    // should only have forward slashes preceding the route
+    uri: { 
+      type: DataTypes.VIRTUAL,
+      get: function() {
+        return '/pc/' + this.id
+      }
+    },
     // character name is an array of strings
     // a character many have a name of any length
     name: {
@@ -108,6 +112,16 @@ module.exports = function(sequelize, DataTypes) {
       case "formal": return this.title + " " + this.name
       default: return this.name
     }
+  }
+
+  // returns true if the input user owns the character instance
+  Character.Instance.prototype.ownedBy = function(user) {
+    return user.id === this.UserId
+  }
+
+  // returns true if the input user has this character selected as their main
+  Character.Instance.prototype.isActiveChar = function(user) {
+    return user.MainCharId === this.id
   }
 
   return Character;

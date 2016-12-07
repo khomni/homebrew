@@ -13,7 +13,7 @@ block content
     if character.active
       +section()
         .btn-group
-          a.btn(href="/pc/"+character.id+"/journal/new" data-response="modal") New Entry
+          a.btn(href=character.uri+"/journal/new" data-response="modal") New Entry
     each entry in character.Journals
       section
         .section-title
@@ -25,8 +25,8 @@ block content
         if character.active
           .section-footer
             .flex.center.pad(data-pad="1em")
-              a.btn(href="/pc/"+character.id+"/journal/"+entry.id data-response="modal") View Entry
-              a.btn(href="/pc/"+character.id+"/journal/"+entry.id+"/edit" data-response="modal") Edit Entry
-              form(action="/pc/"+character.id+"/journal/"+entry.id method="delete" data-response="json")
+              a.btn(href=character.uri+"/journal/"+entry.id data-response="modal") View Entry
+              a.btn(href=character.uri+"/journal/"+entry.id+"/edit" data-response="modal") Edit Entry
+              form(action=character.uri+"/journal/"+entry.id method="delete" data-response="json")
                 button.btn Delete Entry
       

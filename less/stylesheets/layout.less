@@ -282,9 +282,17 @@ section {
 	}
 }
 
+&.border {
+	border: 1px solid fade(black,25%);
+}
+
 // sets a generic flexbox
 .flex {
 	display: flex;
+	max-width: 100%;
+	max-height: 100%;
+	align-items:stretch;
+
 	flex-flow: row wrap;
 
 	&.pad{
@@ -293,6 +301,8 @@ section {
 			margin: 0.5rem;
 		}
 	}
+
+
 
 	&.fill {
 		&>* {
@@ -312,15 +322,27 @@ section {
 	&.center {
 		justify-content: center;
 		align-items: center;
+		label {
+			text-align: center;
+		}
 	}
 
-	&.right {
+	&.js {
+		justify-content: flex-start;
+	}
+
+	&.as {
+		align-items: flex-start;
+	}
+
+	&.je {
 		justify-content: flex-end;
 	}
 
-	&.left {
-		justify-content: flex-start;
+	&.ae {
+		align-items: flex-end;
 	}
+
 
 	&.distribute {
 		justify-content: space-around;

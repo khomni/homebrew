@@ -25,18 +25,22 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
 
-    Campaign.hook('beforeCreate', (campaign, options) => {
-      if(!campaign.url) campaign.url = campaign.name
-      .replace(/[^a-zA-Z0-9_-\s]/gi,'') // remove unsafe characters (except whitespace)
-      .split(/\s+/) //split by whitespace
-      .reduce((a,b)=>{ // make sure only complete words are encoded
-        var length = a.reduce((a,b) => {return a+b.length+1},0)
-        if(length + b.length < 32) a.push(b)
-        return a
-      },[]).join('-')
+  Campaign.hook('beforeCreate', (campaign, options) => {
+    if(!campaign.url) campaign.url = campaign.name
+    .replace(/[^a-zA-Z0-9_-\s]/gi,'') // remove unsafe characters (except whitespace)
+    .split(/\s+/) //split by whitespace
+    .reduce((a,b)=>{ // make sure only complete words are encoded
+      var length = a.reduce((a,b) => {return a+b.length+1},0)
+      if(length + b.length < 32) a.push(b)
+      return a
+    },[]).join('-')
 
-      return Promise.resolve()
-    })
+    return Promise.resolve()
+  })
+
+  Campaign.Instance.prototype.ownedBy = function(user) {
+    return user.id === this.OwnerId
+  }
 
   return Campaign;
 };

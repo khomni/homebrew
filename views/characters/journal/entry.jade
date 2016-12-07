@@ -19,7 +19,7 @@ block content
           span — #[a(href='/pc/'+character.id)= character.name] #{entry.updatedAt.toLocaleString()}
     +section('Actions')
       .flex.center.pad(data-pad="1em")
-        a.btn(href="/pc/"+character.id+"/journal/"+entry.id data-response="modal") Edit Entry
-        form(action="/pc/"+character.id+"/journal/"+entry.id method="delete" data-response="modal")
+        a.btn(href=character.uri+"/journal/"+entry.id data-response="modal") Edit Entry
+        form(action=character.uri+"/journal/"+entry.id method="delete" data-response="modal")
           button.btn Delete Entry
       

@@ -6,13 +6,13 @@ mixin characterCard(character)
           if character.portrait
             img(src=character.portrait.src)
         .character-stats
-          .name(href="/pc/"+character.id)= character.name
+          .name(href=character.uri)= character.name
           if currentUser.id === character.UserId
             .btn-group
-              a.btn(href="/pc/"+character.id) Character Sheet
-              form(action="/pc/"+character.id+"/select" method="POST")
+              a.btn(href=character.uri) Character Sheet
+              form(action=character.uri+"/select" method="POST")
                 button.btn(type="submit") Set As Main
-              form(action="/pc/"+character.id method="delete" data-response="modal")
+              form(action=character.uri method="delete" data-response="modal")
                 button.btn(type="submit") Delete
 
 mixin charOwned(character,bool)

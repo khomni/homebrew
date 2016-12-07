@@ -893,8 +893,14 @@ section .section-footer {
 .timestamp:hover {
   opacity: 0.5;
 }
+.border {
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
 .flex {
   display: flex;
+  max-width: 100%;
+  max-height: 100%;
+  align-items: stretch;
   flex-flow: row wrap;
 }
 .flex.pad {
@@ -917,11 +923,20 @@ section .section-footer {
   justify-content: center;
   align-items: center;
 }
-.flex.right {
+.flex.center label {
+  text-align: center;
+}
+.flex.js {
+  justify-content: flex-start;
+}
+.flex.as {
+  align-items: flex-start;
+}
+.flex.je {
   justify-content: flex-end;
 }
-.flex.left {
-  justify-content: flex-start;
+.flex.ae {
+  align-items: flex-end;
 }
 .flex.distribute {
   justify-content: space-around;
@@ -1021,6 +1036,13 @@ section .section-footer {
   height: 1em;
   vertical-align: middle;
 }
+.checkbox span:before[disabled],
+.radio span:before[disabled] {
+  background: url('/images/textures/marble.jpg'), radial-gradient(ellipse 200% 200% at 50% 0%, #ddd 0%, #999 100%);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+  cursor: default;
+  transform: translateY(1px);
+}
 .checkbox :checked + span,
 .radio :checked + span {
   color: #ff9d55;
@@ -1071,6 +1093,12 @@ section .section-footer {
   justify-content: center;
   padding: 0.5em;
 }
+.btn[disabled] {
+  background: url('/images/textures/marble.jpg'), radial-gradient(ellipse 200% 200% at 50% 0%, #ddd 0%, #999 100%);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+  cursor: default;
+  transform: translateY(1px);
+}
 .btn:hover,
 .btn:focus {
   color: #ff9d55;
@@ -1081,6 +1109,9 @@ section .section-footer {
 }
 .btn.block.full {
   width: 100%;
+}
+.btn[disabled] {
+  color: #999;
 }
 .btn-group {
   display: flex;
@@ -1320,6 +1351,12 @@ body.modal-open {
   text-decoration: none;
   color: #333;
   overflow: hidden;
+}
+.character-card-container .character-card[disabled] {
+  background: url('/images/textures/marble.jpg'), radial-gradient(ellipse 200% 200% at 50% 0%, #ddd 0%, #999 100%);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+  cursor: default;
+  transform: translateY(1px);
 }
 @media (min-width: 720px) {
   .character-card-container .character-card {

@@ -16,7 +16,8 @@ block content
     for character in characters
       section
         .section-title
-          .float.left= character.name
+          .float.left
+            a(href=character.uri)= character.name
           .float.right
             .timestamp= character.updatedAt.toLocaleString()
         if character.Campaign
@@ -24,10 +25,22 @@ block content
             a(href="/c/"+character.Campaign.url)= character.Campaign.name
         .section-footer
           .flex.pad
-            a.btn(href="/pc/"+character.id) Character Sheet
-            +charOwned(character,true)
-              +charActive(character,false)
-                form(action="/pc/"+character.id+"/select" method="post")
-                  button.btn Select
+            //- if character.isActiveChar(currentUser)
+              .flex.vert.border.pad
+                .flex.center: label Active Actions
+                .flex.center
+                  form(action=character.uri+"/select" method="post")
+                    button.btn Select
+            if character.ownedBy(currentUser)
+              .flex.vert.border.pad
+                .flex.center: label Owned Actions
+                .flex.center.pad
+                  form(action=character.uri+"/select" method="post")
+                    button.btn(disabled=character.isActiveChar(currentUser)) Select
+                  a.btn(action=character.uri+"/edit" data-response="modal") Edit
             +charActive(character,false)
-              a.btn(href="/pc/"+character.id+"/relationship/new" data-response="modal") relate
+              .flex.vert.border.pad
+                .flex.center: label Interactions
+                .flex.center.pad
+                  a.btn(href=character.uri+"/relationship/new" data-response="modal") Relate
+                  a.btn(href=character.uri+"/chat" data-response="modal") Chat
