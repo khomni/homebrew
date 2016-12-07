@@ -17,7 +17,7 @@ passport.deserializeUser(function(user, done){
 passport.use(new LocalStrategy({usernameField: 'email', passwordField: 'password',passReqToCallback: true},
   function(req, email, password, done){
     console.log("[Passport] Using Local Strategy")
-    var user = db.User.find({where: {email: email}})
+    var user = db.User.find({where: {$or: [{email: email}, {username: email}]}})
     .then(user => {
       if(!user) return done(null)
       passwd = user ? user.password : ''

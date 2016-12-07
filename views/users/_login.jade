@@ -3,6 +3,6 @@
     .modal-title Log In
     .modal-body 
       form(name='login' action='/login' method='post')
-        input.form-input(type='email' required name='email' placeholder="email")
+        input.form-input(name='email' placeholder="Username or email" required)
         input.form-input(type='password' required name='password' placeholder="password" value="")
         button.btn.block(type='submit') Log In

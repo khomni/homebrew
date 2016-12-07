@@ -22,47 +22,41 @@ nav#nav
   ul.navlinks
     +navlink({url:"/", text: "Home"})
     
-    +filter(currentUser)
-    
-      //- Character Menu
-      +filter(!currentUser.activeChar)
+    if currentUser
+      
+      //- CHARACTER MENU
+      if !currentUser.activeChar
         +dropdown({id:'charselect',text:"Character"})
           +navlink({url:'/pc', text: 'Select Character'})
           +navlink({url:'/pc/create', text: 'Create a Character'})
         +dropdown({id:'campaignmenu',text:"Campaign"})
           +navlink({url:'/c', text: 'Find Campaign'})
           +navlink({url:'/c/new', text: 'Create Campaign'})(data-response="modal")
-      +filter(currentUser.activeChar)
+      else
         +dropdown({id:'charactermenu', text: currentUser.activeChar.name})
-          +navlink({url:'/pc/' + currentUser.activeChar.id,text:'Status'})
+          +navlink({url: currentUser.activeChar.url, text:'Status'})
           +navlink({url: currentUser.activeChar.url + '/inventory',text:'Inventory'})
-          +navlink({url:'/pc/' + + currentUser.activeChar.id + '/journal',text:'Journal'})
+          +navlink({url: currentUser.activeChar.url + '/journal',text:'Journal'})
           
-      //- Campaign Menu
-      +filter(activeChar && !currentUser.activeChar.campaign)
-        +navlink({url: '/c/', text:'Find Campaign'})
-      +filter(activeChar && currentUser.activeChar.campaign)
-        +dropdown({id: 'campaignmenu', text: 'Campaign'})
-          +navlink({url:'/c/'+currentUser.activeChar.campaign.id+'/quests',text:'Quest'})
-          +navlink({url:'/c/'+currentUser.activeChar.campaign.id+'/maps',text:'Maps'})
-          
-      //- Party Menu
-      +filter(currentUser.activeChar && campaign && !party)
-        +navlink({url: '/p', text:'Join Party'})
-      +filter(party)
-        +dropdown({id:'partymenu', text: 'Party'})
-          each member in party
-            +navlink({url:'/pc/' + member.id, text: member.name})
-            
+        //- CAMPAIGN MENU
+        if !currentUser.activeChar.campaign
+          +navlink({url: '/c/', text:'Find Campaign'})
+        else
+          +dropdown({id: 'campaignmenu', text: 'Campaign'})
+            +navlink({url: currentUser.activeChar.Campaign.url+'/quests',text:'Quest'})
+            +navlink({url: currentUser.activeChar.Campaign.url+'/maps',text:'Maps'})
+        
+            if !currentUser.activeChar.party
+              +navlink({url: currentUser.activeChar.campaign.url + '/parties/', text:'Join Party'})
+      
+      
       +dropdown({id: 'accountmenu', text: 'Account'})
         +navlink({url:'/u/'+currentUser.username, text: 'Profile'})
         +navlink({url:'/settings', text: 'Settings'})
         +navlink({url:'/logout', text: 'Log Out'})
         +navlink({url:'/settings/theme', text: 'Theme'})(data-response="modal")
-    +filter(!currentUser)
+    else
       +navlink({url:'/about',text:'About'})
       +dropdown({id: 'account', text:'Log In / Sign Up'})(class="signup")
         +navlink({url:'/login', text: 'Log In'})(data-response="modal")
         +navlink({url:'/signup', text: 'Sign Up'})(data-response="modal")
-    +filter(currentUser)
-      

@@ -13,6 +13,11 @@ block header
 
 block content
   .content-body
+    if campaign
+      section
+        .section-body
+          .flex.pad
+            a.btn(href=campaign.url+'/characters/create') Create Character
     for character in characters
       section
         .section-title
@@ -23,24 +28,19 @@ block content
         if character.Campaign
           .section-body
             a(href=character.Campaign.url)= character.Campaign.name
-        .section-footer
-          .flex.pad
-            //- if character.isActiveChar(currentUser)
-              .flex.vert.border.pad
-                .flex.center: label Active Actions
-                .flex.center
-                  form(action=character.url+"/select" method="post")
-                    button.btn Select
-            if character.ownedBy(currentUser)
-              .flex.vert.border.pad
-                .flex.center: label Owned Actions
-                .flex.center.pad
-                  form(action=character.url+"/select" method="post")
-                    button.btn(disabled=character.isActiveChar(currentUser)) Select
-                  a.btn(href=character.url+"/edit" data-response="modal") Edit
-            +charActive(character,false)
-              .flex.vert.border.pad
-                .flex.center: label Interactions
-                .flex.center.pad
-                  a.btn(href=character.url+"/relationship/new" data-response="modal") Relate
-                  a.btn(href=character.url+"/chat" data-response="modal") Chat
+        if currentUser
+          .section-footer
+            .flex.pad
+              if character.ownedBy(currentUser)
+                .flex.vert.border.pad
+                  .flex.center: label Owned Actions
+                  .flex.center.pad
+                    form(action=character.url+"/select" method="post")
+                      button.btn(disabled=character.isActiveChar(currentUser)) Select
+                    a.btn(href=character.url+"/edit" data-response="modal") Edit
+              else
+                .flex.vert.border.pad
+                  .flex.center: label Interactions
+                  .flex.center.pad
+                    a.btn(href=character.url+"/relationship/new" data-response="modal" disabled=!currentUser.activeChar) Relate
+                    a.btn(href=character.url+"/chat" data-response="modal" disabled=!currentUser.activeChar) Chat

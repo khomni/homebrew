@@ -22,10 +22,9 @@ body {
 a {
 	color: @color-primary;
 	transition: 0.5s;
-	// &:hover{
-	// 	color: lighten(@color-primary, 50%);
-	// 	text-shadow: 0px 0px 3px @color-primary;
-	// }
+	&[disabled] {
+		pointer-events:none;
+	}
 }
 
 hr {

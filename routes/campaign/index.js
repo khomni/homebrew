@@ -26,7 +26,7 @@ router.post('/',Common.middleware.requireUser, (req,res,next) => {
   campaign.setOwner(req.user)
   campaign.save()
   .then((campaign) => {
-    return res.redirect('/c/'+campaign.url)
+    return res.redirect(campaign.url)
   })
   .catch(next)
 
@@ -73,6 +73,7 @@ campaignRouter.delete('/', Common.middleware.requireGM, (req,res,next) =>{
   return res.redirect(req.headers.referer)
 });
 
-campaignRouter.use('/characters', require('../character'))
+campaignRouter.use('/characters', require('../character'));
+// campaignRouter.use('/quests', require('../character'));
 
 module.exports = router;

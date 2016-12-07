@@ -55,7 +55,6 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       relationships: (charArray) => {
-        console.log('searching for relationships between:',charArray.map(c=>{return c.id}))
         return Promise.map(charArray, char => {
           return char.getRelationship({where: {id: {$in:charArray.map(c=>{return c.id})}}})
           .then(relationships => {
@@ -64,7 +63,6 @@ module.exports = function(sequelize, DataTypes) {
               keyed[b.id]= b.Relationship
             },false)
             char.Relationships = keyed
-            console.log(char.name+"'s relationships:",JSON.stringify(keyed))
             return char
           })
         })

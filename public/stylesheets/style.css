@@ -462,6 +462,9 @@ a {
   color: #ff9d55;
   transition: 0.5s;
 }
+a[disabled] {
+  pointer-events: none;
+}
 hr {
   border: none;
   border-bottom: 1px solid #ddd;

@@ -15,9 +15,13 @@ block content
         a.btn(href=campaign.url+"/characters") Characters
         a.btn(href=campaign.url+"/quests") Quests
         a.btn(href=campaign.url+"/codex") Codex
-    +section('Actions')
-      .btn-group
-        a.btn(href=campaign.url+"/characters/create") Create a character in this campaign
-        if currentUser.id == campaign.Owner.id
-          form(action=campaign.url, method="DELETE")
-            button.btn(type="submit") Delete This Campaign
+    if campaign.ownedBy(currentUser)
+      section
+        .section-body
+          .flex.pad
+            .flex.vert.border.pad
+              .flex.center: label GM Actions
+              .flex.center.pad
+                a.btn(href=campaign.url+'/edit') Edit
+                form(action=campaign.url, method="DELETE")
+                  button.btn(type="submit") Delete
