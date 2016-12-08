@@ -913,9 +913,6 @@ section .section-footer {
   align-items: stretch;
   flex-flow: row wrap;
 }
-.flex.pad {
-  margin: -0.5rem;
-}
 .flex.pad > * {
   margin: 0.5rem;
 }

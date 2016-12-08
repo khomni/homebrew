@@ -13,14 +13,6 @@ block content
     section
       .section-body
         .journal-markup!= markdown(quest.description)
-    section
-      .section-body
-        if campaign.ownedBy(currentUser)
-          .flex.center.pad
-            a.btn(href=quest.id+'/add' data-response="modal") Add Subquest
-            a.btn(href=quest.id+"/edit" data-response="modal") Edit Quest
-            form(action=campaign.url+'/quests/'+quest.id method="delete" data-response="json")
-              button.btn Delete Quest
     if quest.subQuests
       section
         .section-body
@@ -29,3 +21,11 @@ block content
             .flex.center
               each subquest in quest.subQuests
                 +quest(subquest)
+    if campaign.ownedBy(currentUser)
+      section
+        .section-body
+          .flex.center.pad
+            a.btn(href=quest.id+'/add' data-response="modal") Add Subquest
+            a.btn(href=quest.id+"/edit" data-response="modal") Edit Quest
+            form(action=campaign.url+'/quests/'+quest.id method="delete" data-response="json")
+              button.btn Delete Quest

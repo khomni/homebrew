@@ -30,7 +30,7 @@ router.get('/new', Common.middleware.requireGM, (req,res,next) => {
 
 var questRouter = express.Router({mergeParams: true});
 
-router.use('/:id', Common.middleware.requireGM, (req,res,next) => {
+router.use('/:id', (req,res,next) => {
   return db.Quest.findOne({where:{id:req.params.id}, include:[{all:true, nested:true}]})
   .then(quest => {
     if(!quest) throw next(Common.error.notfound('Quest'))
@@ -47,7 +47,7 @@ questRouter.get('/', (req,res,next) => {
   return res.render('campaign/quests/detail')
 });
 
-questRouter.post('/', (req,res,next) => {
+questRouter.post('/', Common.middleware.requireGM, (req,res,next) => {
 
   for(key in req.body) res.locals.quest[key] = req.body[key]
 
@@ -72,7 +72,7 @@ questRouter.post('/add', Common.middleware.requireGM, (req,res,next) => {
   .catch(next)
 })
 
-questRouter.delete('/', (req,res,next) => {
+questRouter.delete('/', Common.middleware.requireGM, (req,res,next) => {
 
   return res.locals.quest.destroy()
   .then(quest => {
@@ -81,7 +81,7 @@ questRouter.delete('/', (req,res,next) => {
   return next();
 });
 
-questRouter.get('/edit', (req,res,next) => {
+questRouter.get('/edit', Common.middleware.requireGM, (req,res,next) => {
   if(req.requestType('modal')) return res.render('campaign/quests/modals/edit');
 })
 
