@@ -4,9 +4,8 @@ var router = express.Router();
 router.get('/', (req,res,next) => {
   if(!res.locals.campaign) return next();
 
-  return res.locals.campaign.getQuests({include: [{ all: true}]})
+  return res.locals.campaign.getQuests({include: [{ all: true, nested: true}]})
   .then(quests => {
-    console.log(quests)
     res.locals.quests = quests
     return res.render('campaign/quests/index')
   })
@@ -32,7 +31,7 @@ router.get('/new', Common.middleware.requireGM, (req,res,next) => {
 var questRouter = express.Router({mergeParams: true});
 
 router.use('/:id', Common.middleware.requireGM, (req,res,next) => {
-  return db.Quest.findOne({where:{id:req.params.id}, include:[{all:true}]})
+  return db.Quest.findOne({where:{id:req.params.id}, include:[{all:true, nested:true}]})
   .then(quest => {
     if(!quest) throw next(Common.error.notfound('Quest'))
     res.locals.quest = quest
@@ -42,6 +41,22 @@ router.use('/:id', Common.middleware.requireGM, (req,res,next) => {
 }, questRouter)
 
 questRouter.get('/', (req,res,next) => {
+
+  console.log(res.locals.quest.subQuests)
+
+  return res.render('campaign/quests/detail')
+});
+
+questRouter.post('/', (req,res,next) => {
+
+  for(key in req.body) res.locals.quest[key] = req.body[key]
+
+  return res.locals.quest.save()
+  .then(quest => {
+    return res.redirect(req.headers.referer)
+  })
+  .catch(next)
+
   return res.render('campaign/quests/detail')
 });
 
@@ -52,7 +67,6 @@ questRouter.get('/add', Common.middleware.requireGM, (req,res,next) => {
 questRouter.post('/add', Common.middleware.requireGM, (req,res,next) => {
   return res.locals.quest.createSubQuest(req.body)
   .then(quest => {
-    console.log(quest)
     return res.redirect(res.locals.campaign.url+'/quests/'+quest.id)
   })
   .catch(next)

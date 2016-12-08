@@ -1,8 +1,8 @@
 mixin quest(quest)
   .flex.vert
-    .flex.pad.center.no-size: a(href=campaign.url+"/quests/"+quest.id)=quest.name
+    .flex.center.no-size: a(href=campaign.url+"/quests/"+quest.id)=quest.name
     if quest.subQuests && quest.subQuests.length > 0
-      .flex.border.pad.vert
+      .flex.border.vert
         .flex.center: label Subquests
         .flex.center
           each subquest in quest.subQuests

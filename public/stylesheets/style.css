@@ -461,9 +461,15 @@ body {
 a {
   color: #ff9d55;
   transition: 0.5s;
+  text-decoration: none;
 }
 a[disabled] {
   pointer-events: none;
+}
+a:focus,
+a:hover {
+  outline: none;
+  text-decoration: underline;
 }
 hr {
   border: none;
@@ -908,7 +914,10 @@ section .section-footer {
   flex-flow: row wrap;
 }
 .flex.pad {
-  padding: 0.5rem;
+  margin: -0.5rem;
+}
+.flex.pad > * {
+  margin: 0.5rem;
 }
 .flex.fill > * {
   flex: 1;
@@ -1103,6 +1112,7 @@ section .section-footer {
 .btn:hover,
 .btn:focus {
   color: #ff9d55;
+  text-decoration: none;
 }
 .btn.block {
   display: block;
@@ -1599,7 +1609,8 @@ body.modal-open {
   opacity: 0.25;
   text-decoration: none;
 }
-.breadcrumbs .crumb a:hover {
+.breadcrumbs .crumb a:hover,
+.breadcrumbs .crumb a:focus {
   opacity: 1;
 }
 #nav {

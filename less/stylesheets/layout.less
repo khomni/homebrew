@@ -22,8 +22,15 @@ body {
 a {
 	color: @color-primary;
 	transition: 0.5s;
+	text-decoration:none;
+
 	&[disabled] {
 		pointer-events:none;
+	}
+
+	&:focus,&:hover {
+		outline:none;
+		text-decoration:underline;
 	}
 }
 
@@ -295,11 +302,10 @@ section {
 	flex-flow: row wrap;
 
 	&.pad{
-		padding: 0.5rem;
-		// margin: -0.5rem;
-		// &>* {
-		// 	margin: 0.5rem;
-		// }
+		margin: -0.5rem;
+		&>* {
+			margin: 0.5rem;
+		}
 	}
 
 
