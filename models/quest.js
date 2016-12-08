@@ -23,7 +23,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         // a quest can reference a parent quest if it is a subquest
-        Quest.hasMany(models.Quest, {as: 'subQuest'})
+        Quest.hasMany(models.Quest, {as: 'subQuests'})
       }
     }
   });

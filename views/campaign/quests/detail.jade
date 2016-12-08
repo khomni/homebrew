@@ -1,0 +1,31 @@
+extends /layout
+
+block title
+  title= quest.name
+  
+block header
+  +header
+    .header-item.page-title 
+      span= quest.name
+
+block content
+  .content-body
+    section
+      .section-body
+        .journal-markup!= markdown(quest.description)
+    section
+      .section-body
+        if campaign.ownedBy(currentUser)
+          .flex.center.pad
+            a.btn(href=quest.id+'/add' data-response="modal") Add Subquest
+            a.btn(href=quest.id+"/edit" data-response="modal") Edit Quest
+            form(action=campaign.url+'/quests/'+quest.id method="delete" data-response="json")
+              button.btn Delete Quest
+    if quest.subQuests
+      section
+        .section-body
+          .flex.border.pad.vert
+            .flex.center: label Subquests
+            .flex.center
+              each subquest in quest.subQuests
+                +quest(subquest)

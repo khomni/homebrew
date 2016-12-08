@@ -1,0 +1,15 @@
+.modal-dialog
+  .modal-content
+    form(name='quest' action=campaign.url+'/quests/' + (quest?quest.id:'') + (parent?parent.id+'/add':'') method='post')
+      if parent
+        .modal-title Subquest to #{parent.name}
+      else if quest
+        .modal-title Edit Quest
+      else
+        .modal-title New Quest Entry
+      .modal-body
+        input(type="hidden" name="parent" value=parent?parent.id:false)
+        input.form-input(type='text' required name='name' value=quest?quest.name:false)
+        textarea.form-input(type='text' name='description' height=300)=quest?quest.description:''
+      .modal-footer
+          button.btn.block(type='submit')= quest ? 'Update Quest' : 'Add Quest'

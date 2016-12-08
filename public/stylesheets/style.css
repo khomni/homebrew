@@ -908,10 +908,7 @@ section .section-footer {
   flex-flow: row wrap;
 }
 .flex.pad {
-  margin: -0.5rem;
-}
-.flex.pad > * {
-  margin: 0.5rem;
+  padding: 0.5rem;
 }
 .flex.fill > * {
   flex: 1;
