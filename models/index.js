@@ -28,7 +28,7 @@ module.exports = sequelize.authenticate()
     .catch(err =>{ // if table encounters an error, force sync it
       console.error(colors.red('[database] model definition error:',err))
       return db[modelName].sync({force:true}).then(results=>{
-        console.log(results,'has been resynced')
+        console.log('table '+results+' has been resynced')
       })
     })
   })

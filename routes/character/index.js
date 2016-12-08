@@ -47,11 +47,13 @@ var characterRouter = express.Router({mergeParams: true});
 
 // character router handles individual subpages that pertain to the individual character
 router.use('/:id', (req,res,next) => {
+  if(res.locals.character) return next();
   return db.Character.findOne({where: {id: req.params.id}})
   .then(character => {
     if(!character) throw Common.error.notfound('Character')
     if(character.id == req.user.MainCharId) character.active = true
     res.locals.character = character
+    res.locals.breadcrumbs.add(character.get({plain:true}))
     throw null
   })
   .catch(next)

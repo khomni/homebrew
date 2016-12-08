@@ -1,5 +1,28 @@
 @import '../mixins/mixins.less';
 
+.breadcrumbs {
+	position:relative;
+	.crumb {
+		color: @color-primary;
+
+		& + .crumb {
+			&:before {
+				content: '/';
+				padding: 0 0.5rem;
+				opacity: 0.25;
+			}
+		}
+
+		a {
+			opacity: 0.25;
+			text-decoration: none;
+			&:hover {
+				opacity: 1;
+			}
+		}
+	}
+}
+
 #nav {
 	color: @color-ui;
 	font-weight: 500;

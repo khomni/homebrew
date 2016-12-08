@@ -12,6 +12,13 @@ module.exports = function(sequelize, DataTypes) {
     description: {
       type: DataTypes.TEXT
     },
+    status: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      values: ['complete','active','failed']
+    },
+    visible: {
+      type: DataTypes.BOOLEAN,
+    }
   }, {
     classMethods: {
       associate: function(models) {

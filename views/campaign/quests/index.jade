@@ -1,0 +1,19 @@
+extends /layout
+
+block title
+  title Quests
+  
+block header
+  +header
+    .header-item.page-title 
+      span Quests
+
+block content
+  .content-body
+    for quest in quests
+      section
+        .section-title
+          a(href=quest.id)= quest.name
+        .section-body
+          .journal-markup!= markdown(quest.description)
+    

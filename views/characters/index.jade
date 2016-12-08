@@ -3,13 +3,12 @@ extends ../layout
 block title
   title Characters
   
-block header
+//- block header
   +header
     .header-item.page-title
       span Characters
-    if campaign
-      .header-item
-        a(href=campaign.url)= campaign.name
+    if breadcrumbs.length > 0
+      include /components/breadcrumbs
 
 block content
   .content-body

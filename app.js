@@ -61,6 +61,7 @@ sequelize.sync()
   app.use((req,res,next) => {
     res.locals.currentUser = req.user || false
     res.locals.THEME = req.session.theme || 'default'
+    res.locals.breadcrumbs = new Common.utilities.Breadcrumbs()
     next();
   });
 

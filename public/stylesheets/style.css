@@ -682,6 +682,7 @@ header::after {
   background-blend-mode: multiply;
   background-attachment: local, fixed;
   flex: 1;
+  z-index: 2;
 }
 @media (min-width: 720px) {
   #content-main .content-body {
@@ -1585,6 +1586,24 @@ body.modal-open {
 }
 #content-main.wood section a:not(.btn) {
   color: #2da5cc;
+}
+.breadcrumbs {
+  position: relative;
+}
+.breadcrumbs .crumb {
+  color: #ff9d55;
+}
+.breadcrumbs .crumb + .crumb:before {
+  content: '/';
+  padding: 0 0.5rem;
+  opacity: 0.25;
+}
+.breadcrumbs .crumb a {
+  opacity: 0.25;
+  text-decoration: none;
+}
+.breadcrumbs .crumb a:hover {
+  opacity: 1;
 }
 #nav {
   color: #eee;

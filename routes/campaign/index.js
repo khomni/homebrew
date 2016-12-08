@@ -35,6 +35,8 @@ router.post('/',Common.middleware.requireUser, (req,res,next) => {
 var campaignRouter = express.Router({mergeParams: true});
 
 router.use('/:id', (req,res,next) => {
+
+  if(res.locals.campaign) return next();
   var query = isNaN(req.params.id) ? {url:req.params.id} : {id:req.params.id}
   return db.Campaign.findOne({
     where: query,
@@ -42,6 +44,7 @@ router.use('/:id', (req,res,next) => {
   })
   .then(campaign => {
     res.locals.campaign = campaign
+    res.locals.breadcrumbs.add(campaign.get({plain:true}))
     return next()
   })
   .catch(next)
@@ -73,7 +76,7 @@ campaignRouter.delete('/', Common.middleware.requireGM, (req,res,next) =>{
   return res.redirect(req.headers.referer)
 });
 
-campaignRouter.use('/characters', require('../character'));
-// campaignRouter.use('/quests', require('../character'));
+campaignRouter.use('/pc', require('../character'));
+campaignRouter.use('/quests', require('./quests'));
 
 module.exports = router;
