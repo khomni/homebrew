@@ -72,8 +72,10 @@ campaignRouter.post('/', Common.middleware.requireGM, (req,res,next) => {
 
 });
 
-campaignRouter.delete('/', Common.middleware.requireGM, (req,res,next) =>{
-  return res.redirect(req.headers.referer)
+campaignRouter.delete('/', Common.middleware.requireGM, Common.middleware.confirmDelete, (req,res,next) =>{
+  return res.render('modals/_success',{title:"Campaign Deleted", redirect:'/c/'})
+  // return res.send(res.locals.campaign)
+  // return res.send('<h1>Just some html</h1>')
 });
 
 campaignRouter.use('/pc', require('../character'));

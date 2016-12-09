@@ -71,6 +71,7 @@ router.post('/:id', Common.middleware.requireCharacter, (req,res,next) => {
   .then(entry => {
     res.locals.entry = entry
 
+    if(req.requestType('json')) return res.json(entry)
     if(req.requestType('modal')) return res.render('characters/journal/_entry')
     return res.redirect(req.baseUrl)
   })
@@ -84,9 +85,14 @@ router.delete('/:id', Common.middleware.requireCharacter, (req,res,next) => {
   .then(owned => {
     if(!owned) throw Common.error.authorization('You cannot delete this')
 
-    if(req.requestType('json')) return res.send(res.locals.entry)
-    if(req.requestType('modal')) return res.render('modals/_success')
-    return res.redirect(req.baseUrl);
+    return res.locals.entry.destroy()
+    .then(entry => {
+
+      if(req.requestType('json')) return res.send(res.locals.entry)
+      if(req.requestType('modal')) return res.render('modals/_success')
+      return res.redirect(req.baseUrl);
+    })
+
   })
   .catch(next)
 })

@@ -5,6 +5,15 @@ module.exports = {
     return next();
   },
 
+  confirmDelete: (req,res,next) => {
+    if(req.body.confirm) return next();
+    res.locals.action = req.originalUrl
+    res.locals.body = req.body
+    return res.render('modals/confirmDelete')
+    // return res.redirect(req.headers.referer)
+    return next();
+  },
+
   // restrict the following routes to users who have permission to affect characters
   // Owners can access their own characters
   // GMs can access characters that are part of their campaign

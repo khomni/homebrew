@@ -12,6 +12,9 @@ router.get('/', (req, res, next) => {
     return db.Character.findAll({include:[{model:db.Campaign}], order: [['CampaignId'],['name']]})
   })()
   .then(characters => {
+
+    if(req.requestType('json')) return res.json(characters)
+
     return res.render('characters/', {characters:characters})
   })
   .catch(next)
@@ -61,7 +64,7 @@ router.use('/:id', (req,res,next) => {
 
 characterRouter.get('/',(req,res,next) => {
 
-  if(req.requestType('json')) return res.send(character.get({plain:true}))
+  if(req.requestType('json')) return res.json(res.locals.character.get({plain:true}))
   if(req.requestType('modal')) return res.render('characters/detail')
   return res.render('characters/detail')
 

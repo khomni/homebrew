@@ -1004,15 +1004,23 @@ section .section-footer {
 .radio {
   line-height: 1em;
   margin-right: 0.5em;
+  position: relative;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  cursor: -webkit-default;
+  cursor: -moz-default;
+  cursor: default;
 }
 .checkbox input[type='radio'],
 .radio input[type='radio'],
 .checkbox input[type='checkbox'],
 .radio input[type='checkbox'] {
   display: block;
-  width: 1px;
-  height: 1px;
+  bottom: 0;
   opacity: 0;
+  pointer-events: none;
+  position: absolute;
 }
 .checkbox span,
 .radio span {
@@ -1052,11 +1060,12 @@ section .section-footer {
 }
 .checkbox :checked + span,
 .radio :checked + span {
-  color: #ff9d55;
+  text-shadow: 0px 0px 4px #ff9d55;
 }
 .checkbox :checked + span:before,
 .radio :checked + span:before {
   color: #ff9d55;
+  border-color: #be906f;
 }
 .checkbox :focus + span,
 .radio :focus + span {
@@ -1064,7 +1073,7 @@ section .section-footer {
 }
 .checkbox :focus + span:before,
 .radio :focus + span:before {
-  box-shadow: 0 0 2px #ff9d55;
+  border-color: #be906f;
 }
 .radio {
   line-height: 1em;

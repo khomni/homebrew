@@ -102,6 +102,11 @@ app.use(function(req,res,next){
 // set the user's main character if applicable
 app.use(require(APPROOT+'/middleware/activeChar'));
 
+app.use('/json', (req,res,next)=>{
+  req.headers.accept = 'application/json'
+  return next();
+}, require(APPROOT+'/routes/index'))
+
 // router
 app.use('/', require(APPROOT+'/routes/index'));
 

@@ -2,6 +2,13 @@ include filters
 include character
 include quest
 
+mixin delete(object, options)
+  -options = options || {}
+  -var action = (options.action||object.url)
+  form(id=id, action=action method="delete" data-response="json")&attributes(attributes)
+    button.btn
+      block
+
 mixin logo(options)
   -options = options || {}
   -options.inline = options.inline || true

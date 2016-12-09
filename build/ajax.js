@@ -26,38 +26,40 @@ var Ajax = {
   setListeners: function() {
     document.addEventListener('submit',function(e){
       var thisForm = e.target;
-      if(!thisForm.dataset.response) return true;
+      // if the form doesn't specify a response and the form method is a normal post, then treat as a normal form submission
+      if(!thisForm.dataset.response && thisForm.getAttribute('method').toLowerCase() == 'post') return true;
       e.preventDefault();
       e.stopPropagation();
 
       var Modal = require('./modal');
 
+      // proprietary form handler!
       return Ajax.fetch({
-        method: thisForm.getAttribute('method'),
+        method: thisForm.getAttribute('method'), // supports PUT PATCH DELETE POST
         url: thisForm.action,
-        headers:{
+        headers:{ // allow the form to suggest ways of receiving the data
           modal:thisForm.dataset.response == 'modal',
           Accept: thisForm.dataset.response == 'json' ? 'application/json' : undefined,
         },
         body:thisForm
       })
       .then(response =>{
-        //: TODO: figure out what the router sent and handle appropriately
-        if(thisForm.dataset.response == 'json') return response.json()
-        return response.text()
-      })
-      .then(response => {
-        if(thisForm.dataset.response == 'none') return Modal.hideModal()
-        if(thisForm.dataset.response == 'modal') return Modal.createModal(response);
-        if(thisForm.dataset.response == 'json') {
-          var dataEvent = new CustomEvent('data',{detail: response})
-          thisForm.dispatchEvent(dataEvent)
+        var contentType = response.headers.get("content-type")
+        if(contentType.includes('application/json')) {
+          return response.json()
+          .then(json => {
+            var dataEvent = new CustomEvent('data',{detail: json, bubbles:true})
+            return thisForm.dispatchEvent(dataEvent)
+          })
         }
+        return response.text()
+        .then(html =>{
+          Modal.createModal(html);
+        })
       })
       .catch(err =>{
         Modal.createModal(err);
       })
-
     })
   },
 

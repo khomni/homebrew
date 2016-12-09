@@ -24,6 +24,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Campaign.hasMany(models.Quest);
         Campaign.belongsTo(models.User, {as: 'Owner'});
+        Campaign.hasOne(models.User, {as: 'User'});
       }
     }
   });

@@ -75,11 +75,14 @@ input {
 .checkbox,.radio {
 	line-height: 1em;
 	margin-right: 0.5em;
+	position: relative;
+	.no-select();
 	input[type='radio'],input[type='checkbox'] {
 		display: block;
-		width: 1px;
-		height: 1px;
+		bottom:0;
 		opacity: 0;
+		pointer-events:none;
+		position:absolute;
 	}
 	span {
 		.cursor(pointer);
@@ -95,19 +98,20 @@ input {
 			width: 1em;
 			height: 1em;
 			vertical-align: middle;
-
 		}
 	}
 	:checked + span {
-		color: @color-primary;
+		text-shadow: 0px 0px 4px @color-primary;
 		&:before {
 			color: @color-primary;
+			border-color: #be906f;
 		}
 	}
 	:focus + span {
 		text-shadow+: 0 0 2px @color-primary;
 		&:before {
-			box-shadow+: 0 0 2px @color-primary;
+			border-color: #be906f;
+			// box-shadow+: 0 0 2px @color-primary;
 		}
 	}
 }
