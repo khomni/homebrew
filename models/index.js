@@ -11,8 +11,9 @@ var sequelize = require(APPROOT+'/config/database')
 
 module.exports = sequelize.authenticate()
 .then(() =>{
-  fs
-  .readdirSync(__dirname)
+  console.log(colors.magenta('['+CONFIG.database.name+'] connected'))
+
+  fs.readdirSync(__dirname)
   .filter(function(file) {
     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
   })
@@ -20,45 +21,56 @@ module.exports = sequelize.authenticate()
     var model = sequelize['import'](path.join(__dirname, file));
     db[model.name] = model;
   });
+  console.log(colors.magenta('['+CONFIG.database.name+']',Object.keys(db).length,'models imported'))
 
-  Promise.map(Object.keys(db), (modelName) => {
-    if (db[modelName].associate) db[modelName].associate(db);
-    if(!process.env.NODE_ENV == 'local') return Promise.resolve();
-    return db[modelName].findOne()
-    .catch(err =>{ // if table encounters an error, force sync it
-      console.error(colors.red('[database] model definition error:',err))
-      return db[modelName].sync({force:true}).then(results=>{
-        console.log('table '+results+' has been resynced')
+  for(key in db) {
+    if(db[key].associate) db[key].associate(db)
+  }
+
+  // for each model, promise that it will successfully sync and can query results without error
+  return Promise.map(Object.keys(db), modelName => {
+    // not a sequelize model to sync
+    if(!db[modelName] instanceof Sequelize.Model) return Promise.resolve()
+
+    // try syncing the model to the database
+    return db[modelName].sync()
+    .then(model => {
+      // try to query a document in the model
+      return model.findOne()
+      .then(doc => {
+        // query succeeded, return the model
+        return model
+      })
+      .catch(err => {
+        // if it's not local, throw a critical error
+        if(!process.env.NODE_ENV == 'local') throw err;
+
+        // if it's local, retry the sync with {force: true}
+        return model.sync({force:true})
+        .then(model=>{
+          console.log(colors.magenta('['+CONFIG.database.name+']', model.name, 'force resynced'))
+          return model
+        })
       })
     })
   })
-
-
-  Object.keys(db).forEach(function(modelName) {
-    if (db[modelName].associate) {
-      db[modelName].associate(db);
-    }
-  });
-
-  db.getInstanceMethods = function(doc) {
-    var methods = []
-    for(key in doc) {
-      if(typeof doc[key] == 'function') methods.push(key)
-    }
-    return methods.sort()
-  }
-
-  return Promise.map(Object.keys(db),function(modelName){
-    if(db[modelName] instanceof Sequelize.Model) {
-      return db[modelName].sync()
-      .catch(err => {
-        console.error(err)
-      })
-    }
-  })
   .then(results => {
+    console.log(colors.magenta('['+CONFIG.database.name+']',results.length,'models synced'))
+
+    db.methods = function(doc,regex) {
+      var methods = []
+      for(key in doc) {
+        if(typeof doc[key] == 'function') methods.push(key)
+      }
+      if(regex && regex instanceof RegExp) methods = methods.filter(method => {return regex.test(method)})
+
+      return methods.sort().join(', ').grey
+    }
+
+
     db.sequelize = sequelize
     db.Sequelize = Sequelize
+
     return db
   })
 })

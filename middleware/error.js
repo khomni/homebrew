@@ -5,17 +5,13 @@ module.exports = (err, req, res, next) => {
   var errorActions = []
 
   if(err.name == 'SequelizeDatabaseError') {
-    console.error(err.sql)
+    console.error('['+CONFIG.database.name+']',err)
 
     // var modelName = err.sql.match(/FROM\s\"(.*?)\"/)
     // console.log(modelName,err.sql)
     // if(db[modelName]) errorActions.push(db[modelName].drop().then(()=>{return db[modelName].sync()}))
-  }
-
-  if(err.status % 400 > 99) {
-    console.error(err)
+  } else if(err.status % 400 > 99) {
     console.error(err.stack)
-
   }
 
 

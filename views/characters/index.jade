@@ -3,7 +3,7 @@ extends ../layout
 block title
   title Characters
   
-//- block header
+block header
   +header
     .header-item.page-title
       span Characters
@@ -17,6 +17,10 @@ block content
         .section-body
           .flex.pad
             a.btn(href=campaign.url+'/pc/create') Create Character
+            if currentUser && currentUser.activeChar
+              form(action=campaign.url+'/pc/'+currentUser.activeChar.id method="post")
+                input(type="hidden" name="CampaignId" value=campaign.id)
+                button.btn Move #{currentUser.activeChar.getName('first')} to this Campaign
     for character in characters
       section
         .section-title

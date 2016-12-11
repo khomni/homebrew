@@ -74,52 +74,57 @@ sequelize.sync()
     dest: path.join(__dirname,'public'),
     preprocess: {
       path: function(pathname, req) { // given a path, returns the same path with "/stylesheets/" replaced by "/"
-      return pathname.replace(path.sep + 'stylesheets' + path.sep, path.sep);
-    }
-  },
-  render: {
-    compress: app.get('env') !== 'local'
-  },
-  once: app.get('env') !== 'local', // only recompile on server restart if in production
-}));
+        return pathname.replace(path.sep + 'stylesheets' + path.sep, path.sep);
+      }
+    },
+    render: {
+      compress: app.get('env') !== 'local'
+    },
+    once: app.get('env') !== 'local', // only recompile on server restart if in production
+  }));
 
-app.use(express.static(path.join(__dirname, 'public')));
+  app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(logger('dev'));
+  app.use(logger('dev'));
 
-// set up the vignettes for the header and homepage
-app.use(require('./middleware/vignette'));
+  // set up the vignettes for the header and homepage
+  app.use(require('./middleware/vignette'));
 
-app.use(function(req,res,next){
-  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-  res.header('Expires', '-1');
-  res.header('Pragma', 'no-cache');
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Origin", "http://127.0.0.1:3000");
-  next();
-});
+  app.use(function(req,res,next){
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.header('Expires', '-1');
+    res.header('Pragma', 'no-cache');
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Origin", "http://127.0.0.1:3000");
+    next();
+  });
 
-// set the user's main character if applicable
-app.use(require(APPROOT+'/middleware/activeChar'));
+  // set the user's main character if applicable
+  app.use(require(APPROOT+'/middleware/activeChar'));
 
-app.use('/json', (req,res,next)=>{
-  req.headers.accept = 'application/json'
-  return next();
-}, require(APPROOT+'/routes/index'))
+  app.use('/json', (req,res,next)=>{
+    req.headers.accept = 'application/json'
+    return next();
+  }, require(APPROOT+'/routes/index'))
 
-// router
-app.use('/', require(APPROOT+'/routes/index'));
+  // router
+  app.use('/', require(APPROOT+'/routes/index'));
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+  // catch 404 and forward to error handler
+  app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+  });
 
-// error handler
-app.use(require(APPROOT+'/middleware/error'))
+  // error handler
+  app.use(require(APPROOT+'/middleware/error'))
 
+})
+.catch(err => {
+  console.error('Fatal Error: Could not start database')
+  console.error(err)
+  process.exit();
 })
 
 

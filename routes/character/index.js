@@ -21,24 +21,22 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', Common.middleware.requireUser, (req,res,next) => {
+  console.log(db.methods(req.user,/create/gi))
+  console.log(req.body)
 
-  var character = db.Character.create({
-    npc: false,
+  req.user.createCharacter({
     name: req.body.name,
     race: req.body.race,
     sex: req.body.sex,
-    CampaignId: req.body.campaign,
+    CampaignId: req.body.campaign || undefined,
     UserId: req.user.id
   })
   .then(pc => {
     console.log(pc.url)
-    return req.user.addCharacter(pc)
-    .then((user)=>{
-      if(req.requestType('json')) return res.send(pc.get({plain:true}))
-      if(req.requestType('modal')) return res.render('modals/_success', {title: "Character Created", body:"Good job", redirect:pc.url})
+    if(req.requestType('json')) return res.send(pc.get({plain:true}))
+    if(req.requestType('modal')) return res.render('modals/_success', {title: "Character Created", body:"Good job", redirect:pc.url})
 
-      return res.redirect(pc.url);
-    })
+    return res.redirect(pc.url);
   }).catch(next);
 });
 
@@ -72,9 +70,15 @@ characterRouter.get('/',(req,res,next) => {
 
 characterRouter.post('/', Common.middleware.requireCharacter, (req,res,next) => {
 
+  for(key in req.body) res.locals.character[key] = req.body[key]
+  return res.locals.character.save()
+  .then(character => {
+    return res.redirect(req.headers.referer||'/')
+
+  })
   // TODO: character editing interface
 
-  return res.redirect('/'+req.params.id)
+
 })
 
 characterRouter.delete('/', Common.middleware.requireCharacter, (req,res,next) => {
