@@ -12,7 +12,27 @@ block content
   .content-body
     section
       .section-body
-        .flex
-          each item in character.Items
-            pre= item
-      
+        .flex.center
+          a.btn(href="inventory/new" data-response="modal") New Item
+    section
+      .section-body
+        .flex.fill
+          table.table
+            thead
+              tr
+                th Name
+                th Value
+                th Weight
+                th
+            tbody
+              each item in character.Items
+                tr
+                  td= item.name
+                  td= item.value
+                  td= item.weight
+                  td
+                    .flex.je
+                      a.btn(href="inventory/"+item.id+"/edit" data-response="modal") Edit
+                      form(action="inventory/"+item.id method="delete")
+                        button.btn Delete
+        

@@ -22,6 +22,7 @@ function serialize(form) {
 }
 
 var Ajax = {
+
   // set up the DOM listeners
   setListeners: function() {
     document.addEventListener('submit',function(e){
@@ -122,13 +123,12 @@ var Ajax = {
 
   json: function(args) {
     args.headers = args.headers || {}
-    Object.assign({'Content-Type': 'application/json', 'Accept': 'application/json'}, args.headers);
-
-    return this.fetch(args).then(response => {return response.json()});
+    Object.assign(args.headers, {'Content-Type': 'application/json', 'Accept': 'application/json'});
+    return this.fetch(args).then(response => {return response.json().catch(err => {return response})});
   },
   html: function(args) {
     args.headers = args.headers || {}
-    Object.assign({'Content-Type': 'text/html', 'Accept': 'text/html'}, args.headers);
+    Object.assign(args.headers, {'Content-Type': 'text/html', 'Accept': 'text/html'});
     return this.fetch(args).then(response => {return response.text()});
   },
 

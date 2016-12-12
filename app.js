@@ -122,8 +122,8 @@ sequelize.sync()
 
 })
 .catch(err => {
-  console.error('Fatal Error: Could not start database')
-  console.error(err)
+  console.error('Fatal Error: error initializing application')
+  console.error(err.stack)
   process.exit();
 })
 

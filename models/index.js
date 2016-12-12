@@ -48,7 +48,7 @@ module.exports = sequelize.authenticate()
         // if it's local, retry the sync with {force: true}
         return model.sync({force:true})
         .then(model=>{
-          console.log(colors.magenta('['+CONFIG.database.name+']', model.name, 'force resynced'))
+          console.log(colors.black.bgMagenta('['+CONFIG.database.name+']', model.name, 'force resynced'))
           return model
         })
       })

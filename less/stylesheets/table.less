@@ -1,0 +1,41 @@
+table {
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+
+  .btn {
+    padding:0.25rem;
+  }
+
+  thead {
+    tr {
+      border-bottom: 1px solid;
+    }
+  }
+
+  table td.shrink {
+    white-space:nowrap
+}
+  table td.expand {
+      width: 99%
+  }
+
+  tbody{
+
+  }
+
+  tr {
+    &:hover,&:focus {
+      background: fade(@color-primary,25%);
+    }
+  }
+
+  th {
+    padding: 0.5rem;
+  }
+
+  th,td {
+    text-align:left;
+    padding: 0.25rem;
+  }
+}

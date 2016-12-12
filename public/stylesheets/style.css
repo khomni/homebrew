@@ -916,9 +916,6 @@ section .section-footer {
 .flex.pad > * {
   margin: 0.5rem;
 }
-.flex.fill > * {
-  flex: 1;
-}
 .flex > .grow {
   flex-grow: 1;
 }
@@ -932,6 +929,12 @@ section .section-footer {
 }
 .flex.center label {
   text-align: center;
+}
+.flex.fill {
+  align-items: stretch;
+}
+.flex.fill > * {
+  flex: 1;
 }
 .flex.js {
   justify-content: flex-start;
@@ -954,6 +957,35 @@ section .section-footer {
 .text-center {
   text-align: center;
 }
+table {
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+table .btn {
+  padding: 0.25rem;
+}
+table thead tr {
+  border-bottom: 1px solid;
+}
+table table td.shrink {
+  white-space: nowrap;
+}
+table table td.expand {
+  width: 99%;
+}
+table tr:hover,
+table tr:focus {
+  background: rgba(255, 157, 85, 0.25);
+}
+table th {
+  padding: 0.5rem;
+}
+table th,
+table td {
+  text-align: left;
+  padding: 0.25rem;
+}
 ::selection,
 ::-webkit-selection {
   color: white;
@@ -963,9 +995,20 @@ section .section-footer {
   background: white;
   border: none;
   padding: 0.5rem;
-  width: 100%;
   display: block;
   margin: 0.5em;
+  flex-grow: 1;
+  transition: 0.25s;
+}
+.form-input.pending {
+  -webkit-filter: drop-shadow(0px 0px 4px #91d2e7);
+  filter: drop-shadow(0px 0px 4px #91d2e7);
+  color: #91d2e7;
+}
+.form-input.loading {
+  -webkit-filter: drop-shadow(0px 0px 4px #ff9d55);
+  filter: drop-shadow(0px 0px 4px #ff9d55);
+  color: #ff9d55;
 }
 .form-group {
   margin: 1rem auto;

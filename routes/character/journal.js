@@ -20,14 +20,11 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
 
 router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
 
-  return db.Journal.create({
+  return res.locals.character.createJournal({
     title: req.body.title,
-    body: req.body.body,
+    body: req.body.body
   })
-  .then(journal => {
-    return res.locals.character.addJournal(journal)
-  })
-  .then(() => {
+  .then(journal =>{
     return res.redirect(req.headers.referer || req.baseUrl)
   })
   .catch(next)

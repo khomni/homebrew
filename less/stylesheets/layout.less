@@ -308,14 +308,6 @@ section {
 		}
 	}
 
-
-
-	&.fill {
-		&>* {
-			flex:1;
-		}
-	}
-
 	&>.grow {
 		flex-grow:1;
 	}
@@ -330,6 +322,13 @@ section {
 		align-items: center;
 		label {
 			text-align: center;
+		}
+	}
+
+	&.fill {
+		align-items:stretch;
+		&>* {
+			flex:1;
 		}
 	}
 

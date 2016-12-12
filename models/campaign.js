@@ -18,6 +18,16 @@ module.exports = function(sequelize, DataTypes) {
       get: function() {
         return '/c/' + (this.getDataValue('url') || this.id)
       }
+    },
+    // string describing what rules system the campaign uses
+    // TODO: validate based on internal source files and build out system support
+    system: {
+      type: DataTypes.STRING,
+    },
+    // an optional JSONB field for describing your campaign world's proprietary time system,
+    // TODO: for more details on valid JSON formats, read accompanying documentation
+    calendar: {
+      type: DataTypes.JSONB
     }
   }, {
     classMethods: {

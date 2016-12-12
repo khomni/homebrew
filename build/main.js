@@ -14,7 +14,8 @@ document.onreadystatechange = function(){
   if(pageInitialized) return;
   pageInitialized = true;
 
-  require('./dataSniffer');
+  require('./dataemissions');
+  require('./keypress');
 
   Navbar.init();
   Modal.init();

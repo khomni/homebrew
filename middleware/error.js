@@ -18,7 +18,6 @@ module.exports = (err, req, res, next) => {
   Promise.all(errorActions)
   .catch(err => {console.error(err)})
   .finally(()=>{
-
     if(req.requestType('json')) return res.status(err.status).send(err)
     if(req.requestType('modal')) return res.render('modals/_error', {message: err.message, error: err})
     return res.render('error', {message: err.message, error: err})
