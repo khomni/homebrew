@@ -57,6 +57,7 @@ sequelize.sync()
 
   app.locals.basedir = APPROOT+'/views'
   app.locals.markdown = marked
+  app.locals.SYSTEM = SYSTEM
 
   app.use((req,res,next) => {
     res.locals.currentUser = req.user || false

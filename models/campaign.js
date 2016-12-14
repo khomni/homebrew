@@ -23,6 +23,7 @@ module.exports = function(sequelize, DataTypes) {
     // TODO: validate based on internal source files and build out system support
     system: {
       type: DataTypes.STRING,
+      values: SYSTEM.names
     },
     // an optional JSONB field for describing your campaign world's proprietary time system,
     // TODO: for more details on valid JSON formats, read accompanying documentation

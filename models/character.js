@@ -2,8 +2,8 @@
 
 module.exports = function(sequelize, DataTypes) {
   var Character = sequelize.define("Character", {
-    // virtual field for obtainin the character url
-    // should only have forward slashes preceding the route
+    // optional URL field; defaults to the id route
+    // should only be preceded by forward slashes
     url: {
       type: DataTypes.STRING,
       unique: true,
@@ -49,9 +49,19 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
+
+    // an arbitrary JSON object describing the mechanical attributes of a character
+    // this field should be manipulated by the relevant system
+    properties: {
+      type: DataTypes.JSONB
+    },
+
+    // Virtual Attributes
+    // set active to true if a character matches a user's MainChar
     active: {
       type: DataTypes.VIRTUAL,
     },
+
   }, {
     classMethods: {
       relationships: (charArray) => {

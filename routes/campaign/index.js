@@ -15,7 +15,8 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
 });
 
 router.get('/new', Common.middleware.requireUser, (req, res, next) => {
-  if(req.requestType('modal')) return res.render('campaign/_new')
+
+  if(req.requestType('modal')) return res.render('campaign/_new',{systems:require(APPROOT+'/system').names})
   return res.render('campaign/new')
 });
 
