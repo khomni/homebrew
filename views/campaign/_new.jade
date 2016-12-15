@@ -15,4 +15,6 @@
             select.form-input(name="system")
               each name in SYSTEM.names
                 option.form-input(value=name)= name
-        button.btn.block(type='submit') New Campaign
+        .flex.center.pad
+          a.btn(href="/login" data-response="modal") Login
+          button.btn(type='submit') New Campaign

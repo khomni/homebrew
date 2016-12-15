@@ -18,7 +18,7 @@ document.onreadystatechange = function(){
   require('./keypress');
 
   Navbar.init();
-  Modal.init();
+  Modal.methods.init();
   require('./bars');
   // Favicon.startSpin();
   Ajax.setListeners();

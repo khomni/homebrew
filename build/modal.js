@@ -1,50 +1,117 @@
 var Promise = require('bluebird');
 var Ajax = require('./ajax');
+var Ticker = require('./ticks');
 
-var Modal = {
+var modals = {}
 
-  init: function(){
-    this.dom = document.getElementById('mainModal');
+function Modal(elem) {
+  this.elem = elem
+  var thisModal = this
+  this.lastPosition = {}
 
-    this.triggers = document.querySelectorAll('a[data-response="modal"]');
+  this.hide = function(){
+    this.visible = false;
+    elem.classList.add('hidden')
+  }
 
-    (function(){
-      redirect = document.querySelector('.modal-dialog').dataset.redirect
-      if(redirect) {
-        document.getElementById('mainModal').addEventListener('hide',function(e){
-          window.location = redirect
-        })
+  this.remove = function(){
+    elem.remove();
+    delete this
+  }
+
+  this.show = function(){
+    this.visible = true;
+    elem.classList.remove('hidden')
+  }
+
+  var dragUpdate = new Ticker()
+  elem.addEventListener('mousemove', e => {
+    if(!thisModal.dragging) return true;
+
+    dragUpdate.onTick(function(){
+      if(!thisModal.dragging) return true;
+      var rect = thisModal.dragging.getBoundingClientRect();
+      rect.width = rect.right - rect.left
+      rect.height = rect.bottom - rect.top
+      elem.style.transform = "translate3d("+(e.screenX-rect.width/2)+"px,"+(e.screenY-rect.height*2)+"px,0)"
+      // console.log(elem.style.top, elem.style.left)
+
+    })
+    e.preventDefault()
+    return false;
+  })
+
+  elem.addEventListener('mousedown', e => {
+    if(!e.target.classList.contains('handle')) return true;
+    if(e.which != 1) return true;
+    thisModal.dragging = e.target;
+    document.getElementById('modals').appendChild(elem)
+  })
+
+  elem.addEventListener('mouseup', e => {
+    this.dragging = false;
+  });
+
+  // prevent click events from reaching the modals parent
+  elem.addEventListener('click', e => {
+    document.getElementById('modals').appendChild(elem)
+    e.stopPropagation();
+    return true;
+  })
+
+  elem.modal = this
+}
+
+var methods = {
+
+  init: function() {
+    var modalContainer = document.getElementById('modals');
+
+    // the only document level listener required to create new Modals
+    document.body.addEventListener('click', e => {
+      if(e.target.dataset.response != "modal") return true;
+      e.preventDefault();
+
+      var url = e.target.getAttribute('href')
+
+      var target = document.getElementById(e.target.dataset.target||url)
+
+      if(!target) {
+        target = document.createElement('div')
+        target.classList.add('modal')
+        target.id = e.target.dataset.target || url
       }
-    })()
 
-    this.dom.addEventListener('hide',function(e){
-      redirect = document.querySelector('.modal-dialog').dataset.redirect
-      if(redirect){
-        window.location = redirect
-      }
+      modalContainer.appendChild(target)
+
+      // if the target element in question is not yet a modal, create one now
+      if(!target.modal) modals[target.id] = new Modal(target)
+      // if the source does not have an href, just show the modal
+      if(!url) return target.modal.show();
+
+      // if an href was provided, load the HTML from the server with the modal header,
+      //   put the HTML in the modal, then run any scripts necessary
+      Ajax.html({method:"GET", url:url, headers: {modal:true}})
+      .then(html => {
+        target.innerHTML = html
+        var scripts = Array.prototype.slice.call(target.querySelectorAll('script'))
+        scripts.map(script => {eval(script.innerHTML)})
+        Array.prototype.slice.call(target.querySelectorAll('.modal-title')).map(title =>{title.classList.add('handle')})
+      })
+      .catch(err => {
+        console.error(err)
+      })
+
+    },true)
+
+    modalContainer.addEventListener('click',e => {
+      // hide all modals?
+      Object.keys(modals).map(key => {
+        modals[key].remove()
+      })
+
     })
 
-    for(i=0;i<this.triggers.length;i++){
-      this.triggers[i].addEventListener('click',function(e){
-        e.preventDefault();
-        if(this.dataset.response == 'dismiss') return Modal.hideModal
-        if(!this.getAttribute('href')) return false;
-
-        Modal.loadModal(this.getAttribute('href'),function(err){
-          if(err) return console.error(err)
-          Modal.showModal();
-          var firstInput = Modal.dom.getElementsByTagName('input')[0]
-          if(firstInput) {
-            firstInput.focus();
-            firstInput.select();
-          }
-        });
-      },true)
-    }
-
-    document.body.addEventListener('mousedown',function(e){
-      if(e.target.id === 'mainModal') Modal.hideModal();
-    })
   },
 
   loadModal: function(url,callback) {
@@ -94,3 +161,4 @@ var Modal = {
 };
 
 module.exports = Modal;
+module.exports.methods = methods
