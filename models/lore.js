@@ -6,6 +6,7 @@
 
     Every instance in the database should be 'knowable' by characters.
     Anything resembling a description should be handled in the form of a lore record.
+    Anything that is lorable should have a 'name' field that returns an appropriate label for the thing
 
 */
 
@@ -14,6 +15,9 @@ module.exports = function(sequelize, DataTypes) {
     // The body of the lore, this can be a body of text of any length
     lorable: {
       type: DataTypes.STRING
+    },
+    hidden: {
+      type: DataTypes.VIRTUAL,
     },
     content: {
       type: DataTypes.TEXT,

@@ -1,0 +1,8 @@
+.modal-content.journal
+  .modal-title= title
+  .modal-body
+    each lore in loreList
+      if lore.hidden
+        div ???
+      else
+        div= lore.content

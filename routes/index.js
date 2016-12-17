@@ -73,6 +73,7 @@ router.use('/u',require('./user'));
 router.use('/pc',require('./character'));
 router.use('/r',require('./reference'));
 router.use('/c',require('./campaign'));
+router.use('/lore',require('./lore'));
 
 router.use('/settings',require('./settings'));
 

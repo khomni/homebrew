@@ -22,7 +22,7 @@ router.get('/', (req, res, next) => {
 
 router.post('/', Common.middleware.requireUser, (req,res,next) => {
 
-  req.user.createCharacter({
+  return req.user.createCharacter({
     name: req.body.name,
     race: req.body.race,
     sex: req.body.sex,
@@ -30,12 +30,19 @@ router.post('/', Common.middleware.requireUser, (req,res,next) => {
     UserId: req.user.id
   })
   .then(pc => {
-    console.log(pc.url)
+    if(!req.body.description) return pc;
+
+    return pc.createLore({content:req.body.description, obscurity:0})
+    .then(lore => {
+      return pc
+    })
+  })
+  .then(pc => {
     if(req.requestType('json')) return res.send(pc.get({plain:true}))
     if(req.requestType('modal')) return res.render('modals/_success', {title: "Character Created", body:"Good job", redirect:pc.url})
-
     return res.redirect(pc.url);
-  }).catch(next);
+  })
+  .catch(next);
 });
 
 router.get('/create', Common.middleware.requireUser, (req, res, next) => {
@@ -108,9 +115,9 @@ characterRouter.post('/select', Common.middleware.requireCharacter, (req,res,nex
 characterRouter.use('/journal', require('./journal'));
 characterRouter.use('/inventory', require('./items'));
 characterRouter.use('/relationship', require('./relationships'));
+characterRouter.use('/knowledge', require('./knowledge'));
 
 characterRouter.use('/lore', (req,res,next) => {
-  console.log('getting lore for:',res.locals.character)
   res.locals.lorable = res.locals.character
   return next();
 }, require('../lore'));

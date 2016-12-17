@@ -90,7 +90,7 @@ module.exports = function(sequelize, DataTypes) {
           as: 'lore',
           foreignKey: 'lorable_id',
           scope: {
-            lorable: 'character'
+            lorable: 'Character'
           }
         });
 

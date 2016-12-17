@@ -60,7 +60,7 @@ module.exports = function(sequelize, DataTypes) {
           as: 'lore',
           foreignKey: 'lorable_id',
           scope: {
-            lorable: 'item'
+            lorable: 'Item'
           }
         });
       }

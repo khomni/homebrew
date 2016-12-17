@@ -14,7 +14,7 @@ module.exports = {
   request: function(message){
     var err = new Error()
     err.message = message || 'Bad Request'
-    err.status = 404
+    err.status = 400
     return err
   }
 }
