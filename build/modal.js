@@ -29,7 +29,6 @@ function Modal(elem) {
       y: Math.random() * (window.innerHeight / 10) - window.innerHeight/20
     }
 
-    console.log(variance)
     elem.style.top = Math.max(0,(center.y - modalCenter.y + variance.y)) + "px"
     elem.style.left = Math.max(0,(center.x - modalCenter.x  + variance.x)) + "px"
   }
@@ -140,7 +139,6 @@ var methods = {
       Modal.dom.innerHTML = text
       var scripts = Modal.dom.querySelectorAll('script')
       for(var n=0; n<scripts.length; n++) {
-        console.log(scripts[n].innerHTML)
         eval(scripts[n].innerHTML)
       }
       // Modal.dom.appendChild.call(newdiv.childNodes[0]);
