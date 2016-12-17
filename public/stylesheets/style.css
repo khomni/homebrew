@@ -1392,6 +1392,47 @@ body.modal-open {
   vertical-align: middle;
   max-width: 100vw;
 }
+.modal .modal-content.journal {
+  background: url('/images/textures/journal.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #eee 0%, #ddcC99 100%);
+  background-image: url('/images/textures/journal.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #eee 0%, #ddcC99 100%);
+  background-position: 50% 0%;
+  background-blend-mode: soft-light;
+  border-color: #998a5c;
+  border-radius: 3px;
+  color: #986246;
+  box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.25);
+}
+.modal .modal-content.journal input,
+.modal .modal-content.journal textarea {
+  background: rgba(153, 138, 92, 0.15);
+  color: #986246;
+}
+.modal .modal-content.journal input:focus,
+.modal .modal-content.journal textarea:focus {
+  -webkit-filter: none;
+  filter: none;
+}
+.modal .modal-content.journal input {
+  border: none;
+  border-bottom: 1px dashed;
+}
+.modal .modal-content.journal textarea {
+  border: 1px dashed;
+}
+.modal .modal-content.journal a:not(.btn) {
+  color: #2da5cc;
+}
+.modal .modal-content.journal :not(.btn) {
+  border-color: rgba(153, 138, 92, 0.5);
+}
+.modal .modal-content.journal .journal-markup {
+  font-size: 18px;
+  font-family: baskerville;
+}
+.modal .modal-content.journal .journal-markup p,
+.modal .modal-content.journal .journal-markup blockquote {
+  color: #986246;
+}
 @media only screen and (max-width: 719px) {
   .modal .modal-content {
     width: 480px;
@@ -1712,6 +1753,7 @@ body.modal-open {
   perspective-origin: bottom;
 }
 #content-main.journal section {
+  background: url('/images/textures/journal.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #eee 0%, #ddcC99 100%);
   background-image: url('/images/textures/journal.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #eee 0%, #ddcC99 100%);
   background-position: 50% 0%;
   background-blend-mode: soft-light;
@@ -1719,6 +1761,23 @@ body.modal-open {
   border-radius: 3px;
   color: #986246;
   box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.25);
+}
+#content-main.journal section input,
+#content-main.journal section textarea {
+  background: rgba(153, 138, 92, 0.15);
+  color: #986246;
+}
+#content-main.journal section input:focus,
+#content-main.journal section textarea:focus {
+  -webkit-filter: none;
+  filter: none;
+}
+#content-main.journal section input {
+  border: none;
+  border-bottom: 1px dashed;
+}
+#content-main.journal section textarea {
+  border: 1px dashed;
 }
 #content-main.journal section a:not(.btn) {
   color: #2da5cc;

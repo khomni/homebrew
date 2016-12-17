@@ -1,9 +1,9 @@
 form(name='journal' action=character.url+'/inventory/' + (item?item.id:'') method='post')
-  .modal-content
+  .modal-content&attributes({class: THEME})
     if !item
       .modal-title New Item
     .modal-body
-      .flex.vert
+      .flex.vert.fill
         .flex.vert.center.fill
           label Item Name
           input.form-input.grow(type='text' name='name' value=item?item.name:false)

@@ -2,6 +2,63 @@
 
 @ink-color: #986246;
 
+.journal() {
+  background: url('/images/textures/journal.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #eee 0%, #ddcC99 100%);
+  background-position: 50% 0%;
+  background-blend-mode: soft-light;
+  border-color: #998a5c;
+  border-radius: 3px;
+  color: @ink-color;
+  box-shadow: 0px -2px 5px fade(black,25%);
+
+  input,textarea {
+    background: fade(#998a5c,15%);
+    color: @ink-color;
+    &:focus {
+      .filter(none);
+    }
+  }
+
+  input {
+    border:none;
+    border-bottom: 1px dashed;
+  }
+
+  textarea {
+    border: 1px dashed;
+  }
+
+  background-image: url('/images/textures/journal.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #eee 0%, #ddcC99 100%);
+  background-position: 50% 0%;
+  background-blend-mode: soft-light;
+  border-color: #998a5c;
+  border-radius: 3px;
+  color: @ink-color;
+  box-shadow: 0px -2px 5px fade(black,25%);
+  // margin-bottom: ;
+
+  &:hover,&:focus{
+    // margin-bottom: ~"calc(0% + 20px)"
+    // z-index:2;
+  }
+
+  a:not(.btn) {
+    color: darken(@color-secondary,25%);
+  }
+  :not(.btn) {
+    border-color:fade(#998a5c,50%);
+  }
+  .journal-markup {
+    font-size: 18px;
+    font-family: baskerville;
+    p,blockquote {
+      color: @ink-color;
+    }
+  }
+
+
+}
+
 #content-main {
 
   &.journal {
@@ -11,33 +68,7 @@
     perspective-origin:bottom;
 
     section {
-      background-image: url('/images/textures/journal.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #eee 0%, #ddcC99 100%);
-      background-position: 50% 0%;
-      background-blend-mode: soft-light;
-      border-color: #998a5c;
-      border-radius: 3px;
-      color: @ink-color;
-      box-shadow: 0px -2px 5px fade(black,25%);
-      // margin-bottom: ;
-
-      &:hover,&:focus{
-        // margin-bottom: ~"calc(0% + 20px)"
-        // z-index:2;
-      }
-
-      a:not(.btn) {
-        color: darken(@color-secondary,25%);
-      }
-      :not(.btn) {
-        border-color:fade(#998a5c,50%);
-      }
-      .journal-markup {
-        font-size: 18px;
-        font-family: baskerville;
-        p,blockquote {
-          color: @ink-color;
-        }
-      }
+      .journal()
     }
   }
 
@@ -95,9 +126,6 @@
       }
     }
   }
-
-
-
 }
 
 // section {

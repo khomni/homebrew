@@ -1,30 +1,29 @@
-.modal-dialog
-  .modal-content
-    form(name='journal' action=character.url+'/journal' + (entry?'/'+entry.id:'') method='post')
-      .modal-title 
-        if entry 
-          = entry.title
-        else 
-          | New Journal Entry
-      .modal-body
-        .flex.vert.fill
-          input.form-input(type='text' required name='title' value=entry?entry.title:false)
-          textarea.form-input(type='text' name='body' height=300)= entry?entry.body:''
-          //- div
-            hr
-            label Visibility
-            .flex.distribute.pad
-              label.radio
-                input(type="radio" name="visibleTo" required)
-                span Just Me
-              label.radio
-                input(type="radio" name="visibleTo" value="party" required)
-                span My Party
-              label.radio
-                input(type="radio" name="visibleTo" value="campagin" required)
-                span The Campaign
-              label.radio
-                input(type="radio" name="visibleTo" value="public" required)
-                span Public
-      .modal-footer
-          button.btn.block(type='submit')= entry ? 'Update Entry' : 'Add Journal Entry'
+form(name='journal' action=character.url+'/journal' + (entry?'/'+entry.id:'') method='post')
+  .modal-content&attributes({class:THEME})
+    .modal-title 
+      if entry 
+        = entry.title
+      else 
+        | New Journal Entry
+    .modal-body
+      .flex.vert.fill
+        input.form-input.grow(type='text' required name='title' value=entry?entry.title:false)
+        textarea.form-input.grow(type='text' name='body' height=300)= entry?entry.body:''
+        //- div
+          hr
+          label Visibility
+          .flex.distribute.pad
+            label.radio
+              input(type="radio" name="visibleTo" required)
+              span Just Me
+            label.radio
+              input(type="radio" name="visibleTo" value="party" required)
+              span My Party
+            label.radio
+              input(type="radio" name="visibleTo" value="campagin" required)
+              span The Campaign
+            label.radio
+              input(type="radio" name="visibleTo" value="public" required)
+              span Public
+    .modal-footer
+        button.btn.block(type='submit')= entry ? 'Update Entry' : 'Add Journal Entry'
