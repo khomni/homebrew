@@ -12,6 +12,28 @@ function Modal(elem) {
 
   this.draggable = new Drag.Draggable(elem);
 
+  thisModal.recenter = function(){
+    var rect = elem.getBoundingClientRect()
+    var modalCenter = {
+      x: (rect.right - rect.left) / 2,
+      y: (rect.bottom - rect.top) / 2,
+    }
+
+    var center = {
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2
+    }
+
+    variance  = {
+      x: Math.random() * (window.innerWidth / 10) - window.innerWidth/20,
+      y: Math.random() * (window.innerHeight / 10) - window.innerHeight/20
+    }
+
+    console.log(variance)
+    elem.style.top = Math.max(0,(center.y - modalCenter.y + variance.y)) + "px"
+    elem.style.left = Math.max(0,(center.x - modalCenter.x  + variance.x)) + "px"
+  }
+
   this.hide = function(){
     this.visible = false;
     elem.classList.remove('shown')
@@ -30,15 +52,15 @@ function Modal(elem) {
   }
 
   this.show = function(){
-    this.visible = true;
+    thisModal.visible = true;
     elem.classList.add('shown')
     thisModal.focus();
+    thisModal.recenter();
   }
 
 
   // prevent click events from reaching the modals parent
   elem.addEventListener('mousedown', e => {
-    console.log(e.which)
     if(e.which == 2) return thisModal.remove();
     if(e.which == 1) return thisModal.focus();
     return true;

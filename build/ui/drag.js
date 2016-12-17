@@ -48,11 +48,6 @@ function Draggable(elem,handle) {
   // set internal varialbes
   thisDraggable.handle = handle || elem.querySelector('.handle') || elem
 
-  // forces the draggable object to center itself in the viewport
-  this.center = function(){
-
-  }
-
   // set up listeners on the drag element
   // 1) mousedown to start the drag
   // the listeners for moving and mouseup are handled at the document level

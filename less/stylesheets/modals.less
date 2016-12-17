@@ -1,12 +1,20 @@
 @import '../mixins/mixins.less';
 
+/*
+MODALS
+
+.modal
+
+
+*/
+
 body.modal-open {
 	overflow: hidden;
 }
 
 .draggable {
 	position: absolute;
-	// .xs({position: static});
+	.xs({position: static});
 }
 
 .handle {
@@ -16,22 +24,21 @@ body.modal-open {
 }
 
 .modals {
-	transition: opacity 0.25s;
 	pointer-events:none;
 
 	&:not(:empty) {
 		.xs({
 			pointer-events:all;
+			display: flex;
+			flex-direction: column-reverse;
+			justify-content:flex-end;
+			overflow-y: auto;
 		})
 	}
 
 	&:empty {
 		opacity: 0;
-
 	}
-	// display: flex;
-	// justify-content: space-around;
-	// align-items:center;
 
 	position:fixed;
 	width: 100%;
@@ -44,16 +51,20 @@ body.modal-open {
 }
 
 .modal {
+	flex-shrink:0;
 	transition: opacity 0.2s;
+
 	&:not(:last-child) {
-		.cursor(pointer);
-		input,select,textarea,a,button {
-			pointer-events:none;
-		}
-		opacity: 0.25;
-		&:hover {
-			opacity: 0.75;
-		}
+		.sm-plus({
+			.cursor(pointer);
+			input,select,textarea,a,button {
+				pointer-events:none;
+			}
+			opacity: 0.25;
+			&:hover {
+				opacity: 0.75;
+			}
+		})
 	}
 
 	&.shown {
@@ -61,8 +72,58 @@ body.modal-open {
 		// .animation(forge 2s forwards~"," fadeDown 0.5s @bezier-bounce forwards);
 	}
 
+	.modal-content {
+		max-height:100vh;
+		overflow:hidden;
+		display:flex;
+		flex-direction:column;
+
+		box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+		color: @color-dark;
+		background-color: @color-ui;
+
+		width: 480px;
+		max-width: 720px;
+		vertical-align: middle;
+		max-width: 100vw;
+		.xs({
+			width:480px;
+			max-width: 100vw;
+		});
+		.sm-plus({width:720px});
+		.md-plus({width:960px});
+		.lg({width:1080px});
+	}
+
+	// becomes a draggable handle
+	.modal-title {
+		flex:1;
+		flex-shrink: 0;
+
+		font-size: 24px;
+		font-weight: 500;
+		padding: 1rem;
+		border-bottom: 1px solid #ddd;
+		text-align: center;
+	}
+
+	.modal-body {
+		flex: 1;
+		overflow-y: auto;
+		padding: 1rem;
+	}
+
+	.modal-footer {
+		flex:1;
+		flex-shrink: 0;
+		padding: 1rem;
+	}
+
+	/*
+
 	.modal-dialog {
-		display: block;
+		display: flex;
+		flex-direction:column;
 		margin:auto;
 		width: 480px;
 		max-width: 720px;
@@ -98,4 +159,6 @@ body.modal-open {
 			}
 		}
 	}
+	*/
+
 }

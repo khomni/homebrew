@@ -54,9 +54,9 @@ nav#nav
         +navlink({url:'/u/'+currentUser.username, text: 'Profile'})
         +navlink({url:'/settings', text: 'Settings'})
         +navlink({url:'/logout', text: 'Log Out'})
-        +navlink({url:'/settings/theme', text: 'Theme'})(data-response="modal")
+        +navlink({url:'/settings/theme', text: 'Theme'})(data-response="modal" data-target="theme-modal")
     else
       +navlink({url:'/about',text:'About'})
       +dropdown({id: 'account', text:'Log In / Sign Up'})(class="signup")
-        +navlink({url:'/login', text: 'Log In'})(data-response="modal")
-        +navlink({url:'/signup', text: 'Sign Up'})(data-response="modal")
+        +navlink({url:'/login', text: 'Log In'})(data-response="modal" data-target="login")
+        +navlink({url:'/signup', text: 'Sign Up'})(data-response="modal" data-target="signup")

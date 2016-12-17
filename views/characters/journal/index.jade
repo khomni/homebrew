@@ -26,7 +26,7 @@ block content
           .section-footer
             .flex.center.pad(data-pad="1em")
               a.btn(href=character.url+"/journal/"+entry.id) View Entry
-              a.btn(href=character.url+"/journal/"+entry.id+"/edit" data-response="modal") Edit Entry
+              a.btn(href=character.url+"/journal/"+entry.id+"/edit" data-response="modal" data-target="edit-journal-"+id) Edit Entry
               form(action=character.url+"/journal/"+entry.id method="delete" data-response="json")
                 button.btn Delete Entry
       
