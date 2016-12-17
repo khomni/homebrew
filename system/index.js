@@ -1,11 +1,7 @@
 //
 
 var RuleSets = {
-  pathfinder: {
-    name: "Pathfinder",
-    publisher: "Paizo",
-    system: require('./pathfinder')
-  }
+  pathfinder: require('./pathfinder'),
 }
 
 module.exports = RuleSets

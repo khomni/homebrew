@@ -4,15 +4,30 @@ body.modal-open {
 	overflow: hidden;
 }
 
+.draggable {
+	position: absolute;
+	// .xs({position: static});
+}
+
 .handle {
 	.no-select();
 	.cursor(move);
+
 }
 
 .modals {
+	transition: opacity 0.25s;
+	pointer-events:none;
+
+	&:not(:empty) {
+		.xs({
+			pointer-events:all;
+		})
+	}
+
 	&:empty {
-		pointer-events:none;
 		opacity: 0;
+
 	}
 	// display: flex;
 	// justify-content: space-around;
@@ -24,15 +39,27 @@ body.modal-open {
 	top: 0;
 	left: 0;
 	z-index: 10000;
-	background-color: fade(black,50%);
+	// background-color: fade(black,50%);
 	perspective: 100px;
 }
 
 .modal {
-	position: absolute;
-	.xs({
-		position: static;
-	});
+	transition: opacity 0.2s;
+	&:not(:last-child) {
+		.cursor(pointer);
+		input,select,textarea,a,button {
+			pointer-events:none;
+		}
+		opacity: 0.25;
+		&:hover {
+			opacity: 0.75;
+		}
+	}
+
+	&.shown {
+		pointer-events:all;
+		// .animation(forge 2s forwards~"," fadeDown 0.5s @bezier-bounce forwards);
+	}
 
 	.modal-dialog {
 		display: block;
@@ -48,9 +75,7 @@ body.modal-open {
 		.sm-plus({width:720px});
 		.md-plus({width:960px});
 		.lg({width:1080px});
-
 		.modal-content {
-			// .animation(forge 2s forwards~"," fadeDown 0.5s @bezier-bounce forwards);
 			box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
 			color: @color-dark;
 			background-color: @color-ui;
@@ -58,59 +83,19 @@ body.modal-open {
 			.xs({
 				margin: 0;
 			});
-
 			.modal-title {
 				font-size: 24px;
 				font-weight: 500;
 				padding: 1rem;
 				border-bottom: 1px solid #ddd;
 				text-align: center;
-
 			}
 			.modal-body {
 				padding: 1rem;
-
 			}
 			.modal-footer {
 				padding: 1rem;
 			}
 		}
 	}
-
 }
-
-// .modal {
-// 	position: fixed;
-// 	width: 100%;
-// 	height: 100%;
-// 	top: 0;
-// 	left: 0;
-// 	z-index: 10000;
-// 	background-color: fade(black,50%);
-// 	transition: 0.5s;
-// 	display: none;
-// 	text-align: center;
-// 	&.open {
-// 		display: block;
-// 		.animation(modalOpen 0.5s forwards);
-// 	}
-//
-// 	&::before {
-// 		content: "";
-// 		display: inline-block;
-// 		height: 100%;
-// 		vertical-align: middle;
-// 	}
-//
-// 	.modal-dialog {
-// 		display: inline-block;
-// 		.animation(forge 0.5s forwards);
-// 		background: @color-ui;
-// 		.xs({width: 100%});
-// 		width: 720px;
-// 		height: 200px;
-// 		margin: 0 auto;
-// 		vertical-align: middle;
-// 	}
-//
-// }

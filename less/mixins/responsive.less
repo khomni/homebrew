@@ -7,7 +7,7 @@
 .debug-lines(@text,@color) when not(@debug = false) {
   outline: 1px dashed fade(@color,(@debug) * 100) ;
   outline-offset: -1px;
-  transition: 0.2s;
+  transition: opacity 0.2s;
   &::before {
     font-size: 10px;
     letter-spacing: normal;
@@ -18,7 +18,7 @@
     z-index: 1000;
     position: absolute;
     opacity: @debug;
-    transition: 0.2s;
+    transition: opacity 0.2s;
     padding: 0.25em 0.5em;
     border-radius: 1em 1em;
   }

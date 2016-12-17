@@ -1,6 +1,7 @@
 var Promise = require('bluebird');
 var Ajax = require('./ajax');
-var Ticker = require('./ticks');
+
+var Drag = require('./ui/drag');
 
 var modals = {}
 
@@ -9,9 +10,11 @@ function Modal(elem) {
   var thisModal = this
   this.lastPosition = {}
 
+  this.draggable = new Drag.Draggable(elem);
+
   this.hide = function(){
     this.visible = false;
-    elem.classList.add('hidden')
+    elem.classList.remove('shown')
   }
 
   this.remove = function(){
@@ -19,45 +22,34 @@ function Modal(elem) {
     delete this
   }
 
-  this.show = function(){
+  this.focus = function() {
     this.visible = true;
-    elem.classList.remove('hidden')
+    elem.classList.add('shown');
+    document.getElementById('modals').appendChild(elem)
+
   }
 
-  var dragUpdate = new Ticker()
-  elem.addEventListener('mousemove', e => {
-    if(!thisModal.dragging) return true;
+  this.show = function(){
+    this.visible = true;
+    elem.classList.add('shown')
+    thisModal.focus();
+  }
 
-    dragUpdate.onTick(function(){
-      if(!thisModal.dragging) return true;
-      var rect = thisModal.dragging.getBoundingClientRect();
-      rect.width = rect.right - rect.left
-      rect.height = rect.bottom - rect.top
-      elem.style.transform = "translate3d("+(e.screenX-rect.width/2)+"px,"+(e.screenY-rect.height*2)+"px,0)"
-      // console.log(elem.style.top, elem.style.left)
-
-    })
-    e.preventDefault()
-    return false;
-  })
-
-  elem.addEventListener('mousedown', e => {
-    if(!e.target.classList.contains('handle')) return true;
-    if(e.which != 1) return true;
-    thisModal.dragging = e.target;
-    document.getElementById('modals').appendChild(elem)
-  })
-
-  elem.addEventListener('mouseup', e => {
-    this.dragging = false;
-  });
 
   // prevent click events from reaching the modals parent
-  elem.addEventListener('click', e => {
-    document.getElementById('modals').appendChild(elem)
-    e.stopPropagation();
+  elem.addEventListener('mousedown', e => {
+    console.log(e.which)
+    if(e.which == 2) return thisModal.remove();
+    if(e.which == 1) return thisModal.focus();
     return true;
-  })
+  });
+
+  var focusable = Array.prototype.slice.call(elem.querySelectorAll('input,a,button,select,textarea'))
+  focusable.map(i => {
+    i.addEventListener('focus', e => {
+      thisModal.focus()
+    })
+  });
 
   elem.modal = this
 }
@@ -79,15 +71,15 @@ var methods = {
       if(!target) {
         target = document.createElement('div')
         target.classList.add('modal')
-        target.id = e.target.dataset.target || url
+        target.id = e.target.dataset.target || +Date.now()+url.replace(/\//gi,'-')
       }
 
       modalContainer.appendChild(target)
 
       // if the target element in question is not yet a modal, create one now
-      if(!target.modal) modals[target.id] = new Modal(target)
+
       // if the source does not have an href, just show the modal
-      if(!url) return target.modal.show();
+      if(!url && target.modal) return target.modal.show();
 
       // if an href was provided, load the HTML from the server with the modal header,
       //   put the HTML in the modal, then run any scripts necessary
@@ -97,6 +89,9 @@ var methods = {
         var scripts = Array.prototype.slice.call(target.querySelectorAll('script'))
         scripts.map(script => {eval(script.innerHTML)})
         Array.prototype.slice.call(target.querySelectorAll('.modal-title')).map(title =>{title.classList.add('handle')})
+        modals[target.id] = new Modal(target)
+        target.modal.show();
+
       })
       .catch(err => {
         console.error(err)
@@ -104,13 +99,12 @@ var methods = {
 
     },true)
 
-    modalContainer.addEventListener('click',e => {
-      // hide all modals?
-      Object.keys(modals).map(key => {
-        modals[key].remove()
-      })
-
-    })
+    // modalContainer.addEventListener('click',e => {
+    //   // hide all modals?
+    //   Object.keys(modals).map(key => {
+    //     modals[key].remove()
+    //   })
+    // })
 
   },
 

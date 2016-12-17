@@ -18,7 +18,7 @@ router.post('/', (req,res,next) => {
 
   return res.locals.campaign.createQuest(req.body)
   .then(quest => {
-    return res.redirect('quests/'+quest.id)
+    return res.redirect(req.headers.referer)
   })
   .catch(next);
 

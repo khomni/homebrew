@@ -1,4 +1,5 @@
 var Ajax = require('./ajax.js');
+var Modal = require('./modal');
 
 // various frontend scripts for keypresses
 
@@ -28,4 +29,21 @@ var Ajax = require('./ajax.js');
     }
     return false
   })
+
+  document.addEventListener('keydown', e => {
+    // ESC handler
+    if(e.which === 27) {
+      return true;
+    }
+
+    // TAB handler
+    if(e.which === 9) {
+      return true;
+    }
+    return true;
+  })
+
+
+
+
 })()
