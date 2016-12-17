@@ -41,7 +41,7 @@ block content
                     form(action=character.url+"/select" method="post")
                       button.btn(disabled=character.isActiveChar(currentUser)) Select
                     a.btn(href=character.url+"/edit" data-response="modal") Edit
-              else
+              if !character.isActiveChar(currentUser)
                 .flex.vert.border.pad
                   .flex.center: label Interactions
                   .flex.center.pad

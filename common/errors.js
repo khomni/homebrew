@@ -10,5 +10,11 @@ module.exports = {
     err.message = message + ' not found'
     err.status = 404
     return err
+  },
+  request: function(message){
+    var err = new Error()
+    err.message = message || 'Bad Request'
+    err.status = 404
+    return err
   }
 }

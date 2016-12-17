@@ -79,5 +79,15 @@ router.delete('/:id', Common.middleware.requireCharacter, (req,res,next) => {
   .catch(next)
 })
 
+router.use('/:id/lore', (req,res,next) => {
+  db.Item.findOne({where:{id:req.params.id}})
+  .then(item => {
+    res.locals.lorable = item
+    return next();
+  })
+  .catch(next)
+}, require('../lore'));
+
+
 
 module.exports = router;

@@ -21,8 +21,6 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', Common.middleware.requireUser, (req,res,next) => {
-  console.log(db.methods(req.user,/create/gi))
-  console.log(req.body)
 
   req.user.createCharacter({
     name: req.body.name,
@@ -110,5 +108,11 @@ characterRouter.post('/select', Common.middleware.requireCharacter, (req,res,nex
 characterRouter.use('/journal', require('./journal'));
 characterRouter.use('/inventory', require('./items'));
 characterRouter.use('/relationship', require('./relationships'));
+
+characterRouter.use('/lore', (req,res,next) => {
+  console.log('getting lore for:',res.locals.character)
+  res.locals.lorable = res.locals.character
+  return next();
+}, require('../lore'));
 
 module.exports = router;
