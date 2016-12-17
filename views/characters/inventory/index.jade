@@ -23,16 +23,21 @@ block content
                 th Name
                 th Value
                 th Weight
+                th Rarity
+                th Blueprint
                 th
             tbody
               each item in character.Items
                 tr
-                  td= item.name
+                  td
+                    a(href="inventory/"+item.id+"/lore" data-response="modal" data-target="item-"+item.id)= item.name
                   td= item.value
                   td= item.weight
+                  td= item.rarity
+                  td= item.properties.blueprint
                   td
                     .flex.je
-                      a.btn(href="inventory/"+item.id+"/edit" data-response="modal") Edit
+                      a.btn(href="inventory/"+item.id+"/edit" data-response="modal" data-target="edit-item-"+item.id) Edit
                       form(action="inventory/"+item.id method="delete")
                         button.btn Delete
         

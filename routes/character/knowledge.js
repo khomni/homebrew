@@ -5,21 +5,24 @@ var router = express.Router();
 // this router always has `res.locals.character`
 
 // if the router isn't mounted on top of a route with a character, use the active character
-router.use('/',(req,res,next) => {
-  res.locals.character = res.locals.character
-  if(!res.locals.character && req.user && req.user.activeChar) res.locals.character = req.user.activeChar
-  return next()
-})
+// router.use('/',(req,res,next) => {
+//   res.locals.character = res.locals.character
+//   if(!res.locals.character && req.user && req.user.activeChar) res.locals.character = req.user.activeChar
+//   return next()
+// })
 
-// get all things this character knows
-router.get('/', (req, res, next) => {
+// get all things this character knows (about a topic, if mounted on top of a lorable router middleware)
+router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
   var topic = {}
 
   // if there is a lorable item in the middleware stack, specify that as the topic
   if(res.locals.lorable) topic = {where:{lorable:res.locals.lorable.$modelOptions.name.singular}}
-
-  return res.locals.character.getKnowledge(topic)
+  console.log(topic)
+  return req.user.activeChar.getKnowledge(topic)
   .then(knowledge => {
+    console.log(db.methods(knowledge[0]))
+    if(req.requestType('json')) return res.json(knowledge)
+    if(req.requestType('modal')) return res.render('lore/modals/list',{loreList:knowledge})
     return res.json(knowledge)
   })
   .catch(next)

@@ -2,6 +2,7 @@
 
 @ink-color: #986246;
 
+// JOURNAL THEME
 .journal() {
   background: url('/images/textures/journal.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #eee 0%, #ddcC99 100%);
   background-position: 50% 0%;
@@ -11,7 +12,7 @@
   color: @ink-color;
   box-shadow: 0px -2px 5px fade(black,25%);
 
-  input,textarea {
+  .form-input {
     background: fade(#998a5c,15%);
     color: @ink-color;
     &:focus {
@@ -55,8 +56,35 @@
       color: @ink-color;
     }
   }
+}
 
 
+// WOOD THEME
+.wood() {
+  background-color: #484e50;
+  background-image: url('/images/textures/bronze.jpg'), radial-gradient(ellipse 100% 200% at 50% 25%, #fff 0%, #000 100%);
+  background-blend-mode: soft-light;
+  background-size: initial, cover;
+  border-radius: 3px;
+  box-shadow: 0px 2px 5px fade(black,50%);
+  border: 1px solid fade(#999,50%);
+  border-top-color: fade(white,50%);
+  border-bottom-color: fade(black,50%);
+  color: #eee;
+  text-shadow: 0px 1px 1px fade(black,25%);
+
+  :not(.btn):not(hr) {
+    border-color:fade(#000,50%);
+  }
+
+  hr {
+    border-bottom: 1px solid fade(#fff,25%);
+    border-top: 1px solid fade(#000,25%);
+  }
+
+  a:not(.btn) {
+    color: darken(@color-secondary,25%);
+  }
 }
 
 #content-main {
@@ -107,23 +135,7 @@
     background-blend-mode: multiply;
 
     section {
-      background-image: url('/images/textures/marble.jpg'), linear-gradient(to bottom, #eee 0%, #bbb 100%);
-      background-blend-mode: hard-light;
-      border-radius: 3px;
-      box-shadow: 0px 2px 5px fade(black,50%);
-
-      :not(.btn):not(hr) {
-        border-color:fade(#000,50%);
-      }
-
-      hr {
-        border-bottom: 1px solid fade(#fff,25%);
-        border-top: 1px solid fade(#000,25%);
-      }
-
-      a:not(.btn) {
-        color: darken(@color-secondary,25%);
-      }
+      .wood();
     }
   }
 }

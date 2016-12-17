@@ -23,10 +23,12 @@ var drag = {
         handleRect.offsetTop = drag.dragging.handle.offsetTop
         handleRect.offsetLeft = drag.dragging.handle.offsetLeft
 
+        var noHandle = drag.dragging.elem.isSameNode(drag.dragging.handle)
+
         // set top-left coordinate of the entire element based on the offset of the center of the handle
         // mouse[x,y] - handle[midY,midY] - hanlde[offsetX,offsetY]
-        drag.dragging.elem.style.left = (e.clientX - handleRect.width/2 - handleRect.offsetLeft)+"px"
-        drag.dragging.elem.style.top = (e.clientY - handleRect.height/2 - handleRect.offsetTop)+"px"
+        drag.dragging.elem.style.left = Math.max(0,(e.clientX - handleRect.width/2 - (noHandle ? 0 : handleRect.offsetLeft)))+"px"
+        drag.dragging.elem.style.top = Math.max(0,(e.clientY - handleRect.height/2 - (noHandle ? 0 : handleRect.offsetTop)))+"px"
       })
       return false;
     })

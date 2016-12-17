@@ -1,6 +1,8 @@
 form(name='journal' action=character.url+'/inventory/' + (item?item.id:'') method='post')
   .modal-content&attributes({class: THEME})
-    if !item
+    if item
+      .modal-title= item.name
+    else
       .modal-title New Item
     .modal-body
       .flex.vert.fill
@@ -26,6 +28,6 @@ form(name='journal' action=character.url+'/inventory/' + (item?item.id:'') metho
           .flex.vert
             label Blueprint
             input#blueprint-search.form-input(href="/r/system" type='text' name='blueprint' value=item?item.blueprint:false data-reaction="fill")
-        textarea.form-input(type='text' name='description' height=300)=item&&item.lore?item.lore.description:""
+        textarea.form-input(type='text' name='description' height=300 disabled=!!item&&!!item.lore[0])= item&&item.lore[0] ? item.lore[0].content : ''
     .modal-footer
-        button.btn.block(type='submit')= entry ? 'Update Entry' : 'Add Journal Entry'
+        button.btn.block(type='submit')= item ? 'Update Item' : 'Add Item'

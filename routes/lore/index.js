@@ -32,12 +32,7 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
       console.log(db.methods(filtered[0]))
       if(req.requestType('json')) return res.json(filtered)
       if(req.requestType('modal')) return res.render('lore/modals/list',{title: res.locals.lorable.name, loreList:filtered})
-      return res.json(knowledge)
-
-      return res.json({
-        lorable: res.locals.lorable,
-        lore: filtered
-      })
+      return res.json(filtered)
     })
 
   })
@@ -47,14 +42,7 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
 // lore index when no lorable has been added
 // defaults to obtaining the lore the active character knows
 router.get('/', Common.middleware.requireCharacter, (req,res,next) => {
-  return req.user.activeChar.getKnowledge()
-  .then(knowledge => {
-    console.log(db.methods(knowledge[0]))
-    if(req.requestType('json')) return res.json(knowledge)
-    if(req.requestType('modal')) return res.render('lore/modals/list',{loreList:knowledge})
-    return res.json(knowledge)
-  })
-  return next()
+  return res.redirect('/knowledge');
 })
 
 // Add lore to the lorable object

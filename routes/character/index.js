@@ -115,11 +115,13 @@ characterRouter.post('/select', Common.middleware.requireCharacter, (req,res,nex
 characterRouter.use('/journal', require('./journal'));
 characterRouter.use('/inventory', require('./items'));
 characterRouter.use('/relationship', require('./relationships'));
-characterRouter.use('/knowledge', require('./knowledge'));
 
-characterRouter.use('/lore', (req,res,next) => {
+characterRouter.use('/', (req,res,next) => {
   res.locals.lorable = res.locals.character
   return next();
-}, require('../lore'));
+});
+
+characterRouter.use('/lore',require('../lore'));
+characterRouter.use('/knowledge', require('./knowledge'));
 
 module.exports = router;

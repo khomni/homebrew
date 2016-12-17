@@ -37,6 +37,13 @@ router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
     }
   })
   .then(item => {
+    if(!req.body.description) return item
+     return item.createLore({content:req.body.description, obscurity:0})
+     .then(lore => {
+       return item
+     })
+   })
+   .then(item =>{
     if(req.requestType('json')) return res.send(item)
     return res.redirect(res.locals.character.url + '/inventory')
   })
@@ -44,8 +51,7 @@ router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
 });
 
 router.get('/:id/edit', Common.middleware.requireCharacter, (req,res,next) => {
-
-  db.Item.findOne({where:{id:req.params.id}})
+  db.Item.findOne({where:{id:req.params.id}, include:[{model: db.Lore, as:'lore'}]})
   .then(item =>{
     if(req.requestType('modal')) return res.render('characters/inventory/modals/edit',{item:item})
   })
@@ -60,6 +66,13 @@ router.post('/:id', Common.middleware.requireCharacter, (req,res,next) => {
     return item.save()
   })
   .then(item => {
+    if(!req.body.description) return item
+     return item.createLore({content:req.body.description, obscurity:0})
+     .then(lore => {
+       return item
+     })
+   })
+   .then(item =>{
     if(req.requestType('json')) return res.send(item)
     return res.redirect(res.locals.character.url + '/inventory')
   })
