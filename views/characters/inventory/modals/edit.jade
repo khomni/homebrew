@@ -1,11 +1,11 @@
-form(name='journal' action=character.url+'/inventory/' + (item?item.id:'') method='post')
+form(name='item' action=character.url+'/inventory/' + (item?item.id:'') method='post')
   .modal-content&attributes({class: THEME})
     if item
       .modal-title= item.name
     else
       .modal-title New Item
     .modal-body
-      .flex.vert.fill
+      .flex.vert.fill(class=THEME!='journal'?'paper':'')
         .flex.vert.center.fill
           label Item Name
           input.form-input.grow(type='text' name='name' value=item?item.name:false)
@@ -21,10 +21,10 @@ form(name='journal' action=character.url+'/inventory/' + (item?item.id:'') metho
           .flex.vert
             label Rarity
             select.form-input(name="rarity")
-              option(value=0 checked=item&&item.rarity==0) Common
-              option(value=1 checked=item&&item.rarity==1) Uncommon
-              option(value=2 checked=item&&item.rarity==2) Rare
-              option(value=3 checked=item&&item.rarity==3) Legendary
+              option(value=0 selected=item&&item.rarity==0) Common
+              option(value=1 selected=item&&item.rarity==1) Uncommon
+              option(value=2 selected=item&&item.rarity==2) Rare
+              option(value=3 selected=item&&item.rarity==3) Legendary
           .flex.vert
             label Blueprint
             input#blueprint-search.form-input(href="/r/system" type='text' name='blueprint' value=item?item.blueprint:false data-reaction="fill")

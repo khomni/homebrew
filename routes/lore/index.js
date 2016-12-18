@@ -29,7 +29,7 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
       })
     })
     .then(filtered => {
-      console.log(db.methods(filtered[0]))
+      console.log(filtered)
       if(req.requestType('json')) return res.json(filtered)
       if(req.requestType('modal')) return res.render('lore/modals/list',{title: res.locals.lorable.name, loreList:filtered})
       return res.json(filtered)

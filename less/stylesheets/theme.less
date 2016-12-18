@@ -2,6 +2,10 @@
 
 @ink-color: #986246;
 
+.paper {
+  .journal();
+}
+
 // JOURNAL THEME
 .journal() {
   background: url('/images/textures/journal.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #eee 0%, #ddcC99 100%);
@@ -43,12 +47,10 @@
     // z-index:2;
   }
 
-  a:not(.btn) {
-    color: darken(@color-secondary,25%);
-  }
   :not(.btn) {
     border-color:fade(#998a5c,50%);
   }
+
   .journal-markup {
     font-size: 18px;
     font-family: baskerville;
@@ -73,17 +75,13 @@
   color: #eee;
   text-shadow: 0px 1px 1px fade(black,25%);
 
-  :not(.btn):not(hr) {
-    border-color:fade(#000,50%);
-  }
+  // :not(.btn):not(hr) {
+  //   border-color:fade(#000,50%);
+  // }
 
   hr {
     border-bottom: 1px solid fade(#fff,25%);
     border-top: 1px solid fade(#000,25%);
-  }
-
-  a:not(.btn) {
-    color: darken(@color-secondary,25%);
   }
 }
 
@@ -113,20 +111,15 @@
       border-top: 1px solid fade(#fff,25%);
       border-bottom: 1px solid fade(#000,25%);
 
-      :not(.btn):not(hr) {
-        border-color:fade(#000,50%);
-      }
+      // :not(.btn):not(hr) {
+      //   border-color:fade(#000,50%);
+      // }
 
       hr {
         border-bottom: 1px solid fade(#fff,25%);
         border-top: 1px solid fade(#000,25%);
       }
 
-
-
-      a:not(.btn) {
-        color: darken(@color-secondary,25%);
-      }
     }
   }
 
@@ -139,18 +132,3 @@
     }
   }
 }
-
-// section {
-//   position: relative;
-//   z-index: 2;
-//   margin: auto;
-//   margin-bottom: 0.5rem;
-//   background-image: url('/images/textures/marble.jpg'), radial-gradient(ellipse 100% 200% at 50% 0, white 0%, #ccc 100%);
-//   background-size: 127px, 100%;
-//   background-position: 50% 50%;
-//   background-blend-mode: overlay;
-//   color: @color-dark;
-//   box-shadow: 0px 1px 5px fade(black,12.5%);
-//   border: 1px solid fade(black,25%);
-//   overflow: hidden;
-// }

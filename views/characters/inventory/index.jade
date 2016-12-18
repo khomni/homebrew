@@ -13,31 +13,48 @@ block content
     section
       .section-body
         .flex.center
-          a.btn(href="inventory/new" data-response="modal") New Item
+          if character.isActiveChar(currentUser)
+            a.btn(href="inventory/new" data-response="modal") New Item
+          else
+            a.btn(href="inventory/give" data-response="modal" data-target="give-"+character.id) Give Item
     section
       .section-body
-        .flex.fill
-          table.table
-            thead
-              tr
-                th Name
-                th Value
-                th Weight
-                th Rarity
-                th Blueprint
-                th
-            tbody
-              each item in character.Items
-                tr
-                  td
-                    a(href="inventory/"+item.id+"/lore" data-response="modal" data-target="item-"+item.id)= item.name
-                  td= item.value
-                  td= item.weight
-                  td= item.rarity
-                  td= item.properties.blueprint
-                  td
-                    .flex.je
-                      a.btn(href="inventory/"+item.id+"/edit" data-response="modal" data-target="edit-item-"+item.id) Edit
-                      form(action="inventory/"+item.id method="delete")
-                        button.btn Delete
-        
+        .flex.vert
+            form(action="inventory" method="delete" data-response="json" data-reaction="reload")
+              .scroll.x(class=THEME!='journal'?'paper':'')
+                table.table
+                  thead
+                    tr
+                      th
+                      th Name
+                      th Value
+                      th Weight
+                      //- th Blueprint
+                      if character.isActiveChar(currentUser)
+                        th
+                  tbody
+                    each item in character.Items
+                      tr(data-ref=item.id data-kind="Item")
+                        td
+                          label.checkbox
+                            input(type="checkbox" name="item" value=item.id)
+                            span
+                        td
+                          a(href="inventory/"+item.id data-response="modal" data-target="item-"+item.id data-rarity=item.rarity)= item.name
+                        td= Number(item.value) || '–'
+                        td= Number(item.weight) || '–'
+                        //- td= item.properties.blueprint
+                        if character.isActiveChar(currentUser)
+                          td
+                            .flex.je
+                              a.btn(href="inventory/"+item.id+"/edit" data-response="modal" data-target="edit-item-"+item.id) Edit
+                  tfoot
+                    tr
+                      td 
+                        button.btn(formaction="inventory" formmethod="delete" data-reaction="remove") Remove
+                      th Total
+                      th= meta.value
+                      th= meta.weight
+                      th
+                
+          

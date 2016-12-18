@@ -13,7 +13,13 @@ function serialize(form) {
             }
           }
         } else if ((field.type != 'checkbox' && field.type != 'radio') || field.checked) {
-          obj[encodeURIComponent(field.name)] = field.value;
+          var key = encodeURIComponent(field.name)
+          if(obj[key]) {
+            if(!Array.isArray(obj[key])) obj[key] = [obj[key]]
+            obj[key].push(field.value)
+          } else {
+            obj[encodeURIComponent(field.name)] = field.value;
+          }
         }
       }
     }
@@ -27,6 +33,9 @@ var Ajax = {
   setListeners: function() {
     document.addEventListener('submit',function(e){
       var thisForm = e.target;
+
+      // TOOD: support for button formmethod and formaction
+
       // if the form doesn't specify a response and the form method is a normal post, then treat as a normal form submission
       if(!thisForm.dataset.response && thisForm.getAttribute('method').toLowerCase() == 'post') return true;
       e.preventDefault();
@@ -55,11 +64,11 @@ var Ajax = {
         }
         return response.text()
         .then(html =>{
-          Modal.createModal(html);
+          Modal.methods.createModal(html);
         })
       })
       .catch(err =>{
-        Modal.createModal(err);
+        Modal.methods.createModal(err);
       })
     })
   },
@@ -101,6 +110,7 @@ var Ajax = {
         var data = JSON.stringify(args.data);
       }
     }
+
     var init = {
       method: args.method,
       mode: 'same-origin',

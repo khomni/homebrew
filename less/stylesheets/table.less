@@ -1,6 +1,5 @@
 table {
   width: 100%;
-  overflow-x: auto;
   border-collapse: collapse;
 
   .btn {
@@ -13,6 +12,12 @@ table {
     }
   }
 
+  tfoot {
+    tr {
+      border-top: 1px solid;
+    }
+  }
+
   table td.shrink {
     white-space:nowrap
 }
@@ -21,13 +26,16 @@ table {
   }
 
   tbody{
-
+    tr {
+      border-bottom: 1px solid fade(black,25%);
+      &:hover,&:focus {
+        background: fade(@color-primary,25%);
+      }
+    }
   }
 
   tr {
-    &:hover,&:focus {
-      background: fade(@color-primary,25%);
-    }
+
   }
 
   th {
@@ -37,5 +45,6 @@ table {
   th,td {
     text-align:left;
     padding: 0.25rem;
+    word-break: normal;
   }
 }

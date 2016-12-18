@@ -296,13 +296,24 @@ section {
 	border: 1px solid fade(black,25%);
 }
 
+&.scroll {
+	overflow: auto;
+	&.x:not(.y) {
+		overflow-y: hidden;
+		overflow-x: auto;
+	}
+	&.y:not(.x) {
+		overflow-x: hidden;
+		overflow-y: auto;
+	}
+}
+
 // sets a generic flexbox
 .flex {
 	display: flex;
 	max-width: 100%;
 	max-height: 100%;
 	align-items:stretch;
-
 	flex-flow: row wrap;
 
 	&.pad{

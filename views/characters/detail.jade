@@ -10,10 +10,25 @@ block header
 
 block content
   .content-body
-    if character.active
-    if !character.active
-      section
+    //- if character.active
+    //- if !character.active
+    section
+      if currentUser
         .section-footer
-          .flex.pad.center
-            a.btn(href=character.url+'/relationship/new' data-response="modal") Relate to #{character.getName('first')}
-      
+          .flex.pad
+            if character.ownedBy(currentUser)
+              .flex.vert.border.pad
+                .flex.center: label Owned Actions
+                .flex.center.pad
+                  form(action=character.url+"/select" method="post")
+                    button.btn(disabled=character.isActiveChar(currentUser)) Select
+                  a.btn(href=character.url+"/edit" data-response="modal") Edit
+            if !character.isActiveChar(currentUser)
+              .flex.vert.border.pad
+                .flex.center: label Interactions
+                .flex.center.pad
+                  a.btn(href=character.url+"/relationship/new" data-response="modal") Relate
+                  a.btn(href=character.url+"/chat" data-response="modal") Chat
+                  a.btn(href=character.url+"/lore" data-response="modal") Lore
+                  a.btn(href=character.url+"/inventory/give" data-response="modal") Give Items
+    

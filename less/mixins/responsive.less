@@ -2,7 +2,7 @@
 @screen-md-min: 1200px;
 @screen-lg-min: 1600px;
 
-@debug: 0;
+@debug: false;
 
 .debug-lines(@text,@color) when not(@debug = false) {
   outline: 1px dashed fade(@color,(@debug) * 100) ;

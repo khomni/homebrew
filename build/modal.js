@@ -106,13 +106,7 @@ var methods = {
       //   put the HTML in the modal, then run any scripts necessary
       Ajax.html({method:"GET", url:url, headers: {modal:true}})
       .then(html => {
-        target.innerHTML = html
-        var scripts = Array.prototype.slice.call(target.querySelectorAll('script'))
-        scripts.map(script => {eval(script.innerHTML)})
-        Array.prototype.slice.call(target.querySelectorAll('.modal-title')).map(title =>{title.classList.add('handle')})
-        modals[target.id] = new Modal(target)
-        target.modal.show();
-
+        return Modal.methods.createModal(html, target)
       })
       .catch(err => {
         console.error(err)
@@ -150,27 +144,19 @@ var methods = {
     })
   },
 
-  createModal: function(html,callback) {
-    Modal.dom.innerHTML = ""
-    var newdiv = document.createElement('div');
-    newdiv.innerHTML = html;
-    Modal.dom.appendChild(newdiv.childNodes[0]);
-    Modal.showModal();
+  createModal: function(html, target) {
+    if(!target) {
+      target = document.createElement('div');
+      target.classList.add('modal')
+      target.id = Date.now()
+    }
+    target.innerHTML = html
+    var scripts = Array.prototype.slice.call(target.querySelectorAll('script'))
+    scripts.map(script => {eval(script.innerHTML)})
+    Array.prototype.slice.call(target.querySelectorAll('.modal-title')).map(title =>{title.classList.add('handle')})
+    modals[target.id] = new Modal(target)
+    target.modal.show();
   },
-
-  showModal: function(){
-    document.body.classList.add('modal-open');
-    open = new Event('show')
-    Modal.dom.dispatchEvent(open)
-    Modal.dom.classList.add('open');
-  },
-
-  hideModal: function(){
-    document.body.classList.remove('modal-open')
-    hide = new Event('hide')
-    Modal.dom.dispatchEvent(hide)
-    Modal.dom.classList.remove('open');
-  }
 
 };
 

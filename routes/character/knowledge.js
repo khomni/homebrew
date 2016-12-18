@@ -16,11 +16,9 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
   var topic = {}
 
   // if there is a lorable item in the middleware stack, specify that as the topic
-  if(res.locals.lorable) topic = {where:{lorable:res.locals.lorable.$modelOptions.name.singular}}
-  console.log(topic)
+  if(res.locals.lorable) topic = {where:{lorable:res.locals.lorable.$modelOptions.name.singular, lorable_id: res.locals.lorable.id}}
   return req.user.activeChar.getKnowledge(topic)
   .then(knowledge => {
-    console.log(db.methods(knowledge[0]))
     if(req.requestType('json')) return res.json(knowledge)
     if(req.requestType('modal')) return res.render('lore/modals/list',{loreList:knowledge})
     return res.json(knowledge)

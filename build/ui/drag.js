@@ -10,6 +10,7 @@ var drag = {
     // move a dragging element if dragging
     document.addEventListener('mousemove', e => {
       if(!drag.dragging || !drag.dragging.elem) return true; // nothing to drag, do nothing
+      e.preventDefault();
 
       dragUpdate.onTick(function(){
         if(!drag.dragging) return false; // mouse has been released before the next frame has been obtained

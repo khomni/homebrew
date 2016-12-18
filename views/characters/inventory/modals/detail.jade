@@ -1,0 +1,8 @@
+.modal-content&attributes({class:THEME})
+  .modal-title= item.name
+  .modal-body
+    each lore in item.lore
+      if lore.hidden
+        div ???
+      else
+        div= lore.content
