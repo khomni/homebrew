@@ -1,6 +1,9 @@
 form(name='give' action=character.url+'/inventory/give' method='post')
   .modal-content&attributes({class: THEME})
-    .modal-title Give items to #{character.getName('first')}
+    if character.active
+      .modal-title Take Items
+    else
+      .modal-title Give items to #{character.getName('first')}
     .modal-body
       .flex.vert.fill.pad
         if items.length == 0
@@ -13,4 +16,4 @@ form(name='give' action=character.url+'/inventory/give' method='post')
               span= item.name
             a(href=currentUser.activeChar.url+'/inventory/'+item.id data-response="modal" data-target="item-"+item.id) ?
     .modal-footer.flex.center
-      button.btn(disabled=items.length==0) Give
+      button.btn(disabled=items.length==0)= character.active ? "Take" : "Give"

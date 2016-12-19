@@ -18,7 +18,7 @@ block content
               if !character.Items || character.Items.length == 0
                 .flex.center: label You have no items
               else
-                .scroll.x(class=THEME!='journal'?'paper':'')
+                .scroll.x
                   table.table
                     thead
                       tr
@@ -70,60 +70,13 @@ block content
                         th #{meta.weight.toFixed(2)} #{activeSystem.terms.WEIGHT.pluralize(meta.weight)}
                         th
                         th
-                  .flex.center.pad
-                    if character.isActiveChar(currentUser)
-                      button.btn(formaction="inventory" formmethod="delete" data-reaction="remove") Remove
-                      button.btn(formaction="inventory/drop" formmethod="post" data-reaction="remove") Drop
-                      a.btn(href="inventory/new" data-response="modal") New Item
-                    else
-                      a.btn(href="inventory/give" data-response="modal" data-target="give-"+character.id) Give Item
-    if character.active
-      if nearbyItems && nearbyItems.length > 0
-        section
-          .section-title Nearby
-          .section-body
-            .flex.vert
-              form(action="inventory/pickup" method="post" data-response="json" data-reaction="reload")
-                .scroll.x(class=THEME!='journal'?'paper':'')
-                  table.table
-                    thead
-                      tr
-                        th
-                        th Name
-                        th Quantity
-                        th Value
-                        th Weight
-                        th Properties
-                        th
-                    tbody
-                      each item in nearbyItems
-                        tr(data-ref=item.id data-kind="Item")
-                          td
-                            label.checkbox
-                              input(type="checkbox" name="item" value=item.id tabindex=1)
-                              span
-                          td
-                            a(href="inventory/"+item.id data-response="modal" data-target="item-"+item.id data-rarity=item.rarity tabindex=2)= item.name
-                          th= item.quantity > 1 ? item.quantity : "—"
-                          td
-                            if Number(item.value) == 0
-                              span —
-                            else
-                              span= (Number(item.value)*item.quantity).toLocaleString()+" "+activeSystem.terms.CURRENCY
-                          td
-                            if Number(item.weight) == 0
-                              | —
-                            else
-                              if item.quantity > 1
-                                span #{Number(item.weight)*item.quantity}
-                                label  (#{Number(item.weight)})
-                              else
-                                | #{Number(item.weight) || '–'}
-                          //- td= item.properties.blueprint
-                          td #{Object.keys(item.properties).length||'—'}
-                          if character.isActiveChar(currentUser)
-                            td
-                              .flex.je
-                                a.btn(href="inventory/"+item.id+"/edit" data-response="modal" data-target="edit-item-"+item.id tabindex=3) Edit
-                  .flex.center.pad
-                    button.btn Pick Up
+              .flex.center.pad
+                if character.isActiveChar(currentUser)
+                  button.btn(formaction="inventory" formmethod="delete" data-reaction="remove") Remove
+                  button.btn(formaction="inventory/drop" formmethod="post" data-reaction="remove") Drop
+                  a.btn(href="inventory/new" data-response="modal") New Item
+                else
+                  a.btn(href="inventory/give" data-response="modal" data-target="give-"+character.id) Give Item
+                if character.active
+                  if nearbyItems > 0
+                    a.btn(href="inventory/nearby" data-response="modal" data-target="search-nearby") Search Nearby
