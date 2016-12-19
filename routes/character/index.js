@@ -12,7 +12,6 @@ router.get('/', (req, res, next) => {
     return db.Character.findAll({include:[{model:db.Campaign}], order: [['CampaignId'],['name']]})
   })()
   .then(characters => {
-
     if(req.requestType('json')) return res.json(characters)
 
     return res.render('characters/', {characters:characters})
@@ -54,11 +53,12 @@ var characterRouter = express.Router({mergeParams: true});
 // character router handles individual subpages that pertain to the individual character
 router.use('/:id', (req,res,next) => {
   if(res.locals.character) return next();
-  return db.Character.findOne({where: {id: req.params.id}})
+  return db.Character.findOne({where: {id: req.params.id}, include:[{model:db.Campaign}]})
   .then(character => {
     if(!character) throw Common.error.notfound('Character')
     if(character.id == req.user.MainCharId) character.active = true
     res.locals.character = character
+    res.locals.activeSystem = SYSTEM[character.Campaign.system]
     res.locals.breadcrumbs.add(character.get({plain:true}))
     throw null
   })

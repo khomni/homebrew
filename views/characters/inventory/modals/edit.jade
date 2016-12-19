@@ -1,3 +1,24 @@
+mixin systemField(type,key,label)
+  if label
+    label= label
+  .flex.grow
+    if type === String
+      if item && Array.isArray(item.properties[key])
+        each value in item.properties[key]
+          input.form-input(type="text" name="SYSTEM_"+key value=item.properties[key])&attributes(attributes)
+      else
+        input.form-input(type="text" name="SYSTEM_"+key value=item&&item.properties?item.properties[key]:'')&attributes(attributes)
+    if type === Number
+      if item && Array.isArray(item.properties[key])
+        each value in item.properties[key]
+          input.form-input(type="number" name="SYSTEM_"+key value=item.properties[key])&attributes(attributes)
+      else
+        input.form-input(type="number" name="SYSTEM_"+key value=item&&item.properties?item.properties[key]:'')&attributes(attributes)
+    if Array.isArray(type)
+      .flex.pad.grow(id="SYSTEM_"+key+"_list")
+        a.btn(data-clone="SYSTEM_"+key data-target="SYSTEM_"+key+"_list") +
+        +systemField(type[0], key)(id="SYSTEM_"+key)
+
 form(name='item' action=character.url+'/inventory/' + (item?item.id:'') method='post')
   .modal-content&attributes({class: THEME})
     if item
@@ -6,18 +27,18 @@ form(name='item' action=character.url+'/inventory/' + (item?item.id:'') method='
       .modal-title New Item
     .modal-body
       .flex.vert.fill(class=THEME!='journal'?'paper':'')
-        .flex.vert.center.fill
-          label Item Name
-          input.form-input.grow(type='text' name='name' value=item?item.name:false)
-        .flex.center.fill
+        .flex.center.fill.pad
           .flex.vert
-            label Value
-            input.form-input(type='number' name='value' min=0 value=item?item.value:false)
+            label Item Name
+            input.form-input.grow(type='text' name='name' value=item?item.name:false)
           .flex.vert
-            label Weight
-            input.form-input(type='number' name='weight' min=0 step=0.1 value=item?item.weight:0)
-              
-        .flex.center.fill
+            label Blueprint
+            input#blueprint-search.form-input(href="/r/system" type='text' name='SYSTEM_blueprint' value=item?item.properties.blueprint:false data-reaction="fill")
+          .flex.vert.center.no-size
+            label.checkbox
+              input.form-input(type="checkbox" name="unique" value=item?item.unique:false)
+              span Unique
+        .flex.center.fill.pad
           .flex.vert
             label Rarity
             select.form-input(name="rarity")
@@ -26,8 +47,24 @@ form(name='item' action=character.url+'/inventory/' + (item?item.id:'') method='
               option(value=2 selected=item&&item.rarity==2) Rare
               option(value=3 selected=item&&item.rarity==3) Legendary
           .flex.vert
-            label Blueprint
-            input#blueprint-search.form-input(href="/r/system" type='text' name='blueprint' value=item?item.blueprint:false data-reaction="fill")
-        textarea.form-input(type='text' name='description' height=300 disabled=!!item&&!!item.lore[0])= item&&item.lore[0] ? item.lore[0].content : ''
+            label Value (#{activeSystem.terms.CURRENCY})
+            input.form-input(type='number' name='value' min=0 step=0.01 value=item?item.value:false)
+          .flex.vert
+            label Weight (#{activeSystem.terms.WEIGHT})
+            input.form-input(type='number' name='weight' min=0 step=0.01 value=item?item.weight:0)
+          .flex.vert
+            label Quantity
+            input.form-input(type='number' name='quantity' min=1 value=item?item.quantity:1)
+        .flex.center.fill.pad
+          textarea.form-input(type='text' name='description' height=300 disabled=!!item&&!!item.lore[0])= item&&item.lore[0] ? item.lore[0].content : ''
+        hr
+        h3 #{activeSystem.name} Fields
+        if systemFields
+          .flex.center.vert.fill.pad
+            each type,key in systemFields
+              +systemField(type,key,key)
+            
+                
+        
     .modal-footer
         button.btn.block(type='submit')= item ? 'Update Item' : 'Add Item'

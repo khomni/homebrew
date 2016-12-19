@@ -7,7 +7,7 @@ router.get('/', (req,res,next) => {
 })
 
 router.post('/', (req,res,next) => {
-  if(req.requestType('json')) return res.json({blueprint:'generic', rarity:0})
+  if(req.requestType('json')) return res.json({SYSTEM_blueprint:'generic', rarity:0})
   return res.sendStatus(200)
 });
 

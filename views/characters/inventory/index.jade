@@ -29,6 +29,8 @@ block content
                       th Name
                       th Value
                       th Weight
+                      th Quantity
+                      th Properties
                       //- th Blueprint
                       if character.isActiveChar(currentUser)
                         th
@@ -37,24 +39,35 @@ block content
                       tr(data-ref=item.id data-kind="Item")
                         td
                           label.checkbox
-                            input(type="checkbox" name="item" value=item.id)
+                            input(type="checkbox" name="item" value=item.id tabindex=1)
                             span
                         td
-                          a(href="inventory/"+item.id data-response="modal" data-target="item-"+item.id data-rarity=item.rarity)= item.name
-                        td= Number(item.value) || '–'
-                        td= Number(item.weight) || '–'
+                          a(href="inventory/"+item.id data-response="modal" data-target="item-"+item.id data-rarity=item.rarity tabindex=2)= item.name
+                        td= (Number(item.value)*item.quantity).toLocaleString()+" "+activeSystem.terms.CURRENCY || '–'
+                        td
+                          if Number(item.weight) == 0
+                            | —
+                          else
+                            if item.quantity > 1
+                              | #{Number(item.weight)*item.quantity}
+                              | (#{Number(item.weight)})
+                            else
+                              | #{Number(item.weight) || '–'}
+                        th= item.quantity
                         //- td= item.properties.blueprint
+                        td #{Object.keys(item.properties).length}
                         if character.isActiveChar(currentUser)
                           td
                             .flex.je
-                              a.btn(href="inventory/"+item.id+"/edit" data-response="modal" data-target="edit-item-"+item.id) Edit
+                              a.btn(href="inventory/"+item.id+"/edit" data-response="modal" data-target="edit-item-"+item.id tabindex=3) Edit
                   tfoot
                     tr
                       td 
                         button.btn(formaction="inventory" formmethod="delete" data-reaction="remove") Remove
                       th Total
-                      th= meta.value
-                      th= meta.weight
+                      th #{meta.value.toLocaleString()} #{activeSystem.terms.CURRENCY.pluralize(meta.value)}
+                      th #{meta.weight} #{activeSystem.terms.WEIGHT.pluralize(meta.weight)}
+                      th
                       th
                 
           

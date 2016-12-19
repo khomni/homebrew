@@ -442,6 +442,25 @@ textarea {
 [type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
 }
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background: transparent;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: rgba(51, 51, 51, 0.05);
+  margin: 1px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgba(51, 51, 51, 0.25);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(51, 51, 51, 0.25);
+}
 ::selection,
 ::-webkit-selection {
   color: white;
@@ -876,8 +895,8 @@ table td {
   border: none;
   padding: 0.5rem;
   display: block;
-  margin: 0.5em;
   flex-grow: 1;
+  width: 100%;
   transition: color 0.25s, filter 0.25s;
 }
 .form-input.pending {
@@ -1071,7 +1090,7 @@ textarea:focus {
 }
 textarea {
   min-height: 300px;
-  min-width: 600px;
+  width: 600px;
   max-width: 100%;
 }
 /*

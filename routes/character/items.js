@@ -19,8 +19,8 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
   .then(items => {
     res.locals.character.Items = items
     var meta = items.reduce((a,b)=>{
-      a.value += b.value
-      a.weight += Number(b.weight)
+      a.value += Number(b.value) * b.quantity
+      a.weight += Number(b.weight) * b.quantity
 
       return a
     },{value:0, weight:0})
@@ -32,6 +32,10 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
 });
 
 router.get('/new', Common.middleware.requireCharacter, (req, res, next) => {
+
+  var systemItem = res.locals.activeSystem.Item
+  if(systemItem) res.locals.systemFields = systemItem.prototype.schema
+
   if(req.requestType('modal')) return res.render('characters/inventory/modals/edit')
   return res.redirect(req.baseUrl)
 });
@@ -71,16 +75,23 @@ router.post('/give', Common.middleware.requireCharacter, (req,res,next) => {
 
 router.post('/', (req,res,next) => {
 
+  var baseFields = {}
+  var systemFields = {}
+
+  //
+  Object.keys(req.body).map(key => {
+    if(/^SYSTEM_/.test(key)) return systemFields[key.split('_').pop()] = req.body[key] || undefined
+    return baseFields[key] = req.body[key] || undefined
+  },null)
+
   return res.locals.character.createItem({
-    name: req.body.name || undefined,
-    value: req.body.value || undefined,
-    weight: req.body.weight || undefined,
-    rarity: req.body.rarity || undefined,
-    unique: !!req.body.unique || undefined,
-    properties: {
-      // TODO: this properties object will do all of the system-specific heavy lifting
-      blueprint: req.body.blueprint || undefined,
-    }
+    name: baseFields.name,
+    value: baseFields.value,
+    weight: baseFields.weight,
+    rarity: baseFields.rarity,
+    unique: baseFields.unique || false,
+    quantity: baseFields.quantity || 1,
+    properties: systemFields
   })
   .then(item => {
     if(!req.body.description) return item
@@ -129,6 +140,11 @@ router.get('/:id/', (req,res,next) => {
 })
 
 router.get('/:id/edit', Common.middleware.requireCharacter, (req,res,next) => {
+
+  var systemItem = res.locals.activeSystem.Item
+  if(systemItem) res.locals.systemFields = systemItem.prototype.schema
+
+
   db.Item.findOne({where:{id:req.params.id}, include:[{model: db.Lore, as:'lore'}]})
   .then(item =>{
     if(req.requestType('modal')) return res.render('characters/inventory/modals/edit',{item:item})
@@ -141,7 +157,15 @@ router.post('/:id', Common.middleware.requireCharacter, (req,res,next) => {
 
   db.Item.findOne({where:{id:req.params.id}})
   .then(item =>{
-    for(key in req.body) item[key] = req.body[key]
+
+    var systemFields = {}
+    item.properties= {}
+
+    Object.keys(req.body).map(key => {
+      if(/^SYSTEM_/.test(key)) return item.properties[key.split('_').pop()] = req.body[key] || undefined
+      return item[key] = req.body[key] || undefined
+    },null)
+
     return item.save()
   })
   .then(item => {

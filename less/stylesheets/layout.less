@@ -1,5 +1,28 @@
 @import '../mixins/mixins.less';
 
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background:transparent;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius:10px;
+  background: fade(#333,5%);
+  margin: 1px;
+
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: fade(#333,25%);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:window-inactive {
+  background: fade(#333,25%);
+}
+
 ::selection,::-webkit-selection {
 	color: white;
 	background-color: @color-primary;

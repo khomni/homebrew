@@ -16,7 +16,8 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
 
 router.get('/new', Common.middleware.requireUser, (req, res, next) => {
 
-  if(req.requestType('modal')) return res.render('campaign/_new',{systems:require(APPROOT+'/system').names})
+  // for new campaigns, get the name of all available systems
+  if(req.requestType('modal')) return res.render('campaign/modals/edit',{systems:SYSTEM.names})
   return res.render('campaign/new')
 });
 
@@ -56,6 +57,12 @@ router.use('/:id', (req,res,next) => {
 campaignRouter.get('/',(req,res,next) => {
   if(req.requestType('json')) return res.send(res.locals.campaign.get({plain:true}))
   if(req.requestType('modal')) return res.render('campaign/_detail')
+  return res.render('campaign/detail')
+});
+
+campaignRouter.get('/edit',(req,res,next) => {
+  if(req.requestType('json')) return res.send(res.locals.campaign.get({plain:true}))
+  if(req.requestType('modal')) return res.render('campaign/modals/edit')
   return res.render('campaign/detail')
 });
 

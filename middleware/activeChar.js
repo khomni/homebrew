@@ -7,6 +7,7 @@ module.exports = (req,res,next) => {
   return req.user.getMainChar({include:[{model:db.Campaign}]})
   .then(character => {
     res.locals.currentUser.activeChar = character
+    res.locals.activeSystem = SYSTEM[character.Campaign.system]
 
     return next();
   })

@@ -1,0 +1,25 @@
+.modal-content&attributes({class:THEME})
+  .modal-title
+    if campaign
+      | Edit #{campaign.name}
+    else
+      | Create a New Campaign
+  .modal-body 
+    form(name='campaign' action=(campaign?campaign.url:'/c/') method='post')
+      .flex.vert
+        .flex.vert.fill.js
+          label Campaign Name
+          input.form-input(type='text' required name="name" value=campaign?campaign.name:'' disabled=!!campaign)
+        .flex.vert.fill.js
+          label URL (Optional)
+          input.form-input(type='text' name="url" placeholder="Allowed characters: a-z A-Z 0-9 _-" pattern="^[a-zA-Z0-9_-]*$" maxlength=32 value=campaign?campaign.url:'' disabled=campaign&&campaign.url)
+        .flex.vert.fill.js
+          label System
+          select.form-input(name="system" /*disabled=campaign&&campaign.system*/)
+            each system,key in SYSTEM
+              option.form-input(name="system" value=key selected=campagin&&campaign.system==key)= system.name
+      .flex.center.pad
+        if campaign
+          button.btn(type='submit') Update Campagin
+        else
+          button.btn(type='submit') New Campaign

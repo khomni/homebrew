@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     // value of the object in whichever currency the campaign setting is
     value: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL,
       validate: {
         min: 0,
       }
@@ -28,6 +28,12 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DECIMAL,
       validate: {
         min: 0,
+      }
+    },
+    quantity: {
+      type: DataTypes.INTEGER,
+      validate: {
+        min: 1,
       }
     },
     // quality of the item instance where 0 is mundane
