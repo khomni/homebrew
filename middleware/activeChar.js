@@ -6,10 +6,17 @@ module.exports = (req,res,next) => {
 
   return req.user.getMainChar({include:[{model:db.Campaign}]})
   .then(character => {
+    if(!character) return next();
     res.locals.currentUser.activeChar = character
-    res.locals.activeSystem = SYSTEM[character.Campaign.system]
+    if(character.Campaign) res.locals.activeSystem = SYSTEM[character.Campaign.system]
+    if(character.location) return next()
+    
+    character.location = {type:'Point', coordinates:[0,0]}
+    return character.save()
+    .then(next)
 
-    return next();
+    return next()
   })
+  .catch(next)
 
 }

@@ -19,14 +19,28 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
   .then(items => {
     res.locals.character.Items = items
     var meta = items.reduce((a,b)=>{
+      a.total += b.quantity
       a.value += Number(b.value) * b.quantity
       a.weight += Number(b.weight) * b.quantity
 
       return a
-    },{value:0, weight:0})
+    },{value:0, weight:0, total:0})
 
     if(req.requestType('json')) return res.json(items)
     return res.render('characters/inventory/index',{meta:meta})
+  })
+  .catch(next)
+});
+
+router.get('/nearby', Common.middleware.requireCharacter, (req, res, next) => {
+  var here = req.user.activeChar.location.coordinates
+
+  return db.Item.findAll({where: [
+    {},
+    db.sequelize.fn('ST_DWithin', db.sequelize.col('location'), db.sequelize.fn('ST_MakePoint', here[0], here[1]),10000),
+  ]})
+  .then(item => {
+    return res.json(item)
   })
   .catch(next)
 });
@@ -51,7 +65,7 @@ router.get('/give', Common.middleware.requireCharacter, (req,res,next) => {
     return res.render('characters/inventory/modals/give',{items:items})
   })
   .catch(next)
-})
+});
 
 router.post('/give', Common.middleware.requireCharacter, (req,res,next) => {
   // req.body.item can be an array
@@ -128,11 +142,40 @@ router.delete('/', Common.middleware.requireCharacter, (req,res,next) => {
   })
 
   .catch(next)
+});
+
+router.post('/drop', Common.middleware.requireCharacter, (req,res,next) => {
+  if(!Array.isArray(req.body.item)) req.body.item = [req.body.item]
+
+  return db.Item.findAll({where:{id:{$in:req.body.item}}})
+  .then(items => {
+    return Promise.map(items, item => {
+      return req.user.activeChar.hasItems(item)
+      .then(owned => {
+        if(!owned) return null;
+        item.location = req.user.activeChar.location
+        return item.save().then(item =>{
+          return req.user.activeChar.removeItem(item).then(() => {
+            return {ref:item.get({plain:true}),kind:'Item'}
+          })
+        })
+      })
+    })
+  })
+  .then(results => {
+    console.log('results:',results)
+
+    if(req.requestType('json')) return res.json(results)
+    if(req.requestType('modal')) return res.render('modals/_success',{title:results.length+" items dropped"})
+    return res.json({item:item, location:location})
+  })
+  .catch(next)
 })
 
 router.get('/:id/', (req,res,next) => {
   db.Item.findOne({where:{id:req.params.id}, include:[{model: db.Lore, as:'lore'}]})
   .then(item => {
+    console.log(db.methods(req.user.activeChar,/item/gi))
     if(req.requestType('modal')) return res.render('characters/inventory/modals/detail',{item:item})
     return next()
   })
@@ -155,10 +198,8 @@ router.get('/:id/edit', Common.middleware.requireCharacter, (req,res,next) => {
 
 router.post('/:id', Common.middleware.requireCharacter, (req,res,next) => {
 
-  db.Item.findOne({where:{id:req.params.id}})
+  return db.Item.findOne({where:{id:req.params.id}})
   .then(item =>{
-
-    var systemFields = {}
     item.properties= {}
 
     Object.keys(req.body).map(key => {
@@ -180,7 +221,7 @@ router.post('/:id', Common.middleware.requireCharacter, (req,res,next) => {
     return res.redirect(res.locals.character.url + '/inventory')
   })
   .catch(next)
-})
+});
 
 router.delete('/:id', Common.middleware.requireCharacter, (req,res,next) => {
 

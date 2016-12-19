@@ -46,6 +46,9 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.BOOLEAN,
       default: false
     },
+    location: {
+      type: DataTypes.GEOGRAPHY
+    },
     // an arbitrary JSON object describing the static properties of an item that are inessential for the database (dependent on system)
     // things that may be contained in the properties object:
     //  - Reference to item blueprints or slot in system files
@@ -59,7 +62,12 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
 
         // an item may or may not have a location if it is not owned
-        Item.hasOne(models.Location);
+        // Item.hasOne(models.Location,{
+        //   foreignKey: 'locatable_id',
+        //   scope: {
+        //     locatable: 'Item'
+        //   }
+        // });
 
         // an item can have any number of lore items associated with it
         Item.hasMany(models.Lore,{

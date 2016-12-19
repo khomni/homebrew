@@ -1389,7 +1389,7 @@ body.modal-open {
   background-color: #ffab2e;
 }
 [data-rarity="0"] {
-  color: #999;
+  color: inherit;
 }
 [data-rarity="1"] {
   color: #67c1de;

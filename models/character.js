@@ -49,6 +49,9 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
+    location: {
+      type: DataTypes.GEOGRAPHY
+    },
 
     // an arbitrary JSON object describing the mechanical attributes of a character
     // this field should be manipulated by the relevant system
@@ -84,7 +87,13 @@ module.exports = function(sequelize, DataTypes) {
         // Character.hasOne(models.User, {as: 'mainChar'});
 
         // a character is a locable thing, so it has a location record
-        Character.hasOne(models.Location);
+        // Character.hasOne(models.Location, {
+        //   foreignKey: 'locatable_id',
+        //   scope: {
+        //     locatable: 'Character'
+        //   }
+        // });
+
         // a character has lore in the form of their bio and backstory
         Character.hasMany(models.Lore, {
           as: 'lore',

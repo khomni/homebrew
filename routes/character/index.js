@@ -31,8 +31,13 @@ router.post('/', Common.middleware.requireUser, (req,res,next) => {
   .then(pc => {
     if(!req.body.description) return pc;
 
-    return pc.createLore({content:req.body.description, obscurity:0})
-    .then(lore => {
+    return Promise.props({
+      // sets the character's public lore from their description
+      lore: pc.createLore({content:req.body.description, obscurity:0}),
+      // materializes the character in the world at location [0,0]
+      location: pc.createLocation({coordinates:{ type: 'Point', coordinates: [0,0]}})
+    })
+    .then(results =>{
       return pc
     })
   })
@@ -58,7 +63,7 @@ router.use('/:id', (req,res,next) => {
     if(!character) throw Common.error.notfound('Character')
     if(character.id == req.user.MainCharId) character.active = true
     res.locals.character = character
-    res.locals.activeSystem = SYSTEM[character.Campaign.system]
+    if(character.Campaign) res.locals.activeSystem = SYSTEM[character.Campaign.system]
     res.locals.breadcrumbs.add(character.get({plain:true}))
     throw null
   })
@@ -86,26 +91,32 @@ characterRouter.post('/', Common.middleware.requireCharacter, (req,res,next) => 
 
 })
 
-characterRouter.delete('/', Common.middleware.requireCharacter, (req,res,next) => {
+characterRouter.delete('/', Common.middleware.requireUser, (req,res,next) => {
 
-  return res.locals.character.destroy()
-  .then(character => {
-    if(req.requestType('json')) return res.send(res.locals.character.get({plain:true}))
-    if(req.requestType('modal')) return res.render('modals/_success', {title: res.locals.character.name + " deleted", redirect:req.headers.referer || "/pc"})
-    return res.redirect('/pc')
+  return req.user.hasCharacter(res.locals.character)
+  .then(owned => {
+    if(!owned) throw Common.error.authorization("You don't own that character")
+    return res.locals.character.destroy()
+    .then(character => {
+      if(req.requestType('json')) return res.send({ref:character,kind:'Character'})
+      if(req.requestType('modal')) return res.render('modals/_success', {title: res.locals.character.name + " deleted", redirect:req.headers.referer || "/pc"})
+      return res.redirect('/pc')
+    })
   })
   .catch(next)
 
 });
 
-characterRouter.post('/select', Common.middleware.requireCharacter, (req,res,next) => {
-
-  return req.user.setMainChar(res.locals.character)
-  .then(req.user.save)
-  .then(user => {
-    if(req.requestType('json')) return res.send(res.locals.character.get({plain:true}))
-    if(req.requestType('modal')) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
-    return res.redirect(req.headers.referer)
+characterRouter.post('/select', Common.middleware.requireUser, (req,res,next) => {
+  return req.user.hasCharacter(res.locals.character)
+  .then(owned => {
+    if(!owned) throw Common.error.authorization("You don't own that character")
+    return req.user.setMainChar(res.locals.character)
+    .then(user => {
+      if(req.requestType('json')) return res.send(res.locals.character.get({plain:true}))
+      if(req.requestType('modal')) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
+      return res.redirect(req.headers.referer)
+    })
   })
   .catch(next)
 
