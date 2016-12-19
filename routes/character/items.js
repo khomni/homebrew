@@ -15,32 +15,28 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
     if(req.query.order && ['asc','desc'].indexOf(req.query.order.toLowerCase())>=0) order[1] = req.query.order.toLowerCase()
   }
 
-  return res.locals.character.getItems({order: [order]})
-  .then(items => {
-    res.locals.character.Items = items
-    var meta = items.reduce((a,b)=>{
+  var here = req.user.activeChar.location.coordinates
+
+  return Promise.props({
+    owned: res.locals.character.getItems({order: [order]}),
+    near: db.Item.findAll({
+      attributes: {exclude: ['CharacterId']},
+      where: [{CharacterId:null},db.sequelize.fn('ST_DWithin', db.sequelize.col('location'), db.sequelize.fn('ST_MakePoint', here[0], here[1]),10000),]
+    })
+  })
+  .then(results => {
+    res.locals.nearbyItems = results.near
+    res.locals.character.Items = results.owned
+
+    var meta = results.owned.reduce((a,b)=>{
       a.total += b.quantity
       a.value += Number(b.value) * b.quantity
       a.weight += Number(b.weight) * b.quantity
-
       return a
     },{value:0, weight:0, total:0})
 
-    if(req.requestType('json')) return res.json(items)
+    if(req.requestType('json')) return res.json(results)
     return res.render('characters/inventory/index',{meta:meta})
-  })
-  .catch(next)
-});
-
-router.get('/nearby', Common.middleware.requireCharacter, (req, res, next) => {
-  var here = req.user.activeChar.location.coordinates
-
-  return db.Item.findAll({where: [
-    {},
-    db.sequelize.fn('ST_DWithin', db.sequelize.col('location'), db.sequelize.fn('ST_MakePoint', here[0], here[1]),10000),
-  ]})
-  .then(item => {
-    return res.json(item)
   })
   .catch(next)
 });
@@ -79,6 +75,23 @@ router.post('/give', Common.middleware.requireCharacter, (req,res,next) => {
         if(owned) return res.locals.character.addItem(item)
         return null;
       })
+    })
+    .then(items =>{
+      return res.redirect(req.headers.referer)
+    })
+  })
+  .catch(next)
+});
+
+router.post('/pickup', Common.middleware.requireCharacter, (req,res,next) => {
+  // req.body.item can be an array
+  if(!Array.isArray(req.body.item)) req.body.item = [req.body.item]
+
+  return db.Item.findAll({where: {id: {$in: req.body.item}, CharacterId: null}})
+  .then(items => {
+    console.log(items)
+    return Promise.map(items, item => {
+      return req.user.activeChar.addItem(item)
     })
     .then(items =>{
       return res.redirect(req.headers.referer)
