@@ -17,7 +17,7 @@ block content
         .section-body
           .flex.pad
             a.btn(href=campaign.url+'/pc/create') Create Character
-            if currentUser && currentUser.activeChar
+            if currentUser && currentUser.activeChar && currentUser.activeChar.CampaignId != campaign.id
               form(action=campaign.url+'/pc/'+currentUser.activeChar.id method="post")
                 input(type="hidden" name="CampaignId" value=campaign.id)
                 button.btn Move #{currentUser.activeChar.getName('first')} to this Campaign
