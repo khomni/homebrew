@@ -23,6 +23,7 @@ module.exports = sequelize.authenticate()
   });
   console.log(colors.magenta('['+CONFIG.database.name+']',Object.keys(db).length,'models imported'))
 
+
   for(key in db) {
     if(db[key].associate) db[key].associate(db)
   }
@@ -31,10 +32,12 @@ module.exports = sequelize.authenticate()
   return Promise.map(Object.keys(db), modelName => {
     // not a sequelize model to sync
     if(!db[modelName] instanceof Sequelize.Model) return Promise.resolve()
+    // if(db[modelName].associate) db[modelName].associate(db)
 
     // try syncing the model to the database
     return db[modelName].sync()
     .then(model => {
+
       // try to query a document in the model
       return model.findOne()
       .then(doc => {

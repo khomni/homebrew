@@ -26,7 +26,7 @@ form(name='item' action=character.url+'/inventory/' + (item?item.id:'') method='
     else
       .modal-title New Item
     .modal-body
-      .flex.vert.fill(class=THEME!='journal'?'paper':'')
+      .flex.vert.fill
         .flex.center.fill.pad
           .flex.vert
             label Item Name
