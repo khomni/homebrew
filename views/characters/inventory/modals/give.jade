@@ -13,7 +13,7 @@ form(name='give' action=character.url+'/inventory/give' method='post')
           .flex
             label.checkbox
               input(type="checkbox" name="item" value=item.id)
-              span= item.name
+              span(data-rarity=item.rarity)= item.name
             a(href=currentUser.activeChar.url+'/inventory/'+item.id data-response="modal" data-target="item-"+item.id) ?
     .modal-footer.flex.center
       button.btn(disabled=items.length==0)= character.active ? "Take" : "Give"

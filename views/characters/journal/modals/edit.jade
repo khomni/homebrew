@@ -6,9 +6,11 @@ form(name='journal' action=character.url+'/journal' + (entry?'/'+entry.id:'') me
       else 
         | New Journal Entry
     .modal-body
-      .flex.vert.fill
-        input.form-input.grow(type='text' required name='title' value=entry?entry.title:false)
-        textarea.form-input.grow(type='text' name='body' height=300)= entry?entry.body:''
+      .flex.vert.fill.pad
+        .flex
+          input.form-input.grow(type='text' required name='title' value=entry?entry.title:false)
+        .flex
+          textarea.form-input.grow(type='text' name='body' height=300)= entry?entry.body:''
         //- div
           hr
           label Visibility

@@ -33,7 +33,6 @@ var Ajax = {
   setListeners: function() {
     document.addEventListener('submit',function(e){
       var thisForm = e.target;
-
       // TOOD: support for button formmethod and formaction
 
       // if the form doesn't specify a response and the form method is a normal post, then treat as a normal form submission
@@ -41,12 +40,16 @@ var Ajax = {
       e.preventDefault();
       e.stopPropagation();
 
+      var thisFocus = thisForm.querySelector(':focus')
+      var method = thisFocus.getAttribute('formmethod') || thisForm.getAttribute('method')
+      var action = thisFocus.getAttribute('formaction') || thisForm.action
+      console.log(thisFocus,method,action)
       var Modal = require('./modal');
 
       // proprietary form handler!
       return Ajax.fetch({
-        method: thisForm.getAttribute('method'), // supports PUT PATCH DELETE POST
-        url: thisForm.action,
+        method: method, // supports PUT PATCH DELETE POST
+        url: action,
         headers:{ // allow the form to suggest ways of receiving the data
           modal:thisForm.dataset.response == 'modal',
           Accept: thisForm.dataset.response == 'json' ? 'application/json' : undefined,
