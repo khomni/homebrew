@@ -3,9 +3,9 @@ module.exports = {
     this.url = ""
     this.store = array || []
     this.add = object => {
-      object.url = this.url + object.url
-      this.url = object.url
+      object.url = this.url +  object.url
       this.store.push(object)
+      this.url = object.url
     }
   }
 }

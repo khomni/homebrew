@@ -72,8 +72,12 @@ campaignRouter.post('/', Common.middleware.requireGM, (req,res,next) => {
 
 });
 
-campaignRouter.delete('/', Common.middleware.requireGM, Common.middleware.confirmDelete, (req,res,next) =>{
-  return res.render('modals/_success',{title:"Campaign Deleted", redirect:'/c/'})
+campaignRouter.delete('/', Common.middleware.requireUser, Common.middleware.confirmDelete, (req,res,next) =>{
+  return req.user.hasCampaign(res.locals.campaign)
+  .then(owned => {
+    if(!owned) throw Common.error.authorization("You do not own that campaign")
+    return res.render('modals/_success',{title:"Campaign Deleted", redirect:'/c/'})
+  })
   // return res.send(res.locals.campaign)
   // return res.send('<h1>Just some html</h1>')
 });

@@ -11,7 +11,7 @@ module.exports = function(sequelize, DataTypes) {
         len: [0,32]
       },
       get: function() {
-        return '/pc/' + (this.getDataValue('url') || this.id)
+        return 'pc/' + (this.getDataValue('url') || this.id) + "/"
       }
     },
     // character name is an array of strings

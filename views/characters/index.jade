@@ -16,9 +16,9 @@ block content
       section
         .section-body
           .flex.pad
-            a.btn(href=campaign.url+'/pc/create') Create Character
+            a.btn(href='pc/create' data-response="modal") Create Character
             if currentUser && currentUser.activeChar && currentUser.activeChar.CampaignId != campaign.id
-              form(action=campaign.url+'/pc/'+currentUser.activeChar.id method="post")
+              form(action=currentUser.activeChar.url method="post")
                 input(type="hidden" name="CampaignId" value=campaign.id)
                 button.btn Move #{currentUser.activeChar.getName('first')} to this Campaign
     for character in characters
@@ -38,13 +38,13 @@ block content
                 .flex.vert.border.pad
                   .flex.center: label Owned Actions
                   .flex.center.pad
-                    form(action=character.url+"/select" method="post")
+                    form(action=character.url+"select" method="post")
                       button.btn(disabled=character.isActiveChar(currentUser)) Select
-                    a.btn(href=character.url+"/edit" data-response="modal") Edit
+                    a.btn(href=character.url+"edit" data-response="modal") Edit
               if currentUser.activeChar && !character.isActiveChar(currentUser)
                 .flex.vert.border.pad
                   .flex.center: label Interactions
                   .flex.center.pad
-                    a.btn(href=character.url+"/relationship/new" data-response="modal") Relate
-                    a.btn(href=character.url+"/chat" data-response="modal") Chat
-                    a.btn(href=character.url+"/lore" data-response="modal") Lore
+                    a.btn(href=character.url+"relationship/new" data-response="modal") Relate
+                    a.btn(href=character.url+"chat" data-response="modal") Chat
+                    a.btn(href=character.url+"lore" data-response="modal") Lore

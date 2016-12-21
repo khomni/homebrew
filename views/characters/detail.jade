@@ -20,15 +20,15 @@ block content
               .flex.vert.border.pad
                 .flex.center: label Owned Actions
                 .flex.center.pad
-                  form(action=character.url+"/select" method="post")
+                  form(action="select" method="post")
                     button.btn(disabled=character.isActiveChar(currentUser)) Select
-                  a.btn(href=character.url+"/edit" data-response="modal") Edit
+                  a.btn(href="edit" data-response="modal") Edit
             if !character.isActiveChar(currentUser)
               .flex.vert.border.pad
                 .flex.center: label Interactions
                 .flex.center.pad
-                  a.btn(href=character.url+"/relationship/new" data-response="modal") Relate
-                  a.btn(href=character.url+"/chat" data-response="modal") Chat
-                  a.btn(href=character.url+"/lore" data-response="modal") Lore
-                  a.btn(href=character.url+"/inventory/give" data-response="modal") Give Items
+                  a.btn(href="relationship/new" data-response="modal") Relate
+                  a.btn(href="chat" data-response="modal") Chat
+                  a.btn(href="lore" data-response="modal") Lore
+                  a.btn(href="inventory/give" data-response="modal") Give Items
     

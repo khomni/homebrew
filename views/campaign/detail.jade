@@ -12,9 +12,9 @@ block content
   .content-body
     +section('Contents')
       .flex.center.pad
-        a.btn(href=campaign.url+"/pc") Characters
-        a.btn(href=campaign.url+"/quests") Quests
-        a.btn(href=campaign.url+"/codex") Codex
+        a.btn(href="pc") Characters
+        a.btn(href="quests") Quests
+        a.btn(href="codex") Codex
     if campaign.ownedBy(currentUser)
       section
         .section-body
@@ -22,7 +22,8 @@ block content
             .flex.vert.border.pad
               .flex.center: label GM Actions
               .flex.center.pad
-                a.btn(href=campaign.url+'/edit' data-response="modal") Edit
-                +delete(campaign) Delete
+                a.btn(href='edit' data-response="modal") Edit
+                form(method="delete" data-response="json")
+                  button.btn Delete
                 //- form(action=campaign.url, method="DELETE")
                   button.btn(type="submit") Delete

@@ -21,7 +21,7 @@ router.use('/:username',(req,res,next) => {
   .then(user => {
     if(!user) throw Common.error.notfound('User');
     res.locals.user = user
-    res.locals.breadcrumbs.add({name:user.username,url:'u/'+user.username})
+    res.locals.breadcrumbs.add({name:user.username,url:'u/'+user.username+"/"})
     return next();
   }).catch(next);
 },userRouter);
