@@ -26,7 +26,7 @@ block content
         .section-title
           .float.left
             a(href=character.url)= character.name
-          .float.right
+          //- .float.right
             .timestamp= character.updatedAt.toLocaleString()
         if character.Campaign
           .section-body
@@ -41,7 +41,7 @@ block content
                     form(action=character.url+"/select" method="post")
                       button.btn(disabled=character.isActiveChar(currentUser)) Select
                     a.btn(href=character.url+"/edit" data-response="modal") Edit
-              if !character.isActiveChar(currentUser)
+              if currentUser.activeChar && !character.isActiveChar(currentUser)
                 .flex.vert.border.pad
                   .flex.center: label Interactions
                   .flex.center.pad

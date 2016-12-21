@@ -58,7 +58,7 @@ router.get('/nearby', Common.middleware.requireCharacter, (req,res,next) => {
 })
 
 router.get('/new', Common.middleware.requireCharacter, (req, res, next) => {
-
+  // access the system rules mounted on the middleware
   var systemItem = res.locals.activeSystem.Item
   if(systemItem) res.locals.systemFields = systemItem.prototype.schema
 

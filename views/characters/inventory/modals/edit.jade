@@ -57,9 +57,10 @@ form(name='item' action=character.url+'/inventory/' + (item?item.id:'') method='
             input.form-input(type='number' name='quantity' min=1 value=item?item.quantity:1)
         .flex.center.fill.pad
           textarea.form-input(type='text' name='description' height=300 disabled=!!item&&!!item.lore[0])= item&&item.lore[0] ? item.lore[0].content : ''
-        hr
-        h3 #{activeSystem.name} Fields
         if systemFields
+          .flex.center.vert
+            hr
+            h3 #{activeSystem.name} Fields
           .flex.center.vert.fill.pad
             each type,key in systemFields
               +systemField(type,key,key)

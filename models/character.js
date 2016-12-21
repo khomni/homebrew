@@ -83,8 +83,6 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         // a character is part of a campaign, so it contains a reference to that campaign
         Character.belongsTo(models.Campaign, {constraints: false});
-        // a user account has a designated main character
-        // Character.hasOne(models.User, {as: 'mainChar'});
 
         // a character is a locable thing, so it has a location record
         // Character.hasOne(models.Location, {

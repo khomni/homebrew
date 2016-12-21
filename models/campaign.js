@@ -34,7 +34,6 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         Campaign.hasMany(models.Quest);
-        Campaign.belongsTo(models.User, {as: 'Owner'});
       }
     }
   });
@@ -53,7 +52,7 @@ module.exports = function(sequelize, DataTypes) {
   })
 
   Campaign.Instance.prototype.ownedBy = function(user) {
-    return user.id === this.OwnerId
+    return user.id === this.UserId
   }
 
   return Campaign;

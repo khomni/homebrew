@@ -55,7 +55,7 @@ router.post('/signup', (req,res,next) => {
     username: req.body.username,
     email: req.body.email,
     password: req.body.password
-  })
+  },{fields:['username','email','password']})
   .then(user => {
     req.logIn(user, err => {
       console.log("[Log in] as user: ", req.user.get({plain:true}));

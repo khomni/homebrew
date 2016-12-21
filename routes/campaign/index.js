@@ -3,12 +3,10 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', Common.middleware.requireUser, (req, res, next) => {
-  db.Campaign.findAll({
-    include: [
-      {model: db.User, as: 'Owner'},
-    ],
-  })
-  .then( campaigns => {
+  var quer = {}
+  if(res.locals.user) query = {where:{UserId:res.locals.user.id}}
+  db.Campaign.findAll()
+  .then(campaigns => {
     return res.render('campaign/index', {campaigns: campaigns})
   })
   .catch(next);
@@ -23,10 +21,7 @@ router.get('/new', Common.middleware.requireUser, (req, res, next) => {
 
 router.post('/',Common.middleware.requireUser, (req,res,next) => {
 
-  var campaign = db.Campaign.build(req.body)
-
-  campaign.setOwner(req.user)
-  campaign.save()
+  return req.user.createCampaign(req.body)
   .then((campaign) => {
     return res.redirect(campaign.url)
   })
@@ -40,10 +35,7 @@ router.use('/:id', (req,res,next) => {
 
   if(res.locals.campaign) return next();
   var query = isNaN(req.params.id) ? {url:req.params.id} : {id:req.params.id}
-  return db.Campaign.findOne({
-    where: query,
-    include: [{model: db.User.scope('public'), as: 'Owner'}]
-  })
+  return db.Campaign.findOne({where: query})
   .then(campaign => {
     res.locals.campaign = campaign
     res.locals.breadcrumbs.add(campaign.get({plain:true}))

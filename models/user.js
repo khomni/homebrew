@@ -31,6 +31,9 @@ module.exports = function(sequelize, DataTypes) {
         notEmpty: true
       }
     },
+    admin: {
+      type: DataTypes.BOOLEAN
+    }
   }, {
     scopes: {
       public: {
@@ -47,6 +50,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         User.hasMany(models.Character, {as: 'characters', constraints: false});
         User.belongsTo(models.Character, {as: 'MainChar'});
+        User.hasMany(models.Campaign)
 
       },
       validPassword: function(password, passwd, done, user){
@@ -73,6 +77,32 @@ module.exports = function(sequelize, DataTypes) {
       });
     });
   })
+
+  // returns true if a user owns a character owns the character or campaign
+  // OR if the user owns the campaign that the character belongs to
+  User.Instance.prototype.controls = Promise.method(function(resource) {
+    var thisUser = this
+    if(thisUser.admin) return [true,{ownership:true, domain:true}]
+    if(resource.$modelOptions) {
+      var resourceType = resource.$modelOptions.name.singular
+      if(resourceType === 'Character') {
+        return Promise.props({
+          owned: thisUser.hasCharacter(resource),
+          dominion: resource.getCampaign().then(campaign=>{return thisUser.hasCampaign(campaign)})
+        }).then(results =>{ //
+          return [results.owned||results.dominion, results]
+        })
+      }
+
+      if(resourceType === 'Campaign') {
+        returnthisUser.hasCampaign(resource)
+      }
+
+    }
+
+    throw new Error('The provided argument is not a controllable resource')
+
+  });
 
   return User;
 };

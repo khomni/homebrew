@@ -8,6 +8,7 @@ router.get('/', (req, res, next) => {
   var include = []
 
   return Promise.method(function(){
+    if(res.locals.user) return res.locals.user.getCharacters()
     if(res.locals.campaign) return db.Character.findAll({where:{CampaignId:res.locals.campaign.id}})
     return db.Character.findAll({include:[{model:db.Campaign}], order: [['CampaignId'],['name']]})
   })()
@@ -61,7 +62,7 @@ router.use('/:id', (req,res,next) => {
   return db.Character.findOne({where: {id: req.params.id}, include:[{model:db.Campaign}]})
   .then(character => {
     if(!character) throw Common.error.notfound('Character')
-    if(character.id == req.user.MainCharId) character.active = true
+    if(req.user && character.id == req.user.MainCharId) character.active = true
     res.locals.character = character
     if(character.Campaign) res.locals.activeSystem = SYSTEM[character.Campaign.system]
     res.locals.breadcrumbs.add(character.get({plain:true}))
@@ -119,7 +120,41 @@ characterRouter.post('/select', Common.middleware.requireUser, (req,res,next) =>
     })
   })
   .catch(next)
+})
 
+characterRouter.get('/edit', Common.middleware.requireUser, (req,res,next) => {
+  return req.user.controls(res.locals.character)
+  .spread((controls, controlType)=> {
+    console.log(controls,controlType)
+    if(!controls) throw Common.error.authorization("You aren't authorized to modify that character")
+    // GM edit
+    if(controlType.dominion) {
+      if(req.requestType('modal')) return res.render('characters/modals/edit',{gm:true})
+    }
+
+    if(req.requestType('modal')) return res.render('characters/modals/edit')
+    return next()
+
+  })
+  .catch(next)
+
+})
+
+characterRouter.post('/', Common.middleware.requireUser, (req,res,next) => {
+  // TODO: change the fields that can be modified based on the permission type
+
+  return req.user.controls(res.locals.character)
+  .spread((controls, controlType) => {
+    if(!controls) throw Common.error.authorization("You aren't authorized to modify that character")
+
+    return res.locals.character.save()
+    .then(character => {
+      if(req.requestType('json')) return res.json(character)
+      if(req.requestType('modal')) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
+      return res.redirect(req.headers.referer)
+    })
+  })
+  .catch(next)
 })
 
 

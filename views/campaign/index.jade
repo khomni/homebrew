@@ -1,7 +1,7 @@
 extends ../layout
 
 block title
-  title= "Campaigns"
+  title Campaigns
   
 //- block header
   +header
@@ -11,7 +11,10 @@ block title
 block content
   .content-body
     for campaign in campaigns
-      +section(campaign.name) 
-        a(href=campaign.url) See this Campaign
-    a(href='/c/new' data-response='modal') Start a Campaign
+      section
+        .section-title
+          a(href=campaign.url)= campaign.name
+        .section-body
+          .flex.pad
+            
     

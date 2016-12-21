@@ -1,0 +1,30 @@
+form(action="/pc/" method="post" )
+  .modal-content
+    if character
+      .modal-title= character.name
+    else
+      .modal-title New Character
+    .modal-body
+      input(type="hidden" name="campaign" value=(campaign?campaign.id:false))
+      .flex.vert.pad
+        .flex.pad.center
+          .flex.center
+            label Title
+            input.form-input(name="title" placeholder="Title" value=character?character.title:false)
+          .flex.center.grow
+            label Name
+            input.form-input(name="name" placeholder="Name" value=character?character.name:false required)
+        .flex.pad.center
+          label.form-group-label Sex
+          select.form-input(name="sex")
+            option(selected=character&&character.sex=="n/a") Unspecified
+            option(value="male" selected=character&&character.sex=="male") Male
+            option(value="female" selected=character&&character.sex=="female") Female
+        .flex.pad.center.vert
+          label Description
+          textarea.form-input(name="description")= character?character.description:''
+      if systemFields
+        .flex.vert.pad
+          hr
+          h3 #{activeSystem.name} Fields
+        .flex.vert.pad
