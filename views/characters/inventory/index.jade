@@ -14,7 +14,7 @@ block content
       .section-title Carried
       .section-body
         .flex.vert
-            form(method="post" data-response="json" data-reaction="reload")
+            form(method="post" data-response="json" data-reaction="redirect")
               if !character.Items || character.Items.length == 0
                 .flex.center: label You have no items
               else

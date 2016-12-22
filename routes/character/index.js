@@ -63,6 +63,7 @@ router.use('/:id', (req,res,next) => {
   .then(character => {
     if(!character) throw Common.error.notfound('Character')
     if(req.user && character.id == req.user.MainCharId) character.active = true
+    if(req.user && character.UserId == req.user.id) character.owned = true
     res.locals.character = character
     if(character.Campaign) res.locals.activeSystem = SYSTEM[character.Campaign.system]
     res.locals.breadcrumbs.add(character.get({plain:true}))
@@ -77,20 +78,26 @@ characterRouter.get('/',(req,res,next) => {
   if(req.requestType('modal')) return res.render('characters/detail')
   return res.render('characters/detail')
 
-})
+});
 
-characterRouter.post('/', Common.middleware.requireCharacter, (req,res,next) => {
+characterRouter.post('/', Common.middleware.requireUser, (req,res,next) => {
+  // TODO: change the fields that can be modified based on the permission type
+  console.log(req.body)
+  return req.user.controls(res.locals.character)
+  .spread((controls, controlType) => {
+    if(!controls) throw Common.error.authorization("You aren't authorized to modify that character")
 
-  for(key in req.body) res.locals.character[key] = req.body[key]
-  return res.locals.character.save()
-  .then(character => {
-    return res.redirect(req.headers.referer||'/')
+    for(key in req.body) res.locals.character[key] = req.body[key]
 
+    return res.locals.character.save()
+    .then(character => {
+      if(req.requestType('json')) return res.json(character)
+      if(req.requestType('modal')) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
+      return res.redirect(req.headers.referer)
+    })
   })
-  // TODO: character editing interface
-
-
-})
+  .catch(next)
+});
 
 characterRouter.delete('/', Common.middleware.requireUser, (req,res,next) => {
 
@@ -138,23 +145,6 @@ characterRouter.get('/edit', Common.middleware.requireUser, (req,res,next) => {
   })
   .catch(next)
 
-})
-
-characterRouter.post('/', Common.middleware.requireUser, (req,res,next) => {
-  // TODO: change the fields that can be modified based on the permission type
-
-  return req.user.controls(res.locals.character)
-  .spread((controls, controlType) => {
-    if(!controls) throw Common.error.authorization("You aren't authorized to modify that character")
-
-    return res.locals.character.save()
-    .then(character => {
-      if(req.requestType('json')) return res.json(character)
-      if(req.requestType('modal')) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
-      return res.redirect(req.headers.referer)
-    })
-  })
-  .catch(next)
 })
 
 

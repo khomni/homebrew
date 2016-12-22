@@ -1,11 +1,12 @@
-form(action="/pc/" method="post" )
+form(action="/pc/" + (character ? character.id : '') method="post" )
   .modal-content
     if character
       .modal-title= character.name
     else
       .modal-title New Character
     .modal-body
-      input(type="hidden" name="campaign" value=(campaign?campaign.id:false))
+      if !character
+        input(type="hidden" name="campaign" value=(campaign?campaign.id:false))
       .flex.vert.pad
         .flex.pad.center
           .flex.center
@@ -14,10 +15,13 @@ form(action="/pc/" method="post" )
           .flex.center.grow
             label Name
             input.form-input(name="name" placeholder="Name" value=character?character.name:false required)
+          .flex.center.grow
+            label Race
+            input.form-input(name="race" placeholder="Name" value=character?character.race:false)
         .flex.pad.center
           label.form-group-label Sex
           select.form-input(name="sex")
-            option(selected=character&&character.sex=="n/a") Unspecified
+            option(selected=character&&character.sex=="n/a" value=" ") Unspecified
             option(value="male" selected=character&&character.sex=="male") Male
             option(value="female" selected=character&&character.sex=="female") Female
         .flex.pad.center.vert
@@ -28,3 +32,7 @@ form(action="/pc/" method="post" )
           hr
           h3 #{activeSystem.name} Fields
         .flex.vert.pad
+    .modal-footer
+      .flex.center.pad
+        button.btn= character ? 'Update '+ character.getName('first') : 'Create'
+          

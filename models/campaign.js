@@ -19,6 +19,9 @@ module.exports = function(sequelize, DataTypes) {
         return 'c/' + (this.getDataValue('url') || this.id) + "/"
       }
     },
+    owned: {
+      type: DataTypes.VIRTUAL
+    },
     // string describing what rules system the campaign uses
     // TODO: validate based on internal source files and build out system support
     system: {
@@ -50,10 +53,6 @@ module.exports = function(sequelize, DataTypes) {
 
     return Promise.resolve()
   })
-
-  Campaign.Instance.prototype.ownedBy = function(user) {
-    return user.id === this.UserId
-  }
 
   return Campaign;
 };

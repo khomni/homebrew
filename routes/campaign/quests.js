@@ -4,7 +4,9 @@ var router = express.Router();
 router.get('/', (req,res,next) => {
   if(!res.locals.campaign) return next();
 
-  return res.locals.campaign.getQuests({include: [{ all: true, nested: true}]})
+  return res.locals.campaign.getQuests({
+    include: [{model: db.Quest, as: 'quests', through:{where: {subquest:true}}, include: [{model: db.Quest, as: 'quests', through:{where: {subquest:true}}}]}]
+  })
   .then(quests => {
     res.locals.quests = quests
     return res.render('campaign/quests/index')
@@ -24,14 +26,18 @@ router.post('/', (req,res,next) => {
 
 });
 
-router.get('/new', Common.middleware.requireGM, (req,res,next) => {
+router.get('/new', Common.middleware.requireUser, (req,res,next) => {
+  if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to make quests"))
   if(req.requestType('modal')) return res.render('campaign/quests/modals/edit')
 })
 
 var questRouter = express.Router({mergeParams: true});
 
 router.use('/:id', (req,res,next) => {
-  return db.Quest.findOne({where:{id:req.params.id}, include:[{all:true, nested:true}]})
+  return db.Quest.findOne({
+    where:{id:req.params.id},
+    include:[{model:db.Quest, as:'quests', nested:true}],
+  })
   .then(quest => {
     if(!quest) throw next(Common.error.notfound('Quest'))
     res.locals.quest = quest
@@ -41,14 +47,13 @@ router.use('/:id', (req,res,next) => {
 }, questRouter)
 
 questRouter.get('/', (req,res,next) => {
-
-  console.log(res.locals.quest.subQuests)
-
+  res.locals.parentQuests = res.locals.quest.quests.filter(quest=>{return !quest.QuestLink.subquest})
+  res.locals.childQuests = res.locals.quest.quests.filter(quest=>{return quest.QuestLink.subquest})
   return res.render('campaign/quests/detail')
 });
 
-questRouter.post('/', Common.middleware.requireGM, (req,res,next) => {
-
+questRouter.post('/', Common.middleware.requireUser, (req,res,next) => {
+  if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to make quests"))
   for(key in req.body) res.locals.quest[key] = req.body[key]
 
   return res.locals.quest.save()
@@ -60,29 +65,85 @@ questRouter.post('/', Common.middleware.requireGM, (req,res,next) => {
   return res.render('campaign/quests/detail')
 });
 
-questRouter.get('/add', Common.middleware.requireGM, (req,res,next) => {
+questRouter.get('/add', Common.middleware.requireUser, (req,res,next) => {
+  if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to make quests"))
   if(req.requestType('modal')) return res.render('campaign/quests/modals/edit',{quest:null,parent:res.locals.quest})
 })
 
-questRouter.post('/add', Common.middleware.requireGM, (req,res,next) => {
-  return res.locals.quest.createSubQuest(req.body)
+questRouter.post('/add', Common.middleware.requireUser, (req,res,next) => {
+  if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to make quests"))
+
+  return res.locals.quest.createQuest(Object.assign(req.body,{CampaignId:res.locals.campaign.id}))
   .then(quest => {
-    return res.redirect(res.locals.campaign.url+'/quests/'+quest.id)
+    quest.addQuest(res.locals.quest,{subquest:false})
+    return res.redirect("/"+res.locals.campaign.url+"quests/"+ quest.id)
   })
   .catch(next)
 })
 
-questRouter.delete('/', Common.middleware.requireGM, (req,res,next) => {
-
+questRouter.delete('/', Common.middleware.requireUser, (req,res,next) => {
+  if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to delete quests"))
   return res.locals.quest.destroy()
   .then(quest => {
-    return res.redirect(req.headers.referer)
+    if(req.requestType('json')) {
+      return res.json({redirect:"/"+res.locals.campaign.url+"quests"})
+    }
+
   })
   return next();
 });
 
-questRouter.get('/edit', Common.middleware.requireGM, (req,res,next) => {
+// brings up a dialog that allows details of a quest to be modified
+questRouter.get('/edit', Common.middleware.requireUser, (req,res,next) => {
+  if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to edit quests"))
   if(req.requestType('modal')) return res.render('campaign/quests/modals/edit');
-})
+});
+
+// Quest Linking
+// link the routed quest to another quest
+// brings up a dialog that lets the user select another quest to link to
+questRouter.get('/link', Common.middleware.requireUser, (req,res,next) => {
+  if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to link quests"))
+
+  return res.locals.campaign.getQuests({attributes:['name','id'],where:{id:{$ne:res.locals.quest.id}}, include: [{ model: db.Quest, as: 'quests', nested: true, through:{where: {subquest:true}}}]})
+  .then(linkable => {
+    if(req.requestType('modal')) return res.render('campaign/quests/modals/link',{linkable:linkable});
+    return next();
+  })
+  .catch(next)
+});
+
+// creates a dependent
+// req.body is the id of the target quest
+questRouter.post('/link', Common.middleware.requireUser, (req,res,next) => {
+  if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to link quests"));
+  return res.locals.campaign.getQuests({where: {id:req.body.quest}})
+  .then(quest => {
+    return quest.hasQuest(res.locals.quest) // is the target link already associated with the quest?
+    .then(linked =>{
+      console.log('linked:',linked)
+      if(linked) { // if linked, remove link
+        return quest.removeQuest(res.locals.quest)
+        .then(() => {
+          return res.locals.quest.removeQuest(quest)
+        })
+      }
+
+      // if not linked, create a two way link
+      return quest.addQuest(res.locals.quest, {subquest:!req.body.subquest}) // the target quest is the parent unless specified
+      .then(()=>{
+        res.locals.quest.addQuest(quest,{subquest:!!req.body.subquest})
+      })
+    })
+    .then(quest => {
+      if(req.requestType('json')) return res.json({redirect:req.baseUrl})
+      if(req.requestType('modal')) return res.render('modals/_success',{redirect:req.baseUrl})
+      return res.json()
+
+    })
+  })
+  .catch(next)
+
+});
 
 module.exports = router;

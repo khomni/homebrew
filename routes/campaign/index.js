@@ -39,6 +39,8 @@ router.use('/:id', (req,res,next) => {
   .then(campaign => {
     res.locals.campaign = campaign
     res.locals.breadcrumbs.add(campaign.get({plain:true}))
+    if(!req.user) return next()
+    if(req.user && req.user.id == campaign.UserId) campaign.owned = true
     return next()
   })
   .catch(next)

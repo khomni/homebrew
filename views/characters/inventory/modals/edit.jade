@@ -35,6 +35,7 @@ form(name='item' action=character.url+'/inventory/' + (item?item.id:'') method='
             label Blueprint
             input#blueprint-search.form-input(href="/r/system" type='text' name='SYSTEM_blueprint' value=item?item.properties.blueprint:false data-reaction="fill")
           .flex.vert.center.no-size
+            label Flags
             label.checkbox
               input.form-input(type="checkbox" name="unique" value=item?item.unique:false)
               span Unique

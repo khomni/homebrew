@@ -1,11 +1,11 @@
 mixin quest(quest)
-  .flex.vert
-    .flex.center.no-size: a(href=campaign.url+"/quests/"+quest.id)=quest.name
-    if quest.subQuests && quest.subQuests.length > 0
-      .flex.border.vert
-        .flex.center: label Subquests
+  .flex.pad
+    .flex.center.pad.no-size
+      a.btn(href="/"+campaign.url+"quests/"+quest.id)= quest.name
+    if quest.quests && quest.quests.length > 0
+      .flex.pad.vert
         .flex.center
-          each subquest in quest.subQuests
+          each subquest in quest.quests
             +quest(subquest)
   //-
     .section-title

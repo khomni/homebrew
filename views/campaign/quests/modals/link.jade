@@ -1,0 +1,14 @@
+form(action="/"+campaign.url+"quests/"+quest.id+"/link" method="post" data-response="json" data-reaction="redirect")
+	.modal-content
+		.modal-title Link/Unlink #{quest.name}
+		.modal-body
+			.flex.vert.center.grow.pad
+				select.form-input(name="quest")
+					each parent in linkable
+						option(value=parent.id)= parent.name
+				label.checkbox
+					input(type="checkbox" name="subquest")
+					span Link this as a child quest
+		.modal-footer
+			.flex.center.pad
+				button.btn Link

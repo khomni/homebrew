@@ -29,20 +29,21 @@ module.exports = function(sequelize, DataTypes) {
     },
     race: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull:true,
       validate: {
-        len: [1,32]
+        len: [0,32]
       }
     },
     sex: {
       type: DataTypes.ENUM,
-      allowNull: false,
-      values: ['male','female','n/a']
+      allowNull:true,
+      values: ['male','female']
     },
     title: {
       type: DataTypes.STRING,
+      allowNull:true,
       validate: {
-        len: [1,64]
+        len: [0,64]
       }
     },
     npc: {
@@ -63,6 +64,9 @@ module.exports = function(sequelize, DataTypes) {
     // set active to true if a character matches a user's MainChar
     active: {
       type: DataTypes.VIRTUAL,
+    },
+    owned: {
+      type: DataTypes.VIRTUAL
     },
 
   }, {

@@ -13,14 +13,19 @@ block content
     section
       .section-body
         .flex.pad
-          if campaign.ownedBy(currentUser)
+          if campaign.owned
             .flex.vert.border.pad
               .flex.center: label GM Actions
               .flex.center.pad
                 a.btn(href="quests/new" data-response="modal") New Quest
     section
       .section-body
-        for quest in quests
-          +quest(quest)
-            
+        if quests.length > 0
+          .flex.vert.pad
+            for quest in quests
+              .flex.border
+                +quest(quest)
+        else
+          .flex.center
+            label No quests yet
     
