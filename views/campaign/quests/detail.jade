@@ -45,5 +45,6 @@ block content
               +quest(ancestor)
           +quest(quest,true)
           if quest.children && quest.children.length > 0
+            label Subquests
             each child in quest.children
               +quest(child)

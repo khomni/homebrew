@@ -7,8 +7,8 @@ form(action="/"+campaign.url+"quests/"+quest.id+"/link" method="post" data-respo
 					each parent in linkable
 						option(value=parent.id)= parent.name
 				label.checkbox
-					input(type="checkbox" name="subquest")
-					span Link this as a child quest
+					input(type="checkbox" name="asParent")
+					span Link #{quest.name} as a parent quest
 		.modal-footer
 			.flex.center.pad
 				button.btn Link

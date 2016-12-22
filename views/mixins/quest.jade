@@ -1,11 +1,11 @@
-mixin quest(quest, shallow)
+mixin quest(quest, active)
   .flex.vert.as
     .flex.center.pad
       -var n = quest.hierarchyLevel
       while n --> 1
         .spacer(style="width:10px")= n
-      a.btn(href="/"+campaign.url+"quests/"+quest.id disabled=shallow)= quest.name
-    if quest.children && quest.children.length > 0 && !shallow
+      a.btn(href="/"+campaign.url+"quests/"+quest.id disabled=active)= quest.name
+    if quest.children && quest.children.length > 0 && !active
       each subquest in quest.children
         +quest(subquest)
   //-

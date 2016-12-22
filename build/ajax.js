@@ -43,7 +43,6 @@ var Ajax = {
       var thisFocus = thisForm.querySelector(':focus')
       var method = thisFocus.getAttribute('formmethod') || thisForm.getAttribute('method')
       var action = thisFocus.getAttribute('formaction') || thisForm.action
-      console.log(thisFocus,method,action)
       var Modal = require('./modal');
 
       // proprietary form handler!

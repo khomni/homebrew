@@ -4,7 +4,7 @@ var router = express.Router();
 router.get('/', (req,res,next) => {
   if(!res.locals.campaign) return next();
 
-  return res.locals.campaign.getQuests({ include: {model:db.Quest, as: 'descendents', hierarchy: true,}
+  return res.locals.campaign.getQuests({ include: {model:db.Quest, as: 'descendents', hierarchy: true}
     // include: [{model: db.Quest, as: 'quests', through:{where: {subquest:true}}, include: [{model: db.Quest, as: 'quests', through:{where: {subquest:true}}}]}]
   })
   .then(quests => {
@@ -112,7 +112,8 @@ questRouter.get('/edit', Common.middleware.requireUser, (req,res,next) => {
 questRouter.get('/link', Common.middleware.requireUser, (req,res,next) => {
   if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to link quests"))
 
-  return res.locals.campaign.getQuests({attributes:['name','id'],where:{id:{$ne:res.locals.quest.id}}, include: [{ model: db.Quest, as: 'quests', nested: true, through:{where: {subquest:true}}}]})
+  // get the campaign's quests and all of their descendents
+  return res.locals.campaign.getQuests({attributes:['name','id'], include: {model:db.Quest, as: 'descendents', hierarchy: true}})
   .then(linkable => {
     if(req.requestType('modal')) return res.render('campaign/quests/modals/link',{linkable:linkable});
     return next();
@@ -124,31 +125,48 @@ questRouter.get('/link', Common.middleware.requireUser, (req,res,next) => {
 // req.body is the id of the target quest
 questRouter.post('/link', Common.middleware.requireUser, (req,res,next) => {
   if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to link quests"));
-  return res.locals.campaign.getQuests({where: {id:req.body.quest}})
+  console.log(db.methods(res.locals.campaign))
+  db.Quest.findOne({where: {id:req.body.quest}})
   .then(quest => {
-    return quest.hasQuest(res.locals.quest) // is the target link already associated with the quest?
-    .then(linked =>{
-      if(linked) { // if linked, remove link
-        return quest.removeQuest(res.locals.quest)
-        .then(() => {
-          return res.locals.quest.removeQuest(quest)
-        })
-      }
-
-      // if not linked, create a two way link
-      return quest.addQuest(res.locals.quest, {subquest:!req.body.subquest}) // the target quest is the parent unless specified
-      .then(()=>{
-        res.locals.quest.addQuest(quest,{subquest:!!req.body.subquest})
-      })
-    })
-    .then(quest => {
-      if(req.requestType('json')) return res.json({redirect:req.baseUrl})
-      if(req.requestType('modal')) return res.render('modals/_success',{redirect:req.baseUrl})
-      return res.json()
-
+    console.log(db.methods(quest))
+    if(!quest) throw null // quest does not exist
+    return res.locals.campaign.hasQuest(quest)
+    .then(owned => {
+      if(!owned) throw null // quest is not part of the campaign
+      if(!req.body.asParent) return quest.addChild(res.locals.quest)
+      return quest.setParent(res.locals.quest)
     })
   })
+  .then(quest => {
+    console.log(quest)
+    if(req.requestType('json')) return res.json({redirect:req.baseUrl})
+    if(req.requestType('modal')) return res.render('modals/_success',{redirect:req.baseUrl})
+  })
   .catch(next)
+
+  //   return quest.hasQuest(res.locals.quest) // is the target link already associated with the quest?
+  //   .then(linked =>{
+  //     if(linked) { // if linked, remove link
+  //       return quest.removeQuest(res.locals.quest)
+  //       .then(() => {
+  //         return res.locals.quest.removeQuest(quest)
+  //       })
+  //     }
+  //
+  //     // if not linked, create a two way link
+  //     return quest.addQuest(res.locals.quest, {subquest:!req.body.subquest}) // the target quest is the parent unless specified
+  //     .then(()=>{
+  //       res.locals.quest.addQuest(quest,{subquest:!!req.body.subquest})
+  //     })
+  //   })
+  //   .then(quest => {
+  //     if(req.requestType('json')) return res.json({redirect:req.baseUrl})
+  //     if(req.requestType('modal')) return res.render('modals/_success',{redirect:req.baseUrl})
+  //     return res.json()
+  //
+  //   })
+  // })
+  // .catch(next)
 
 });
 
