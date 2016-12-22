@@ -107,6 +107,7 @@ var Ajax = {
       if(args.body.nodeName === "FORM") {
         args.headers['Content-Type'] = 'application/json'
         var data = JSON.stringify(serialize(args.body))
+        console.log(data)
       }
       else if(typeof args.data === 'object') {
         args.headers['Content-Type'] = 'application/json'

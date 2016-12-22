@@ -4,8 +4,8 @@ var router = express.Router();
 router.get('/', (req,res,next) => {
   if(!res.locals.campaign) return next();
 
-  return res.locals.campaign.getQuests({
-    include: [{model: db.Quest, as: 'quests', through:{where: {subquest:true}}, include: [{model: db.Quest, as: 'quests', through:{where: {subquest:true}}}]}]
+  return res.locals.campaign.getQuests({ include: {model:db.Quest, as: 'descendents', hierarchy: true,}
+    // include: [{model: db.Quest, as: 'quests', through:{where: {subquest:true}}, include: [{model: db.Quest, as: 'quests', through:{where: {subquest:true}}}]}]
   })
   .then(quests => {
     res.locals.quests = quests
@@ -20,6 +20,7 @@ router.post('/', (req,res,next) => {
 
   return res.locals.campaign.createQuest(req.body)
   .then(quest => {
+    if(req.requestType('json')) return res.json({redirect:req.headers.referer})
     return res.redirect(req.headers.referer)
   })
   .catch(next);
@@ -36,7 +37,14 @@ var questRouter = express.Router({mergeParams: true});
 router.use('/:id', (req,res,next) => {
   return db.Quest.findOne({
     where:{id:req.params.id},
-    include:[{model:db.Quest, as:'quests', nested:true}],
+      // include: {model: db.Quest}
+    include: [
+      {model: db.Quest, as: 'descendents', hierarchy:true},
+      {model: db.Quest, as: 'ancestors'}
+    ],
+    order: [
+      [ {model: db.Quest, as: 'ancestors' }, 'hierarchyLevel' ]
+    ]
   })
   .then(quest => {
     if(!quest) throw next(Common.error.notfound('Quest'))
@@ -47,17 +55,16 @@ router.use('/:id', (req,res,next) => {
 }, questRouter)
 
 questRouter.get('/', (req,res,next) => {
-  res.locals.parentQuests = res.locals.quest.quests.filter(quest=>{return !quest.QuestLink.subquest})
-  res.locals.childQuests = res.locals.quest.quests.filter(quest=>{return quest.QuestLink.subquest})
   return res.render('campaign/quests/detail')
 });
 
 questRouter.post('/', Common.middleware.requireUser, (req,res,next) => {
   if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to make quests"))
   for(key in req.body) res.locals.quest[key] = req.body[key]
-
+  console.log(req.body)
   return res.locals.quest.save()
   .then(quest => {
+    if(req.requestType('json')) return res.json({redirect:req.headers.referer})
     return res.redirect(req.headers.referer)
   })
   .catch(next)
@@ -73,9 +80,9 @@ questRouter.get('/add', Common.middleware.requireUser, (req,res,next) => {
 questRouter.post('/add', Common.middleware.requireUser, (req,res,next) => {
   if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to make quests"))
 
-  return res.locals.quest.createQuest(Object.assign(req.body,{CampaignId:res.locals.campaign.id}))
+  return res.locals.quest.createChild(req.body)
   .then(quest => {
-    quest.addQuest(res.locals.quest,{subquest:false})
+    if(req.requestType('json')) return res.json({redirect:req.headers.referer})
     return res.redirect("/"+res.locals.campaign.url+"quests/"+ quest.id)
   })
   .catch(next)
@@ -121,7 +128,6 @@ questRouter.post('/link', Common.middleware.requireUser, (req,res,next) => {
   .then(quest => {
     return quest.hasQuest(res.locals.quest) // is the target link already associated with the quest?
     .then(linked =>{
-      console.log('linked:',linked)
       if(linked) { // if linked, remove link
         return quest.removeQuest(res.locals.quest)
         .then(() => {

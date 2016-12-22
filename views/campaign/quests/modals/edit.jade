@@ -1,4 +1,4 @@
-form(name='quest' action="/"+campaign.url+'quests/' + (quest?quest.id:'') + (parent?parent.id+'/add':'') method='post')
+form(name='quest' action="/"+campaign.url+'quests/' + (quest?quest.id:'') + (parent?parent.id+'/add':'') method='post' data-response="json" data-reaction="redirect")
   .modal-content
     if parent
       .modal-title Subquest to #{parent.name}
@@ -21,5 +21,19 @@ form(name='quest' action="/"+campaign.url+'quests/' + (quest?quest.id:'') + (par
         .flex.vert.center
           label Description
           textarea.form-input(type='text' name='description' height=300)=quest?quest.description:''
+        .flex.center
+          label.checkbox
+            input(type="checkbox" name="visible" checked=quest&&quest.visible)
+            span Visible
+        .flex.center
+          label.radio
+            input(type="radio" name="status" value="active" checked=quest&&quest.status=="active")
+            span Active
+          label.radio
+            input(type="radio" name="status" value="failed" checked=quest&&quest.status=="failed")
+            span Failed
+          label.radio
+            input(type="radio" name="status" value="complete" checked=quest&&quest.status=="complete")
+            span Complete
     .modal-footer
         button.btn.block(type='submit')= quest ? 'Update Quest' : 'Add Quest'

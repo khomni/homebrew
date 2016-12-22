@@ -28,6 +28,7 @@ module.exports = sequelize.authenticate()
     if(db[key].associate) db[key].associate(db)
   }
 
+
   // for each model, promise that it will successfully sync and can query results without error
   return Promise.map(Object.keys(db), modelName => {
     // not a sequelize model to sync
@@ -70,6 +71,9 @@ module.exports = sequelize.authenticate()
       return methods.sort().join(', ').grey
     }
 
+    return sequelize.sync()
+  })
+  .then(()=> {
 
     db.sequelize = sequelize
     db.Sequelize = Sequelize

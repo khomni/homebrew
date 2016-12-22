@@ -1,12 +1,13 @@
-mixin quest(quest)
-  .flex.pad
-    .flex.center.pad.no-size
-      a.btn(href="/"+campaign.url+"quests/"+quest.id)= quest.name
-    if quest.quests && quest.quests.length > 0
-      .flex.pad.vert
-        .flex.center
-          each subquest in quest.quests
-            +quest(subquest)
+mixin quest(quest, shallow)
+  .flex.vert.as
+    .flex.center.pad
+      -var n = quest.hierarchyLevel
+      while n --> 1
+        .spacer(style="width:10px")= n
+      a.btn(href="/"+campaign.url+"quests/"+quest.id disabled=shallow)= quest.name
+    if quest.children && quest.children.length > 0 && !shallow
+      each subquest in quest.children
+        +quest(subquest)
   //-
     .section-title
       a(href='quests/'+quest.id)= quest.name

@@ -21,10 +21,8 @@ block content
     section
       .section-body
         if quests.length > 0
-          .flex.vert.pad
-            for quest in quests
-              .flex.border
-                +quest(quest)
+          for quest in quests
+            +quest(quest)
         else
           .flex.center
             label No quests yet

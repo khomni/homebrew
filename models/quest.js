@@ -6,27 +6,29 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        len: [1,32]
+        len: [1,64]
       }
     },
     description: {
       type: DataTypes.TEXT
     },
     status: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
+      type: DataTypes.ENUM,
+      allowNull:true,
       values: ['complete','active','failed']
     },
     visible: {
       type: DataTypes.BOOLEAN,
     }
   }, {
+    // hierarchy: true,
     classMethods: {
       associate: function(models) {
         // a quest can reference a parent quest if it is a subquest
-        Quest.belongsToMany(models.Quest, {as: 'quests', through:models.QuestLink});
       }
     }
   });
+  Quest.isHierarchy();
 
   return Quest;
 };

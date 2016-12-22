@@ -39,16 +39,11 @@ block content
                   .flex.grow
     section
       .section-body
-        .flex.fill
-          if parentQuests && parentQuests.length > 0
-            .flex.pad.vert
-              .flex.center: label Parent Quests
-              .flex.center
-                each parent in parentQuests
-                  +quest(parent)
-          if childQuests && childQuests.length > 0
-            .flex.pad.vert
-              .flex.center: label Subquests
-              .flex.center
-                each child in childQuests
-                  +quest(child)
+        .flex.fill.vert
+          if quest.ancestors && quest.ancestors.length > 0
+            each ancestor in quest.ancestors
+              +quest(ancestor)
+          +quest(quest,true)
+          if quest.children && quest.children.length > 0
+            each child in quest.children
+              +quest(child)
