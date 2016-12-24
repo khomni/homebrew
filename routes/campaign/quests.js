@@ -124,7 +124,7 @@ questRouter.get('/link', Common.middleware.requireUser, (req,res,next) => {
 // req.body is the id of the target quest
 questRouter.post('/link', Common.middleware.requireUser, (req,res,next) => {
   if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to link quests"));
-  db.Quest.findOne({where: {id:req.body.quest}})
+  return db.Quest.findOne({where: {id:req.body.quest}})
   .then(quest => {
     if(!quest) throw null // quest does not exist
 
@@ -145,7 +145,6 @@ questRouter.post('/link', Common.middleware.requireUser, (req,res,next) => {
     })
   })
   .then(quest => {
-    console.log('getting ready to link')
     if(!req.body.asParent) return quest.addChild(res.locals.quest)
     return quest.setParent(res.locals.quest)
   })
@@ -154,30 +153,6 @@ questRouter.post('/link', Common.middleware.requireUser, (req,res,next) => {
     if(req.requestType('modal')) return res.render('modals/_success',{redirect:req.baseUrl})
   })
   .catch(next)
-
-  //   return quest.hasQuest(res.locals.quest) // is the target link already associated with the quest?
-  //   .then(linked =>{
-  //     if(linked) { // if linked, remove link
-  //       return quest.removeQuest(res.locals.quest)
-  //       .then(() => {
-  //         return res.locals.quest.removeQuest(quest)
-  //       })
-  //     }
-  //
-  //     // if not linked, create a two way link
-  //     return quest.addQuest(res.locals.quest, {subquest:!req.body.subquest}) // the target quest is the parent unless specified
-  //     .then(()=>{
-  //       res.locals.quest.addQuest(quest,{subquest:!!req.body.subquest})
-  //     })
-  //   })
-  //   .then(quest => {
-  //     if(req.requestType('json')) return res.json({redirect:req.baseUrl})
-  //     if(req.requestType('modal')) return res.render('modals/_success',{redirect:req.baseUrl})
-  //     return res.json()
-  //
-  //   })
-  // })
-  // .catch(next)
 
 });
 
