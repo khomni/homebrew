@@ -39,12 +39,14 @@ block content
                   .flex.grow
     section
       .section-body
-        .flex.fill.vert
+        .flex.fill
           if quest.ancestors && quest.ancestors.length > 0
-            each ancestor in quest.ancestors
-              +quest(ancestor)
-          +quest(quest,true)
+            div
+              label Parent Quests
+              each ancestor in quest.ancestors
+                +quest(ancestor)
           if quest.children && quest.children.length > 0
-            label Subquests
-            each child in quest.children
-              +quest(child)
+            div
+              label Subquests
+              each child in quest.children
+                +quest(child)

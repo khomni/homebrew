@@ -1,21 +1,29 @@
 mixin quest(quest, active)
-  .flex.vert.as
-    .flex.center.pad
-      -var n = quest.hierarchyLevel
-      while n --> 1
-        .spacer(style="width:10px")= n
-      a.btn(href="/"+campaign.url+"quests/"+quest.id disabled=active)= quest.name
+  .quest-container.flex.vert(class=!quest.visible&&campaign.owned?'obscured ':'' + quest.status)
+    a.quest(href="/"+campaign.url+"quests/"+quest.id disabled=!quest.visible&&!campaign.owned)
+      .flex.pad
+        if !(quest.visible || campaign.owned)
+          div ???
+        else 
+          div= quest.name
+        if quest.status
+          .tag= quest.status
+        if !quest.visible && campaign.owned
+          .tag.grey unpublished
+        .timestamp.je.grow= quest.updatedAt.toLocaleDateString()
     if quest.children && quest.children.length > 0 && !active
       each subquest in quest.children
         +quest(subquest)
-  //-
-    .section-title
-      a(href='quests/'+quest.id)= quest.name
-    .section-body
-      .journal-markup!= markdown(quest.description)
-    .section-body
-      if quest.subQuests.length > 0
-        .flex.pad
-          each subquest in quest.subQuests
-            .flex.pad
-              .flex.center: a(href=campaign.url+'/quests/'+subquest.id)= subquest.name
+    block
+    
+//-
+  .section-title
+    a(href='quests/'+quest.id)= quest.name
+  .section-body
+    .journal-markup!= markdown(quest.description)
+  .section-body
+    if quest.subQuests.length > 0
+      .flex.pad
+        each subquest in quest.subQuests
+          .flex.pad
+            .flex.center: a(href=campaign.url+'/quests/'+subquest.id)= subquest.name

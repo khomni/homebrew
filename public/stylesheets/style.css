@@ -483,7 +483,7 @@ body {
   overflow-y: overlay;
 }
 a {
-  color: #ff9d55;
+  color: #ff8022;
   transition: 0.5s;
   text-decoration: none;
 }
@@ -492,6 +492,7 @@ a[disabled] {
 }
 a:focus,
 a:hover {
+  color: #ff9d55;
   outline: none;
   text-decoration: underline;
 }
@@ -712,6 +713,13 @@ p + p {
     padding: 1em 0;
   }
 }
+.tag {
+  font-size: 10px;
+  text-transform: uppercase;
+  border: 1px solid;
+  border-radius: 3px;
+  padding: 3px;
+}
 .copy,
 section .section-title,
 section .section-body {
@@ -773,13 +781,8 @@ section .section-footer {
   float: right;
 }
 .timestamp {
+  text-align: right;
   opacity: 0.25;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -webkit-user-select: none;
-  cursor: -webkit-default;
-  cursor: -moz-default;
-  cursor: default;
   transition: 0.25s;
 }
 .timestamp:hover {
@@ -1205,6 +1208,9 @@ body.modal-open {
 .modal .modal-content.journal textarea {
   border: 1px dashed;
 }
+.modal .modal-content.journal a:not(.btn) {
+  color: #986246;
+}
 .modal .modal-content.journal :not(.btn) {
   border-color: rgba(153, 138, 92, 0.5);
 }
@@ -1400,6 +1406,52 @@ body.modal-open {
   color: #aa00ff;
   text-shadow: 0 0 8px #c65dfc;
 }
+.quest-container {
+  border-left: 1px solid;
+  border-bottom: 1px solid;
+  border-color: rgba(0, 0, 0, 0.25);
+  padding-right: 0;
+}
+.quest-container > .quest-container {
+  margin-left: 1em;
+  border-bottom: none;
+}
+.quest-container.collapsed {
+  border-bottom: 1px dashed;
+}
+.quest-container.collapsed > .quest-container {
+  max-height: 0;
+  overflow: hidden;
+}
+.quest-container.obscured {
+  -webkit-filter: saturate(0);
+  filter: saturate(0);
+}
+.quest-container.complete .quest {
+  opacity: 0.5;
+}
+.quest-container:not(:first-child) {
+  border-top: none;
+}
+.quest-container:hover > .quest {
+  opacity: 1;
+  background: rgba(255, 157, 85, 0.1);
+}
+.quest-container .quest {
+  text-decoration: none;
+  padding: 0.5em;
+}
+.quest-container .quest:hover,
+.quest-container .quest:focus {
+  opacity: 1;
+}
+.quest-container .quest:focus {
+  padding-left: 1em;
+  background: rgba(255, 157, 85, 0.1);
+}
+.quest-container .spacer {
+  padding: 5px;
+}
 .paper {
   background: url('/images/textures/journal.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #eee 0%, #ddcC99 100%);
   background-image: url('/images/textures/journal.jpg'), radial-gradient(ellipse 100% 200% at 50% 100%, #eee 0%, #ddcC99 100%);
@@ -1424,6 +1476,9 @@ body.modal-open {
 }
 .paper textarea {
   border: 1px dashed;
+}
+.paper a:not(.btn) {
+  color: #986246;
 }
 .paper :not(.btn) {
   border-color: rgba(153, 138, 92, 0.5);
@@ -1466,6 +1521,9 @@ body.modal-open {
 }
 #content-main.journal section textarea {
   border: 1px dashed;
+}
+#content-main.journal section a:not(.btn) {
+  color: #986246;
 }
 #content-main.journal section :not(.btn) {
   border-color: rgba(153, 138, 92, 0.5);

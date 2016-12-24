@@ -6,6 +6,8 @@ form(action="/"+campaign.url+"quests/"+quest.id+"/link" method="post" data-respo
 				select.form-input(name="quest")
 					each parent in linkable
 						option(value=parent.id)= parent.name
+						each child in parent.children
+							option(value=child.id) #{"─".repeat(child.hierarchyLevel)}#{child.name}
 				label.checkbox
 					input(type="checkbox" name="asParent")
 					span Link #{quest.name} as a parent quest

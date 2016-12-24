@@ -42,9 +42,6 @@ router.use('/:id', (req,res,next) => {
       {model: db.Quest, as: 'descendents', hierarchy:true},
       {model: db.Quest, as: 'ancestors'}
     ],
-    order: [
-      [ {model: db.Quest, as: 'ancestors' }, 'hierarchyLevel' ]
-    ]
   })
   .then(quest => {
     if(!quest) throw next(Common.error.notfound('Quest'))
@@ -125,20 +122,32 @@ questRouter.get('/link', Common.middleware.requireUser, (req,res,next) => {
 // req.body is the id of the target quest
 questRouter.post('/link', Common.middleware.requireUser, (req,res,next) => {
   if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to link quests"));
-  console.log(db.methods(res.locals.campaign))
   db.Quest.findOne({where: {id:req.body.quest}})
   .then(quest => {
-    console.log(db.methods(quest))
     if(!quest) throw null // quest does not exist
+
+    if(!quest.CampaignId) {
+      return quest.getAncestors()
+      .then(ancestors => {
+        return res.locals.campaign.hasQuest(ancestors[0])
+        .then(owned => {
+          if(!owned) throw Common.error.authorization("You can only link quests to quests in the same campaign");
+          return quest
+        })
+      })
+    }
     return res.locals.campaign.hasQuest(quest)
     .then(owned => {
-      if(!owned) throw null // quest is not part of the campaign
-      if(!req.body.asParent) return quest.addChild(res.locals.quest)
-      return quest.setParent(res.locals.quest)
+      if(!owned) throw Common.error.authorization("You can only link quests to quests in the same campaign");
+      return quest
     })
   })
   .then(quest => {
-    console.log(quest)
+    console.log('getting ready to link')
+    if(!req.body.asParent) return quest.addChild(res.locals.quest)
+    return quest.setParent(res.locals.quest)
+  })
+  .then(quest => {
     if(req.requestType('json')) return res.json({redirect:req.baseUrl})
     if(req.requestType('modal')) return res.render('modals/_success',{redirect:req.baseUrl})
   })
