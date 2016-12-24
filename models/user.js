@@ -95,7 +95,7 @@ module.exports = function(sequelize, DataTypes) {
       }
 
       if(resourceType === 'Campaign') {
-        returnthisUser.hasCampaign(resource)
+        return thisUser.hasCampaign(resource)
       }
 
     }

@@ -22,7 +22,7 @@ module.exports = function(sequelize, DataTypes) {
     freezeTableName: true,
     classMethods: {
       associate: function(models) {
-        Comment.hasOne(models.Character) // all comments have a
+        Comment.hasOne(models.Character) // all comments have a speaking character. Join the character from the comment itself
       }
     }
   });

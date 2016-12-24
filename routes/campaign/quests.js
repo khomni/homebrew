@@ -52,13 +52,15 @@ router.use('/:id', (req,res,next) => {
 }, questRouter)
 
 questRouter.get('/', (req,res,next) => {
-  return res.render('campaign/quests/detail')
+  res.locals.quest.getComments()
+  .then(comments => {
+    return res.render('campaign/quests/detail', {comments:comments})
+  })
 });
 
 questRouter.post('/', Common.middleware.requireUser, (req,res,next) => {
   if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to make quests"))
   for(key in req.body) res.locals.quest[key] = req.body[key]
-  console.log(req.body)
   return res.locals.quest.save()
   .then(quest => {
     if(req.requestType('json')) return res.json({redirect:req.headers.referer})

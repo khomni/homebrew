@@ -25,6 +25,14 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         // a quest can reference a parent quest if it is a subquest
+        Quest.hasMany(models.Comment, {
+          as: 'comments',
+          constraints: false,
+          foreignKey: 'commentable_id',
+          scope: {
+            commentable: 'Quest'
+          }
+        })
       }
     }
   });
