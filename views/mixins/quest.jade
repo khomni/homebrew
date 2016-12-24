@@ -10,6 +10,8 @@ mixin quest(quest, active)
           .tag= quest.status
         if !quest.visible && campaign.owned
           .tag.grey unpublished
+        if quest.comments && quest.comments.length > 0
+          div (#{quest.comments.length} comments)
         .timestamp.je.grow= quest.updatedAt.toLocaleDateString()
     if quest.children && quest.children.length > 0 && !active
       each subquest in quest.children

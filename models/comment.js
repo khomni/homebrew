@@ -26,6 +26,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   });
+  Comment.isHierarchy();
 
   return Comment;
 };

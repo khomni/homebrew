@@ -4,8 +4,11 @@ var router = express.Router();
 router.get('/', (req,res,next) => {
   if(!res.locals.campaign) return next();
 
-  return res.locals.campaign.getQuests({ include: {model:db.Quest, as: 'descendents', hierarchy: true}
-    // include: [{model: db.Quest, as: 'quests', through:{where: {subquest:true}}, include: [{model: db.Quest, as: 'quests', through:{where: {subquest:true}}}]}]
+  return res.locals.campaign.getQuests({
+    include: [
+      {model:db.Quest, as: 'descendents', hierarchy: true, include: {model:db.Comment, as: 'comments', attributes:['id']}},
+      {model:db.Comment, as: 'comments', attributes:['id']},
+    ],
   })
   .then(quests => {
     res.locals.quests = quests
@@ -40,7 +43,7 @@ router.use('/:id', (req,res,next) => {
       // include: {model: db.Quest}
     include: [
       {model: db.Quest, as: 'descendents', hierarchy:true},
-      {model: db.Quest, as: 'ancestors'}
+      {model: db.Quest, as: 'ancestors'},
     ],
   })
   .then(quest => {
@@ -153,7 +156,12 @@ questRouter.post('/link', Common.middleware.requireUser, (req,res,next) => {
     if(req.requestType('modal')) return res.render('modals/_success',{redirect:req.baseUrl})
   })
   .catch(next)
-
 });
 
-module.exports = router;
+// Comments
+questRouter.use('/comment',(req,res,next) => {
+  res.locals.commentable = res.locals.quest
+  return next();
+},require(APPROOT+'/routes/comment'));
+
+module.exports = router
