@@ -67,10 +67,19 @@ var Ajax = {
         return response.text()
         .then(html =>{
           if(thisForm.dataset.response == 'modal') return Modal.methods.createModal(html);
-          if(thisForm.dataset.response == 'insert') {
+          if(thisForm.dataset.response == 'insert' || thisForm.dataset.response == 'replace') {
             if(!thisForm.dataset.target) throw new Error('No target to insert data')
             var target = document.getElementById(thisForm.dataset.target)
-            target.innerHTML = html
+            if(thisForm.dataset.response == 'insert') target.innerHTML = html
+            if(thisForm.dataset.response == 'replace') {
+              console.log(target.parentNode, target)
+              var response = document.createElement('div')
+              response.innerHTML = html
+              var elems = Array.prototype.slice.call(response.childNodes)
+              elems.map(e=>{target.parentNode.insertBefore(e,target)})
+              target.remove();
+            }
+
           }
         })
       })

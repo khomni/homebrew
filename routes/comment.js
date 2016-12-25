@@ -15,7 +15,7 @@ router.get('/', (req,res,next) => {
 
 	return res.locals.commentable.getComments({
 		include:[
-			{model:db.Comment,as: 'descendents', hierarchy:true,
+			{model:db.Comment, as: 'descendents', hierarchy:true,
 				include:[
 					{model:db.Character},
 					{model:db.User}
@@ -26,7 +26,7 @@ router.get('/', (req,res,next) => {
 		]
 	})
 	.then(comments => {
-		console.log(JSON.stringify(comments,null,'  '))
+		// console.log(comments)
 		if(req.requestType('json')) return res.json(comments)
 		// ajax comments, load in just the comment markup
 		if(req.requestType('xhr')) return res.render('comments/_comments',{comments:comments});
@@ -39,7 +39,6 @@ router.get('/', (req,res,next) => {
 router.post('/', Common.middleware.requireUser, (req,res,next) => {
 	if(!res.locals.commentable) return next(Common.error.notfound('Could not locate the commentable resource'))
 	// create a comment on this resource as the active character
-	console.log(db.methods(res.locals.commentable))
 	return res.locals.commentable.createComment(Object.assign(req.body,{
 		// if an activeChar is available, post as that character
 		CharacterId: req.user.activeChar ? req.user.activeChar.id: null,
@@ -55,6 +54,11 @@ router.post('/', Common.middleware.requireUser, (req,res,next) => {
 	.catch(next)
 });
 
+router.get('/new', Common.middleware.requireUser, (req,res,next) => {
+	console.log(req.baseUrl)
+	if(req.requestType('modal')) return res.render('comments/modals/edit',{action:req.baseUrl})
+	return next();
+})
 
 commentRouter = express.Router({mergeParams: true})
 
@@ -64,17 +68,36 @@ router.use('/:id', (req,res,next) => {
     where:{id:req.params.id},
       // include: {model: db.Quest}
     include: [
-      {model: db.Comment, as: 'descendents', hierarchy:true},
+      {model: db.Comment, as: 'descendents',hierarchy:true},
       {model: db.Comment, as: 'ancestors'},
     ],
   })
   .then(comment => {
+		console.log(JSON.stringify(comment,null,' '))
+		console.log(db.methods(comment))
 		res.locals.comment = comment
 		return next()
 	})
 	.catch(next)
 
 }, commentRouter);
+
+commentRouter.delete('/',(req,res,next) => {
+
+	return Promise.resolve() // to return a database operation save/destroy
+	.then(()=>{
+		if(res.locals.comment.comments.length === 0) return res.locals.comment.destroy().then(()=>{return null})
+		res.locals.comment.archived = true
+		return res.locals.comment.save()
+	})
+	.then(comment =>{
+		console.log(comment)
+		if(req.requestType('json')) return res.json({ref: comment,kind:'Comment'})
+		// rerender the comment as an archived comment
+		if(req.requestType('xhr')) return res.render('comments/_comment',{comment:comment})
+	})
+	.catch(next)
+})
 
 
 // recursive commenting!?

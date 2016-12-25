@@ -16,6 +16,12 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.TEXT,
       allowNull:false
     },
+    // instead of deleting comments, in order to preserve hierarchy they are to be archived instead
+    // archived comments do not show any of the comment's details but will still show up in the hierarchy of a resource's comments
+    archived: {
+      type:DataTypes.BOOLEAN,
+      defaultValue: false,
+    }
   }, {
     defaultScope: {
       order: [['createdAt','DESC']]

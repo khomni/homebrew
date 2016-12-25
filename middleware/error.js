@@ -4,7 +4,7 @@ module.exports = (err, req, res, next) => {
 
   var errorActions = []
 
-  if(err.name == 'SequelizeDatabaseError') {
+  if(err.name == 'SequelizeDatabaseError' || err.name == 'SequelizeHierarchyError') {
     console.error('['+CONFIG.database.name+']',err)
 
     // var modelName = err.sql.match(/FROM\s\"(.*?)\"/)

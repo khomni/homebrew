@@ -38,4 +38,6 @@
 
 		});
 	})
+	// trigger a scroll event to make sure anything in view gets loaded automatically
+	document.dispatchEvent(new Event('scroll'))
 })()

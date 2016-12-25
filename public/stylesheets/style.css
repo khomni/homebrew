@@ -482,16 +482,20 @@ body {
   color: #111;
   overflow-y: overlay;
 }
-a {
+a,
+.as-link {
   color: #ff8022;
   transition: 0.5s;
   text-decoration: none;
 }
-a[disabled] {
+a[disabled],
+.as-link[disabled] {
   pointer-events: none;
 }
 a:focus,
-a:hover {
+.as-link:focus,
+a:hover,
+.as-link:hover {
   color: #ff9d55;
   outline: none;
   text-decoration: underline;
@@ -888,6 +892,19 @@ table td {
   color: white;
   background-color: #ff9d55;
 }
+button.as-link {
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  display: inline;
+  font: inherit;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  outline-offset: 0;
+  /* Additional styles to look like a link */
+  cursor: pointer;
+}
 .form-input {
   background: white;
   border: none;
@@ -1203,7 +1220,8 @@ body.modal-open {
 .modal .modal-content.journal textarea {
   border: 1px dashed;
 }
-.modal .modal-content.journal a:not(.btn) {
+.modal .modal-content.journal a:not(.btn),
+.modal .modal-content.journal .as-link {
   color: #986246;
 }
 .modal .modal-content.journal :not(.btn) {
@@ -1252,6 +1270,14 @@ body.modal-open {
   flex-shrink: 0;
   padding: 1rem;
 }
+.comments-section.loading:after {
+  content: "Loading comments...";
+  font-style: italic;
+}
+.comments-section > .comments-section {
+  padding-left: 1em;
+  border-left: 1px dashed;
+}
 .comments-section .comment-container {
   padding: 0.5rem;
   margin-bottom: 0.5rem;
@@ -1261,6 +1287,11 @@ body.modal-open {
   border-bottom: 1px dashed;
   padding-bottom: 0.25rem;
   margin-bottom: 0.25rem;
+}
+.comments-section .comment-container .comment-footer {
+  border-top: 1px dashed;
+  padding-top: 0.25rem;
+  margin-top: 0.25rem;
 }
 .character-card-container {
   padding: 0.5em;
@@ -1481,7 +1512,8 @@ body.modal-open {
 .paper textarea {
   border: 1px dashed;
 }
-.paper a:not(.btn) {
+.paper a:not(.btn),
+.paper .as-link {
   color: #986246;
 }
 .paper :not(.btn) {
@@ -1525,7 +1557,8 @@ body.modal-open {
 #content-main.journal section textarea {
   border: 1px dashed;
 }
-#content-main.journal section a:not(.btn) {
+#content-main.journal section a:not(.btn),
+#content-main.journal section .as-link {
   color: #986246;
 }
 #content-main.journal section :not(.btn) {
