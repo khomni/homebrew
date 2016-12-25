@@ -1,14 +1,14 @@
 function Ticker() {
-  this.ticking = false;
-  this.onTick = function(func){
-    var thisTicker = this
-    if(!this.ticking) {
+  var thisTicker = this
+  thisTicker.ticking = false;
+  thisTicker.onTick = function(func){
+    if(!thisTicker.ticking) {
       window.requestAnimationFrame(function(){
         thisTicker.ticking = false
         func();
       })
     }
-    this.ticking = true
+    thisTicker.ticking = true
   }
 }
 

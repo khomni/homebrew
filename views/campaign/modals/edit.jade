@@ -5,7 +5,7 @@
     else
       | Create a New Campaign
   .modal-body 
-    form(name='campaign' action=(campaign?campaign.url:'/c/') method='post')
+    form(name='campaign' action=(campaign?'/'+campaign.url:'/c/') method='post')
       .flex.vert
         .flex.vert.fill.js
           label Campaign Name

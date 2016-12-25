@@ -14,6 +14,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     body: {
       type: DataTypes.TEXT,
+      allowNull:false
     },
   }, {
     defaultScope: {
@@ -22,11 +23,13 @@ module.exports = function(sequelize, DataTypes) {
     freezeTableName: true,
     classMethods: {
       associate: function(models) {
-        Comment.hasOne(models.Character) // all comments have a speaking character. Join the character from the comment itself
+        // all comments either have a speaking character or a speaking user
+        Comment.belongsTo(models.Character)
+        Comment.belongsTo(models.User)
       }
     }
   });
-  Comment.isHierarchy();
+  Comment.isHierarchy({childrenAs: 'comments'});
 
   return Comment;
 };

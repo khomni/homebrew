@@ -23,27 +23,6 @@ block content
       section
         .section-body
           .journal-markup!= markdown(quest.description)
-    if comments
-      section
-        .section-title Comments
-        .section-body
-          if comments.length < 1
-            .flex.center
-              label: i Be the first to comment on this quest
-          else
-            .flex.vert.pad
-              each comment in comments
-                .flex.vert
-                  .flex-no-size
-                    .float.left
-                    .float.right= comment.updatedAt
-                  .flex
-                    .flex.no-size
-                      //- profile photo
-                    .flex.grow
-        .section-footer
-          .flex.pad.center
-            a.btn(href=quest.id+"/comment" data-response="modal" data-target="comment-"+quest.id) Add Comment
     section
       .section-body
         .flex.fill
@@ -57,3 +36,8 @@ block content
               label Subquests
               each child in quest.children
                 +quest(child)
+    section
+      .section-title Comments
+      .section-body
+        //- the comments mixin should handle all the rendering for comments features via ajax
+        +comments(quest.id+'/comment')

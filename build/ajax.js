@@ -66,7 +66,12 @@ var Ajax = {
         }
         return response.text()
         .then(html =>{
-          Modal.methods.createModal(html);
+          if(thisForm.dataset.response == 'modal') return Modal.methods.createModal(html);
+          if(thisForm.dataset.response == 'insert') {
+            if(!thisForm.dataset.target) throw new Error('No target to insert data')
+            var target = document.getElementById(thisForm.dataset.target)
+            target.innerHTML = html
+          }
         })
       })
       .catch(err =>{

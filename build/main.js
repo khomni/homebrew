@@ -14,12 +14,12 @@ document.onreadystatechange = function(){
   pageInitialized = true;
 
   require('./dataemissions');
+  require('./ui/scroll');
   require('./keypress');
 
   Drag.init();
   Navbar.init();
   Modal.methods.init();
-  require('./bars');
   // Favicon.startSpin();
   Ajax.setListeners();
   window.Ajax = Ajax

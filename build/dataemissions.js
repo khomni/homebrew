@@ -1,3 +1,5 @@
+// this code establishes listeners for data events that occur from interaction with form elements
+
 (function(){
   // data is sniffed at the document level, but reference to the targeted dom will be e.target
   document.addEventListener('data',function(e){
@@ -10,7 +12,6 @@
     if(!source.dataset.reaction) return false;
 
     if(source.dataset.reaction == 'redirect') {
-      console.log(data)
       if(data.redirect) return window.location = data.redirect
       return window.location.reload()
     }

@@ -645,11 +645,6 @@ header .vignettes .vignette {
   background-color: inherit;
   background-size: cover;
   background-blend-mode: luminosity;
-  -webkit-animation: vignette 20s forwards;
-  -moz-animation: vignette 20s forwards;
-  -ms-animation: vignette 20s forwards;
-  -o-animation: vignette 20s forwards;
-  animation: vignette 20s forwards;
 }
 header .vignettes .attribution {
   color: white;
@@ -1216,7 +1211,6 @@ body.modal-open {
 }
 .modal .modal-content.journal .journal-markup {
   font-size: 18px;
-  font-family: baskerville;
 }
 .modal .modal-content.journal .journal-markup p,
 .modal .modal-content.journal .journal-markup blockquote {
@@ -1257,6 +1251,16 @@ body.modal-open {
   flex: 1;
   flex-shrink: 0;
   padding: 1rem;
+}
+.comments-section .comment-container {
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid;
+}
+.comments-section .comment-container .comment-header {
+  border-bottom: 1px dashed;
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.25rem;
 }
 .character-card-container {
   padding: 0.5em;
@@ -1485,7 +1489,6 @@ body.modal-open {
 }
 .paper .journal-markup {
   font-size: 18px;
-  font-family: baskerville;
 }
 .paper .journal-markup p,
 .paper .journal-markup blockquote {
@@ -1530,7 +1533,6 @@ body.modal-open {
 }
 #content-main.journal section .journal-markup {
   font-size: 18px;
-  font-family: baskerville;
 }
 #content-main.journal section .journal-markup p,
 #content-main.journal section .journal-markup blockquote {

@@ -3,23 +3,30 @@ var router = express.Router();
 
 // Comments
 // mount this middleware onto any resource-specific router that supports comments
-// this router MUST be mounted after declaring res.locals.commentable
+// in order to post comments, this router must be mounted after declaring `res.locals.commentable`
 // res.locals.commentable must have Comments as an associ
 // e.g. characterRouter, questRouter,
-router.use('/',(req,res,next)=>{
-	if(!res.locals.commentable) return next(Common.error.notfound('Could not locate the commentable resource'))
-	// console.log('comments' in db[res.locals.commentable.$modelOptions.name.singular].associations)
-	// if(db[res.locals.commentable.$modelOptions.name)
-	return next()
-})
 
 
 
 // get all comments on the resource indicated by `res.locals.commentable`
 router.get('/', (req,res,next) => {
-	return res.locals.commentable.getComments()
-	.then(comments => {
+	if(!res.locals.commentable) return next(Common.error.notfound('Could not locate the commentable resource'))
 
+	return res.locals.commentable.getComments({
+		include:[
+			{model:db.Comment,as: 'descendents', hierarchy:true,
+				include:[
+					{model:db.Character},
+					{model:db.User}
+				]
+			},
+			{model:db.Character},
+			{model:db.User}
+		]
+	})
+	.then(comments => {
+		console.log(JSON.stringify(comments,null,'  '))
 		if(req.requestType('json')) return res.json(comments)
 		// ajax comments, load in just the comment markup
 		if(req.requestType('xhr')) return res.render('comments/_comments',{comments:comments});
@@ -30,7 +37,9 @@ router.get('/', (req,res,next) => {
 
 // posts a single comment to commentable
 router.post('/', Common.middleware.requireUser, (req,res,next) => {
+	if(!res.locals.commentable) return next(Common.error.notfound('Could not locate the commentable resource'))
 	// create a comment on this resource as the active character
+	console.log(db.methods(res.locals.commentable))
 	return res.locals.commentable.createComment(Object.assign(req.body,{
 		// if an activeChar is available, post as that character
 		CharacterId: req.user.activeChar ? req.user.activeChar.id: null,
@@ -55,8 +64,8 @@ router.use('/:id', (req,res,next) => {
     where:{id:req.params.id},
       // include: {model: db.Quest}
     include: [
-      {model: db.Quest, as: 'descendents', hierarchy:true},
-      {model: db.Quest, as: 'ancestors'},
+      {model: db.Comment, as: 'descendents', hierarchy:true},
+      {model: db.Comment, as: 'ancestors'},
     ],
   })
   .then(comment => {

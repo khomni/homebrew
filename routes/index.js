@@ -75,6 +75,7 @@ router.use('/r',require('./reference'));
 router.use('/c',require('./campaign'));
 router.use('/lore',require('./lore'));
 router.use('/knowledge',require('./character/knowledge'));
+router.use('/comment',require('./comment'));
 
 router.use('/settings',require('./settings'));
 

@@ -1,0 +1,32 @@
+//- this module lets you get all the comment functionality
+mixin comments(url)
+	-var hash = Common.hashString(url)
+	.comments-section(id='comment-'+hash href=url data-visible="load")
+	+newComment(url,'comment-'+hash)
+
+mixin newComment(action, target)
+	form.add-comment(action=(action||'comment') method="post" data-response="redirect" tabindex=1)
+		textarea.form-input(name="body")
+		.flex.center.pad
+			button.btn Add Comment
+				
+mixin comment(comment)
+	.comment-container
+		.comment-header.flex
+			.flex.grow
+				if comment.Character
+					label= comment.Character.name
+				else if comment.User
+					label= comment.User.username
+				else
+					label ???
+			.flex.no-size.je
+				.timestamp= comment.updatedAt.toLocaleString()
+		.comment-body!= markdown(comment.body)
+		if comment.comments && comment.comments.length > 0
+			.comment-section
+				each child in comment.comments
+					+comment(child)
+		//- +newComment('/comment/'+comment.id+'/comment','comment-'+comment.id)
+		//- TODO make nested comments not ugly
+	
