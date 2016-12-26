@@ -55,7 +55,6 @@ router.post('/', Common.middleware.requireUser, (req,res,next) => {
 });
 
 router.get('/new', Common.middleware.requireUser, (req,res,next) => {
-	console.log(req.baseUrl)
 	if(req.requestType('modal')) return res.render('comments/modals/edit',{action:req.baseUrl})
 	return next();
 })
@@ -88,6 +87,8 @@ commentRouter.delete('/',(req,res,next) => {
 	.then(()=>{
 		if(res.locals.comment.comments.length === 0) return res.locals.comment.destroy().then(()=>{return null})
 		res.locals.comment.archived = true
+		res.locals.comment.CharacterId = null
+		res.locals.comment.UserId = null
 		return res.locals.comment.save()
 	})
 	.then(comment =>{

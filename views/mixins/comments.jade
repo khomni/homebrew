@@ -1,9 +1,9 @@
 //- this module lets you get all the comment functionality
 mixin comments(url)
 	-var hash = Common.hashString(url)
-	.comments-section(id='comment-'+hash href=url data-visible="load")
+	div(id='comment-'+hash href=url data-visible="load")
 	.flex.center.pad
-		a.btn(href=url+"/new" data-response="modal") Add Comment
+		a.btn(href=url+"/new" data-response="modal" data-target="quest-"+quest.id+"-comment") Add Comment
 
 mixin newComment(action)
 	form.add-comment(action=(action||'comment') method="post" data-response="json" data-reaction="redirect")
@@ -12,34 +12,34 @@ mixin newComment(action)
 			a.btn(href=(action||'comment') data-response="modal") Add Comment
 				
 mixin comment(comment,parent)
-	.comment-container
-		if !comment || comment.archived
-			.comment-body: label Removed
-		else
-			.comment-header.flex
-				.flex.grow
-					if comment.Character
-						label: a(href="/"+campaign.url + comment.Character.url)= comment.Character.name
-					else if comment.User
-						label= comment.User.username
-					else
-						label ???
-					if parent && parent.Character
-						label(style="margin-left:0.5rem") (to #[a(href="/"+campaign.url + parent.Character.url)= parent.Character.getName('first')])
-				.flex.no-size.je
-					.timestamp= comment.updatedAt.toLocaleString()
-			.comment-body!= markdown(comment.body)
-			.comment-footer
-				if (comment.Character && comment.Character.ownedBy(currentUser)) || (comment.User && comment.User.id == currentUser.id)
-					.flex.pad.je
-						a(href='/comment/'+comment.id+'/edit' data-response="modal") Edit
-						form(action='/comment/'+comment.id method='delete' data-response="insert" data-target="comment-"+comment.id)
-							button.as-link(role="button" type="submit") Delete
-						a(href='/comment/'+comment.id+'/reply' data-response="modal") Reply
-	if comment && comment.comments && comment.comments.length > 0
-		.comments-section
+	.comments-section(id="comment-"+comment.id)
+		.comment-container
+			if !comment || comment.archived
+				.comment-body: label Removed
+			else
+				.comment-header.flex
+					.flex.grow
+						if comment.Character
+							label: a(href="/"+campaign.url + comment.Character.url)= comment.Character.name
+						else if comment.User
+							label= comment.User.username
+						else
+							label ???
+						if parent && parent.Character
+							label(style="margin-left:0.5rem") (to #[a(href="/"+campaign.url + parent.Character.url)= parent.Character.getName('first')])
+					.flex.no-size.je
+						.timestamp= comment.updatedAt.toLocaleString()
+				.comment-body!= markdown(comment.body)
+				.comment-footer
+					if (comment.Character && comment.Character.ownedBy(currentUser)) || (comment.User && comment.User.id == currentUser.id)
+						.flex.je
+							a(href='/comment/'+comment.id+'/edit' data-response="modal") Edit
+							form(action='/comment/'+comment.id method='delete' data-response="insert" data-target="comment-"+comment.id)
+								button.as-link(role="button" type="submit") Delete
+							a(href='/comment/'+comment.id+'/comment/new' data-response="modal" data-target="comment-"+comment.id+"-comment") Reply
+		if comment && comment.comments && comment.comments.length > 0
 			each child in comment.comments
 				+comment(child, comment)
-	//- +newComment('/comment/'+comment.id+'/comment','comment-'+comment.id)
-	//- TODO make nested comments not ugly
-	
+		//- +newComment('/comment/'+comment.id+'/comment','comment-'+comment.id)
+		//- TODO make nested comments not ugly
+		
