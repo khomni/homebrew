@@ -31,12 +31,12 @@ mixin comment(comment,parent)
 						.timestamp= comment.updatedAt.toLocaleString()
 				.comment-body!= markdown(comment.body)
 				.comment-footer
-					if (comment.Character && comment.Character.ownedBy(currentUser)) || (comment.User && comment.User.id == currentUser.id)
-						.flex.je
+					.flex.je
+						if (comment.Character && comment.Character.isActiveChar(currentUser)) || (comment.User && comment.User.id == currentUser.id)
 							a(href='/comment/'+comment.id+'/edit' data-response="modal") Edit
 							form(action='/comment/'+comment.id method='delete' data-response="insert" data-target="comment-"+comment.id)
 								button.as-link(role="button" type="submit") Delete
-							a(href='/comment/'+comment.id+'/comment/new' data-response="modal" data-target="comment-"+comment.id+"-comment") Reply
+						a(href='/comment/'+comment.id+'/comment/new' data-response="modal" data-target="comment-"+comment.id+"-comment") Reply
 		if comment && comment.comments && comment.comments.length > 0
 			each child in comment.comments
 				+comment(child, comment)

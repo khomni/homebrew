@@ -45,13 +45,14 @@ router.post('/', Common.middleware.requireUser, (req,res,next) => {
   .then(pc => {
     if(req.requestType('json')) return res.send(pc.get({plain:true}))
     if(req.requestType('modal')) return res.render('modals/_success', {title: "Character Created", body:"Good job", redirect:pc.url})
-    return res.redirect(pc.url);
+    return res.redirect(req.baseUrl);
   })
   .catch(next);
 });
 
 router.get('/create', Common.middleware.requireUser, (req, res, next) => {
-  return res.render('characters/new')
+  if(req.requestType('modal')) return res.render('characters/modals/edit')
+  return res.render('characters/new');
 });
 
 var characterRouter = express.Router({mergeParams: true});
@@ -123,7 +124,7 @@ characterRouter.post('/select', Common.middleware.requireUser, (req,res,next) =>
     .then(user => {
       if(req.requestType('json')) return res.send(res.locals.character.get({plain:true}))
       if(req.requestType('modal')) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
-      return res.redirect(req.headers.referer)
+      return res.redirect(req.baseUrl)
     })
   })
   .catch(next)

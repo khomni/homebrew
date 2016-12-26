@@ -649,6 +649,11 @@ header .vignettes .vignette {
   background-color: inherit;
   background-size: cover;
   background-blend-mode: luminosity;
+  -webkit-animation: vignette 20s forwards;
+  -moz-animation: vignette 20s forwards;
+  -ms-animation: vignette 20s forwards;
+  -o-animation: vignette 20s forwards;
+  animation: vignette 20s forwards;
 }
 header .vignettes .attribution {
   color: white;
@@ -1289,9 +1294,8 @@ body.modal-open {
   margin-bottom: 0.25rem;
 }
 .comments-section .comment-container .comment-footer {
-  border-top: 1px dashed;
-  padding-top: 0.25rem;
-  margin-top: 0.25rem;
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
 }
 .character-card-container {
   padding: 0.5em;
@@ -1442,14 +1446,11 @@ body.modal-open {
   text-shadow: 0 0 8px #c65dfc;
 }
 .quest-container {
-  border-left: 1px solid;
-  border-bottom: 1px solid;
-  border-color: rgba(0, 0, 0, 0.25);
-  padding-right: 0;
+  margin-top: 0.5rem;
 }
 .quest-container > .quest-container {
-  margin-left: 1em;
-  border-bottom: none;
+  padding-left: 1em;
+  border-left: 1px dashed;
 }
 .quest-container.collapsed {
   border-bottom: 1px dashed;
@@ -1473,8 +1474,11 @@ body.modal-open {
   background: rgba(255, 157, 85, 0.1);
 }
 .quest-container .quest {
+  display: block;
+  padding: 0.5rem;
+  border: 1px solid;
+  margin-bottom: 0.5rem;
   text-decoration: none;
-  padding: 0.5em;
 }
 .quest-container .quest:hover,
 .quest-container .quest:focus {

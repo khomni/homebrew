@@ -1,5 +1,5 @@
 mixin quest(quest, active)
-  .quest-container.flex.vert(class=!quest.visible&&campaign.owned?'obscured ':'' + quest.status)
+  .quest-container(class=!quest.visible&&campaign.owned?'obscured ':'' + quest.status)
     a.quest(href="/"+campaign.url+"quests/"+quest.id disabled=!quest.visible&&!campaign.owned)
       .flex.pad
         if !(quest.visible || campaign.owned)
