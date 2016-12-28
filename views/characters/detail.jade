@@ -22,7 +22,7 @@ block content
                 .flex.center.pad
                   form(action="select" method="post")
                     button.btn(disabled=character.isActiveChar(currentUser)) Select
-                  a.btn(href="edit" data-response="modal") Edit
+                  a.btn(href="/"+character.url+"edit" data-response="modal") Edit
             if !character.isActiveChar(currentUser)
               .flex.vert.border.pad
                 .flex.center: label Interactions

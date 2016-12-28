@@ -12,7 +12,7 @@ router.use((req,res,next)=> {
   .catch(next)
 })
 
-/* GET users listing. */
+/* GET users journals. */
 router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
   if(req.requestType('json')) return res.send(res.locals.character.Journals)
   return res.render('characters/journal/index')
@@ -41,12 +41,16 @@ router.get('/new', Common.middleware.requireCharacter, (req,res,next) => {
 // the following routers concern an individual journal entry, as referenced by the :id parameter
 // the journal entry will be queried by this middleware then added to res.locals.entry
 
-router.use('/:id', (req,res,next) => {
+router.use('/:id', Common.middleware.requireCharacter, (req,res,next) => {
   return db.Journal.findOne({where: {CharacterId: res.locals.character.id, id:req.params.id}})
   .then(entry => {
     if(!entry) throw Common.error.notfound('Journal entry')
-    res.locals.entry = entry
-    throw null
+    return req.user.activeChar.hasJournal(entry)
+    .then(owned =>{
+      if(!owned) throw Common.error.notfound('Journal entry')
+      res.locals.entry = entry
+      throw null
+    })
   })
   .catch(next)
 })

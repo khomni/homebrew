@@ -1485,7 +1485,8 @@ body.modal-open {
   opacity: 1;
 }
 .quest-container .quest:focus {
-  padding-left: 1em;
+  margin-left: 1em;
+  margin-right: -1em;
   background: rgba(255, 157, 85, 0.1);
 }
 .quest-container .spacer {
