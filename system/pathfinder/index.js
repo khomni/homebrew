@@ -1,7 +1,8 @@
 // Pathfinder Ruleset
+var System = require('../').builder
 
-var Pathfinder = {
-  // publisher information
+var Pathfinder = new System({
+  // name / publisher information
   name: "Pathfinder",
   publisher: "Paizo",
 
@@ -10,7 +11,8 @@ var Pathfinder = {
 
   // mechanics
   Item: require('./item'),
+  Creature: require('./creature'),
 
-}
+})
 
 module.exports = Pathfinder

@@ -1,6 +1,6 @@
 require('dotenv').config();
 var path = require('path');
-global.APPROOT = path.resolve(__dirname);
+// global.APPROOT = path.resolve(__dirname);
 require('./config/globals');
 
 var express = require('express');
