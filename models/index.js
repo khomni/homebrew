@@ -71,7 +71,7 @@ module.exports = sequelize.authenticate()
       return methods.sort().join(', ').grey
     }
 
-    return sequelize.sync()
+    return sequelize.sync({force:CONFIG.database.forcesync})
   })
   .then(()=> {
 
