@@ -340,6 +340,12 @@ section {
 	}
 }
 
+.pad{
+  &>* {
+    margin: 0.5rem;
+  }
+}
+
 // sets a generic flexbox
 .flex {
 	display: flex;
@@ -347,13 +353,6 @@ section {
 	max-height: 100%;
 	align-items:stretch;
 	flex-flow: row wrap;
-
-	&.pad{
-		// margin: -0.5rem;
-		&>* {
-			margin: 0.5rem;
-		}
-	}
 
 	&>.grow {
 		flex-grow:1;
@@ -374,7 +373,7 @@ section {
 
 	&.fill {
 		align-items:stretch;
-		&>* {
+		&>*:not(.no-size) {
 			flex:1;
 		}
 	}

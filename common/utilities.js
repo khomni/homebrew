@@ -7,5 +7,9 @@ module.exports = {
       this.store.push(object)
       this.url = object.url
     }
-  }
+  },
+  renderAsync: Promise.method(function(path,locals){
+    var jade = require('jade');
+    return jade.compileFile(path)(locals)
+  })
 }

@@ -57,10 +57,5 @@ function recursiveConvert(object,trace) {
 
 recursiveConvert(quantifiable)
 
-// get a Quantifiable using the stringified
-module.exports.get = function(string) {
-
-}
-
-module.exports.ids = flatKeys // export an array of keys so other modules can access them
 module.exports = quantifiable // export the object
+module.exports.keys = flatKeys // export an array of keys so other modules can access them

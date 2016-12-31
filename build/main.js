@@ -16,6 +16,7 @@ document.onreadystatechange = function(){
   require('./dataemissions');
   require('./ui/scroll');
   require('./keypress');
+  require('./ui/forms');
 
   Drag.init();
   Navbar.init();

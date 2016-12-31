@@ -60,10 +60,11 @@ router.get('/nearby', Common.middleware.requireCharacter, (req,res,next) => {
 router.get('/new', Common.middleware.requireCharacter, (req, res, next) => {
   // access the system rules mounted on the middleware
   var systemItem = res.locals.activeSystem.Item
-  if(systemItem) res.locals.systemFields = systemItem.prototype.schema
 
   if(req.requestType('modal')) return res.render('characters/inventory/modals/edit')
   return res.redirect(req.baseUrl)
+
+
 });
 
 
@@ -108,7 +109,6 @@ router.post('/pickup', Common.middleware.requireCharacter, (req,res,next) => {
 
   return db.Item.findAll({where: {id: {$in: req.body.item}, CharacterId: null}})
   .then(items => {
-    console.log(items)
     return Promise.map(items, item => {
       return req.user.activeChar.addItem(item)
     })
@@ -148,7 +148,7 @@ router.post('/', (req,res,next) => {
    })
    .then(item =>{
     if(req.requestType('json')) return res.send(item)
-    return res.redirect(res.locals.character.url + '/inventory')
+    return res.redirect(req.baseUrl)
   })
   .catch(next)
 });
@@ -204,10 +204,10 @@ router.post('/drop', Common.middleware.requireCharacter, (req,res,next) => {
   .catch(next)
 })
 
-router.get('/:id/', (req,res,next) => {
-  db.Item.findOne({where:{id:req.params.id}, include:[{model: db.Lore, as:'lore'}]})
+router.get('/:id', (req,res,next) => {
+  return db.Item.findOne({where:{id:req.params.id}, include:[{model: db.Lore, as:'lore'}]})
   .then(item => {
-    console.log(db.methods(req.user.activeChar,/item/gi))
+    console.log(JSON.stringify(item,null,' '))
     if(req.requestType('modal')) return res.render('characters/inventory/modals/detail',{item:item})
     return next()
   })
@@ -233,7 +233,7 @@ router.post('/:id', Common.middleware.requireCharacter, (req,res,next) => {
   return db.Item.findOne({where:{id:req.params.id}})
   .then(item =>{
     item.properties= {}
-
+    console.log(req.body)
     Object.keys(req.body).map(key => {
       if(/^SYSTEM_/.test(key)) return item.properties[key.split('_').pop()] = req.body[key] || undefined
       return item[key] = req.body[key] || undefined
@@ -250,7 +250,7 @@ router.post('/:id', Common.middleware.requireCharacter, (req,res,next) => {
    })
    .then(item =>{
     if(req.requestType('json')) return res.send(item)
-    return res.redirect(res.locals.character.url + '/inventory')
+    return res.redirect(req.baseUrl)
   })
   .catch(next)
 });

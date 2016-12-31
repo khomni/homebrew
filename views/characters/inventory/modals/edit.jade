@@ -1,25 +1,4 @@
-mixin systemField(type,key,label)
-  if label
-    label= label
-  .flex.grow
-    if type === String
-      if item && Array.isArray(item.properties[key])
-        each value in item.properties[key]
-          input.form-input(type="text" name="SYSTEM_"+key value=item.properties[key])&attributes(attributes)
-      else
-        input.form-input(type="text" name="SYSTEM_"+key value=item&&item.properties?item.properties[key]:'')&attributes(attributes)
-    if type === Number
-      if item && Array.isArray(item.properties[key])
-        each value in item.properties[key]
-          input.form-input(type="number" name="SYSTEM_"+key value=item.properties[key])&attributes(attributes)
-      else
-        input.form-input(type="number" name="SYSTEM_"+key value=item&&item.properties?item.properties[key]:'')&attributes(attributes)
-    if Array.isArray(type)
-      .flex.pad.grow(id="SYSTEM_"+key+"_list")
-        a.btn(data-clone="SYSTEM_"+key data-target="SYSTEM_"+key+"_list") +
-        +systemField(type[0], key)(id="SYSTEM_"+key)
-
-form(name='item' action=character.url+'/inventory/' + (item?item.id:'') method='post')
+form(name='item' action='/'+character.url+'inventory/' + (item?item.id:'') method='post')
   .modal-content&attributes({class: THEME})
     if item
       .modal-title= item.name
@@ -56,17 +35,12 @@ form(name='item' action=character.url+'/inventory/' + (item?item.id:'') method='
           .flex.vert
             label Quantity
             input.form-input(type='number' name='quantity' min=1 value=item?item.quantity:1)
-        .flex.center.fill.pad
-          textarea.form-input(type='text' name='description' height=300 disabled=!!item&&!!item.lore[0])= item&&item.lore[0] ? item.lore[0].content : ''
-        if systemFields
-          .flex.center.vert
-            hr
-            h3 #{activeSystem.name} Fields
-          .flex.center.vert.fill.pad
-            each type,key in systemFields
-              +systemField(type,key,key)
-            
-                
+        if activeSystem
+          !{ activeSystem.render('itemFields.jade',{item: item||{properties:{}}}) }
+        .pad
+          label Description
+          .flex.center.fill
+            textarea.form-input(type='text' name='description' height=300 disabled=!!item&&!!item.lore[0])= item&&item.lore[0] ? item.lore[0].content : ''
         
     .modal-footer
         button.btn.block(type='submit')= item ? 'Update Item' : 'Add Item'

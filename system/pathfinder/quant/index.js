@@ -9,9 +9,7 @@ function Quantifiable(args) {
 Quantifiable.schema = Schema({
   label: String, // the user-facing name of the metric, e.g. "Movement Speed" or "Armor Check Penalty" or "Fire Resistance"
   // '?dice': Boolean // if dice == true, the quantifiable refers to a dice roll, so the bonus metrics need to be in the form `Array.of(2, Number.min(1)]`
-})
-
-
+});
 
 module.exports = Quantifiable
 module.exports.list = require('./list')

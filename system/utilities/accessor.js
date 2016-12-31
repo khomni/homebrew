@@ -15,7 +15,30 @@ function getNested(string) {
   }
 
   return null
+}
+
+// goes through a flat object with keys in dot notation and blows it up into a nested object
+function unflatten(object) {
+  var thisObject = object || this // the funciton is bound to the object to be unflattened
+
+  Object.keys(thisObject).map(keys => {
+
+    var focus = thisObject
+    keys.split('.').reduce((a,b)=>{
+      console.log(focus)
+      focus[b] = focus[b] || {}
+      focus = focus[b]
+      return b
+    },null)
+
+    key = keys.split('.').pop() // get the last key to insert the value
+    focus[key] = thisObject[keys] // add the value to the last focused
+    //recurse
+  });
+
+  return thisObject
 
 }
 
 module.exports = getNested
+module.exports.unFlatten = unflatten

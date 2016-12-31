@@ -6,7 +6,7 @@ function Bonus(args) {
   if(!Bonus.schema(thisBonus)) throw new Error('Quantifiable does not match schema')
 }
 
-module.exports.types = [
+Bonus.types = [
   'alchemical',
   'armor',
   'circumstance',
@@ -60,7 +60,7 @@ Bonus.schema = Schema({
   '?percentage': Boolean, // if present and true, the bonus is a percentage effect
   '?round': ['up','down'], // if present, indicate whether to round up or down
   // per pathfinder rules, bonuses have a type that does not typically stack with itself
-  '?type': module.exports.types
+  '?type': Bonus.types
 })
 
 module.exports = Bonus
