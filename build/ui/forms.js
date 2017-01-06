@@ -3,19 +3,23 @@
   document.addEventListener('click', e => {
     var clickAction = e.target.dataset.click
     if(!clickAction) return true; // do not interrupt the click behavior
-    console.log(e)
-    e.preventDefault();
-    // duplicate
-    var target = e.target.dataset.target
-    if(clickAction=='duplicate' && target) {
 
+    e.preventDefault();
+    var target = e.target.dataset.target
+    // duplicate
+    if(clickAction=='duplicate' && target) {
       target = document.getElementById(target) || document.querySelector(target)
+      if(!target) return false
       var destination = e.target.dataset.destination
       destination = document.getElementById(destination) || document.querySelector(destination)
       var duplicate = document.createElement('div')
       duplicate.innerHTML = target.outerHTML
       Array.prototype.slice.call(duplicate.childNodes).map(node => {destination.appendChild(node)})
+    }
 
+    if(clickAction=='remove' && target) {
+      target = document.getElementById(target) || document.querySelector(target)
+      target.remove()
     }
 
 

@@ -18,7 +18,8 @@ html
         +characterCard(activeChar)
       block header
         +header(headerColor||null)
-      #content-main&attributes({class: THEME})
+      #content-main.marble
+        //- &attributes({class: THEME})
         //- include /components/breadcrumbs
         block content
       block footer

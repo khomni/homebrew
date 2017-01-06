@@ -1,4 +1,13 @@
+var utilities = require('./utilities')
+
 module.exports = {
+  // given a req.body with a number of dot-delimited field names, converts the req.body into the corresponding object
+  objectifyBody: (req,res,next) => {
+    req.body = utilities.unflatten(req.body)
+    console.log(req.body)
+    return next();
+  },
+
   // restrict the following routes to logged-in users
   requireUser: (req,res,next) => {
     if(!req.user) return next(Common.error.authorization('You must be logged in to do that'))

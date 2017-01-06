@@ -21,13 +21,16 @@ function getNested(string) {
 function unflatten(object) {
   var thisObject = object || this // the funciton is bound to the object to be unflattened
 
+  // for each of the keys in the unflattening object, build out the objects and assign each key
   Object.keys(thisObject).map(keys => {
-
+    // 'focus' on the reference to assign keys to it
     var focus = thisObject
+
+    // split the dot-notation key by piece, then iteratively assign them to their predacessor
+    // the final segment will be assigned with the value of the entire key
     keys.split('.').reduce((a,b)=>{
-      console.log(focus)
-      focus[b] = focus[b] || {}
-      focus = focus[b]
+      focus[b] = focus[b] || {} // set the focus to an empty object if it doesn't already exist
+      focus = focus[b] // change the reference to this object
       return b
     },null)
 

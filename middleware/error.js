@@ -20,6 +20,7 @@ module.exports = (err, req, res, next) => {
   .finally(()=>{
     if(req.requestType('json')) return res.status(err.status).send(err)
     if(req.requestType('modal')) return res.render('modals/_error', {message: err.message, error: err})
+    if(req.requestType('xhr')) return res.render('errorFragment',{error:err})
     return res.render('error', {message: err.message, error: err})
   })
 

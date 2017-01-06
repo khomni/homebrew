@@ -5,21 +5,6 @@
 	background-color: @color-primary;
 }
 
-button.as-link {
-	-webkit-appearance: none;
-  background: none;
-  border: none;
-  display: inline;
-  font: inherit;
-  margin: 0;
-  padding: 0;
-  outline: none;
-  outline-offset: 0;
-  /* Additional styles to look like a link */
-  cursor: pointer;
-  // text-decoration: underline;
-}
-
 input {
 	&.form-input {}
 }
@@ -146,7 +131,40 @@ input {
 }
 
 
+button {
 
+	&.as-link {
+		-webkit-appearance: none;
+		background: none;
+		border: none;
+		display: inline;
+		font: inherit;
+		margin: 0;
+		padding: 0;
+		outline: none;
+		outline-offset: 0;
+		/* Additional styles to look like a link */
+		cursor: pointer;
+		// text-decoration: underline;
+	}
+
+	&.close {
+		color:inherit;
+		font-size:24px;
+		text-shadow: 0px -1px 1px fade(black,15%), 0px 1px 1px fade(white,15%);
+		-webkit-appearance: none;
+		background: none;
+		outline: none;
+		border: none;
+		opacity: 0.5;
+		font-weight: 600;
+		transition: opacity 0.25s;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
+}
 
 .btn {
 	.marble-ui();
@@ -157,7 +175,8 @@ input {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 0.5em;
+	line-height: 0.8em;
+	padding: 0.4em;
 
 	&:hover,&:focus {
 		color: @color-primary;

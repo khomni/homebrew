@@ -12,7 +12,7 @@ form(name='item' action='/'+character.url+'inventory/' + (item?item.id:'') metho
             input.form-input.grow(type='text' name='name' value=item?item.name:false)
           .flex.vert
             label Blueprint
-            input#blueprint-search.form-input(href="/r/system" type='text' name='SYSTEM_blueprint' value=item?item.properties.blueprint:false data-reaction="fill")
+            input#blueprint-search.form-input(href="/r/system" type='text' name='properties.blueprint' value=item?item.properties.blueprint:false data-reaction="fill")
           .flex.vert.center.no-size
             label Flags
             label.checkbox

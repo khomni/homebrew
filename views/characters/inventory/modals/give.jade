@@ -1,4 +1,4 @@
-form(name='give' action=character.url+'/inventory/give' method='post')
+form(name='give' action="/"+character.url+'inventory/give' method='post')
   .modal-content&attributes({class: THEME})
     if character.active
       .modal-title Take Items
@@ -14,6 +14,6 @@ form(name='give' action=character.url+'/inventory/give' method='post')
             label.checkbox
               input(type="checkbox" name="item" value=item.id)
               span(data-rarity=item.rarity)= item.name
-            a(href=currentUser.activeChar.url+'/inventory/'+item.id data-response="modal" data-target="item-"+item.id) ?
+            a(href='/'+currentUser.activeChar.url+'inventory/'+item.id data-response="modal" data-target="item-"+item.id) ?
     .modal-footer.flex.center
       button.btn(disabled=items.length==0)= character.active ? "Take" : "Give"

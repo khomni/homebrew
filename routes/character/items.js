@@ -119,26 +119,13 @@ router.post('/pickup', Common.middleware.requireCharacter, (req,res,next) => {
   .catch(next)
 });
 
-router.post('/', (req,res,next) => {
+router.post('/', Common.middleware.objectifyBody, (req,res,next) => {
 
   var baseFields = {}
   var systemFields = {}
 
-  //
-  Object.keys(req.body).map(key => {
-    if(/^SYSTEM_/.test(key)) return systemFields[key.split('_').pop()] = req.body[key] || undefined
-    return baseFields[key] = req.body[key] || undefined
-  },null)
 
-  return res.locals.character.createItem({
-    name: baseFields.name,
-    value: baseFields.value,
-    weight: baseFields.weight,
-    rarity: baseFields.rarity,
-    unique: baseFields.unique || false,
-    quantity: baseFields.quantity || 1,
-    properties: systemFields
-  })
+  return res.locals.character.createItem(req.body)
   .then(item => {
     if(!req.body.description) return item
      return item.createLore({content:req.body.description, obscurity:0})
@@ -207,7 +194,6 @@ router.post('/drop', Common.middleware.requireCharacter, (req,res,next) => {
 router.get('/:id', (req,res,next) => {
   return db.Item.findOne({where:{id:req.params.id}, include:[{model: db.Lore, as:'lore'}]})
   .then(item => {
-    console.log(JSON.stringify(item,null,' '))
     if(req.requestType('modal')) return res.render('characters/inventory/modals/detail',{item:item})
     return next()
   })
@@ -228,18 +214,11 @@ router.get('/:id/edit', Common.middleware.requireCharacter, (req,res,next) => {
   .catch(next)
 })
 
-router.post('/:id', Common.middleware.requireCharacter, (req,res,next) => {
+router.post('/:id', Common.middleware.requireCharacter, Common.middleware.objectifyBody, (req,res,next) => {
 
   return db.Item.findOne({where:{id:req.params.id}})
   .then(item =>{
-    item.properties= {}
-    console.log(req.body)
-    Object.keys(req.body).map(key => {
-      if(/^SYSTEM_/.test(key)) return item.properties[key.split('_').pop()] = req.body[key] || undefined
-      return item[key] = req.body[key] || undefined
-    },null)
-
-    return item.save()
+    return item.update(req.body)
   })
   .then(item => {
     if(!req.body.description) return item
