@@ -194,6 +194,7 @@ router.post('/drop', Common.middleware.requireCharacter, (req,res,next) => {
 router.get('/:id', (req,res,next) => {
   return db.Item.findOne({where:{id:req.params.id}, include:[{model: db.Lore, as:'lore'}]})
   .then(item => {
+    console.log(JSON.stringify(item,null,'  '))
     if(req.requestType('modal')) return res.render('characters/inventory/modals/detail',{item:item})
     return next()
   })

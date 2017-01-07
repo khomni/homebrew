@@ -33,15 +33,15 @@
   mixin bonus(bonus)
     .flex.pad.fill.pathfinder_bonus
       .flex.vert.no-size
-        input.form-input(type="number" name="properties.[bonus].number" value=bonus.bonus)
+        input.form-input(type="number" name="properties.bonuses.$.number" value=bonus.number)
       .flex.vert
-        select.form-input(name="properties.[bonus].type")
+        select.form-input(name="properties.bonuses.$.type")
           option(disabled selected) —
           each type in Quantifiable.bonus.types
             option(value=type selected=bonus.type==type)= type
       .flex.vert.center.no-size to
       .flex.vert
-        select.form-input(name="properties.[bonus].key")
+        select.form-input(name="properties.bonuses.$.key")
           option(disabled selected) —
           each key in Quantifiable.list.keys
             option(value=key selected=bonus.key==key)= Quantifiable.list.get(key).label
@@ -50,9 +50,10 @@
       
       
   #pathfinder_bonuses.flex.vert.border.fill
+    template#bonus_template
+      +bonus({})
     if item.properties.bonuses
       each bonus in item.properties.bonuses
         +bonus(bonus)
-    +bonus({})
   .flex.center
-    a.btn(data-click='duplicate' data-target=".pathfinder_bonus" data-destination="pathfinder_bonuses") New Bonus
+    a.btn(data-click='duplicate' data-target="bonus_template" data-destination="pathfinder_bonuses") New Bonus

@@ -1,10 +1,23 @@
-var utilities = require('./utilities')
+var utilities = require('./utilities');
+var flat = require('flat');
 
 module.exports = {
   // given a req.body with a number of dot-delimited field names, converts the req.body into the corresponding object
   objectifyBody: (req,res,next) => {
-    req.body = utilities.unflatten(req.body)
-    console.log(req.body)
+
+    console.log('step 1:',JSON.stringify(req.body,null,'  '))
+
+    for(var key in req.body) {
+      if(Array.isArray(req.body[key])) {
+        req.body[key].map((value,index) => {
+          if(value) req.body[key.replace('$',index)] = value
+        })
+        delete req.body[key]
+      }
+    }
+    console.log('step 2:',JSON.stringify(req.body,null,'  '))
+    req.body = flat.unflatten(req.body)
+    console.log('step 3:',JSON.stringify(req.body,null,'  '))
     return next();
   },
 

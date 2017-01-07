@@ -17,4 +17,4 @@ module.exports.bonus = require('./bonus')
 
 var getNested = require(APPROOT+'/system/utilities/accessor')
 
-module.exports.list.get = getNested.bind(module.exports.list)
+module.exports.list.get = Common.utilities.get.bind(module.exports.list)
