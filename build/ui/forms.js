@@ -3,6 +3,7 @@
   document.addEventListener('click', e => {
     var clickAction = e.target.dataset.click
     if(!clickAction) return true; // do not interrupt the click behavior
+    var source = e.target
 
     e.preventDefault();
     var target = e.target.dataset.target
@@ -24,7 +25,7 @@
     }
 
     if(clickAction=='remove' && target) {
-      target = document.getElementById(target) || document.querySelector(target)
+      target = document.getElementById(target) || source.closest(target)
       target.remove()
     }
 

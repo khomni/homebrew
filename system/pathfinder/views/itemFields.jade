@@ -25,33 +25,51 @@
         label Hands
         select.form-input(type="number" name="properties.hands" value=Common.utilities.get(item, 'properties.hpMax'))
           option Any
-          option(value=1) One-handed
-          option(value=2) Two-handed
+          option(value=1) One-handed Only
+          option(value=2) Two-handed Only
           option(value=0) Impossible to Carry
-.flex.vert.pad
-  mixin bonus(bonus)
-    .flex.pad.fill.pathfinder_bonus
-      .flex.vert.no-size
-        input.form-input(type="number" name="properties.bonuses.$.number" value=bonus.number)
-      .flex.vert
-        select.form-input(name="properties.bonuses.$.type")
-          option(disabled selected) —
-          each type in Quantifiable.bonus.types
-            option(value=type selected=bonus.type==type)= type
-      .flex.vert.center.no-size to
-      .flex.vert
-        select.form-input(name="properties.bonuses.$.key")
-          option(disabled selected) —
-          each key in Quantifiable.list.keys
-            option(value=key selected=bonus.key==key)= Quantifiable.list.get(key).label
-      .flex.vert.center.no-size
-        button.close(data-click="remove" data-target=".pathfinder_bonus") ×
-
-  #pathfinder_bonuses.flex.vert.border.fill
-    template#bonus_template
-      +bonus({})
-    if Common.utilities.get(item, 'properties.bonuses')
-      each bonus in Common.utilities.get(item, 'properties.bonuses')
-        +bonus(bonus)
-  .flex.center
-    a.btn(data-click='duplicate' data-target="bonus_template" data-destination="pathfinder_bonuses") New Bonus
+    .flex.vert.fill.pad
+      mixin ability(ability)
+        .flex.pad.fill.pathfinder_bonus
+          .flex.vert.center.no-size
+            a.close(data-click="remove" data-target=".pathfinder_bonus")
+          .flex.vert
+            input.form-input(type="text" name="properties.abilities.$.description" value=ability.description)
+      mixin bonus(bonus)
+        .flex.pad.fill.pathfinder_bonus
+          .flex.vert.center.no-size
+            a.close(data-click="remove" data-target=".pathfinder_bonus")
+          .flex.vert
+            input.form-input(type="number" name="properties.bonuses.$.bonus" value=bonus.bonus)
+          .flex.vert
+            select.form-input(name="properties.bonuses.$.type")
+              option(disabled selected) —
+              each type in Quantifiable.bonus.types
+                option(value=type selected=bonus.type==type)= type
+          .flex.vert.center.no-size to
+          .flex.vert
+            select.form-input(name="properties.bonuses.$.key")
+              option(disabled selected) —
+              each key in Quantifiable.list.keys
+                option(value=key selected=bonus.key==key)= Quantifiable.list.get(key).label
+      .flex.vert.border
+        .flex.center.distribute.pad
+          label Bonuses
+          a.btn(data-click='duplicate' data-target="bonus_template" data-destination="pathfinder_bonuses") New Bonus
+        #pathfinder_bonuses.flex.vert.fill
+          template#bonus_template
+            +bonus({bonus:null})
+          if Common.utilities.get(item, 'properties.bonuses')
+            each bonus in Common.utilities.get(item, 'properties.bonuses')
+              +bonus(bonus)
+      .flex.vert.border
+        .flex.center.distribute.pad
+          label Abilities
+          a.btn(data-click='duplicate' data-target="ability_template" data-destination="pathfinder_abilities") New Ability
+        #pathfinder_abilities.flex.vert.fill
+          template#ability_template
+            +ability({description:null})
+          if Common.utilities.get(item, 'properties.abilities')
+            each ability in Common.utilities.get(item, 'properties.abilities')
+              +ability(ability)
+      

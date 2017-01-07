@@ -17,6 +17,7 @@ document.onreadystatechange = function(){
   require('./ui/scroll');
   require('./keypress');
   require('./ui/forms');
+  require('./ui/tabs');
 
   Drag.init();
   Navbar.init();

@@ -20,7 +20,8 @@ Item.schema = Schema({
   '?cl': Number.min(0),
   '?aura': Item.auras['abjuration','conjuration','divination','enchantment','evocation','illustion','necromancy','transmutation'],
   // '?enhancementBonus': Number.min(0).max(5),
-  '?bonus': Array.of(Quantifiable.schema),
+  '?bonuses': Array.of(Quantifiable.bonus.schema),
+  '?abilities': Array.of(String),
   '?slot': Item.slots,
   '?hands': [0, 1, 2], // assume an item can be carried in one or two hands if unspecified, or cannot be carried if 0,
   '?tag': module.exports.tags // a list of item tags for classification purposes

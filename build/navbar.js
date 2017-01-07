@@ -5,7 +5,7 @@ var Navbar = {
   },
   setListeners: function(){
     var menus = document.getElementsByClassName('dropdown-menu');
-    for(i=0;i < menus.length; i++){
+    for(var i=0;i < menus.length; i++){
       var thisMenu = menus[i];
       (function(){
         thisMenu.addEventListener('click',function(e){
@@ -15,7 +15,7 @@ var Navbar = {
     };
 
     var dropdowns = document.getElementsByClassName('dropdown');
-    for(i=0;i < dropdowns.length;i++) {
+    for(var i=0;i < dropdowns.length;i++) {
       var thisDrop = i;
       (function(){
         var target = document.getElementById(dropdowns[thisDrop].dataset.target);
@@ -39,7 +39,7 @@ var Navbar = {
       e.stopPropagation();
     });
     document.addEventListener('click',function(e){
-      for(i=0;i< dropdowns.length; i++) {
+      for(var i=0;i< dropdowns.length; i++) {
         dropdowns[i].classList.remove('active');
       }
     },false);

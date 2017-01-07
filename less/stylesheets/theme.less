@@ -9,20 +9,19 @@
 .marble() {
 	background-image: url('/images/textures/marble.jpg'), radial-gradient(ellipse 100% 200% at 50% 0, white 0%, #ccc 100%);
 	background-size: 127px, 100%;
-	background-position: 50% 50%;
+	background-position: 50% 0%;
 	background-blend-mode: overlay;
 	color: @color-dark;
 	box-shadow: 0px 1px 5px fade(black,12.5%);
-	border: 1px solid fade(black,25%);
 	overflow: hidden;
 
-	input {
-		border:none;
-		border-bottom: 1px dashed;
+	.form-input {
+		box-shadow: inset 0px 1px 2px fade(black,25%);
 	}
 
-	textarea {
-		border: 1px dashed;
+	label {
+		color: #999;
+		text-shadow: 0px -1px 1px fade(black,25%), 0px 1px 1px fade(white,25%);
 	}
 
 	// a:not(.btn),.as-link {
