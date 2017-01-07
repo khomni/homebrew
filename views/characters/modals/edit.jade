@@ -1,14 +1,14 @@
-form(action="/pc/" + (character ? character.id : '') method="post" )
+form(action=(campaign?campaign.url:"")+ "pc/" + (character ? character.id : '') method="post" )
   .modal-content
     if character
       .modal-title= character.name
     else
       .modal-title New Character
     .modal-body
-      if !character
+      //- if !character
         input(type="hidden" name="campaign" value=(campaign?campaign.id:false))
       .flex.vert.pad
-        .flex.pad.center
+        .flex.pad.center.fill
           .flex.center
             label Title
             input.form-input(name="title" placeholder="Title" value=character?character.title:false)

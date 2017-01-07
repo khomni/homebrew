@@ -20,23 +20,15 @@ router.get('/', (req, res, next) => {
   .catch(next)
 });
 
-router.post('/', Common.middleware.requireUser, (req,res,next) => {
+router.post('/', Common.middleware.requireUser, Common.middleware.objectifyBody, (req,res,next) => {
 
-  return req.user.createCharacter({
-    name: req.body.name,
-    race: req.body.race,
-    sex: req.body.sex,
-    CampaignId: req.body.campaign || undefined,
-    UserId: req.user.id
-  })
+  return req.user.createCharacter(req.body)
   .then(pc => {
-    if(!req.body.description) return pc;
 
     return Promise.props({
+      campaign: res.locals.campaign ? pc.setCampaign(res.locals.campaign) : Promise.resolve(null),
       // sets the character's public lore from their description
-      lore: pc.createLore({content:req.body.description, obscurity:0}),
-      // materializes the character in the world at location [0,0]
-      location: pc.createLocation({coordinates:{ type: 'Point', coordinates: [0,0]}})
+      lore: req.body.description ? pc.createLore({content:req.body.description, obscurity:0}) : Promise.resolve(null),
     })
     .then(results =>{
       return pc
@@ -51,6 +43,7 @@ router.post('/', Common.middleware.requireUser, (req,res,next) => {
 });
 
 router.get('/create', Common.middleware.requireUser, (req, res, next) => {
+
   if(req.requestType('modal')) return res.render('characters/modals/edit')
   return res.render('characters/new');
 });
@@ -83,7 +76,6 @@ characterRouter.get('/',(req,res,next) => {
 
 characterRouter.post('/', Common.middleware.requireUser, (req,res,next) => {
   // TODO: change the fields that can be modified based on the permission type
-  console.log(req.body)
   return req.user.controls(res.locals.character)
   .spread((controls, controlType) => {
     if(!controls) throw Common.error.authorization("You aren't authorized to modify that character")

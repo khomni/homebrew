@@ -11,7 +11,7 @@ block title
 block content
   .content-body
     +section()
-      form(method="post" action="/pc/")
+      form(method="post" action=(campagin?campaign.url:"")+"/pc/")
         input(type="hidden" name="campaign" value=(campaign?campaign.id:false))
         .form-group.horz
           label.form-group-label Name

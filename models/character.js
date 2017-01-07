@@ -51,7 +51,8 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: true,
     },
     location: {
-      type: DataTypes.GEOGRAPHY
+      type: DataTypes.GEOGRAPHY,
+      defaultValue: { type: 'Point', coordinates: [0,0]}
     },
 
     // an arbitrary JSON object describing the mechanical attributes of a character

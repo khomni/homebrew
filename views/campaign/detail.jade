@@ -12,9 +12,9 @@ block content
   .content-body
     +section('Contents')
       .flex.center.pad
-        a.btn(href="pc") Characters
-        a.btn(href="quests") Quests
-        a.btn(href="codex") Codex
+        a.btn(href=campaign.url+"pc") Characters
+        a.btn(href=campaign.url+"quests") Quests
+        a.btn(href=campaign.url+"codex") Codex
     if campaign.owned
       section
         .section-body

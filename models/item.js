@@ -19,6 +19,9 @@ module.exports = function(sequelize, DataTypes) {
     // value of the object in whichever currency the campaign setting is
     value: {
       type: DataTypes.DECIMAL,
+      set: function(v){
+        this.setDataValue('value',Number(v))
+      },
       validate: {
         min: 0,
       }
