@@ -5,25 +5,25 @@
     .flex.center.pad.fill
       .flex.vert
         label Caster Level
-        input.form-input(type="number" name="properties.cl" value=item.properties.cl min=0)
+        input.form-input(type="number" name="properties.cl" value=Common.utilities.get(item, 'properties.cl') min=0)
       .flex.vert
         label Max HP
-        input.form-input(type="number" name="properties.hpMax" value=item.properties.hpMax min=0)
+        input.form-input(type="number" name="properties.hpMax" value=Common.utilities.get(item, 'properties.hpMax') min=0)
       .flex.vert
         label Aura
         select.form-input(type="number" name="properties.aura")
           option(disabled selected) —
           each aura in Item.auras
-            option(value=aura selected=item.properties.aura==aura)= aura
+            option(value=aura selected=Common.utilities.get(item, 'properties.aura')==aura)= aura
       .flex.vert
         label Slot
-        select.form-input(type="number" name="properties.slot" value=item.properties.slot)
+        select.form-input(type="number" name="properties.slot")
           option(selected disabled) —
           each slot in Item.slots
-            option(value=slot selected=item.properties.slot==slot)= slot
+            option(value=slot selected=Common.utilities.get(item, 'properties.slot')==slot)= slot
       .flex.vert
         label Hands
-        select.form-input(type="number" name="properties.hands" value=item.properties.hpMax)
+        select.form-input(type="number" name="properties.hands" value=Common.utilities.get(item, 'properties.hpMax'))
           option Any
           option(value=1) One-handed
           option(value=2) Two-handed
@@ -46,13 +46,12 @@
             option(value=key selected=bonus.key==key)= Quantifiable.list.get(key).label
       .flex.vert.center.no-size
         button.close(data-click="remove" data-target=".pathfinder_bonus") ×
-      
-      
+
   #pathfinder_bonuses.flex.vert.border.fill
     template#bonus_template
       +bonus({})
-    if item.properties.bonuses
-      each bonus in item.properties.bonuses
+    if Common.utilities.get(item, 'properties.bonuses')
+      each bonus in Common.utilities.get(item, 'properties.bonuses')
         +bonus(bonus)
   .flex.center
     a.btn(data-click='duplicate' data-target="bonus_template" data-destination="pathfinder_bonuses") New Bonus

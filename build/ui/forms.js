@@ -1,5 +1,5 @@
 (function(){
-
+  // form elements that can be clicked on
   document.addEventListener('click', e => {
     var clickAction = e.target.dataset.click
     if(!clickAction) return true; // do not interrupt the click behavior
@@ -12,8 +12,14 @@
       if(!target) return false
       var destination = e.target.dataset.destination
       destination = document.getElementById(destination) || document.querySelector(destination)
-      var duplicate = document.createElement('div')
-      duplicate.innerHTML = target.outerHTML
+
+      if("content" in target) { // target is a template, import the node
+        var duplicate = document.importNode(target.content,true)
+      } else {
+        var duplicate = document.createElement('div')
+        duplicate.innerHTML = target.outerHTML
+      }
+
       Array.prototype.slice.call(duplicate.childNodes).map(node => {destination.appendChild(node)})
     }
 

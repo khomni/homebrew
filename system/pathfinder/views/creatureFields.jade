@@ -1,0 +1,22 @@
+//- Creature Fields
+.flex.vert.pad
+  .flex.vert.border.pad
+    .flex.center: label: strong Pathfinder
+    .flex.center.vert.pad
+      .flex.center: label: strong Ability Scores
+      table
+        tr
+          th: label STR
+          td: input.form-input(name="properties.attributes.str" value=Common.utilities.get(creature, 'properties.attributes.str'))
+          th: label INT
+          td: input.form-input(name="properties.attributes.int" value=Common.utilities.get(creature, 'properties.attributes.dex'))
+        tr
+          th: label DEX
+          td: input.form-input(name="properties.attributes.dex" value=Common.utilities.get(creature, 'properties.attributes.dex'))
+          th: label WIS
+          td: input.form-input(name="properties.attributes.wis" value=Common.utilities.get(creature,'properties.attributes.wis'))
+        tr
+          th: label CON
+          td: input.form-input(name="properties.attributes.con" value=Common.utilities.get(creature,'properties.attributes.con'))
+          th: label CHA
+          td: input.form-input(name="properties.attributes.cha" value=Common.utilities.get(creature,'properties.attributes.cha'))

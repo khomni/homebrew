@@ -74,15 +74,13 @@ characterRouter.get('/',(req,res,next) => {
 
 });
 
-characterRouter.post('/', Common.middleware.requireUser, (req,res,next) => {
+characterRouter.post('/', Common.middleware.requireUser, Common.middleware.objectifyBody, (req,res,next) => {
   // TODO: change the fields that can be modified based on the permission type
   return req.user.controls(res.locals.character)
   .spread((controls, controlType) => {
     if(!controls) throw Common.error.authorization("You aren't authorized to modify that character")
 
-    for(key in req.body) res.locals.character[key] = req.body[key]
-
-    return res.locals.character.save()
+    return res.locals.character.update(req.body)
     .then(character => {
       if(req.requestType('json')) return res.json(character)
       if(req.requestType('modal')) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
@@ -125,7 +123,6 @@ characterRouter.post('/select', Common.middleware.requireUser, (req,res,next) =>
 characterRouter.get('/edit', Common.middleware.requireUser, (req,res,next) => {
   return req.user.controls(res.locals.character)
   .spread((controls, controlType)=> {
-    console.log(controls,controlType)
     if(!controls) throw Common.error.authorization("You aren't authorized to modify that character")
     // GM edit
     if(controlType.dominion) {
@@ -134,7 +131,6 @@ characterRouter.get('/edit', Common.middleware.requireUser, (req,res,next) => {
 
     if(req.requestType('modal')) return res.render('characters/modals/edit')
     return next()
-
   })
   .catch(next)
 

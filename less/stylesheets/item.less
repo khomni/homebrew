@@ -4,15 +4,24 @@
 
 [data-rarity="1"] {
   color: darken(@color-secondary,10%);
+  &:hover,&:active,&:focus {
+    color: @color-secondary;
+  }
   // text-shadow: 0 0 2px @color-secondary;
 }
 
 [data-rarity="2"] {
   color: darken(@color-primary,10%);
+    &:hover,&:active,&:focus {
+      color: @color-primary;
+    }
   // text-shadow: 0 0 4px @color-primary;
 }
 
 [data-rarity="3"] {
   color: #aa00ff;
+  &:hover,&:active,&:focus {
+    color: #cd66ff;
+  }
   text-shadow: 0 0 8px #c65dfc;
 }

@@ -9,10 +9,8 @@ function Class(args) {
 
 // the Item prototype schema describes the keys and data types accepted in the item's property field
 Class.prototype.schema = {
-  cl: Number,
-  aura: String,
-  enchantmentBonus: Number,
-  properties: [String]
+  name: String,
+  level: Number.min(1).max(20),
 }
 
 

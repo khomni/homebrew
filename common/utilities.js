@@ -14,11 +14,13 @@ var renderAsync = Promise.method(function(path,locals){
   return jade.compileFile(path)(locals)
 });
 
-function get(string) {
+function get(object, string) {
   // bind this function to a nested object so that `this` refers to the object being worked on
-  var thisObject = this
+  var thisObject = string ? object : this
+  var string = string || object
+  if(typeof string != 'string') return string
 
-  if(!string) return thisObject
+  if(!string && !object) return thisObject
   var args = string.split('.') // split the provided string into its component parts
 
   if(args.length == 1) return thisObject[args.pop()]

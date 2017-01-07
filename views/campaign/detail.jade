@@ -22,8 +22,8 @@ block content
             .flex.vert.border.pad
               .flex.center: label GM Actions
               .flex.center.pad
-                a.btn(href='edit' data-response="modal") Edit
-                form(method="delete" data-response="json")
+                a.btn(href=campaign.url+"edit" data-response="modal") Edit
+                form(method=campaign.url+"delete" data-response="json")
                   button.btn Delete
                 //- form(action=campaign.url, method="DELETE")
                   button.btn(type="submit") Delete

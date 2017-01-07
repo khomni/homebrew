@@ -2,6 +2,14 @@ table {
 	width: 100%;
 	border-collapse: collapse;
 
+	&.hover {
+		tbody tr {
+			&:hover,&:focus {
+				background: fade(@color-primary,25%);
+			}
+		}
+	}
+
 	thead {
 		tr {
 			border-bottom: 1px solid;
@@ -23,10 +31,7 @@ table {
 
 	tbody{
 		tr {
-			border-bottom: 1px solid fade(black,25%);
-			&:hover,&:focus {
-				background: fade(@color-primary,25%);
-			}
+			border-bottom: 1px solid;
 		}
 	}
 

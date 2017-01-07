@@ -27,11 +27,8 @@ form(action=(campaign?campaign.url:"")+ "pc/" + (character ? character.id : '') 
         .flex.pad.center.vert
           label Description
           textarea.form-input(name="description")= character?character.description:''
-      if systemFields
-        .flex.vert.pad
-          hr
-          h3 #{activeSystem.name} Fields
-        .flex.vert.pad
+      if activeSystem
+        !{activeSystem.render('creatureFields.jade',{creature: character||{properties:{}}})}
     .modal-footer
       .flex.center.pad
         button.btn= character ? 'Update '+ character.getName('first') : 'Create'

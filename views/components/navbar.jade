@@ -43,6 +43,7 @@ nav#nav
           +navlink({url: '/c/', text:'Find Campaign'})
         else
           +dropdown({id: 'campaignmenu', text: 'Campaign'})
+            +navlink({url: currentUser.activeChar.Campaign.url, text:'Home'})
             +navlink({url: currentUser.activeChar.Campaign.url+'quests',text:'Quest'})
             +navlink({url: currentUser.activeChar.Campaign.url+'maps',text:'Maps'})
         

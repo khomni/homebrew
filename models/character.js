@@ -58,7 +58,7 @@ module.exports = function(sequelize, DataTypes) {
     // an arbitrary JSON object describing the mechanical attributes of a character
     // this field should be manipulated by the relevant system
     properties: {
-      type: DataTypes.JSONB
+      type: DataTypes.JSONB,
     },
 
     // Virtual Attributes
@@ -129,6 +129,8 @@ module.exports = function(sequelize, DataTypes) {
       return Promise.resolve(character);
     })
   })
+
+  // Character.Instance.prototype.get = Common.utilities.get.bind(Character.Instance.prototype)
 
   Character.Instance.prototype.getName = function(string) {
     switch (string) {
