@@ -1,4 +1,4 @@
-form(name='quest' action="/"+campaign.url+'quests/' + (quest?quest.id:'') + (parent?parent.id+'/add':'') method='post' data-response="json" data-reaction="redirect")
+form(name='quest' action=campaign.url+'quests/' + (quest?quest.id:'') + (parent?parent.id+'/add':'') method='post' data-response="json" data-reaction="redirect")
   .modal-content
     if parent
       .modal-title Subquest to #{parent.name}

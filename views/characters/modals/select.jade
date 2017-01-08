@@ -1,0 +1,7 @@
+.modal-content
+  .modal-title Select Character
+  .modal-body
+    .flex.vert.pad.as
+      each character in characters
+        form(action="/"+character.url+"/select" method="POST")
+          button.as-link(type="submit" disabled=character.isActiveChar(currentUser))= character.name

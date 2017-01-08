@@ -13,11 +13,29 @@
 		border-left: 1px dashed;
 	}
 
+	.collapse-handle {
+		padding: 0.5em;
+		opacity: 0.5;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		.cursor(pointer);
+		&:before {
+			transition: 0.25s;
+			content:"▼"
+		}
+	}
+
 	&.collapsed {
 		border-bottom: 1px dashed;
 		&>.quest-container {
-			max-height: 0;
-			overflow: hidden;
+			display: none;
+		}
+
+		&>.quest .collapse-handle {
+			&:before {
+				transform: rotateZ(-90deg);
+			}
 		}
 	}
 
@@ -36,28 +54,33 @@
 	}
 
 	&:hover {
-		&>.quest {
+		&>.quest .quest-link {
 			opacity: 1;
 			background: fade(@color-primary,10%);
 		}
 	}
 
 	.quest {
-		display: block;
-		padding: 0.5rem;
-		border: 1px solid;
 		margin-bottom: 0.5rem;
-		text-decoration:none;
+		transition: opacity 0.25s;
 
-		&:hover,&:focus {
+		&:hover {
 			opacity: 1;
 		}
 
-		&:focus {
-			margin-left: 1em;
-			margin-right: -1em;
-			background: fade(@color-primary,10%);
+		.quest-link {
+			border: 1px solid;
+			text-decoration:none;
+			padding: 0.5rem;
+
+			&:focus {
+				outline:none;
+				margin-left: 1em;
+				margin-right: -1em;
+				background: fade(@color-primary,10%);
+			}
 		}
+
 		&:not(:only-child) {
 			// padding-left: 0;
 		}

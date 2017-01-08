@@ -12,6 +12,7 @@
     if(!source.dataset.reaction) return false;
 
     if(source.dataset.reaction == 'redirect') {
+      console.log('redirect with data:',data)
       if(data.redirect) return window.location = data.redirect
       return window.location.reload()
     }

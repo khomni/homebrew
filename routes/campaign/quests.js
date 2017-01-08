@@ -12,7 +12,6 @@ router.get('/', (req,res,next) => {
     ],
   })
   .then(quests => {
-    console.log(quests)
     res.locals.quests = quests
     return res.render('campaign/quests/index')
   })
@@ -93,15 +92,27 @@ questRouter.post('/add', Common.middleware.requireUser, (req,res,next) => {
   .catch(next)
 })
 
-questRouter.delete('/', Common.middleware.requireUser, (req,res,next) => {
+questRouter.delete('/', Common.middleware.requireUser, Common.middleware.confirmDelete, (req,res,next) => {
   if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to delete quests"))
-  return res.locals.quest.destroy()
-  .then(quest => {
-    if(req.requestType('json')) {
-      return res.json({redirect:"/"+res.locals.campaign.url+"quests"})
-    }
 
+  // delete up the tree
+  return res.locals.quest.getDescendents({order:[['hierarchyLevel','DESC']]})
+  .then(quests => {
+    Promise.each(quests, quest => {
+      return quest.destroy().reflect()
+    })
+    .then(results => {
+      return res.locals.quest.destroy()
+    })
   })
+  // TODO: delete all child quests at once
+  // return res.locals.quest.destroy()
+  .then(() => {
+    if(req.requestType('json')) {
+      return res.json({ref:res.locals.quest,kind:"Quest"})
+    }
+  })
+  .catch(next)
   return next();
 });
 

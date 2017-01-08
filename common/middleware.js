@@ -29,6 +29,7 @@ module.exports = {
     if(req.body.confirm) return next();
     res.locals.action = req.originalUrl
     res.locals.body = req.body
+    console.log('rendering modal')
     return res.render('modals/confirmDelete')
     // return res.redirect(req.headers.referer)
     return next();

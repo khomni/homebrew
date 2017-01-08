@@ -145,18 +145,23 @@ button {
 		outline-offset: 0;
 		/* Additional styles to look like a link */
 		cursor: pointer;
+
+		&[disabled] {
+			color: #999;
+		}
 		// text-decoration: underline;
 	}
 }
 
 a.close,button.close {
 	&:empty {
-		width: 1em;
 		&:before {
 			font-size:24px;
 			content:"×"
 		};
 	};
+	width: 1em;
+	font-size: 18px;
 	user-select:none;
 	height: 1em;
 	line-height: 1em;

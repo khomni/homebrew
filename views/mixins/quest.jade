@@ -1,7 +1,7 @@
 mixin quest(quest, active)
-  .quest-container(class=!quest.visible&&campaign.owned?'obscured ':'' + quest.status)
-    a.quest(href="/"+campaign.url+"quests/"+quest.id disabled=!quest.visible&&!campaign.owned)
-      .flex.pad
+  .quest-container(class=!quest.visible&&campaign.owned?'obscured ':'' + quest.status data-ref=quest.id data-kind="Quest")
+    .quest.flex.fill
+      a.flex.pad.quest-link(href=campaign.url+"quests/"+quest.id disabled=!quest.visible&&!campaign.owned tabindex=1)
         if !(quest.visible || campaign.owned)
           div ???
         else 
@@ -13,6 +13,14 @@ mixin quest(quest, active)
         if quest.comments && quest.comments.length > 0
           div (#{quest.comments.length} comments)
         .timestamp.je.grow= quest.updatedAt.toLocaleDateString()
+      .flex.pad.center.no-size
+        if quest.children && quest.children.length > 0 && !active
+          .flex.no-size.collapse-handle(data-click="collapse" data-target=".quest-container")
+        a.close(href=campaign.url+"quests/"+quest.id+"/edit" data-response="modal" title="Edit Quest") ?
+        a.close(href=campaign.url+"quests/"+quest.id+"/add" data-response="modal" title="Add Subquest") +
+        form.no-size.flex.vert.fill(action=campaign.url+"quests/"+quest.id method="delete" data-response="json" data-reaction="remove")
+          button.close(title="Delete Quest")
+            
     if quest.children && quest.children.length > 0 && !active
       each subquest in quest.children
         +quest(subquest)

@@ -14,7 +14,7 @@ router.get('/', (req, res, next) => {
   })()
   .then(characters => {
     if(req.requestType('json')) return res.json(characters)
-
+    if(req.requestType('modal')) return res.render('characters/modals/select',{characters:characters})
     return res.render('characters/', {characters:characters})
   })
   .catch(next)
@@ -114,7 +114,7 @@ characterRouter.post('/select', Common.middleware.requireUser, (req,res,next) =>
     .then(user => {
       if(req.requestType('json')) return res.send(res.locals.character.get({plain:true}))
       if(req.requestType('modal')) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
-      return res.redirect(req.baseUrl)
+      return res.redirect(req.headers.referer||req.baseUrl)
     })
   })
   .catch(next)

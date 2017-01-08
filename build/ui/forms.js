@@ -7,6 +7,7 @@
 
     e.preventDefault();
     var target = e.target.dataset.target
+
     // duplicate
     if(clickAction=='duplicate' && target) {
       target = document.getElementById(target) || document.querySelector(target)
@@ -27,6 +28,11 @@
     if(clickAction=='remove' && target) {
       target = document.getElementById(target) || source.closest(target)
       target.remove()
+    }
+
+    if(clickAction=='collapse' && target) {
+      target = document.getElementById(target) || source.closest(target)
+      target.classList.toggle('collapsed')
     }
 
 

@@ -21,7 +21,7 @@ mixin comment(comment,parent)
 				.comment-header.flex
 					.flex.grow
 						if comment.Character
-							label: a(href="/"+campaign.url + comment.Character.url)= comment.Character.name
+							label: a(href=campaign.url + comment.Character.url)= comment.Character.name
 						else if comment.User
 							label= comment.User.username
 						else

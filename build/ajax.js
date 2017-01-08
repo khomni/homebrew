@@ -61,18 +61,17 @@ var Ajax = {
           return response.json()
           .then(json => {
             var dataEvent = new CustomEvent('data',{detail: json, bubbles:true})
-            return thisForm.dispatchEvent(dataEvent)
+            thisForm.dispatchEvent(dataEvent)
           })
         }
         return response.text()
         .then(html =>{
-          if(thisForm.dataset.response == 'modal') return Modal.methods.createModal(html);
+          if(thisForm.dataset.response != 'insert') return Modal.methods.createModal(html);
           if(thisForm.dataset.response == 'insert' || thisForm.dataset.response == 'replace') {
             if(!thisForm.dataset.target) throw new Error('No target to insert data')
             var target = document.getElementById(thisForm.dataset.target)
             if(thisForm.dataset.response == 'insert') target.innerHTML = html
             if(thisForm.dataset.response == 'replace') {
-              console.log(target.parentNode, target)
               var response = document.createElement('div')
               response.innerHTML = html
               var elems = Array.prototype.slice.call(response.childNodes)
