@@ -4,43 +4,49 @@ form(name='item' action='/'+character.url+'inventory/' + (item?item.id:'') metho
       .modal-title= item.name
     else
       .modal-title New Item
+    if activeSystem
+      .tab-group
+        a.tab.active(data-click="tab" data-target="basic-fields") Basic
+        a.tab(data-click="tab" data-target="system-fields")= activeSystem.name
     .modal-body
-      .flex.vert.fill
-        .flex.center.fill.pad
-          .flex.vert
-            label Item Name
-            input.form-input.grow(type='text' name='name' value=item?item.name:false)
-          .flex.vert
-            label Blueprint
-            input#blueprint-search.form-input(href="/r/system" type='text' name='properties.blueprint' value=item?item.properties.blueprint:false data-reaction="fill")
-          .flex.vert.center.no-size
-            label Flags
-            label.checkbox
-              input.form-input(type="checkbox" name="unique" value=item?item.unique:false)
-              span Unique
-        .flex.center.fill.pad
-          .flex.vert
-            label Rarity
-            select.form-input(name="rarity")
-              option(value=0 selected=item&&item.rarity==0) Common
-              option(value=1 selected=item&&item.rarity==1) Uncommon
-              option(value=2 selected=item&&item.rarity==2) Rare
-              option(value=3 selected=item&&item.rarity==3) Legendary
-          .flex.vert
-            label Value (#{activeSystem.terms.CURRENCY})
-            input.form-input(type='number' name='value' min=0 step="any" value=item?item.value:false)
-          .flex.vert
-            label Weight (#{activeSystem.terms.WEIGHT})
-            input.form-input(type='number' name='weight' min=0 step="any" value=item?item.weight:0)
-          .flex.vert
-            label Quantity
-            input.form-input(type='number' name='quantity' min=1 value=item?item.quantity:1)
+      .tab-panel
+        #basic-fields.tab-pane.active.flex.vert.fill
+          .flex.center.fill.pad
+            .flex.vert
+              label Item Name
+              input.form-input.grow(type='text' name='name' value=item?item.name:false)
+            .flex.vert
+              label Blueprint
+              input#blueprint-search.form-input(href="/r/system" type='text' name='properties.blueprint' value=item?item.properties.blueprint:false data-reaction="fill")
+            .flex.vert.center.no-size
+              label Flags
+              label.checkbox
+                input.form-input(type="checkbox" name="unique" value=item?item.unique:false)
+                span Unique
+          .flex.center.fill.pad
+            .flex.vert
+              label Rarity
+              select.form-input(name="rarity")
+                option(value=0 selected=item&&item.rarity==0) Common
+                option(value=1 selected=item&&item.rarity==1) Uncommon
+                option(value=2 selected=item&&item.rarity==2) Rare
+                option(value=3 selected=item&&item.rarity==3) Legendary
+            .flex.vert
+              label Value (#{activeSystem.terms.CURRENCY})
+              input.form-input(type='number' name='value' min=0 step="any" value=item?item.value:false)
+            .flex.vert
+              label Weight (#{activeSystem.terms.WEIGHT})
+              input.form-input(type='number' name='weight' min=0 step="any" value=item?item.weight:0)
+            .flex.vert
+              label Quantity
+              input.form-input(type='number' name='quantity' min=1 value=item?item.quantity:1)
+          .pad
+            label Description
+            .flex.center.fill
+              textarea.form-input(type='text' name='description' height=300 disabled=!!item&&!!item.lore[0])= item&&item.lore[0] ? item.lore[0].content : ''
         if activeSystem
-          !{activeSystem.render('itemFields.jade',{item: item||{properties:{}}})}
-        .pad
-          label Description
-          .flex.center.fill
-            textarea.form-input(type='text' name='description' height=300 disabled=!!item&&!!item.lore[0])= item&&item.lore[0] ? item.lore[0].content : ''
+          #system-fields.tab-pane.flex.vert.fill
+            !{activeSystem.render('itemFields.jade',{item: item||{properties:{}}})}
         
     .modal-footer
         button.btn.block(type='submit')= item ? 'Update Item' : 'Add Item'

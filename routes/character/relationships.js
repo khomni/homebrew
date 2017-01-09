@@ -28,7 +28,7 @@ router.get('/new', Common.middleware.requireCharacter, (req,res,next) => {
 
   return db.Character.relationships([req.user.activeChar, res.locals.character])
   .then(relationships => {
-    res.locals.activeChar = activeChar
+    // res.locals.activeChar = req.user.activeChar
 
     if(req.requestType('modal')) return res.render('characters/_connect.jade')
   })

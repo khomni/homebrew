@@ -4,9 +4,10 @@ var flat = require('flat');
 module.exports = {
   // given a req.body with a number of dot-delimited field names, converts the req.body into the corresponding object
   objectifyBody: (req,res,next) => {
-    // console.log("1:",req.body)
+    console.log("1:",req.body)
     for(var key in req.body) {
       if(!req.body[key]) delete req.body[key]
+      if(!Array.isArray(req.body[key]) && /\.\$\./.test(key)) req.body[key] = [req.body[key]]
       if(Array.isArray(req.body[key])) {
         req.body[key].map((value,index) => {
           if(value) req.body[key.replace('$',index)] = value
@@ -14,9 +15,9 @@ module.exports = {
         delete req.body[key]
       }
     }
-    // console.log("2:",req.body)
+    console.log("2:",req.body)
     req.body = flat.unflatten(req.body)
-    // console.log("3:",req.body)
+    console.log("3:",req.body)
     return next();
   },
 

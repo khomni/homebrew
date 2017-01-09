@@ -1,22 +1,48 @@
 //- Creature Fields
-.flex.vert.pad
-  .flex.vert.border.pad
-    .flex.center: label: strong Pathfinder
-    .flex.center.vert.pad
-      .flex.center: label: strong Ability Scores
-      table
-        tr
-          th: label STR
-          td: input.form-input(name="properties.attributes.str" value=Common.utilities.get(creature, 'properties.attributes.str'))
-          th: label INT
-          td: input.form-input(name="properties.attributes.int" value=Common.utilities.get(creature, 'properties.attributes.dex'))
-        tr
-          th: label DEX
-          td: input.form-input(name="properties.attributes.dex" value=Common.utilities.get(creature, 'properties.attributes.dex'))
-          th: label WIS
-          td: input.form-input(name="properties.attributes.wis" value=Common.utilities.get(creature,'properties.attributes.wis'))
-        tr
-          th: label CON
-          td: input.form-input(name="properties.attributes.con" value=Common.utilities.get(creature,'properties.attributes.con'))
-          th: label CHA
-          td: input.form-input(name="properties.attributes.cha" value=Common.utilities.get(creature,'properties.attributes.cha'))
+
+.flex.center.vert.fill
+  .flex.center.fill.pad
+    .flex.center: label: strong Ability Scores
+    table
+      tr
+        th: label STR
+        td: input.form-input(type="number" name="properties.attributes.str" value=Common.utilities.get(creature, 'properties.attributes.str'))
+      tr
+        th: label DEX
+        td: input.form-input(type="number" name="properties.attributes.dex" value=Common.utilities.get(creature, 'properties.attributes.dex'))
+      tr
+        th: label CON
+        td: input.form-input(type="number" name="properties.attributes.con" value=Common.utilities.get(creature,'properties.attributes.con'))
+      tr
+        th: label INT
+        td: input.form-input(type="number" name="properties.attributes.int" value=Common.utilities.get(creature, 'properties.attributes.dex'))
+      tr
+        th: label WIS
+        td: input.form-input(type="number" name="properties.attributes.wis" value=Common.utilities.get(creature,'properties.attributes.wis'))
+      tr
+        th: label CHA
+        td: input.form-input(type="number" name="properties.attributes.cha" value=Common.utilities.get(creature,'properties.attributes.cha'))
+  .flex.center.fill.pad
+    .flex.vert.fill
+      label Experience
+      input.form-input(type="number" name="properties.experience" value=Common.utilities.get(creature,'properties.experience'))
+  .flex.center.vert.fill.pad.border
+    .flex.center.distribute
+      label Classes
+      a.btn(data-click='duplicate' data-target="class_template" data-destination="pathfinder_classes") Add Class
+    .flex.vert#pathfinder_classes
+      mixin pfclass(pfclass)
+        .flex.pad.pathfinder_class
+          .flex.vert.center.no-size
+            a.close(data-click="remove" data-target=".pathfinder_class")
+          .flex.vert
+            input.form-input(type="text" placeholder="Class" name="properties.classes.$.name" value=pfclass.name)
+          .flex.vert
+            input.form-input(type="number" placeholder="Level" name="properties.classes.$.level" value=pfclass.level)
+      template#class_template
+        +pfclass({})
+      if Common.utilities.get(creature, 'properties.classes')
+        each pfclass in Common.utilities.get(creature, 'properties.classes')
+          +pfclass(pfclass)
+      
+    

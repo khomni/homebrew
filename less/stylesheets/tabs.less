@@ -1,10 +1,54 @@
 .tab-group {
-  .tab {
+  display: flex;
+  flex-flow: row;
+  background: url('/images/textures/marble.jpg'), #666;
+  background-blend-mode: soft-light;
+  flex-shrink:0;
+  user-select:none;
+  overflow:hidden;
+  overflow-x: auto;
 
-    &:not(.active) {
-      .cursor(pointer);
+  .tab {
+    .marble();
+    position:relative;
+    display:block;
+    border-radius: 0;
+    padding: 0.5rem;
+    box-shadow: none;
+    border-radius: 0;
+    text-decoration:none;
+    & + .tab {
+      border-left: 1px solid fade(black,25%);
 
     }
+
+    &:last-child {
+      border-radius: 0px 2px 0px 0px;
+    }
+
+    &:not(.active):not(:active):not(:focus):not([disabled]) {
+      .cursor(pointer);
+      background-color: #aaa;
+      background-blend-mode: soft-light;
+    }
+
+    &.active,&:active,&:focus {
+      .cursor(default);
+      flex-shrink:0;
+      border-bottom-color: transparent;
+      box-shadow: none;
+      text-decoration:none;
+      box-shadow: 0px 0px 8px fade(black,50%);
+      z-index:2;
+    }
+
+    &[disabled] {
+      pointer-events:none;
+      background: none;
+      text-shadow: 0px -1px 1px fade(black,25%), 0px 1px 1px fade(white,25%);
+      color: #333;
+    }
+
   }
 }
 

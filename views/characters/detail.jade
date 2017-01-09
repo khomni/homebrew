@@ -9,24 +9,11 @@ block header
       span= character.name
 
 block content
+  .tab-group
+    a.tab.active(data-click="tab" data-target="") Active
+    a.tab(data-click="tab" data-target="") Inactive
+    a.tab(data-click="tab" data-target="" disabled) Disabled
   .content-body
-    section
-      .section-body
-        .flex#tab-1
-        .flex#tab-2
-        .flex#tab-3
-        .flex#tab-4
-    section
-      .section-body
-        .flex
-          a(data-click="tab" data-target="tab-1") Tab 1
-          a(data-click="tab" data-target="tab-2") Tab 2
-          a(data-click="tab" data-target="tab-3") Tab 3
-          a(data-click="tab" data-target="tab-4") Tab 4
-          
-          a(href="/"+character.url+"factions", data-click="tab" data-target="tab-2") Tab 2
-          a(href="/"+character.url+"inventory", data-click="tab" data-target="tab-3") Tab 3
-          a(href="/"+character.url+"journal", data-click="tab" data-target="tab-4") Tab 4
     //- if character.active
     //- if !character.active
     section
@@ -37,7 +24,7 @@ block content
               .flex.vert.border.pad
                 .flex.center: label Owned Actions
                 .flex.center.pad
-                  form(action="select" method="post")
+                  form(action="/"+character.url+"select" method="post")
                     button.btn(disabled=character.isActiveChar(currentUser)) Select
                   a.btn(href="/"+character.url+"edit" data-response="modal") Edit
             if !character.isActiveChar(currentUser)

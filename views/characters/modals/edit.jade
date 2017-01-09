@@ -4,31 +4,35 @@ form(action=(campaign?campaign.url:"")+ "pc/" + (character ? character.id : '') 
       .modal-title= character.name
     else
       .modal-title New Character
+    if activeSystem
+      .tab-group
+        a.tab.active(data-click="tab" data-target="basic-fields") Basic
+        a.tab(data-click="tab" data-target="system-fields")= activeSystem.name
     .modal-body
-      //- if !character
-        input(type="hidden" name="campaign" value=(campaign?campaign.id:false))
-      .flex.vert.pad
-        .flex.pad.center.fill
-          .flex.center
-            label Title
-            input.form-input(name="title" placeholder="Title" value=character?character.title:false)
-          .flex.center.grow
-            label Name
-            input.form-input(name="name" placeholder="Name" value=character?character.name:false required)
-          .flex.center.grow
-            label Race
-            input.form-input(name="race" placeholder="Name" value=character?character.race:false)
-        .flex.pad.center
-          label.form-group-label Sex
-          select.form-input(name="sex")
-            option(selected=character&&character.sex=="n/a" value=" ") Unspecified
-            option(value="male" selected=character&&character.sex=="male") Male
-            option(value="female" selected=character&&character.sex=="female") Female
-        .flex.pad.center.vert
-          label Description
-          textarea.form-input(name="description")= character?character.description:''
-      if activeSystem
-        !{activeSystem.render('creatureFields.jade',{creature: character||{properties:{}}})}
+      .tab-panel
+        #basic-fields.tab-pane.active.flex.vert.fill
+          .flex.pad.center.fill
+            .flex.center
+              label Title
+              input.form-input(name="title" placeholder="Title" value=character?character.title:false)
+            .flex.center.grow
+              label Name
+              input.form-input(name="name" placeholder="Name" value=character?character.name:false required)
+            .flex.center.grow
+              label Race
+              input.form-input(name="race" placeholder="Name" value=character?character.race:false)
+          .flex.pad.center
+            label.form-group-label Sex
+            select.form-input(name="sex")
+              option(selected=character&&character.sex=="n/a" value=" ") Unspecified
+              option(value="male" selected=character&&character.sex=="male") Male
+              option(value="female" selected=character&&character.sex=="female") Female
+          .flex.pad.center.vert
+            label Description
+            textarea.form-input(name="description")= character?character.description:''
+        if activeSystem
+          #system-fields.tab-pane.flex.vert.fill
+            !{activeSystem.render('creatureFields.jade',{creature: character||{properties:{}}})}
     .modal-footer
       .flex.center.pad
         button.btn= character ? 'Update '+ character.getName('first') : 'Create'

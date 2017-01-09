@@ -33,6 +33,7 @@ module.exports = {
     // source.dataset.target
     // source.dataset.container
     var target = document.getElementById(source.dataset.target) || document.querySelector(source.dataset.target);
+    if(!target) return false;
 
     target.parentNode.childNodes.forEach(node=>{
       if(node != target) return node.classList.remove('active');
@@ -53,7 +54,7 @@ module.exports = {
       return node.classList.add('active');
     })
 
-    target.classList.add('active')
+    // target.classList.add('active');
 
 
   }

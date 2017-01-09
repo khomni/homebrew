@@ -39,6 +39,7 @@
 }
 
 .marble-ui() {
+  text-decoration: none;
   border: none;
   background: #ddd;
   color: @color-dark;
@@ -52,7 +53,7 @@
   // &:hover {
   // 	color: @color-primary;
   // }
-  &[disabled] {
+  &[disabled],&.active {
     background: url('/images/textures/marble.jpg'), radial-gradient(ellipse 200% 200% at 50% 0%, #ddd 0%, #999 100%);
     box-shadow: 0 0 1px fade(black,50%);
     cursor: default;
