@@ -1,0 +1,2 @@
+require('./click');
+require('./input');

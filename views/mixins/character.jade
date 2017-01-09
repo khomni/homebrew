@@ -14,13 +14,3 @@ mixin characterCard(character)
                 button.btn(type="submit") Set As Main
               form(action="/"+character.url method="delete" data-response="modal")
                 button.btn(type="submit") Delete
-
-mixin charOwned(character,bool)
-  -var owned = currentUser && character && currentUser.id === character.UserId
-  if (owned && bool) || (!owned && !bool)
-    block
-      
-mixin charActive(character,bool)
-  -var owned = currentUser && character && currentUser.MainCharId === character.id
-  if (owned && bool) || (!owned && !bool)
-    block

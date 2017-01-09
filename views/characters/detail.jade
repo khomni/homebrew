@@ -10,6 +10,23 @@ block header
 
 block content
   .content-body
+    section
+      .section-body
+        .flex#tab-1
+        .flex#tab-2
+        .flex#tab-3
+        .flex#tab-4
+    section
+      .section-body
+        .flex
+          a(data-click="tab" data-target="tab-1") Tab 1
+          a(data-click="tab" data-target="tab-2") Tab 2
+          a(data-click="tab" data-target="tab-3") Tab 3
+          a(data-click="tab" data-target="tab-4") Tab 4
+          
+          a(href="/"+character.url+"factions", data-click="tab" data-target="tab-2") Tab 2
+          a(href="/"+character.url+"inventory", data-click="tab" data-target="tab-3") Tab 3
+          a(href="/"+character.url+"journal", data-click="tab" data-target="tab-4") Tab 4
     //- if character.active
     //- if !character.active
     section

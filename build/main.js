@@ -16,8 +16,10 @@ document.onreadystatechange = function(){
   require('./dataemissions');
   require('./ui/scroll');
   require('./keypress');
-  require('./ui/forms');
   require('./ui/tabs');
+
+  // add document-level event listeners for the application
+  require('./listeners');
 
   Drag.init();
   Navbar.init();

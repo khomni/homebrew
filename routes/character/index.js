@@ -2,16 +2,14 @@ var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/', (req, res, next) => {
-  if(!req.user) return next();
-  var query = {}
-  var include = []
+router.get('/', Common.middleware.requireUser, (req, res, next) => {
 
-  return Promise.method(function(){
+  return Promise.resolve().then(()=>{
+    if(res.locals.faction) return res.locals.faction.getMembers()
     if(res.locals.user) return res.locals.user.getCharacters()
     if(res.locals.campaign) return db.Character.findAll({where:{CampaignId:res.locals.campaign.id}})
     return db.Character.findAll({include:[{model:db.Campaign}], order: [['CampaignId'],['name']]})
-  })()
+  })
   .then(characters => {
     if(req.requestType('json')) return res.json(characters)
     if(req.requestType('modal')) return res.render('characters/modals/select',{characters:characters})
@@ -37,7 +35,7 @@ router.post('/', Common.middleware.requireUser, Common.middleware.objectifyBody,
   .then(pc => {
     if(req.requestType('json')) return res.send(pc.get({plain:true}))
     if(req.requestType('modal')) return res.render('modals/_success', {title: "Character Created", body:"Good job", redirect:pc.url})
-    return res.redirect(req.baseUrl);
+    return res.redirect(req.headers.referer||req.baseUrl);
   })
   .catch(next);
 });
@@ -59,7 +57,10 @@ router.use('/:id', (req,res,next) => {
     if(req.user && character.id == req.user.MainCharId) character.active = true
     if(req.user && character.UserId == req.user.id) character.owned = true
     res.locals.character = character
-    if(character.Campaign) res.locals.activeSystem = SYSTEM[character.Campaign.system]
+    if(character.Campaign) {
+      res.locals.campaign = character.Campaign
+      res.locals.activeSystem = SYSTEM[character.Campaign.system]
+    }
     res.locals.breadcrumbs.add(character.get({plain:true}))
     throw null
   })
@@ -140,6 +141,7 @@ characterRouter.get('/edit', Common.middleware.requireUser, (req,res,next) => {
 characterRouter.use('/journal', require('./journal'));
 characterRouter.use('/inventory', require('./items'));
 characterRouter.use('/relationship', require('./relationships'));
+characterRouter.use('/factions', require('../campaign/factions'));
 
 characterRouter.use('/', (req,res,next) => {
   res.locals.lorable = res.locals.character

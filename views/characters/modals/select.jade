@@ -5,3 +5,4 @@
       each character in characters
         form(action="/"+character.url+"/select" method="POST")
           button.as-link(type="submit" disabled=character.isActiveChar(currentUser))= character.name
+      a.btn(href=(campaign?campaign.url:"/")+"pc/create" data-response="modal") New Character

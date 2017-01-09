@@ -110,6 +110,7 @@ module.exports = function(sequelize, DataTypes) {
         Character.belongsToMany(models.Character, {as: 'relationship',through: models.Relationship});
         // a character has access to some pieces of lore, the association being 'knowledge'
         Character.belongsToMany(models.Lore, {as: 'knowledge', through: models.Knowledge});
+        // a character can be a member of one or more factions
 
         // items tend to belong to characters, so they can have an owner in their record
         Character.hasMany(models.Item);

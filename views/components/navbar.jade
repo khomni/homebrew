@@ -46,10 +46,10 @@ nav#nav
           +dropdown({id: 'campaignmenu', text: 'Campaign'})
             +navlink({url: currentUser.activeChar.Campaign.url, text:'Home'})
             +navlink({url: currentUser.activeChar.Campaign.url+'quests',text:'Quest'})
-            +navlink({url: currentUser.activeChar.Campaign.url+'maps',text:'Maps'})
+            +navlink({url: currentUser.activeChar.Campaign.url+'locations',text:'Locations'})
         
             if !currentUser.activeChar.party
-              +navlink({url: currentUser.activeChar.Campaign.url + 'parties', text:'Join Party'})
+              +navlink({url: currentUser.activeChar.Campaign.url + 'factions', text:'Join Party'})
       
       
       +dropdown({id: 'accountmenu', text: 'Account'})

@@ -1,0 +1,23 @@
+form(name='faction' action=campaign.url+"factions/"+(faction?faction.id:"") method='post')
+  .modal-content&attributes({class:THEME})
+    .modal-title
+      if faction
+        | Edit #{faction.name}
+      else
+        | Start New Faction
+    .modal-body
+        .flex.vert
+          .flex.vert.fill.js
+            label Faction Name
+            input.form-input(type='text' name="name" value=faction?faction.name:'')
+          if faction && faction.leader.isActiveChar(currentUser)
+            label Faction Leader
+            select.form-input(name="leaderId")
+              each member in faction.members
+                option(value=member.id)= member.name
+    .modal-footer
+      .flex.center.pad
+        if faction
+          button.btn(type='submit') Update Faction
+        else
+          button.btn(type='submit') Create Faction

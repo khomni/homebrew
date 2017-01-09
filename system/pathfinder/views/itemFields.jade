@@ -24,7 +24,7 @@
       .flex.vert
         label Hands
         select.form-input(type="number" name="properties.hands" value=Common.utilities.get(item, 'properties.hpMax'))
-          option Any
+          option(value="") Any
           option(value=1) One-handed Only
           option(value=2) Two-handed Only
           option(value=0) Impossible to Carry

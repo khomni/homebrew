@@ -15,9 +15,6 @@ module.exports = function(sequelize, DataTypes) {
       validate: {
         len: [0,32]
       },
-      set: function(i){
-        this.setDataValue('url', i.replace(/\s/gi,'-').toLowerCase())
-      },
       get: function() {
         return '/c/' + (this.getDataValue('url') || this.id) + "/"
       }
@@ -41,6 +38,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Campaign.hasMany(models.Quest);
         Campaign.hasMany(models.Location)
+        Campaign.hasMany(models.Faction,{constraints:false})
       }
     }
   });

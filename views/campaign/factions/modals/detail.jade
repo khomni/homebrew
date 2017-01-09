@@ -1,0 +1,20 @@
+.modal-content&attributes({class:THEME})
+  .modal-title= faction.name
+  .modal-body 
+    .flex.vert.pad
+      label Leader
+      a(href="/"+faction.leader.url)= faction.leader.getName('formal')
+        
+      label Members
+      table.table
+        thead
+          tr
+            th #
+            th Name
+        tbody
+          each member,i in faction.members
+            tr
+              td= i+1
+              td: a(href="/"+member.url)= member.name
+      
+    .flex.center.pad

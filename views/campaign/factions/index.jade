@@ -1,0 +1,39 @@
+extends /layout
+
+block title
+  title #{campaign.name} – Factions
+  
+block header
+  +header
+    .header-item.page-title 
+      span Factions
+  
+block content
+  .content-body
+    section
+      .section-title Factions
+      .section-body
+        if factions.length > 0
+          table.table#factions-index
+            thead
+              tr
+                th Faction
+                th Leader
+                th Members
+                th
+            tbody
+              for faction in factions
+                tr
+                  td: a(href=campaign.url+"factions/"+faction.id data-response="modal")= faction.name
+                  td: a(href="/pc/"+faction.leader.id)= faction.leader.getName('formal')
+                  td= faction.members.length
+                  td: .flex.pad
+                    form(action=campaign.url+"factions/"+faction.id+"/join" method="post" data-response="json" data-reaction="redirect"): button.as-link Join / Leave
+                    if faction.leader.isActiveChar(currentUser)
+                      a.close(href=campaign.url+"factions/"+faction.id+"/edit" data-response="modal" title="Edit Faction") ?
+                      form(action=campaign.url+"factions/"+faction.id+"/disband" method="post" data-response="json" data-reaction="redirect"): button.close(title="Disband Faction")
+        else
+          label No Factions
+        .flex.center.pad
+          a.btn(href=campaign.url+"factions/new" data-response="modal") Create Faction
+          

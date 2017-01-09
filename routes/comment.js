@@ -44,6 +44,7 @@ router.post('/', Common.middleware.requireUser, (req,res,next) => {
     CharacterId: req.user.activeChar ? req.user.activeChar.id: null,
     // otherwise, post it as the user
     UserId: !req.user.activeChar ? req.user.id : null
+
   }))
   .then(comment => {
     if(req.requestType('json')) return res.json(comment)

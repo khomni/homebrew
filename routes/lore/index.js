@@ -13,9 +13,6 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
   if(!res.locals.lorable) return next(); // no lorable item!
   if(!res.locals.lorable.getLore) return next(Common.error.request('That resource cannot have lore'))
 
-  console.log(db.methods(res.locals.lorable,/lore/gi))
-  console.log(db.methods(req.user.activeChar,/knowledge/gi))
-
   return res.locals.lorable.getLore()
   .then(lore => {
     return Promise.map(lore, piece => {

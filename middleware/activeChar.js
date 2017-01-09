@@ -8,9 +8,12 @@ module.exports = (req,res,next) => {
   .then(character => {
     if(!character) return next();
     res.locals.currentUser.activeChar = character
-    if(character.Campaign) res.locals.activeSystem = SYSTEM[character.Campaign.system]
+    if(character.Campaign) {
+      res.locals.campaign = character.Campaign
+      res.locals.activeSystem = SYSTEM[character.Campaign.system]
+    }
     if(character.location) return next()
-    
+
     character.location = {type:'Point', coordinates:[0,0]}
     return character.save()
     .then(next)

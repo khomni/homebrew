@@ -3,9 +3,9 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', Common.middleware.requireUser, (req, res, next) => {
-  var quer = {}
+  var query = {}
   if(res.locals.user) query = {where:{UserId:res.locals.user.id}}
-  db.Campaign.findAll()
+  db.Campaign.findAll(query)
   .then(campaigns => {
     return res.render('campaign/index', {campaigns: campaigns})
   })
@@ -86,5 +86,6 @@ campaignRouter.delete('/', Common.middleware.requireUser, Common.middleware.conf
 
 campaignRouter.use('/pc', require('../character'));
 campaignRouter.use('/quests', require('./quests'));
+campaignRouter.use('/factions', require('./factions'));
 
 module.exports = router;
