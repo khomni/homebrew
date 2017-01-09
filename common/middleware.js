@@ -6,6 +6,7 @@ module.exports = {
   objectifyBody: (req,res,next) => {
     // console.log("1:",req.body)
     for(var key in req.body) {
+      if(!req.body[key]) delete req.body[key]
       if(Array.isArray(req.body[key])) {
         req.body[key].map((value,index) => {
           if(value) req.body[key.replace('$',index)] = value
@@ -29,8 +30,11 @@ module.exports = {
     if(req.body.confirm) return next();
     res.locals.action = req.originalUrl
     res.locals.body = req.body
-    console.log('rendering modal')
-    return res.render('modals/confirmDelete')
+    return res.render('modals/confirmDelete',{
+      action: req.originalUrl,
+      body:req.body,
+      accept: req.headers.get('accept')
+    })
     // return res.redirect(req.headers.referer)
     return next();
   },
