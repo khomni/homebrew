@@ -55,32 +55,31 @@ var Ajax = {
         },
         body:thisForm
       })
-      .then(response =>{
-        var contentType = response.headers.get("content-type")
-        if(contentType.includes('application/json')) {
-          return response.json()
-          .then(json => {
-            var dataEvent = new CustomEvent('data',{detail: json, bubbles:true})
-            thisForm.dispatchEvent(dataEvent)
-          })
-        }
-        return response.text()
-        .then(html =>{
-          if(thisForm.dataset.response != 'insert') return Modal.methods.createModal(html);
-          if(thisForm.dataset.response == 'insert' || thisForm.dataset.response == 'replace') {
-            if(!thisForm.dataset.target) throw new Error('No target to insert data')
-            var target = document.getElementById(thisForm.dataset.target)
-            if(thisForm.dataset.response == 'insert') target.innerHTML = html
-            if(thisForm.dataset.response == 'replace') {
-              var response = document.createElement('div')
-              response.innerHTML = html
-              var elems = Array.prototype.slice.call(response.childNodes)
-              elems.map(e=>{target.parentNode.insertBefore(e,target)})
-              target.remove();
-            }
+      .then(xhr =>{
 
+        var contentType = xhr.getResponseHeader('Content-Type');
+        if(contentType.includes('application/json')) {
+          var response = JSON.parse(xhr.response)
+          var dataEvent = new CustomEvent('data',{detail: response, bubbles:true})
+          return thisForm.dispatchEvent(dataEvent)
+        }
+
+        var html = xhr.response
+
+        if(thisForm.dataset.response == 'insert' || thisForm.dataset.response == 'replace') {
+          if(!thisForm.dataset.target) throw new Error('No target to insert data')
+          var target = document.getElementById(thisForm.dataset.target)
+          if(thisForm.dataset.response == 'insert') target.innerHTML = html
+          if(thisForm.dataset.response == 'replace') {
+            var response = document.createElement('div')
+            response.innerHTML = html
+            var elems = Array.prototype.slice.call(response.childNodes)
+            elems.map(e=>{target.parentNode.insertBefore(e,target)})
+            target.remove();
           }
-        })
+          return;
+        }
+        return Modal.methods.createModal(html);
       })
       .catch(err =>{
         Modal.methods.createModal(err);
@@ -119,7 +118,6 @@ var Ajax = {
       if(args.body.nodeName === "FORM") {
         args.headers['Content-Type'] = 'application/json'
         var data = JSON.stringify(serialize(args.body))
-        console.log(data)
       }
       else if(typeof args.data === 'object') {
         args.headers['Content-Type'] = 'application/json'
@@ -139,23 +137,45 @@ var Ajax = {
       body: data || null
     }
 
-    for(key in args.headers) {
-      init.headers[key] = args.headers[key]
-    }
+    return new Promise(function(resolve,reject){
+      var xhr = new XMLHttpRequest()
+      // Promise.promisifyAll(xhr)
 
-    return fetch(args.url,init);
+      Object.assign(init.headers, args.headers)
 
+      xhr.open(args.method, args.url)
+
+      for(key in init.headers) {
+        xhr.setRequestHeader(key, init.headers[key])
+      }
+
+      xhr.send(data)
+
+      xhr.onreadystatechange = function() {
+        if(xhr.readyState == XMLHttpRequest.DONE) {
+          if(xhr.status == 200) return resolve(xhr)
+          var err = new Error(xhr);
+          err.status = xhr.status;
+          err.statusText = xhr.statusText;
+          err.message = xhr.responseText;
+          return reject(err);
+        }
+      }
+    })
   },
 
   json: function(args) {
     args.headers = args.headers || {}
     Object.assign(args.headers, {'Content-Type': 'application/json', 'Accept': 'application/json'});
-    return this.fetch(args).then(response => {return response.json().catch(err => {return response})});
+    return this.fetch(args).then(xhr => {
+      console.log(xhr)
+      return xhr.response
+    });
   },
   html: function(args) {
     args.headers = args.headers || {}
     Object.assign(args.headers, {'Content-Type': 'text/html', 'Accept': 'text/html'});
-    return this.fetch(args).then(response => {return response.text()});
+    return this.fetch(args).then(xhr => {return xhr.response});
   },
 
 };

@@ -56,7 +56,7 @@ block content
                               else
                                 | #{Number(item.weight) || '–'}
                           //- td= item.properties.blueprint
-                          td #{Object.keys(item.properties).length||'—'}
+                          td #{Object.keys(item.properties||{}).length||'—'}
                           if character.isActiveChar(currentUser)
                             td
                               .flex.je
