@@ -46,6 +46,7 @@ function Modal(elem) {
   this.focus = function() {
     this.visible = true;
     elem.classList.add('shown');
+    if(elem == elem.parentNode.lastChild) return true
     document.getElementById('modals').appendChild(elem)
 
   }
@@ -60,16 +61,17 @@ function Modal(elem) {
 
   // prevent click events from reaching the modals parent
   elem.addEventListener('mousedown', e => {
-    if(e.which == 2) return thisModal.remove();
-    if(e.which == 1) return thisModal.focus();
+    if(e.which == 2) thisModal.remove();
+    if(e.which == 1) thisModal.focus();
     return true;
-  });
+  },true);
 
   var focusable = Array.prototype.slice.call(elem.querySelectorAll('input,a,button,select,textarea'))
   focusable.map(i => {
     i.addEventListener('focus', e => {
       thisModal.focus()
-    })
+      return true;
+    },true)
   });
 
   elem.modal = this

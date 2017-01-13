@@ -32,13 +32,13 @@ var drag = {
         drag.dragging.elem.style.top = Math.max(0,(e.clientY - handleRect.height/2 - (noHandle ? 0 : handleRect.offsetTop)))+"px"
       })
       return false;
-    })
+    },true)
 
     // release the dragging element
     document.addEventListener('mouseup', e => {
       drag.dragging = null;
       return true;
-    })
+    },true)
 
   }
 }
@@ -62,7 +62,7 @@ function Draggable(elem,handle) {
       handle: thisDraggable.handle,
     }
     return true;
-  })
+  },true)
 
 }
 
