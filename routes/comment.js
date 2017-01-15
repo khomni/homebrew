@@ -56,7 +56,7 @@ router.post('/', Common.middleware.requireUser, (req,res,next) => {
 });
 
 router.get('/new', Common.middleware.requireUser, (req,res,next) => {
-  if(req.requestType('modal')) return res.render('comments/modals/edit',{action:req.baseUrl})
+  if(req.requestType('modal')) return res.render('comments/modals/edit',{comment: null, action:req.baseUrl})
   return next();
 })
 

@@ -16,15 +16,12 @@ module.exports = function(sequelize, DataTypes) {
     lorable: {
       type: DataTypes.STRING
     },
-    hidden: {
-      type: DataTypes.VIRTUAL,
-    },
-    new: {
-      type: DataTypes.VIRTUAL,
-    },
     content: {
       type: DataTypes.TEXT,
     },
+    hidden: {type: DataTypes.VIRTUAL,},
+    new: {type: DataTypes.VIRTUAL},
+    owned: {type: DataTypes.VIRTUAL},
     // lore obscurity represents the likelihood of a person knowning it
     // a piece of lore with an obscurity of 0 is common knowledge
     // (think DC for knowledge checks)

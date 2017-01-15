@@ -1,4 +1,3 @@
--console.log(JSON.stringify(lore,null,'  '))
 if !lore
   .lore-container.flex.row
     .lore-content.grow: label Removed
@@ -6,14 +5,14 @@ else
   .lore-container.flex.row(id="lore-"+lore.id class=lore.hidden?'obscured':'')
     if lore.hidden
       .lore-content.grow: label Obscurity: #{lore.obscurity}
-      .flex.vert.no-size
-        if campaign.owned
+      .flex.vert.pad.no-size
+        if lore.owned || campaign.owned
           form(action=(base+"/learn") method="post" data-response="replace" data-target="lore-"+lore.id)
             button.close(title="Learn"): i.fa.fa-book
     else
       .lore-content.grow= lore.content
-      .flex.vert.no-size
-        if campaign.owned
+      .flex.vert.pad.no-size
+        if lore.owned || campaign.owned
           form(action=base method="delete" data-response="replace" data-target="lore-"+lore.id)
             button.close(title="Delete Lore")
           a.close(href=base+"/edit" data-response="modal" data-target="edit-lore-"+lore.id): i.fa.fa-wrench

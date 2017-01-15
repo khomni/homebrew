@@ -18,26 +18,30 @@ router.get('/', Common.middleware.requireCharacter, (req,res,next) => {
 router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
   if(!res.locals.lorable.getLore) return next(Common.error.request('That resource cannot have lore'))
 
+  // TODO: nifty way of determining if the user has dominion over the lorable
+
+  // get all lore belonging to the lorable
   return res.locals.lorable.getLore()
   .then(lore => {
+    // for each piece of lore associated with the lorable, determine if it is known by the activeChar
     return Promise.map(lore, piece => {
       return req.user.activeChar.hasKnowledge(piece)
       .then(hasKnowledge => {
-        if(!hasKnowledge) {
-          if(piece.obscurity == 0) {
-            return req.user.activeChar.addKnowledge(piece)
-            .then(knowledge => {
-              piece.hidden = false
-              return piece
-            })
-          }
-          piece.hidden = true
+        if(hasKnowledge) return piece // character knows this lore
+
+        if(piece.obscurity == 0) {
+          // piece is not obscure knowledge, character learns it automatically
+          return req.user.activeChar.addKnowledge(piece)
+          .then(knowledge => {
+            return piece
+          })
         }
+        // user does not know lore and it is obscure
+        piece.hidden = true
         return piece
       })
     })
     .then(filtered => {
-      console.log(JSON.stringify(filtered,null,'  '))
       if(req.requestType('json')) return res.json(filtered)
       if(req.requestType('xhr')) return res.render('lore/_list',{base:req.baseUrl, loreList:filtered})
       if(req.requestType('modal')) return res.render('lore/modals/list',{base:req.baseUrl, title: res.locals.lorable.name, loreList:filtered})
@@ -79,6 +83,7 @@ router.use('/:id', Common.middleware.requireCharacter, (req,res,next) => {
     .then(hasKnowledge => {
       if(!hasKnowledge && lore.obscurity == 0) return req.user.activeChar.addKnowledge(lore)
       lore.hidden = !hasKnowledge
+      lore.owned = res.locals.campaign.owned
       return lore
     })
     .then(lore => {
