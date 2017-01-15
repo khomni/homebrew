@@ -19,9 +19,10 @@ block content
     //- if !character.active
     section
       .tab-group
+        a.tab(href="/"+character.url+"lore" data-click="tab" data-target="character-"+character.id+"-lore") Lore
         if !character.isActiveChar(currentUser)
           a.tab(href="/"+character.url+"relationship/new" data-response="modal" data-target="character-"+character.id+"-relate") Relate
           a.tab(href="/"+character.url+"chat" data-response="modal" data-target="character-"+character.id+"-chat") Chat
-          a.tab(href="/"+character.url+"lore" data-response="modal" data-target="character-"+character.id+"-lore") Lore
           a.tab(href="/"+character.url+"inventory/give" data-response="modal" data-target="character-"+character.id+"-give") Give Items
-      .section-body
+      .tab-panel
+        .tab-pane.section-body(id="character-"+character.id+"-lore")

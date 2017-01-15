@@ -89,14 +89,6 @@ module.exports = function(sequelize, DataTypes) {
         // a character is part of a campaign, so it contains a reference to that campaign
         Character.belongsTo(models.Campaign, {constraints: false});
 
-        // a character is a locable thing, so it has a location record
-        // Character.hasOne(models.Location, {
-        //   foreignKey: 'locatable_id',
-        //   scope: {
-        //     locatable: 'Character'
-        //   }
-        // });
-
         // a character has lore in the form of their bio and backstory
         Character.hasMany(models.Lore, {
           as: 'lore',

@@ -14,6 +14,23 @@ var renderAsync = Promise.method(function(path,locals){
   return jade.compileFile(path)(locals)
 });
 
+function dedupe(array) {
+  if(!array) return array
+  if(!Array.isArray(array)) return [array]
+  var seen = {};
+  var out = [];
+  var len = array.length;
+  var j = 0;
+  for(var i = 0; i < len; i++) {
+       var item = array[i];
+       if(seen[item] !== 1) {
+             seen[item] = 1;
+             out[j++] = item;
+       }
+  }
+  return out;
+}
+
 function get(object, string) {
   // bind this function to a nested object so that `this` refers to the object being worked on
   var thisObject = string ? object : this
@@ -39,5 +56,6 @@ function get(object, string) {
 module.exports = {
   Breadcrumbs: Breadcrumbs,
   renderAsync: renderAsync,
-  get: get
+  get: get,
+  dedupe: dedupe,
 }

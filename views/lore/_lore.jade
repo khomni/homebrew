@@ -1,10 +1,11 @@
+-console.log(JSON.stringify(lore,null,'  '))
 if !lore
-  .lore-container.flex.border
-    label Removed
+  .lore-container.flex.row
+    .lore-content.grow: label Removed
 else
   .lore-container.flex.row(id="lore-"+lore.id class=lore.hidden?'obscured':'')
     if lore.hidden
-      .lore-content.grow: label ???
+      .lore-content.grow: label Obscurity: #{lore.obscurity}
       .flex.vert.no-size
         if campaign.owned
           form(action=(base+"/learn") method="post" data-response="replace" data-target="lore-"+lore.id)

@@ -59,11 +59,15 @@ function Modal(elem) {
     thisModal.recenter();
   }
 
+  elem.addEventListener('data', e => {
+    return thisModal.remove()
+  })
 
   // prevent click events from reaching the modals parent
   elem.addEventListener('mousedown', e => {
-    if(e.which == 2) thisModal.remove();
-    if(e.which == 1) thisModal.focus();
+    if(e.which == 2) return thisModal.remove();
+    if(e.which == 1) return thisModal.focus();
+
     return true;
   },true);
 

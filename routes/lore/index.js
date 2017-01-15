@@ -24,13 +24,20 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
       return req.user.activeChar.hasKnowledge(piece)
       .then(hasKnowledge => {
         if(!hasKnowledge) {
-          if(piece.obscurity == 0) return req.user.activeChar.addKnowledge(piece)
+          if(piece.obscurity == 0) {
+            return req.user.activeChar.addKnowledge(piece)
+            .then(knowledge => {
+              piece.hidden = false
+              return piece
+            })
+          }
           piece.hidden = true
         }
         return piece
       })
     })
     .then(filtered => {
+      console.log(JSON.stringify(filtered,null,'  '))
       if(req.requestType('json')) return res.json(filtered)
       if(req.requestType('xhr')) return res.render('lore/_list',{base:req.baseUrl, loreList:filtered})
       if(req.requestType('modal')) return res.render('lore/modals/list',{base:req.baseUrl, title: res.locals.lorable.name, loreList:filtered})
@@ -101,26 +108,71 @@ loreRouter.get('/edit', Common.middleware.requireGM, (req, res, next) => {
 });
 
 loreRouter.post('/', Common.middleware.requireGM, (req, res, next) => {
-
   return res.locals.lore.update(req.body)
   .then(lore => {
     if(req.requestType('json')) return res.json(lore)
     if(req.requestType('xhr')) return res.render('lore/_lore',{lore:lore})
   })
   .catch(next)
+});
+
+loreRouter.delete('/', Common.middleware.requireGM, (req, res, next) => {
+
+  return res.locals.lore.destroy()
+  .then(() => {
+    if(req.requestType('json')) return res.json(res.locals.lore)
+    if(req.requestType('xhr')) return res.render('lore/_lore',{lore:null})
+  })
+  .catch(next)
 
 });
 
+
+
 // learn a piece of lore
 loreRouter.post('/learn', Common.middleware.requireCharacter, (req, res, next) => {
-
   return req.user.activeChar.addKnowledge(res.locals.lore)
   .then(knowledge => {
     res.locals.lore.hidden = false
     if(req.requestType('json')) return res.json(res.locals.lore)
     if(req.requestType('xhr')) return res.render('lore/_lore.jade')
   })
+});
 
+// learn a piece of lore
+loreRouter.get('/teach', Common.middleware.requireCharacter, (req, res, next) => {
+  return req.user.activeChar.hasKnowledge(res.locals.lore)
+  .then(hasKnowledge => {
+    if(!hasKnowledge) throw Common.error.request("You can't teach what you don't know.")
+
+    return req.user.activeChar.getMembership({
+      include:[{
+        model:db.Character,
+        as:'members',
+        where: {id: {$ne: req.user.activeChar.id}},
+        include: [{model:db.Lore, as: 'knowledge'}]
+      }]
+    })
+    .then(factions => {
+      if(req.requestType('modal')) return res.render('lore/modals/teach',{factions:factions})
+      return next()
+    })
+  })
+  .catch(next)
+});
+
+// teach a piece of lore
+loreRouter.post('/teach', Common.middleware.requireCharacter, (req, res, next) => {
+  console.log(req.body.pc)
+  var bulk = Common.utilities.dedupe(req.body.pc).map(id => {
+    return {CharacterId: id, LoreId: res.locals.lore.id}
+  })
+
+  return db.Knowledge.bulkCreate(bulk)
+  .then(knowledge => {
+    return res.json(res.locals.lore)
+  })
+  .catch(next)
 });
 
 module.exports = router;

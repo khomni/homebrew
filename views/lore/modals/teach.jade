@@ -1,0 +1,16 @@
+form(name='lore' action=base+"/teach" method='post' data-response="json")
+  .modal-content
+    .modal-title Teach Lore
+    .tab-group
+      each faction,i in factions
+        a.tab(data-click="tab" data-target="teach-faction-"+faction.id)= faction.name
+    .tab-panel.modal-body
+      each faction in factions
+        .tab-pane(id="teach-faction-"+faction.id)
+          each member in faction.members
+            if member.knowledge.map(k => {return k.id}).indexOf(lore.id) < 0
+              label.checkbox
+                input(type="checkbox" name="pc" value=member.id)
+                span= member.name
+    .modal-footer
+        button.btn.block(type='submit' data-dismiss) Teach
