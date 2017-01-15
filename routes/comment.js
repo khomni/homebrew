@@ -41,9 +41,9 @@ router.post('/', Common.middleware.requireUser, (req,res,next) => {
   // create a comment on this resource as the active character
   return res.locals.commentable.createComment(Object.assign(req.body,{
     // if an activeChar is available, post as that character
-    CharacterId: req.user.activeChar ? req.user.activeChar.id: null,
+    CharacterId: req.user.MainChar ? req.user.MainChar.id: null,
     // otherwise, post it as the user
-    UserId: !req.user.activeChar ? req.user.id : null
+    UserId: !req.user.MainChar ? req.user.id : null
 
   }))
   .then(comment => {

@@ -25,13 +25,13 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
   .then(lore => {
     // for each piece of lore associated with the lorable, determine if it is known by the activeChar
     return Promise.map(lore, piece => {
-      return req.user.activeChar.hasKnowledge(piece)
+      return req.user.MainChar.hasKnowledge(piece)
       .then(hasKnowledge => {
         if(hasKnowledge) return piece // character knows this lore
 
         if(piece.obscurity == 0) {
           // piece is not obscure knowledge, character learns it automatically
-          return req.user.activeChar.addKnowledge(piece)
+          return req.user.MainChar.addKnowledge(piece)
           .then(knowledge => {
             return piece
           })
@@ -79,9 +79,9 @@ router.use('/:id', Common.middleware.requireCharacter, (req,res,next) => {
   .then(lore => {
     if(!lore) throw Common.error.notfound('Lore')
 
-    return req.user.activeChar.hasKnowledge(lore)
+    return req.user.MainChar.hasKnowledge(lore)
     .then(hasKnowledge => {
-      if(!hasKnowledge && lore.obscurity == 0) return req.user.activeChar.addKnowledge(lore)
+      if(!hasKnowledge && lore.obscurity == 0) return req.user.MainChar.addKnowledge(lore)
       lore.hidden = !hasKnowledge
       lore.owned = res.locals.campaign.owned
       return lore
@@ -98,7 +98,7 @@ router.use('/:id', Common.middleware.requireCharacter, (req,res,next) => {
 
 loreRouter.get('/', (req, res, next) => {
 
-  if(res.locals.lore.hidden) return next(Common.error.request(req.user.activeChar.getName('first') + " does not know this"))
+  if(res.locals.lore.hidden) return next(Common.error.request(req.user.MainChar.getName('first') + " does not know this"))
 
   if(req.requestType('json')) return res.json(res.locals.lore)
   if(req.requestType('xhr')) return res.render('lore/_lore')
@@ -136,7 +136,7 @@ loreRouter.delete('/', Common.middleware.requireGM, (req, res, next) => {
 
 // learn a piece of lore
 loreRouter.post('/learn', Common.middleware.requireCharacter, (req, res, next) => {
-  return req.user.activeChar.addKnowledge(res.locals.lore)
+  return req.user.MainChar.addKnowledge(res.locals.lore)
   .then(knowledge => {
     res.locals.lore.hidden = false
     if(req.requestType('json')) return res.json(res.locals.lore)
@@ -146,15 +146,15 @@ loreRouter.post('/learn', Common.middleware.requireCharacter, (req, res, next) =
 
 // learn a piece of lore
 loreRouter.get('/teach', Common.middleware.requireCharacter, (req, res, next) => {
-  return req.user.activeChar.hasKnowledge(res.locals.lore)
+  return req.user.MainChar.hasKnowledge(res.locals.lore)
   .then(hasKnowledge => {
     if(!hasKnowledge) throw Common.error.request("You can't teach what you don't know.")
 
-    return req.user.activeChar.getMembership({
+    return req.user.MainChar.getMembership({
       include:[{
         model:db.Character,
         as:'members',
-        where: {id: {$ne: req.user.activeChar.id}},
+        where: {id: {$ne: req.user.MainChar.id}},
         include: [{model:db.Lore, as: 'knowledge'}]
       }]
     })

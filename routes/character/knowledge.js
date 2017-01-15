@@ -7,7 +7,7 @@ var router = express.Router();
 // if the router isn't mounted on top of a route with a character, use the active character
 // router.use('/',(req,res,next) => {
 //   res.locals.character = res.locals.character
-//   if(!res.locals.character && req.user && req.user.activeChar) res.locals.character = req.user.activeChar
+//   if(!res.locals.character && req.user && req.user.MainChar) res.locals.character = req.user.MainChar
 //   return next()
 // })
 
@@ -17,7 +17,7 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
 
   // if there is a lorable item in the middleware stack, specify that as the topic
   if(res.locals.lorable) topic = {where:{lorable:res.locals.lorable.$modelOptions.name.singular, lorable_id: res.locals.lorable.id}}
-  return req.user.activeChar.getKnowledge(topic)
+  return req.user.MainChar.getKnowledge(topic)
   .then(knowledge => {
     if(req.requestType('json')) return res.json(knowledge)
     if(req.requestType('modal')) return res.render('lore/modals/list',{loreList:knowledge})

@@ -25,7 +25,7 @@ nav#nav
     if currentUser
       
       //- CHARACTER MENU
-      if !currentUser.activeChar
+      if !currentUser.MainChar
         +dropdown({id:'charselect',text:"Character"})
           +navlink({url:'/pc', text: 'Select Character'})
           +navlink({url:'/pc/create', text: 'Create a Character'})
@@ -33,23 +33,23 @@ nav#nav
           +navlink({url:'/c', text: 'Find Campaign'})
           +navlink({url:'/c/new', text: 'Create Campaign'})(data-response="modal")
       else
-        +dropdown({id:'charactermenu', text: currentUser.activeChar.getName('first')})
+        +dropdown({id:'charactermenu', text: currentUser.MainChar.getName('first')})
           +navlink({url: "/u/"+currentUser.username+"/pc", text:'Switch'})(data-response="modal" data-target="switch-character")
-          +navlink({url: "/"+currentUser.activeChar.url, text:'Status'})
-          +navlink({url: "/"+currentUser.activeChar.url + 'inventory',text:'Inventory'})
-          +navlink({url: "/"+currentUser.activeChar.url + 'journal',text:'Journal'})
+          +navlink({url: "/"+currentUser.MainChar.url, text:'Status'})
+          +navlink({url: "/"+currentUser.MainChar.url + 'inventory',text:'Inventory'})
+          +navlink({url: "/"+currentUser.MainChar.url + 'journal',text:'Journal'})
           
         //- CAMPAIGN MENU
-        if !currentUser.activeChar.Campaign
+        if !currentUser.MainChar.Campaign
           +navlink({url: '/c/', text:'Find Campaign'})
         else
           +dropdown({id: 'campaignmenu', text: 'Campaign'})
-            +navlink({url: currentUser.activeChar.Campaign.url, text:'Home'})
-            +navlink({url: currentUser.activeChar.Campaign.url+'quests',text:'Quests'})
-            +navlink({url: currentUser.activeChar.Campaign.url+'locations',text:'Locations'})
+            +navlink({url: currentUser.MainChar.Campaign.url, text:'Home'})
+            +navlink({url: currentUser.MainChar.Campaign.url+'quests',text:'Quests'})
+            +navlink({url: currentUser.MainChar.Campaign.url+'locations',text:'Locations'})
         
-            if !currentUser.activeChar.party
-              +navlink({url: currentUser.activeChar.Campaign.url + 'factions', text:'Join Party'})
+            if !currentUser.MainChar.party
+              +navlink({url: currentUser.MainChar.Campaign.url + 'factions', text:'Join Party'})
       
       
       +dropdown({id: 'accountmenu', text: 'Account'})

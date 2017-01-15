@@ -14,7 +14,7 @@ router.get('/', Common.middleware.requireCharacter, (req,res,next) => {
 
 router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
 
-  return req.user.activeChar.addRelationship(res.locals.character,{quality:req.body.quality})
+  return req.user.MainChar.addRelationship(res.locals.character,{quality:req.body.quality})
   .then(results => {
     return res.send(results)
   })
@@ -26,9 +26,9 @@ router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
 
 router.get('/new', Common.middleware.requireCharacter, (req,res,next) => {
 
-  return db.Character.relationships([req.user.activeChar, res.locals.character])
+  return db.Character.relationships([req.user.MainChar, res.locals.character])
   .then(relationships => {
-    // res.locals.activeChar = req.user.activeChar
+    // res.locals.activeChar = req.user.MainChar
 
     if(req.requestType('modal')) return res.render('characters/_connect.jade')
   })

@@ -46,7 +46,7 @@ module.exports = {
   requireCharacter: (req,res,next) => {
     if(!req.user) return next(Common.error.authorization("You must be logged in to access this resource"));
     if(req.user.admin) return next(); // admins get privilege regardless
-    if(!req.user.activeChar) return next(Common.error.authorization("You need an active character to access this"))
+    if(!req.user.MainChar) return next(Common.error.authorization("You need an active character to access this"))
     return next()
   },
 

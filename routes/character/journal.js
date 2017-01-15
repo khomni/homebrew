@@ -45,7 +45,7 @@ router.use('/:id', Common.middleware.requireCharacter, (req,res,next) => {
   return db.Journal.findOne({where: {CharacterId: res.locals.character.id, id:req.params.id}})
   .then(entry => {
     if(!entry) throw Common.error.notfound('Journal entry')
-    return req.user.activeChar.hasJournal(entry)
+    return req.user.MainChar.hasJournal(entry)
     .then(owned =>{
       if(!owned) throw Common.error.notfound('Journal entry')
       res.locals.entry = entry

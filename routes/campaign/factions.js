@@ -38,8 +38,8 @@ router.post('/', Common.middleware.requireCharacter, Common.middleware.objectify
   return res.locals.campaign.createFaction(req.body)
   .then(faction => {
     return Promise.all([
-      faction.setLeader(req.user.activeChar),
-      faction.addMember(req.user.activeChar),
+      faction.setLeader(req.user.MainChar),
+      faction.addMember(req.user.MainChar),
     ])
   })
   .then(()=>{
@@ -83,18 +83,18 @@ factionRouter.post('/', (req,res,next) => {
 
 factionRouter.post('/join', Common.middleware.requireUser, (req,res,next) => {
 
-  return req.user.activeChar.hasMembership(res.locals.faction)
+  return req.user.MainChar.hasMembership(res.locals.faction)
   .then(isMember => {
     // active character is not yet a member, add membership
-    if(!isMember) return req.user.activeChar.addMembership(res.locals.faction)
+    if(!isMember) return req.user.MainChar.addMembership(res.locals.faction)
 
     // active character is already a member, remove membership
-    if(isMember) return req.user.activeChar.removeMembership(res.locals.faction)
+    if(isMember) return req.user.MainChar.removeMembership(res.locals.faction)
     .then(()=>{
       return res.locals.faction.getMembers() // update remaining members
     })
     .then(members => {
-      var isLeader = res.locals.faction.leader.id == req.user.activeChar.id
+      var isLeader = res.locals.faction.leader.id == req.user.MainChar.id
       if(!isLeader) return; // the member that left is not the leader
 
       // the faction leader just left. If there are no more members, disband the faction

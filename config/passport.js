@@ -8,9 +8,20 @@ passport.serializeUser(function(user, done){
 
 //Deserialize Sessions
 passport.deserializeUser(function(user, done){
-  return db.User.find({where: {id: user.id}})
-  .then(user => done(null, user))
-  .catch(err => done(err, null))
+  return db.User.find({
+    where: {id: user.id},
+    include: [{
+      model:db.Character,
+      as:'MainChar',
+      include: [{
+        model: db.Campaign
+      }]
+    }]
+  })
+  .then(user => {
+    return done(null, user)
+  })
+  .catch(done)
 });
 
 // For Authentication Purposes

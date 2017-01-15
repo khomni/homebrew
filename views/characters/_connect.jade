@@ -6,10 +6,10 @@
       .modal-body
         .flex.center.pad
           div
-            label #{currentUser.activeChar.getName('first')}' Attitude
-            input.form-input(type='number' min=-100 max=100 value=(currentUser.activeChar.Relationships[character.id] ? currentUser.activeChar.Relationships[character.id].quality : false) name="quality")
+            label #{currentUser.MainChar.getName('first')}' Attitude
+            input.form-input(type='number' min=-100 max=100 value=(currentUser.MainChar.Relationships[character.id] ? currentUser.MainChar.Relationships[character.id].quality : false) name="quality")
           div
             label #{character.getName('first')}'s Attitude
-            input.form-input(type='number' min=-100 max=100 value=(character.Relationships[currentUser.activeChar.id] ? character.Relationships[currentUser.activeChar.id].quality : false) disabled)
+            input.form-input(type='number' min=-100 max=100 value=(character.Relationships[currentUser.MainChar.id] ? character.Relationships[currentUser.MainChar.id].quality : false) disabled)
       .modal-footer
           button.btn.block(type='submit') Update Relationship
