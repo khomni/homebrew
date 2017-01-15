@@ -79,6 +79,21 @@ router.use('/:id', (req,res,next) => {
 
 }, commentRouter);
 
+commentRouter.post('/',(req,res,next) => {
+  return res.locals.comment.update(req.body)
+  .then(comment => {
+    if(req.requestType('json')) return res.json(comment)
+    // TODO add async comment insertion
+    if(req.requestType('xhr')) return res.render('comments/_comment',{comment:comment})
+    return res.redirect(req.headers.referer)
+  })
+})
+
+commentRouter.get('/edit',(req,res,next) => {
+  if(req.requestType('modal')) return res.render('comments/modals/edit',{action:req.baseUrl})
+  return next()
+})
+
 commentRouter.delete('/',(req,res,next) => {
   // check the comment for children
   console.log('deleteing comment:',res.locals.comment.id)

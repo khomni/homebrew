@@ -9,35 +9,51 @@ block header
       span= quest.name
 
 block content
+  if campaign.owned
+    form.tab-group(action=quest.id  data-response="json" data-reaction="redirect")
+      a.tab(href=quest.id+'/add' data-response="modal") Add Subquest
+      a.tab(href=quest.id+"/edit" data-response="modal") Edit Quest
+      a.tab(href=quest.id+"/link" data-response="modal") Link Quest
+      button.tab(formmethod="delete") Delete Quest
+    
   .content-body
-    if campaign.owned
-      section
-        .section-body
-          .flex.center.pad
-            a.btn(href=quest.id+'/add' data-response="modal") Add Subquest
-            a.btn(href=quest.id+"/edit" data-response="modal") Edit Quest
-            a.btn(href=quest.id+"/link" data-response="modal") Link Quest
-            form(action=quest.id method="delete" data-response="json" data-reaction="redirect")
-              button.btn Delete Quest
-    if quest.description
-      section
-        .section-body
-          .journal-markup!= markdown(quest.description)
     section
-      .section-body
-        .flex.fill
+      .tab-group
+        a.tab.active(data-click="tab" data-target="quest-description") About
+        a.tab(href=quest.id+"/lore" data-click="tab" data-target="quest-lore") Lore
+        a.tab(data-click="tab" data-target="quest-parents" disabled=!(quest.ancestors && quest.ancestors.length > 0)) Parent Quest
+        a.tab(data-click="tab" data-target="quest-children" disabled=!(quest.children && quest.children.length > 0)) Subquests
+        
+      //- a.tab(data-click="tab" data-target="quest-comments") Comments
+      .tab-panel#quest-pages
+        .section-body.tab-pane.active#quest-description
+          if quest.description
+            .journal-markup!= markdown(quest.description)
+        .section-body.tab-pane#quest-lore
+        .section-body.tab-pane#quest-parents
           if quest.ancestors && quest.ancestors.length > 0
             div
               label Parent Quests
               each ancestor in quest.ancestors
-                +quest(ancestor)
+                +quest(ancestor, true)
+        .section-body.tab-pane#quest-children
           if quest.children && quest.children.length > 0
             div
               label Subquests
               each child in quest.children
-                +quest(child)
+                +quest(child, true)
+        //- .tab-pane#quest-comments
+          +comments(quest.id+'/comment')
     section
       .section-title Comments
       .section-body
-        //- the comments mixin should handle all the rendering for comments features via ajax
         +comments(quest.id+'/comment')
+    //- if quest.children
+      section
+        .tab-group
+          each child in quest.children
+            a.tab(href=child.id data-click="tab" data-target="subquest-"+child.id)= child.name
+        .section-body
+          .tab-panel
+            each child in quest.children
+              .tab-pane(id="subquest-"+child.id)

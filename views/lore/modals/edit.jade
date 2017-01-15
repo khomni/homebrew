@@ -1,0 +1,16 @@
+form(name='lore' action=base method='post' data-response=lore?"replace":"json" data-target=lore?"lore-"+lore.id:false data-reaction="redirect")
+  .modal-content
+    if lore
+      .modal-title Edit Lore
+    else
+      .modal-title New Lore
+    .modal-body
+      .flex.vert.center.pad
+        .flex.vert.center
+          label Content
+          textarea.form-input(type='text' name='content' rows=10 cols=50)= lore?lore.content:''
+        .flex.vert.center
+          label Obscurity
+          input.form-input(type="number" name="obscurity" value=lore?lore.obscurity:false)
+    .modal-footer
+        button.btn.block(type='submit')= lore ? 'Update Lore' : 'Add Lore'

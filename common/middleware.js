@@ -33,8 +33,7 @@ module.exports = {
     res.locals.body = req.body
     return res.render('modals/confirmDelete',{
       action: req.originalUrl,
-      body:req.body,
-      accept: req.headers.get('accept')
+      body:req.body
     })
     // return res.redirect(req.headers.referer)
     return next();
@@ -71,8 +70,7 @@ module.exports = {
     if(!res.locals.campaign) return next();
     if(!req.user) return next(Common.error.authorization("You must be logged in as the GM to access this resource"));
     if(req.user.admin) return next();
-
-    if(res.locals.campaign.OwnerId === req.user.id) return next();
+    if(res.locals.campaign.owned) return next();
     return next(Common.error.authorization("You must be logged in as the GM to access this resource"))
   }
 

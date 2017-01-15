@@ -175,9 +175,17 @@ questRouter.post('/link', Common.middleware.requireUser, (req,res,next) => {
 });
 
 // Comments
+
+
+
 questRouter.use('/comment',(req,res,next) => {
   res.locals.commentable = res.locals.quest
   return next();
 },require(APPROOT+'/routes/comment'));
+
+questRouter.use('/lore',(req,res,next) => {
+  res.locals.lorable = res.locals.quest
+  return next();
+},require(APPROOT+'/routes/lore'));
 
 module.exports = router

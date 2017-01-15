@@ -32,7 +32,7 @@ form(action=(campaign?campaign.url:"")+ "pc/" + (character ? character.id : '') 
             textarea.form-input(name="description")= character?character.description:''
         if activeSystem
           #system-fields.tab-pane.flex.vert.fill
-            !{activeSystem.render('creatureFields.jade',{creature: character||{properties:{}}})}
+            | !{activeSystem.render('creatureFields.jade',{creature: character||{properties:{}}})}
     .modal-footer
       .flex.center.pad
         button.btn= character ? 'Update '+ character.getName('first') : 'Create'

@@ -33,7 +33,13 @@ var campaignRouter = express.Router({mergeParams: true});
 
 router.use('/:id', (req,res,next) => {
 
-  if(res.locals.campaign) return next();
+  // res.locals.campaign is already set by activeChar's campaign
+  if(res.locals.campaign) {
+    // if the routed campaign is the same, skip the database query
+    if(req.params.id == res.locals.campaign.id || req.params.id == res.locals.campaign.getDataValue('url')) return next();
+  }
+
+  // find the campaign by the url or id
   var query = isNaN(req.params.id) ? {url:req.params.id} : {id:req.params.id}
   return db.Campaign.findOne({where: query})
   .then(campaign => {

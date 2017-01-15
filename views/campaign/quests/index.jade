@@ -11,18 +11,14 @@ block header
 block content
   .content-body
     section
-      .section-body
-        .flex.pad
-          if campaign.owned
-            .flex.vert.border.pad
-              .flex.center: label GM Actions
-              .flex.center.pad
-                a.btn(href="quests/new" data-response="modal") New Quest
-    section
+      if campaign.owned
+        .tab-group
+          a.tab.active All Quests
+          a.tab(href="quests/new" data-response="modal") New Quest
       .section-body
         if quests.length > 0
           for quest in quests
-            +quest(quest)
+            +quest(quest, true)
         else
           .flex.center
             label No quests yet

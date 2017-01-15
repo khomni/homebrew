@@ -68,7 +68,8 @@ var Ajax = {
 
         if(thisForm.dataset.response == 'insert' || thisForm.dataset.response == 'replace') {
           if(!thisForm.dataset.target) throw new Error('No target to insert data')
-          var target = document.getElementById(thisForm.dataset.target)
+          var target = document.getElementById(thisForm.dataset.target);
+          console.log(target)
           if(thisForm.dataset.response == 'insert') target.innerHTML = html
           if(thisForm.dataset.response == 'replace') {
             var response = document.createElement('div')
@@ -82,7 +83,7 @@ var Ajax = {
         return Modal.methods.createModal(html);
       })
       .catch(err =>{
-        Modal.methods.createModal(err);
+        console.error(err)
       })
     })
   },
@@ -114,6 +115,7 @@ var Ajax = {
   },
 
   fetch: function(args) {
+    document.body.classList.add('loading');
     if(args.body) {
       if(args.body.nodeName === "FORM") {
         args.headers['Content-Type'] = 'application/json'
@@ -153,14 +155,21 @@ var Ajax = {
 
       xhr.onreadystatechange = function() {
         if(xhr.readyState == XMLHttpRequest.DONE) {
-          if(xhr.status == 200) return resolve(xhr)
-          var err = new Error(xhr);
-          err.status = xhr.status;
-          err.statusText = xhr.statusText;
-          err.message = xhr.responseText;
-          return reject(err);
+          document.body.classList.remove('loading');
+          return resolve(xhr)
+          // if(xhr.status == 200) return resolve(xhr)
+          // var err = new Error();
+          // err.status = xhr.status;
+          // err.statusText = xhr.statusText;
+          // err.message = xhr.responseText;
+          // return reject(err);
         }
       }
+
+      xhr.onerror = function() {
+        return reject(xhr)
+      }
+
     })
   },
 

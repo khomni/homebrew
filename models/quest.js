@@ -32,7 +32,17 @@ module.exports = function(sequelize, DataTypes) {
           scope: {
             commentable: 'Quest'
           }
-        })
+        });
+
+        // a character has lore in the form of their bio and backstory
+        Quest.hasMany(models.Lore, {
+          as: 'lore',
+          foreignKey: 'lorable_id',
+          scope: {
+            lorable: 'Quest'
+          }
+        });
+
       }
     }
   });

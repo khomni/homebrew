@@ -45,7 +45,7 @@ nav#nav
         else
           +dropdown({id: 'campaignmenu', text: 'Campaign'})
             +navlink({url: currentUser.activeChar.Campaign.url, text:'Home'})
-            +navlink({url: currentUser.activeChar.Campaign.url+'quests',text:'Quest'})
+            +navlink({url: currentUser.activeChar.Campaign.url+'quests',text:'Quests'})
             +navlink({url: currentUser.activeChar.Campaign.url+'locations',text:'Locations'})
         
             if !currentUser.activeChar.party

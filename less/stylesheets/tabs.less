@@ -1,15 +1,25 @@
 .tab-group {
   display: flex;
   flex-flow: row;
-  background: url('/images/textures/marble.jpg'), #666;
-  background-blend-mode: soft-light;
+  // background: url('/images/textures/marble.jpg'), #666;
+  background: inherit;
+  background-blend-mode: multiply;
   flex-shrink:0;
   user-select:none;
   overflow:hidden;
   overflow-x: auto;
 
+  &::after{
+    content:"";
+    display: block;
+    flex:1;
+    background: fade(black,25%);
+    border-bottom: 1px solid #333;
+  }
+
   .tab {
     .marble();
+    .cursor(pointer);
     position:relative;
     display:block;
     border-radius: 0;
@@ -17,37 +27,48 @@
     box-shadow: none;
     border-radius: 0;
     text-decoration:none;
+    border: none;
+
     & + .tab {
       border-left: 1px solid fade(black,25%);
+    }
 
+    &:only-child.active {
+      display:none;
     }
 
     &:last-child {
       border-radius: 0px 2px 0px 0px;
     }
 
-    &:not(.active):not(:active):not(:focus):not([disabled]) {
-      .cursor(pointer);
-      background-color: #aaa;
+    &:not(.active):not(:active):not(:focus):not(.error) {
       background-blend-mode: soft-light;
+      background-color: #aaa;
+    }
+
+    &.active {
+      .cursor(default);
+      z-index:2;
     }
 
     &.active,&:active,&:focus {
-      .cursor(default);
       flex-shrink:0;
       border-bottom-color: transparent;
       box-shadow: none;
       text-decoration:none;
       box-shadow: 0px 0px 8px fade(black,50%);
-      z-index:2;
     }
 
     &[disabled] {
-      pointer-events:none;
-      background: none;
-      text-shadow: 0px -1px 1px fade(black,25%), 0px 1px 1px fade(white,25%);
-      color: #333;
+      .cursor(default);
+      pointer-events: none;
+      color: #bbb;
     }
+
+    // &.error {
+    //   background-color: #f00;
+    //   background-blend-mode: darken;
+    // }
 
   }
 }

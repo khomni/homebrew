@@ -1,0 +1,12 @@
+-listBase = base
+.flex.vert.pad.lore-section
+  if loreList && loreList.length > 0
+    each lore in loreList
+      -base = listBase + "/" + lore.id
+      include ./_lore
+  else
+    label No Lore
+
+if campaign.owned
+  .flex.center.pad
+    a.btn(href=listBase+"/new" data-response="modal") Add Lore

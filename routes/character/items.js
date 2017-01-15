@@ -237,7 +237,7 @@ router.post('/:id', Common.middleware.requireCharacter, Common.middleware.object
 
 router.delete('/:id', Common.middleware.requireCharacter, (req,res,next) => {
 
-  db.Item.findOne({where:{id:req.params.id}})
+  return db.Item.findOne({where:{id:req.params.id}})
   .then(item =>{
     return item.destroy()
     .then(() => {
@@ -249,7 +249,7 @@ router.delete('/:id', Common.middleware.requireCharacter, (req,res,next) => {
 })
 
 router.use('/:id/lore', (req,res,next) => {
-  db.Item.findOne({where:{id:req.params.id}})
+  return db.Item.findOne({where:{id:req.params.id}})
   .then(item => {
     res.locals.lorable = item
     return next();

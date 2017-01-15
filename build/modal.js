@@ -46,7 +46,8 @@ function Modal(elem) {
   this.focus = function() {
     this.visible = true;
     elem.classList.add('shown');
-    if(elem == elem.parentNode.lastChild) return true
+    // if the modal is already in the DOM and is currently the last modal, do not append
+    if(elem.parentNode && elem == elem.parentNode.lastChild) return true
     document.getElementById('modals').appendChild(elem)
 
   }
@@ -84,12 +85,21 @@ var methods = {
 
     // the only document level listener required to create new Modals
     document.body.addEventListener('click', e => {
-      if(e.target.dataset.response != "modal") return true;
+      var spawner
+      for(var i=0; i<e.path.length;i++) {
+        // if(!e.path[i]) return true
+        if(e.path[i].dataset && e.path[i].dataset.response == 'modal') {
+          spawner = e.path[i]
+          break;
+        }
+      }
+
+      if(!spawner) return true;
       e.preventDefault();
 
-      var url = e.target.getAttribute('href')
+      var url = spawner.getAttribute('href')
 
-      var target = document.getElementById(e.target.dataset.target||url)
+      var target = document.getElementById(spawner.dataset.target||url)
 
       if(!target) {
         target = document.createElement('div')
@@ -111,7 +121,7 @@ var methods = {
         return Modal.methods.createModal(html, target)
       })
       .catch(err => {
-        console.error(err)
+        return Modal.methods.createModal(err, target)
       })
 
     },true)

@@ -11,13 +11,8 @@ module.exports = (req,res,next) => {
     if(character.Campaign) {
       res.locals.campaign = character.Campaign
       res.locals.activeSystem = SYSTEM[character.Campaign.system]
+      if(req.user.id == character.Campaign.UserId) character.Campaign.owned = true
     }
-    if(character.location) return next()
-
-    character.location = {type:'Point', coordinates:[0,0]}
-    return character.save()
-    .then(next)
-
     return next()
   })
   .catch(next)

@@ -45,8 +45,8 @@ form(name='item' action='/'+character.url+'inventory/' + (item?item.id:'') metho
             .flex.center.fill
               textarea.form-input(type='text' name='description' height=300 disabled=!!item&&!!item.lore[0])= item&&item.lore[0] ? item.lore[0].content : ''
         if activeSystem
-          #system-fields.tab-pane.flex.vert.fill
-            !{activeSystem.render('itemFields.jade',{item: item||{properties:{}}})}
+          #system-fields.tab-pane.flex.vert.fill 
+            | !{activeSystem.render('itemFields.jade',{item: item||{properties:{}}})}
         
     .modal-footer
         button.btn.block(type='submit')= item ? 'Update Item' : 'Add Item'

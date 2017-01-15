@@ -18,7 +18,8 @@
 			}
 			// for each viewable element, check to see if any part of it is on screen
 			onView.map((elem,i) => {
-				var rect = elem.getBoundingClientRect()
+				if(!elem.offsetParent) return false; // do not trigger if element is not visible
+				var rect = elem.getBoundingClientRect();
 				if(rect.top < window.innerHeight || rect.bottom < window.scrollY) {
 					onView.splice(i,1);
 					// load ajax content
@@ -32,7 +33,6 @@
 						.catch(console.error)
 					}
 					// remove the triggered view event from the list
-
 				}
 			})
 

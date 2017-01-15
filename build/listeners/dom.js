@@ -46,6 +46,13 @@ module.exports = {
       .then(html => {
         target.innerHTML = html
         source.dataset.loaded = true
+        document.dispatchEvent(new Event('scroll'))
+        source.classList.remove('error')
+        target.classList.remove('error')
+      })
+      .catch(err => {
+        source.classList.add('error')
+        target.classList.add('error')
       })
     }
 
@@ -55,7 +62,7 @@ module.exports = {
     })
 
     // target.classList.add('active');
-
+  document.dispatchEvent(new Event('scroll'))
 
   }
 }

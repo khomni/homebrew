@@ -20,7 +20,7 @@ form(name='quest' action=campaign.url+'quests/' + (quest?quest.id:'') + (parent?
             input.form-input(type="text" disabled value=parent.name)
         .flex.vert.center
           label Description
-          textarea.form-input(type='text' name='description' height=300)=quest?quest.description:''
+          textarea.form-input(type='text' name='description' rows=10 cols=50)=quest?quest.description:''
         .flex.center
           label.checkbox
             input(type="checkbox" name="visible" checked=quest&&quest.visible)

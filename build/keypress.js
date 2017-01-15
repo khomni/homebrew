@@ -8,7 +8,8 @@ var Modal = require('./modal');
   document.addEventListener('keydown', e => {
     // ESC handler
     if(e.which === 27) {
-      document.querySelector('.modal:last-child').modal.remove()
+      var topModal = document.querySelector('.modal:last-child')
+      if(topModal && topModal.modal) topModal.modal.remove()
       return true;
     }
 

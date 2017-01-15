@@ -28,10 +28,6 @@
   background-color: @color-primary;
 }
 
-a[href*=lore] {
-  .cursor(help);
-}
-
 html {
   height: 100%;
   max-width: 100vw;
@@ -44,6 +40,27 @@ body {
   background-color: @color-ui;
   color: @color-dark;
   overflow-y: overlay;
+
+  &:after {
+    z-index: 1000;
+    padding:0.5em;
+    content:"";
+    opacity: 0;
+    transition: 0.25s;
+    transition-delay: 0.25s;
+    position: fixed;
+    bottom:0;
+    right:0;
+    color: white;
+  }
+
+  &.loading {
+    &:after {
+      content:"Loading...";
+      opacity: 1;
+    }
+  }
+
 }
 
 a,.as-link {
@@ -265,8 +282,7 @@ p {
 }
 
 section {
-  border: 1px solid;
-  border-color: fade(black,15%);
+  border-radius: 1px;
   position: relative;
   z-index: 2;
   margin: auto;
@@ -389,7 +405,6 @@ section {
     align-items: flex-end;
   }
 
-
   &.distribute {
     justify-content: space-around;
   }
@@ -414,9 +429,7 @@ section {
 }
 
 .error {
-  background: fade(red,25%);
-  border: 1px dashed;
-  border-color: #ff0000 !important;
-  color: #330000;
-  padding: 0.5rem;
+  .filter(sepia(1) saturate(5) hue-rotate(-50deg));
+  box-shadow: 0px 0px 8px fade(#990000,50%);
+  outline: 1px solid fade(#990000, 50%);
 }

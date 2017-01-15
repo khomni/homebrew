@@ -19,6 +19,9 @@ module.exports = function(sequelize, DataTypes) {
     hidden: {
       type: DataTypes.VIRTUAL,
     },
+    new: {
+      type: DataTypes.VIRTUAL,
+    },
     content: {
       type: DataTypes.TEXT,
     },
