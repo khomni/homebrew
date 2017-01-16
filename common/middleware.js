@@ -7,17 +7,24 @@ module.exports = {
     console.log("1:",req.body)
     for(var key in req.body) {
       if(!req.body[key]) delete req.body[key]
+      // if(!!Number(req.body[key])) req.body[key] = Number(req.body[key])
       if(!Array.isArray(req.body[key]) && /\.\$\./.test(key)) req.body[key] = [req.body[key]]
       if(Array.isArray(req.body[key])) {
         req.body[key].map((value,index) => {
-          if(value) req.body[key.replace('$',index)] = value
+          if(value) {
+            // if(!!Number(value)) value = Number(value)
+            req.body[key.replace('$',index)] = value
+          }
         })
         delete req.body[key]
       }
     }
+    // 
+    for(var key in req.body) if(!!Number(req.body[key])) req.body[key] = Number(req.body[key])
+
     console.log("2:",req.body)
     req.body = flat.unflatten(req.body)
-    console.log("3:",req.body)
+    console.log("3:",JSON.stringify(req.body,null,'  '))
     return next();
   },
 

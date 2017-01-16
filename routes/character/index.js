@@ -146,6 +146,12 @@ characterRouter.use('/factions', require('../campaign/factions'));
 
 characterRouter.use('/', (req,res,next) => {
   res.locals.lorable = res.locals.character
+
+  // give user access to add lore and automatically learn existing lore if they own the character or the campaign
+  if(res.locals.character.ownedBy(req.user) || res.locals.campaign.owned) {
+    res.locals.permission.read = true
+    res.locals.permission.write = true
+  }
   return next();
 });
 

@@ -6,13 +6,13 @@ else
     if lore.hidden
       .lore-content.grow: label Obscurity: #{lore.obscurity}
       .flex.vert.pad.no-size
-        if lore.owned || campaign.owned
+        if lore.owned
           form(action=(base+"/learn") method="post" data-response="replace" data-target="lore-"+lore.id)
             button.close(title="Learn"): i.fa.fa-book
     else
       .lore-content.grow= lore.content
       .flex.vert.pad.no-size
-        if lore.owned || campaign.owned
+        if lore.owned
           form(action=base method="delete" data-response="replace" data-target="lore-"+lore.id)
             button.close(title="Delete Lore")
           a.close(href=base+"/edit" data-response="modal" data-target="edit-lore-"+lore.id): i.fa.fa-wrench

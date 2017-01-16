@@ -28,7 +28,7 @@ nav#nav
       if !currentUser.MainChar
         +dropdown({id:'charselect',text:"Character"})
           +navlink({url:'/pc', text: 'Select Character'})
-          +navlink({url:'/pc/create', text: 'Create a Character'})
+          +navlink({url:'/pc/create', text: 'Create a Character'})(data-response="modal" data-target="create-character")
         +dropdown({id:'campaignmenu',text:"Campaign"})
           +navlink({url:'/c', text: 'Find Campaign'})
           +navlink({url:'/c/new', text: 'Create Campaign'})(data-response="modal")

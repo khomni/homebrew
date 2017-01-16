@@ -1,4 +1,5 @@
 module.exports = (req,res,next) => {
+  if(!req.user) return next()
   var campaign = req.user.get('MainChar.Campaign')
 
   if(campaign) {
@@ -7,7 +8,7 @@ module.exports = (req,res,next) => {
     res.locals.campaign = campaign
     res.locals.activeSystem = SYSTEM[campaign.system]
   }
-  
+
   return next()
 
 }

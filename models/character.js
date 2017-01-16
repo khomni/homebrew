@@ -56,7 +56,7 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     // an arbitrary JSON object describing the mechanical attributes of a character
-    // this field should be manipulated by the relevant system
+    // this field should be manipulated by the inherited rules system
     properties: {
       type: DataTypes.JSONB,
     },

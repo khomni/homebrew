@@ -36,10 +36,14 @@ module.exports = function(sequelize, DataTypes) {
     freezeTableName: true,
     classMethods: {
       associate: function(models) {
-
+        Lore.belongsTo(models.User, {as:'author'})
       }
     }
   });
+
+  Lore.Instance.prototype.ownedBy = function(user) {
+    return user.id === this.authorId
+  }
 
   return Lore;
 };

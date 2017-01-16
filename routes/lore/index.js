@@ -25,6 +25,7 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
   .then(lore => {
     // for each piece of lore associated with the lorable, determine if it is known by the activeChar
     return Promise.map(lore, piece => {
+      piece.owned = piece.ownedBy(req.user) || res.locals.campaign.owned || req.user.admin
       return req.user.MainChar.hasKnowledge(piece)
       .then(hasKnowledge => {
         if(hasKnowledge) return piece // character knows this lore
@@ -36,7 +37,7 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
             return piece
           })
         }
-        // user does not know lore and it is obscure
+        // user does not know lore
         piece.hidden = true
         return piece
       })
@@ -55,17 +56,27 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
 // defaults to obtaining the lore the active character knows
 
 
-router.get('/new', Common.middleware.requireGM, (req,res,next)=>{
+router.get('/new', (req,res,next)=>{
   if(req.requestType('modal')) return res.render('lore/modals/edit',{base:req.baseUrl})
 })
 
 // Add lore to the lorable object
-router.post('/', (req, res, next) => {
+router.post('/', Common.middleware.requireUser, (req, res, next) => {
   if(!res.locals.lorable) return next(Common.error.request('Cannot add lore to nothing'))
   if(!res.locals.lorable.createLore) return next(Common.error.request('That resource cannot have lore'))
+  if(!res.locals.permission.write) throw Common.error.authorization('You are not permitted to add lore to this resource')
+
+  Object.assign(req.body,{authorId:req.user.id, lorable_id: res.locals.lorable.id})
+  console.log(res.locals.lorable.get({plain:true}))
+  console.log(db.methods(res.locals.lorable,/lore/gi))
 
   // create a bit of lore for the lorable
   return res.locals.lorable.createLore(req.body)
+  .then(lore => {
+    if(!req.user.MainChar) return lore
+    // if there is an active character, add that lore as knowledge automatically
+    return req.user.MainChar.addKnowledge(lore).then(()=>{return lore})
+  })
   .then(lore => {
     return res.json(lore)
   })
@@ -75,15 +86,19 @@ router.post('/', (req, res, next) => {
 loreRouter = express.Router({mergeParams: true});
 
 router.use('/:id', Common.middleware.requireCharacter, (req,res,next) => {
-  return db.Lore.findOne({where:{id:req.params.id}})
+
+  return res.locals.lorable.getLore({where:{id:req.params.id}})
   .then(lore => {
+    lore = lore.pop()
     if(!lore) throw Common.error.notfound('Lore')
+    lore.owned = lore.ownedBy(req.user) || res.locals.campaign.owned || req.user.admin
 
     return req.user.MainChar.hasKnowledge(lore)
     .then(hasKnowledge => {
-      if(!hasKnowledge && lore.obscurity == 0) return req.user.MainChar.addKnowledge(lore)
+      // if the character doesn't know the lore and it's unobscure, or they completely own the lorable resource, learn it automatically
+      if(!hasKnowledge && (lore.obscurity == 0)) return req.user.MainChar.addKnowledge(lore).then(() => {return lore})
+      // the hidden status of the lore depends on the MainChar possessing the knowledge
       lore.hidden = !hasKnowledge
-      lore.owned = res.locals.campaign.owned
       return lore
     })
     .then(lore => {
@@ -105,14 +120,19 @@ loreRouter.get('/', (req, res, next) => {
 
 });
 
-loreRouter.get('/edit', Common.middleware.requireGM, (req, res, next) => {
+loreRouter.get('/edit', Common.middleware.requireUser, (req, res, next) => {
+
+  if(!res.locals.lore.owned) return next(Common.error.request("You can't modify lore you haven't written"))
 
   if(req.requestType('json')) return res.json(res.locals.lore)
   if(req.requestType('modal')) return res.render('lore/modals/edit')
 
 });
 
-loreRouter.post('/', Common.middleware.requireGM, (req, res, next) => {
+loreRouter.post('/', Common.middleware.requireUser, (req, res, next) => {
+
+  if(!res.locals.lore.owned) return next(Common.error.request("You can't modify lore you haven't written"))
+
   return res.locals.lore.update(req.body)
   .then(lore => {
     if(req.requestType('json')) return res.json(lore)
@@ -122,6 +142,8 @@ loreRouter.post('/', Common.middleware.requireGM, (req, res, next) => {
 });
 
 loreRouter.delete('/', Common.middleware.requireGM, (req, res, next) => {
+
+  if(!res.locals.lore.ownedBy(req.user) || res.locals.campaign.owned || req.user.admin) return next(Common.error.request("You can't delete lore you haven't written"))
 
   return res.locals.lore.destroy()
   .then(() => {
@@ -136,16 +158,20 @@ loreRouter.delete('/', Common.middleware.requireGM, (req, res, next) => {
 
 // learn a piece of lore
 loreRouter.post('/learn', Common.middleware.requireCharacter, (req, res, next) => {
+
   return req.user.MainChar.addKnowledge(res.locals.lore)
   .then(knowledge => {
     res.locals.lore.hidden = false
     if(req.requestType('json')) return res.json(res.locals.lore)
     if(req.requestType('xhr')) return res.render('lore/_lore.jade')
   })
+  .catch(next)
+
 });
 
 // learn a piece of lore
 loreRouter.get('/teach', Common.middleware.requireCharacter, (req, res, next) => {
+
   return req.user.MainChar.hasKnowledge(res.locals.lore)
   .then(hasKnowledge => {
     if(!hasKnowledge) throw Common.error.request("You can't teach what you don't know.")
@@ -164,11 +190,12 @@ loreRouter.get('/teach', Common.middleware.requireCharacter, (req, res, next) =>
     })
   })
   .catch(next)
+
 });
 
 // teach a piece of lore
 loreRouter.post('/teach', Common.middleware.requireCharacter, (req, res, next) => {
-  console.log(req.body.pc)
+
   var bulk = Common.utilities.dedupe(req.body.pc).map(id => {
     return {CharacterId: id, LoreId: res.locals.lore.id}
   })
