@@ -249,7 +249,7 @@ itemRouter.use('/lore', (req,res,next) => {
   res.locals.lorable = res.locals.item
 
   // if this item is owned by the MainChar, they may add lore to it
-  if(res.locals.character && res.locals.character.ownedBy(req.user)) res.locals.permission.write = true
+  if(res.locals.character && res.locals.character.isActiveChar(req.user)) res.locals.permission.write = true
 
   return next();
 

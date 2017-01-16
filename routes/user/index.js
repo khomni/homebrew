@@ -17,8 +17,9 @@ router.get('/', (req, res, next) => {
 var userRouter = express.Router({mergeParams: true});
 
 router.use('/:username',(req,res,next) => {
-  return db.User.findOne({where: {username:req.params.username}, include:[{model: db.Character, as: 'characters'},{model: db.Character, as: 'MainChar'}]})
+  return db.User.findOne({where: {username:req.params.username}, include:[{model: db.Character, as: 'characters'},{model: db.Campaign}]})
   .then(user => {
+    console.log(user)
     if(!user) throw Common.error.notfound('User');
     res.locals.user = user
     res.locals.breadcrumbs.add({name:user.username,url:'u/'+user.username+"/"})

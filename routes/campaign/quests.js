@@ -186,11 +186,12 @@ questRouter.use('/comment',(req,res,next) => {
 questRouter.use('/lore',(req,res,next) => {
   res.locals.lorable = res.locals.quest
 
+  // give user access to add lore and automatically learn existing lore if they own the campaign
   if(res.locals.campaign.owned) {
     res.locals.permission.read = true
     res.locals.permission.write = true
   }
-  
+
   return next();
 },require(APPROOT+'/routes/lore'));
 

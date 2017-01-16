@@ -10,6 +10,28 @@ block header
 
 block content
   .content-body
-    +section(user.username) 
+    //- +section(user.username) 
       p= user.username
       p= user.email
+    section
+      .tab-group
+        a.tab.active(data-click="tab" data-target="user-profile") Profile
+        a.tab(data-click="tab" data-target="user-characters") Characters
+        a.tab(data-click="tab" data-target="user-campaigns") Campaigns
+      .tab-panel
+        .tab-pane.active#user-profile
+          .section-title= user.username
+        .tab-pane#user-characters
+          .tab-group
+            each character in user.characters
+              a.tab(data-click="tab" data-target='user-character-'+character.id)= character.getName('first')
+          .tab-panel
+            each character in user.characters
+              .tab-pane.section-body(id='user-character-'+character.id)
+                .flex.pad
+                  a(href="/"+character.url) Status
+                  a(href="/"+character.url+"/inventory") Inventory
+        .tab-pane#user-campaigns
+          .tab-group
+            each campaign in user.Campaigns
+              a.tab(href=campaign.url)= campaign.name

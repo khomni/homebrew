@@ -57,6 +57,7 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
 
 
 router.get('/new', (req,res,next)=>{
+  if(!res.locals.permission.write) return next(Common.error.authorization('You are not permitted to add lore to this resource'))
   if(req.requestType('modal')) return res.render('lore/modals/edit',{base:req.baseUrl})
 })
 
@@ -64,7 +65,7 @@ router.get('/new', (req,res,next)=>{
 router.post('/', Common.middleware.requireUser, (req, res, next) => {
   if(!res.locals.lorable) return next(Common.error.request('Cannot add lore to nothing'))
   if(!res.locals.lorable.createLore) return next(Common.error.request('That resource cannot have lore'))
-  if(!res.locals.permission.write) throw Common.error.authorization('You are not permitted to add lore to this resource')
+  if(!res.locals.permission.write) return next(Common.error.authorization('You are not permitted to add lore to this resource'))
 
   Object.assign(req.body,{authorId:req.user.id, lorable_id: res.locals.lorable.id})
   console.log(res.locals.lorable.get({plain:true}))
