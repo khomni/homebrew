@@ -13,13 +13,24 @@ var router = express.Router();
 
 // get all things this character knows (about a topic, if mounted on top of a lorable router middleware)
 router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
-  var topic = {}
+  var query = {}
+
+  res.locals.base = res.locals.campaign.url+ "lore"
 
   // if there is a lorable item in the middleware stack, specify that as the topic
-  if(res.locals.lorable) topic = {where:{lorable:res.locals.lorable.$modelOptions.name.singular, lorable_id: res.locals.lorable.id}}
-  return req.user.MainChar.getKnowledge(topic)
+  if(res.locals.lorable) query = {where:{lorable:res.locals.lorable.$modelOptions.name.singular, lorable_id: res.locals.lorable.id}}
+  return req.user.MainChar.getKnowledge(query)
   .then(knowledge => {
+
     if(req.requestType('json')) return res.json(knowledge)
+
+    var subjects = {}
+    knowledge.map(k => {
+      subjects[k.lorable] = subjects[k.lorable] || []
+      subjects[k.lorable].push(k)
+    })
+
+    if(req.requestType('xhr')) return res.render('lore/_topics',{subjects:subjects})
     if(req.requestType('modal')) return res.render('lore/modals/list',{loreList:knowledge})
     return res.json(knowledge)
   })

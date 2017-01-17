@@ -11,72 +11,16 @@ block header
 block content
   .content-body
     section
-      .section-title Carried
-      .section-body
-        .flex.vert
-            form(method="post" data-response="json" data-reaction="redirect")
-              if !character.Items || character.Items.length == 0
-                .flex.center: label You have no items
-              else
-                .scroll.x
-                  table.table
-                    thead
-                      tr
-                        th
-                        th Name
-                        th Quantity
-                        th Value
-                        th Weight
-                        th Properties
-                        //- th Blueprint
-                        if character.isActiveChar(currentUser)
-                          th
-                    tbody
-                      each item in character.Items
-                        tr(data-ref=item.id data-kind="Item")
-                          td
-                            label.checkbox
-                              input(type="checkbox" name="item" value=item.id tabindex=1)
-                              span
-                          td
-                            a(href="inventory/"+item.id data-response="modal" data-target="item-"+item.id data-rarity=item.rarity tabindex=2)= item.name
-                          th= item.quantity > 1 ? item.quantity : "—"
-                          td
-                            if Number(item.value) == 0
-                              span —
-                            else
-                              span= (Number(item.value)*item.quantity).toLocaleString()+" "+activeSystem.terms.CURRENCY
-                          td
-                            if Number(item.weight) == 0
-                              | —
-                            else
-                              if item.quantity > 1
-                                span #{Number(item.weight)*item.quantity}
-                                label  (#{Number(item.weight)})
-                              else
-                                | #{Number(item.weight) || '–'}
-                          //- td= item.properties.blueprint
-                          td #{Object.keys(item.properties||{}).length||'—'}
-                          if character.isActiveChar(currentUser)
-                            td
-                              .flex.je
-                                a.btn(href="inventory/"+item.id+"/edit" data-response="modal" data-target="edit-item-"+item.id tabindex=3) Edit
-                    tfoot
-                      tr
-                        td 
-                        th Total
-                        th #{meta.total}
-                        th #{meta.value.toLocaleString()} #{activeSystem.terms.CURRENCY.pluralize(meta.value)}
-                        th #{meta.weight.toFixed(2)} #{activeSystem.terms.WEIGHT.pluralize(meta.weight)}
-                        th
-                        th
-              .flex.center.pad
-                if character.isActiveChar(currentUser)
-                  button.btn(formaction="inventory" formmethod="delete" data-reaction="remove") Remove
-                  button.btn(formaction="inventory/drop" formmethod="post" data-reaction="remove") Drop
-                  a.btn(href="inventory/new" data-response="modal") New Item
-                else
-                  a.btn(href="inventory/give" data-response="modal" data-target="give-"+character.id) Give Item
-                if character.active
-                  if nearbyItems > 0
-                    a.btn(href="inventory/nearby" data-response="modal" data-target="search-nearby") Search Nearby
+      .tab-group
+        a.tab.active(href="" data-click="tab" data-target="owned-items") Carried
+        if itemOwner.isActiveChar(currentUser)
+          a.tab(href="?nearby=true" data-click="tab" data-target="nearby-items") Nearby
+        //- else
+          a.tab(href="/"+currentUser.MainChar.url+"inventory?role=give" data-click="tab" data-target="give-items") Give
+      .tab-panel
+        .section-body.tab-pane.active#owned-items
+          include ./_itemTable
+        if itemOwner.isActiveChar(currentUser)
+          .section-body.tab-pane#nearby-items
+        //- else
+          .section-body.tab-pane#give-items

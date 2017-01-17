@@ -144,7 +144,7 @@ characterRouter.use('/inventory', require('./items'));
 characterRouter.use('/relationship', require('./relationships'));
 characterRouter.use('/factions', require('../campaign/factions'));
 
-characterRouter.use('/', (req,res,next) => {
+characterRouter.use('/lore', (req,res,next) => {
   res.locals.lorable = res.locals.character
 
   // give user access to add lore and automatically learn existing lore if they own the character or the campaign
@@ -153,9 +153,8 @@ characterRouter.use('/', (req,res,next) => {
     res.locals.permission.write = true
   }
   return next();
-});
+},require('../lore'));
 
-characterRouter.use('/lore',require('../lore'));
 characterRouter.use('/knowledge', require('./knowledge'));
 
 module.exports = router;

@@ -1,5 +1,7 @@
 var path = require('path');
 
+require('./extensions');
+
 global.APPROOT = path.resolve()
 global.Promise = require('bluebird');
 global.CONFIG = require('./');

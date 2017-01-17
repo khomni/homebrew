@@ -93,5 +93,6 @@ campaignRouter.delete('/', Common.middleware.requireUser, Common.middleware.conf
 campaignRouter.use('/pc', require('../character'));
 campaignRouter.use('/quests', require('./quests'));
 campaignRouter.use('/factions', require('./factions'));
+campaignRouter.use('/lore', require('../lore'));
 
 module.exports = router;

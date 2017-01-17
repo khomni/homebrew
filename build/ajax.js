@@ -9,21 +9,22 @@ function serialize(form) {
         if (field.type == 'select-multiple') {
           for (j=form.elements[i].options.length-1; j>=0; j--) {
             if(field.options[j].selected) {
-              obj[encodeURIComponent(field.name)] = field.options[j].value;
+              obj[field.name] = field.options[j].value;
             }
           }
         } else if ((field.type != 'checkbox' && field.type != 'radio') || field.checked) {
-          var key = encodeURIComponent(field.name)
+          var key = field.name
           if(obj[key]) {
             if(!Array.isArray(obj[key])) obj[key] = [obj[key]]
             obj[key].push(field.value)
           } else {
-            obj[encodeURIComponent(field.name)] = field.value;
+            obj[field.name] = field.value;
           }
         }
       }
     }
   }
+  console.log(obj)
   return obj
 }
 

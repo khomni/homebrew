@@ -84,5 +84,41 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
 
+  // if an item is saved with 0 quantity, destroy the stack
+  Item.hook('beforeSave', (item, options) => {
+    if(item.quantity == 0) return item.destroy()
+    return Promise.resolve(item)
+  })
+
+  // splits an item into multiple stacks by creating a clone with the quantity of the provided number and removing that number from the base
+  // returns the base item and the split item stack as an array [base, split]
+  Item.Instance.prototype.split = Promise.method(function(number) {
+    var thisItem = this
+    number = Number(number) || 1
+
+    if(thisItem.quantity <= number) throw Common.error.request("You can't split this item like that")
+
+    var cloneStack = JSON.parse(JSON.stringify(thisItem))
+    delete cloneStack.id
+
+    var cloneStack = Item.build(cloneStack)
+    cloneStack.set('quantity',number)
+
+    return cloneStack.save()
+    .then(clone => {
+      return thisItem.update({quantity: thisItem.quantity - number})
+      .catch(err => {
+        // failed to update the item, destroy the clone and throw an error
+        return clone.destroy().then(()=>{
+          throw err
+        })
+      })
+      .then(updated => {
+        return [updated,clone]
+      })
+    })
+  })
+
+
   return Item;
 };

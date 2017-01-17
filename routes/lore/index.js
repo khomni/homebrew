@@ -88,9 +88,18 @@ loreRouter = express.Router({mergeParams: true});
 
 router.use('/:id', Common.middleware.requireCharacter, (req,res,next) => {
 
-  return res.locals.lorable.getLore({where:{id:req.params.id}})
+  return Promise.resolve().then(()=>{
+    if(!res.locals.lorable) {
+      return db.Lore.find({where:{id:req.params.id}})
+    }
+
+    return res.locals.lorable.getLore({where:{id:req.params.id}})
+    .then(lore => {
+      lore = lore.pop()
+      return lore
+    })
+  })
   .then(lore => {
-    lore = lore.pop()
     if(!lore) throw Common.error.notfound('Lore')
     lore.owned = lore.ownedBy(req.user) || res.locals.campaign.owned || req.user.admin
 
