@@ -21,25 +21,26 @@
   .tab {
     .marble();
     .cursor(pointer);
+    position: relative;
+    z-index: 1;
+    box-shadow:none;
     color:inherit;
     background: inherit;
     position:relative;
     display:block;
     border-radius: 0;
     padding: 0.5rem;
-    box-shadow: none;
     border-radius: 0;
     text-decoration:none;
     border: none;
-    border-bottom: 1px solid transparent;
+    border-bottom: 1px solid fade(black,25%);
 
     & + .tab {
       border-left: 1px solid fade(black,25%);
     }
 
-    &:not(.active):not(:active):not(:focus):not(.error):not([disabled]) {
+    &:not(.active):not(:active):not(.error):not([disabled]) {
       background: fade(black,25%);
-      border-bottom-color: fade(black,25%);
     }
 
     &.active {
@@ -47,12 +48,11 @@
       z-index:2;
     }
 
-    &.active,&:active,&:focus {
-      flex-shrink:0;
+    &.active,&:active {
       border-bottom-color: transparent;
-      box-shadow: none;
-      text-decoration:none;
       box-shadow: 0px 0px 8px fade(black,50%);
+      flex-shrink:0;
+      text-decoration:none;
     }
 
     &[disabled] {

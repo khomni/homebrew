@@ -35,7 +35,9 @@ module.exports = {
     var target = document.getElementById(source.dataset.target) || document.querySelector(source.dataset.target);
     if(!target) return false;
 
-    target.parentNode.childNodes.forEach(node=>{
+    var allPanes = Array.prototype.slice.call(target.parentNode.childNodes)
+
+    allPanes.forEach(node=>{
       if(node != target) return node.classList.remove('active');
       return node.classList.add('active');
     });
@@ -56,7 +58,9 @@ module.exports = {
       })
     }
 
-    source.parentNode.childNodes.forEach(node=>{
+    var allTabs = Array.prototype.slice.call(source.parentNode.childNodes)
+
+    allTabs.forEach(node=>{
       if(node != source) return node.classList.remove('active');
       return node.classList.add('active');
     })

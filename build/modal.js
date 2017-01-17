@@ -90,13 +90,14 @@ var methods = {
     // the only document level listener required to create new Modals
     document.body.addEventListener('click', e => {
       var spawner
-      for(var i=0; i<e.path.length;i++) {
-        // if(!e.path[i]) return true
-        if(e.path[i].dataset && e.path[i].dataset.response == 'modal') {
-          spawner = e.path[i]
-          break;
-        }
-      }
+      var spawner = e.target.closest('[data-response="modal"]')
+      // for(var i=0; i<e.path.length;i++) {
+      //   // if(!e.path[i]) return true
+      //   if(e.path[i].dataset && e.path[i].dataset.response == 'modal') {
+      //     spawner = e.path[i]
+      //     break;
+      //   }
+      // }
 
       if(!spawner) return true;
       e.preventDefault();

@@ -13,6 +13,8 @@ document.onreadystatechange = function(){
   if(pageInitialized) return;
   pageInitialized = true;
 
+  require('./polyfill');
+
   require('./dataemissions');
   require('./ui/scroll');
   require('./keypress');

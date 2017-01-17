@@ -14,7 +14,7 @@ block content
       if campaign.owned
         .tab-group
           a.tab.active All Quests
-          a.tab(href="quests/new" data-response="modal") New Quest
+          a.tab(href="quests/new" data-response="modal" title="New Quest"): i.fa.fa-plus
       .section-body
         if quests.length > 0
           for quest in quests
