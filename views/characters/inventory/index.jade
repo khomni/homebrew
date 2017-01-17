@@ -12,15 +12,16 @@ block content
   .content-body
     section
       .tab-group
-        a.tab.active(href="" data-click="tab" data-target="owned-items") Carried
+        a.tab.active(href="" data-click="tab" data-target="owned-items") #{itemOwner.getName('first')}'s Items
         if itemOwner.isActiveChar(currentUser)
           a.tab(href="?nearby=true" data-click="tab" data-target="nearby-items") Nearby
-        //- else
-          a.tab(href="/"+currentUser.MainChar.url+"inventory?role=give" data-click="tab" data-target="give-items") Give
+          a.tab(href="inventory/new" data-response="modal"): i.fa.fa-plus
+        else if currentUser.MainChar
+          a.tab(href="inventory/give" data-click="tab" data-target="give-items") #{currentUser.MainChar.getName('first')}'s Items
       .tab-panel
         .section-body.tab-pane.active#owned-items
           include ./_itemTable
         if itemOwner.isActiveChar(currentUser)
           .section-body.tab-pane#nearby-items
-        //- else
+        else
           .section-body.tab-pane#give-items

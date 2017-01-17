@@ -1,30 +1,50 @@
 function serialize(form) {
   var obj = {};
   var field, s = [];
+
+  // make sure that the provided argument is a form node
   if (typeof form == 'object' && form.nodeName == "FORM") {
     var len = form.elements.length;
-    for (var i=0; i<len; i++) {
-      field = form.elements[i];
-      if (field.name && !field.disabled && field.type != 'file' && field.type != 'reset' && field.type != 'submit' && field.type != 'button') {
-        if (field.type == 'select-multiple') {
-          for (j=form.elements[i].options.length-1; j>=0; j--) {
-            if(field.options[j].selected) {
-              obj[field.name] = field.options[j].value;
-            }
-          }
-        } else if ((field.type != 'checkbox' && field.type != 'radio') || field.checked) {
-          var key = field.name
-          if(obj[key]) {
-            if(!Array.isArray(obj[key])) obj[key] = [obj[key]]
-            obj[key].push(field.value)
-          } else {
-            obj[field.name] = field.value;
-          }
-        }
+
+    var fields = Array.prototype.slice.call(form.elements)
+
+    fields.map(field => {
+      // ignore undesirable form elements
+      if(field.disabled || ['button','submit','reset','file'].indexOf(field.type) >= 0) return false
+
+      // multiple choice
+      if(field.type == 'select-multiple') {
+        return Array.prototype.slice.call(field.options).map(option => {
+          if(!option.selected) return false
+          if(!obj[field.name]) return obj[field.name] = option.value
+
+          if(!Array.isArray(obj[field.name])) obj[field.name] = [obj[field.name]]
+          obj[field.name].push(option.value)
+        })
       }
-    }
+
+      // checkboxes with support to track unchecked
+      if(field.type == 'checkbox' || field.type == 'radio') {
+        var value = field.checked ? field.value : field.getAttribute('default')
+        console.log(value)
+        if(!value) return false
+
+        if(!obj[field.name]) return obj[field.name] = value
+
+        if(!Array.isArray(obj[field.name])) obj[field.name] = [obj[field.name]]
+        return obj[field.name].push(value)
+      }
+
+      var value = field.value || field.getAttribute('default')
+
+      if(!obj[field.name]) return obj[field.name] = value
+
+      if(!Array.isArray(obj[field.name])) obj[field.name] = [obj[field.name]]
+      obj[field.name].push(value)
+      console.log(field.name,obj)
+    })
   }
-  console.log(obj)
+  console.log(JSON.stringify(obj,null,'  '))
   return obj
 }
 

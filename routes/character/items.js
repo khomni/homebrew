@@ -58,7 +58,6 @@ router.get('/new', Common.middleware.requireCharacter, (req, res, next) => {
   if(req.requestType('modal')) return res.render('characters/inventory/modals/edit')
   return res.redirect(req.baseUrl)
 
-
 });
 
 
@@ -66,10 +65,11 @@ router.get('/new', Common.middleware.requireCharacter, (req, res, next) => {
 // res.locals.character is the receiving character
 // res.locals.currentUser.MainChar is the giving character
 router.get('/give', Common.middleware.requireCharacter, (req,res,next) => {
-  if(!req.requestType('modal')) return next()
   return req.user.MainChar.getItems()
   .then(items => {
-    return res.render('characters/inventory/modals/give',{items:items})
+    res.locals.itemOwner = req.user.MainChar
+    if(req.requestType('modal')) return res.render('characters/inventory/modals/give',{items:items})
+    if(req.requestType('xhr')) return res.render('characters/inventory/_itemTable',{items:items})
   })
   .catch(next)
 });
@@ -86,17 +86,27 @@ router.post('/give', Common.middleware.requireCharacter,Common.middleware.object
   .then(items => {
 
     return Promise.map(items, item => {
-      if(!item.CharacterId) {
-        item.location = null
-        return res.locals.character.addItem(item)
-      }
 
-      return req.user.MainChar.hasItems(item)
-      .then(owned => {
-        if(!owned) return null
-        item.location = null
-        return res.locals.character.addItem(item)
-        return null;
+      return Promise.resolve().then(()=>{
+        if(!item.Characterid) return item
+        return req.user.MainChar.hasItem(item)
+        .then(owned => {
+          if(!owned) return null
+          return item
+        })
+      }).then(item => {
+        if(!item) return null
+
+        var giveArgument = itemsToGive.find(i =>{return i.id == item.id})
+
+        if(item.quantity <= giveArgument.quantity) {
+          return res.locals.character.addItem(item)
+        }
+
+        return item.split(giveArgument.quantity)
+        .spread((baseItem, splitItem) => {
+          res.locals.character.addItem(splitItem)
+        })
       })
     })
     .then(items =>{
@@ -135,7 +145,7 @@ router.delete('/', Common.middleware.requireCharacter, Common.middleware.objecti
   var itemsToDelete = req.body.item.filter(item => {return item.quantity > 0})
 
   // instantiate all items in the body that are owned by the MainChar
-  return db.Item.findAll({where:{id:{$in:itemsToDelete.mapKey('id')}, CharacterId:req.user.MainChar.id}})
+  return db.Item.findAll({where:{id:{$in:itemsToDelete.mapKey('id')}}})
   .then(items => {
 
     return Promise.map(items, item => {
@@ -143,6 +153,14 @@ router.delete('/', Common.middleware.requireCharacter, Common.middleware.objecti
       var dropArgument = itemsToDelete.find(i =>{return i.id == item.id})
 
       return Promise.resolve().then(()=>{
+        if(!item.Characterid) return item
+        return req.user.MainChar.hasItem(item)
+        .then(owned => {
+          if(!owned) return null
+          return item
+        })
+      }).then(item => {
+        if(!item) return null
         // drop the entire item
         if(item.quantity <= dropArgument.quantity) {
           return item.destroy().then(()=>{return {ref:item.get({plain:true}),kind:'Item'}})
@@ -169,7 +187,6 @@ router.post('/drop', Common.middleware.requireCharacter, Common.middleware.objec
   // instantiate all items in the body that are owned by the MainChar
   return db.Item.findAll({where:{id:{$in:itemsToDrop.mapKey('id')}, CharacterId:req.user.MainChar.id}})
   .then(items => {
-    console.log('itemsToDrop:', JSON.stringify(items,null,'  '))
 
     // for each instantiated item, determine whether to drop the whole stack, or split and drop
     return Promise.map(items, item => {
