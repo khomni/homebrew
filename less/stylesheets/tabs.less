@@ -2,25 +2,27 @@
   display: flex;
   flex-flow: row;
   // background: url('/images/textures/marble.jpg'), #666;
-  background: inherit;
-  background-blend-mode: multiply;
+  // background: inherit;
+  // background-blend-mode: multiply;
+  color:inherit;
   flex-shrink:0;
   user-select:none;
   overflow:hidden;
   overflow-x: auto;
-  border-top: 1px solid;
 
   &::after{
     content:"";
     display: block;
     flex:1;
     background: fade(black,25%);
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid fade(black,25%);
   }
 
   .tab {
     .marble();
     .cursor(pointer);
+    color:inherit;
+    background: inherit;
     position:relative;
     display:block;
     border-radius: 0;
@@ -29,22 +31,15 @@
     border-radius: 0;
     text-decoration:none;
     border: none;
+    border-bottom: 1px solid transparent;
 
     & + .tab {
       border-left: 1px solid fade(black,25%);
     }
 
-    // &:only-child.active {
-    //   display:none;
-    // }
-
-    &:last-child {
-      border-radius: 0px 2px 0px 0px;
-    }
-
-    &:not(.active):not(:active):not(:focus):not(.error) {
-      background-blend-mode: soft-light;
-      background-color: #aaa;
+    &:not(.active):not(:active):not(:focus):not(.error):not([disabled]) {
+      background: fade(black,25%);
+      border-bottom-color: fade(black,25%);
     }
 
     &.active {
@@ -63,7 +58,9 @@
     &[disabled] {
       .cursor(default);
       pointer-events: none;
-      color: #bbb;
+      background: fade(black,50%);
+      border-bottom-color: fade(black,50%);
+      opacity: 0.5;
     }
 
     // &.error {

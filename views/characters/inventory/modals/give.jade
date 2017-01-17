@@ -1,19 +1,8 @@
-form(name='give' action="/"+character.url+'inventory/give' method='post')
-  .modal-content&attributes({class: THEME})
-    if character.active
-      .modal-title Take Items
-    else
-      .modal-title Give items to #{character.getName('first')}
-    .modal-body
-      .flex.vert.fill.pad
-        if items.length == 0
-          .flex.center
-            label You do not have any items
-        each item in items
-          .flex
-            label.checkbox
-              input(type="checkbox" name="item" value=item.id)
-              span(data-rarity=item.rarity)= item.name
-            a(href='/'+currentUser.MainChar.url+'inventory/'+item.id data-response="modal" data-target="item-"+item.id) ?
-    .modal-footer.flex.center
-      button.btn(disabled=items.length==0)= character.active ? "Take" : "Give"
+.modal-content&attributes({class: THEME})
+  if character.active
+    .modal-title Take Items
+  else
+    .modal-title Give items to #{character.getName('first')}
+  .modal-body
+    .flex.vert
+      include ../_itemTable

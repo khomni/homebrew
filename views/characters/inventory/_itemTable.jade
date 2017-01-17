@@ -50,7 +50,7 @@ form(method="post" data-response="json" data-reaction="redirect")
               if itemOwner && itemOwner.isActiveChar(currentUser)
                 td
                   .flex.je
-                    a.close(href="inventory/"+item.id+"/edit" data-response="modal" data-target="edit-item-"+item.id tabindex=3): i.fa.fa-wrench
+                    a.close(href="/"+itemOwner.url+"inventory/"+item.id+"/edit" data-response="modal" data-target="edit-item-"+item.id tabindex=3): i.fa.fa-wrench
         if meta
           tfoot
             tr
@@ -65,7 +65,7 @@ form(method="post" data-response="json" data-reaction="redirect")
                 th
   .flex.center.pad
     if itemOwner && itemOwner.isActiveChar(currentUser) && !character.isActiveChar(currentUser)
-      button.btn(formaction="inventory/give" formmethod="post" data-response="json" data-reaction="redirect") Give Items
+      button.btn(formaction="/"+character.url+"inventory/give" formmethod="post" data-response="json" data-reaction="redirect") Give Items
     else
       if !itemOwner || itemOwner.isActiveChar(currentUser)
         //- item is owned or has no owner
