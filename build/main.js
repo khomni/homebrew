@@ -16,7 +16,6 @@ document.onreadystatechange = function(){
   require('./polyfill');
 
   require('./dataemissions');
-  require('./ui/scroll');
   require('./keypress');
   require('./ui/tabs');
 
