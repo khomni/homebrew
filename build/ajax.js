@@ -90,7 +90,6 @@ var Ajax = {
         if(thisForm.dataset.response == 'insert' || thisForm.dataset.response == 'replace') {
           if(!thisForm.dataset.target) throw new Error('No target to insert data')
           var target = document.getElementById(thisForm.dataset.target);
-          console.log(target)
           if(thisForm.dataset.response == 'insert') target.innerHTML = html
           if(thisForm.dataset.response == 'replace') {
             var response = document.createElement('div')

@@ -19,7 +19,7 @@ module.exports = {
         delete req.body[key]
       }
     }
-    // 
+    //
     for(var key in req.body) if(!!Number(req.body[key])) req.body[key] = Number(req.body[key])
 
     console.log("2:",req.body)
@@ -48,36 +48,28 @@ module.exports = {
 
   // restrict the following routes to users who have an active character
   // Owners can access their own characters
-  // GMs can access characters that are part of their campaign
   // Admins can access any characters
   requireCharacter: (req,res,next) => {
+    // reject if the user is not signed in
     if(!req.user) return next(Common.error.authorization("You must be logged in to access this resource"));
+    // allow if the user is an admin
     if(req.user.admin) return next(); // admins get privilege regardless
+    // reject if the user doesn't have an active character
     if(!req.user.MainChar) return next(Common.error.authorization("You need an active character to access this"))
+    // contine if they do
     return next()
   },
 
-  /*
-  return req.user.hasCharacter(res.locals.character)
-  .then(owned => {
-    if(owned) throw null // if the user owns the character, continue
-
-    // check to see what campaign the character belongs to
-    return res.locals.character.getCampaign()
-    .then(campaign => {
-      if(!campaign) throw Common.error.authorization("You do not have permission to access this resource")
-      if(campaign.OwnerId === req.user.id) throw null
-      throw Common.error.authorization("You do not have permission to access this resource")
-    })
-  })
-  .catch(next)
-  */
-
   requireGM: (req,res,next) => {
+    // allow if there is no campaign in the route
     if(!res.locals.campaign) return next();
+    // reject if the user is not signed in
     if(!req.user) return next(Common.error.authorization("You must be logged in as the GM to access this resource"));
+    // allow if the user is an admin
     if(req.user.admin) return next();
+    // allow if the user owns the campaign
     if(res.locals.campaign.owned) return next();
+    // otherwise, reject
     return next(Common.error.authorization("You must be logged in as the GM to access this resource"))
   }
 
