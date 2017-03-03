@@ -1,86 +1,59 @@
 'use strict';
 
-var fs        = require('fs');
-var path      = require('path');
-var Sequelize = require('sequelize');
-var basename  = path.basename(module.filename);
-var env       = process.env.NODE_ENV || 'development';
-var db        = {};
+const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
+const basename = path.basename(module.filename);
+const env = process.env.NODE_ENV || 'development';
+const sequelize = require(APPROOT+'/config/database');
+const EventEmitter = require('events')
 
-var sequelize = require(APPROOT+'/config/database')
+let db = {};
 
-module.exports = sequelize.authenticate()
-.then(() =>{
-  console.log(colors.magenta('['+CONFIG.database.name+'] connected'))
-
-  fs.readdirSync(__dirname)
-  .filter(function(file) {
-    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-  })
-  .forEach(function(file) {
-    var model = sequelize['import'](path.join(__dirname, file));
-    db[model.name] = model;
-  });
-  console.log(colors.magenta('['+CONFIG.database.name+']',Object.keys(db).length,'models imported'))
-
-
-  for(key in db) {
-    if(db[key].associate) db[key].associate(db)
-  }
-
-
-  // for each model, promise that it will successfully sync and can query results without error
-  return Promise.map(Object.keys(db), modelName => {
-    // not a sequelize model to sync
-    if(!db[modelName] instanceof Sequelize.Model) return Promise.resolve()
-    // if(db[modelName].associate) db[modelName].associate(db)
-
-    // try syncing the model to the database
-    return db[modelName].sync()
-    .then(model => {
-
-      // try to query a document in the model
-      return model.findOne()
-      .then(doc => {
-        // query succeeded, return the model
-        return model
-      })
-      .catch(err => {
-        // if it's not local, throw a critical error
-        if(!process.env.NODE_ENV == 'local') throw err;
-
-        // if it's local, retry the sync with {force: true}
-        return model.sync({force:true})
-        .then(model=>{
-          console.log(colors.black.bgMagenta('['+CONFIG.database.name+']', model.name, 'force resynced'))
-          return model
-        })
-      })
-    })
-  })
-  .then(results => {
-    console.log(colors.magenta('['+CONFIG.database.name+']',results.length,'models synced'))
-
-    db.methods = function(doc,regex) {
-      var methods = []
-      for(key in doc) {
-        if(typeof doc[key] == 'function') methods.push(key)
-      }
-      if(regex && regex instanceof RegExp) methods = methods.filter(method => {return regex.test(method)})
-
-      return methods.sort().join(', ').grey
-    }
-
-    return sequelize.sync({force:CONFIG.database.forcesync})
-  })
-  .then(()=> {
-
-    db.sequelize = sequelize
-    db.Sequelize = Sequelize
-
-    return db
-  })
+fs.readdirSync(__dirname)
+.filter(function(file) {
+  return (file.indexOf('.') !== 0) && (file !== basename) && ((file.slice(-3) === '.js') || (file.indexOf('.') < 0));
 })
+.forEach(function(file) {
+  let model = sequelize.import(path.join(__dirname, file));
+  db[model.name] = model
+});
+
+db._connection = new EventEmitter();
+
+db._associate = function(){
+  for(let key in db) {
+    if(db[key].associate) {
+      db[key].associate(db)
+    }
+  }
+}
+
+// associates the models and syncs to the database
+db._sync = Promise.method(function(){
+  db._associate()
+  return sequelize.sync({force:CONFIG.database.forcesync})
+})
+
+db._methods = function(doc,regex) {
+  let  methods = []
+  for(let key in doc) if(typeof doc[key] == 'function') methods.push(key)
+  if(regex && regex instanceof RegExp) methods = methods.filter(method => {return regex.test(method)})
+  return methods.sort().join(', ').grey
+}
+
+db._sync()
+.then(models => {
+  console.log(colors.magenta('['+CONFIG.database.name+'::'+CONFIG.database.options.host+'] connected'))
+  db._connection.synced = true
+  db._connection.emit('synced')
+})
+.catch(err => {
+  console.error('sync error:', err.stack)
+  db._connection.emit('error', err)
+})
+
+module.exports = db
 
 module.exports.sequelize = sequelize;
 module.exports.Sequelize = Sequelize;

@@ -1,4 +1,5 @@
 var path = require('path');
+require('dotenv').config();
 
 require('./extensions');
 

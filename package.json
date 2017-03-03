@@ -3,14 +3,17 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "debug": "node debug ./bin/www",
+    "start": "node ./bin/www",
+    "test": "set \"NODE_ENV=test\" && mocha --recursive",
+    "cover-test": "set \"NODE_ENV=test\" && istanbul cover --report lcov node_modules/mocha/bin/_mocha -- --recursive",
+    "coverage-cleanup": "rm -rf ./coverage"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "bluebird": "^3.4.6",
     "body-parser": "^1.15.2",
     "browserify-middleware": "^7.1.0",
-    "chai": "^3.5.0",
     "colors": "^1.1.2",
     "connect-sequelize": "^2.0.2",
     "cookie-parser": "~1.3.5",
@@ -26,7 +29,6 @@
     "less": "^2.7.1",
     "less-middleware": "^2.2.0",
     "marked": "^0.3.6",
-    "mocha": "^2.5.3",
     "morgan": "~1.6.1",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
@@ -39,5 +41,12 @@
     "sequelize-hierarchy": "^1.0.0",
     "serve-favicon": "^2.3.2",
     "sqlite": "0.0.4"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "codeclimate-test-reporter": "^0.4.1",
+    "istanbul": "^0.4.5",
+    "mocha": "^2.5.3"
   }
 }

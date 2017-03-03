@@ -66,9 +66,9 @@ module.exports = function(sequelize, DataTypes) {
   User.hook('beforeCreate', function(user, options, callback) {
     options.updatesOnDuplicate = options.updatesOnDuplicate || []
     options.updatesOnDuplicate.push('password')
-    var salt = bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt){
+    var salt = bcrypt.genSalt(CONFIG.security.SALT_WORK_FACTOR, function(err, salt){
       if(err) return callback(err)
-      bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt){
+      bcrypt.genSalt(CONFIG.security.SALT_WORK_FACTOR, function(err, salt){
         bcrypt.hash(user.password, salt, null, function(err, hash){
           if(err) return callback(err);
           user.password = hash;

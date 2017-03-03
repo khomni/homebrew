@@ -1,5 +1,5 @@
 module.exports = {
   default: {
-    performance: true,
+    SALT_WORK_FACTOR: 12
   }
 }
