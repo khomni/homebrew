@@ -23,15 +23,26 @@ describe('User', ()=>{
   describe('Static Methods', () => {
 
     let createData = {username:'test', password:'testpassword', email:'test@test.com'}
+    let user
 
     it('User.create()', () => {
       return db.User.create(createData)
-      .then(user => {
-        console.log(db._methods(user))
-        console.log(user.constructor == db.User)
+      .then(u => {
+        user = u
         expect(user).to.exist
         expect(user.$modelOptions).to.exist
       })
+    })
+
+    it('User.validPassword()', () => {
+      return Promise.all([
+        expect(db.User.validPassword(createData.password, user.password, user)).to.eventually.equal(user),
+        expect(db.User.validPassword(createData.password, user.password, user)).to.eventually.equal(user)
+      ])
+    })
+
+    it('User.destroy()', () => {
+      return db.User.destroy({where:{id:user.id}})
     })
 
   })

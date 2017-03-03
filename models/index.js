@@ -44,7 +44,7 @@ db._methods = function(doc,regex) {
 
 db._sync()
 .then(models => {
-  console.log(colors.magenta('['+CONFIG.database.name+'::'+CONFIG.database.options.host+'] connected'))
+  console.log(colors.magenta('['+CONFIG.database.options.host + '/' + CONFIG.database.name+'] connected'))
   db._connection.synced = true
   db._connection.emit('synced')
 })

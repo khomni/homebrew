@@ -32,11 +32,9 @@ passport.use(new LocalStrategy({usernameField: 'email', passwordField: 'password
     .then(user => {
       if(!user) return done(null)
       passwd = user ? user.password : ''
-      db.User.validPassword(password, passwd, done, user)
+      return db.User.validPassword(password, passwd, user)
+      .then(isValid =>{return done(null, isValid)})
     })
-    .catch(err => {
-      console.error(err);
-      done(err, null);
-    })
+    .catch(done)
   }
 ));
