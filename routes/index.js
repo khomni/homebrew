@@ -69,6 +69,8 @@ router.get('/about', (req, res, next) => {
   res.render('about');
 });
 
+router.use('/i',require('./images'));
+
 router.use('/u',require('./user'));
 router.use('/pc',require('./character'));
 router.use('/r',require('./reference'));

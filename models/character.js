@@ -98,6 +98,18 @@ module.exports = function(sequelize, DataTypes) {
           }
         });
 
+        Character.hasMany(models.Image, {
+          // as: 'images',
+          foreignKey: 'imageable_id',
+          scope: {
+            imageable: 'Character'
+          }
+        });
+
+        Character.addScope('defaultScope', {
+          include: [{model: models.Campaign}, {model:models.Image}]
+        }, {override:true} )
+
         // Character.belongsTo(models.Party);
         Character.belongsToMany(models.Character, {as: 'relationship',through: models.Relationship});
         // a character has access to some pieces of lore, the association being 'knowledge'

@@ -13,9 +13,6 @@ passport.deserializeUser(function(user, done){
     include: [{
       model:db.Character,
       as:'MainChar',
-      include: [{
-        model: db.Campaign
-      }]
     }]
   })
   .then(user => {

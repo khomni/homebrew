@@ -17,17 +17,39 @@ module.exports = function(sequelize, DataTypes) {
   var Image = sequelize.define("Image", {
     url: { // complete link to
       type: DataTypes.VIRTUAL,
+      get: function() {
+        return 'https://' + this.s3.region + '.amazonaws.com/' + this.s3.bucket + '/' + this.s3.key
+      }
+    },
+    imageable: { // the model type of the image
+      type: DataTypes.STRING,
     },
 
+    key: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      index: true,
+      unique: true,
+    },
     // amazon s3 components
     s3: {
       type: DataTypes.JSONB,
       validate: function(object){
-        console.log('validating s3:',object)
         if(!('region' in object)) throw new Error('Missing s3 region');
         if(!('bucket' in object)) throw new Error('Missing s3 bucket');
         if(!('key' in object)) throw new Error('Missing s3 key');
       }
+    },
+    public: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
+    vetted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    attribution: {
+      type: DataTypes.STRING,
     },
 
     // these virtuals are used for the creation process only
@@ -41,11 +63,8 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
 
-  Image.beforeCreate((image, options) => {
-    // TODO: upload the photo to s3
-    // the file object will be included in the `file` field as a virtual object
+  Image.beforeValidate((image, options) => {
     if(!image.file) throw new Error('No file provided')
-
     let filename = crypto.pseudoRandomBytes(16).toString('hex') + Date.now() + path.extname(image.file.originalname);
 
     let key = [];
@@ -53,11 +72,20 @@ module.exports = function(sequelize, DataTypes) {
     key.push(image.path);
     key.push(filename);
 
+    image.key = key.join('/')
+
     image.s3 = {
       region: CONFIG.aws.region,
       bucket: CONFIG.aws.bucket,
-      key: key.join('/')
+      key: image.key,
     }
+
+    return image
+  })
+
+  Image.beforeCreate((image, options) => {
+    // TODO: upload the photo to s3
+    // the file object will be included in the `file` field as a virtual object
 
     let startTime = Date.now();
     return s3.putObjectAsync({
@@ -70,7 +98,7 @@ module.exports = function(sequelize, DataTypes) {
       s3Log('photo uploaded:', image.s3.key, '('+(Date.now()-startTime)+'ms)')
       return image
     })
-  })
+  });
 
   Image.beforeDestroy((image, options) => {
     // TODO: amazon aws remove object

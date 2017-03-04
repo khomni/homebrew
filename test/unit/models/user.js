@@ -34,11 +34,16 @@ describe('User', ()=>{
       })
     })
 
-    it('User.validPassword()', () => {
-      return Promise.all([
-        expect(db.User.validPassword(createData.password, user.password, user)).to.eventually.equal(user),
+    describe('User.validPassword()', () => {
+
+      it('returns the user when provided the correct password', () => {
         expect(db.User.validPassword(createData.password, user.password, user)).to.eventually.equal(user)
-      ])
+      })
+
+      it('returns false when provided the incorrect password', () => {
+        expect(db.User.validPassword('hunter2', user.password, user)).to.eventually.equal(false)
+      })
+
     })
 
     it('User.destroy()', () => {

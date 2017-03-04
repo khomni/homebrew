@@ -51,7 +51,7 @@ var characterRouter = express.Router({mergeParams: true});
 // character router handles individual subpages that pertain to the individual character
 router.use('/:id', (req,res,next) => {
   if(res.locals.character) return next();
-  return db.Character.findOne({where: {id: req.params.id}, include:[{model:db.Campaign}]})
+  return db.Character.findOne({where: {id: req.params.id}})
   .then(character => {
     if(!character) throw Common.error.notfound('Character')
     if(req.user && character.id == req.user.MainCharId) character.active = true
@@ -63,7 +63,12 @@ router.use('/:id', (req,res,next) => {
       res.locals.activeSystem = SYSTEM[character.Campaign.system]
     }
     res.locals.breadcrumbs.add(character.get({plain:true}))
-    throw null
+    return next()
+    // return character.getImages()
+    // .then(images =>{
+    //   res.locals.character.images = images
+    //   return next()
+    // })
   })
   .catch(next)
 }, characterRouter)
@@ -153,7 +158,12 @@ characterRouter.use('/lore', (req,res,next) => {
     res.locals.permission.write = true
   }
   return next();
-},require('../lore'));
+}, require('../lore'));
+
+characterRouter.use('/images', (req,res,next) => {
+  res.locals.imageable = res.locals.character
+  return next();
+}, require('../images'));
 
 characterRouter.use('/knowledge', require('./knowledge'));
 

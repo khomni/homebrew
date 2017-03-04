@@ -19,7 +19,7 @@ module.exports = function(sequelize, DataTypes) {
     content: {
       type: DataTypes.TEXT,
     },
-    hidden: {type: DataTypes.VIRTUAL,},
+    hidden: {type: DataTypes.VIRTUAL},
     new: {type: DataTypes.VIRTUAL},
     owned: {type: DataTypes.VIRTUAL},
     // lore obscurity represents the likelihood of a person knowning it
