@@ -41,6 +41,26 @@ body {
   color: @color-dark;
   overflow-y: overlay;
 
+  &:before {
+    z-index:1000;
+    content:"";
+    opacity: 0;
+    pointer-events: none;
+    position:fixed;
+    top:0;
+    right:0;
+    bottom:0;
+    left:0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    background: transparent;
+    transition: 0.25s;
+    color: white;
+    text-shadow: 0px 1px 2  px fade(black,25%);
+  }
+
   &:after {
     z-index: 1000;
     padding:0.5em;
@@ -56,8 +76,22 @@ body {
 
   &.loading {
     &:after {
-      content:"Loading...";
+      content: "Loading...";
       opacity: 1;
+    }
+  }
+
+  &.dropfile {
+    // &:before {
+    //   background: fade(@color-secondary,50%);
+    //   content: "Drop Files";
+    //   opacity: 1;
+    // }
+
+    input[type="file"] {
+      z-index: 1001;
+      position:relative;
+      outline: 2px dashed @color-primary;
     }
   }
 

@@ -26,7 +26,14 @@ block content
         a.tab(href="/"+character.url+"journal" data-click="tab" data-target="lore") Journal
       .tab-panel
         #about.section-body.tab-pane.active
-          pre= JSON.stringify(character,null,'  ')
+          .flex.vert
+            .flex.pad.js.border
+              each image in character.Images
+                img(src="/"+image.key)
+            .flex.pad.center
+              form(action='/'+character.url+'images' method="POST" enctype="multipart/form-data" data-response="json")
+                input(type="file" name="image")
+                button.btn Upload
         #inventory.tab-pane.section-body
         #lore.tab-pane.section-body
         #knowledge.tab-pane

@@ -1,11 +1,12 @@
+'use strict';
 /*jslint node: true */
 
-var Promise = require('bluebird');
-var Ajax = require('./ajax');
-var Navbar = require('./navbar');
-var Favicon = require('./favicon');
-var Modal = require('./modal');
-var Drag = require('./ui/drag');
+const Promise = require('bluebird');
+const Ajax = require('./ajax');
+const Navbar = require('./navbar');
+const Favicon = require('./favicon');
+const Modal = require('./modal');
+const Drag = require('./ui/drag');
 
 var pageInitialized = false;
 
