@@ -17,7 +17,6 @@ router.get('/*', (req,res,next) => {
 
   return db.Image.findOne({where: {key: key}})
   .then(image => {
-    console.log(image.key)
 
     let stream = s3.getObject({
       Key: image.s3.key,

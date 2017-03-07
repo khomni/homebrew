@@ -29,13 +29,18 @@ block content
           .flex.vert
             .flex.pad.center
               each image in character.Images
-                img(src=image.path).character-portrait
-                form(action=image.path method="delete" data-response="json" data-reaction="redirect")
-                  button.as-link: i.fa.fa-close
+                .flex.vert
+                  img(src=image.path).character-portrait
+                  form(action=image.path method="delete" data-response="json" data-reaction="redirect").flex.pad.center
+                    button.as-link: i.fa.fa-close
+                    a(href='/' + character.url + 'images/' + image.id + '/edit' data-response="modal"): i.fa.fa-wrench
+                    a(href=image.path): i.fa.fa-eye
             .flex.pad.center
               form(action='/'+character.url+'images' method="POST" enctype="multipart/form-data" data-response="json" data-reaction="redirect")
-                input(type="file" name="image")
-                button.btn Upload
+                .flex.pad.center
+                  label.btn(for="addfile") Select Photo
+                    input#addfile(type="file" name="image")
+                  button.btn Upload
         #inventory.tab-pane.section-body
         #lore.tab-pane.section-body
         #knowledge.tab-pane
