@@ -84,6 +84,9 @@ app.use(lessMiddleware(path.join(__dirname, 'less', '_output'),{
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// pipes images from Amazon AWS s3 service to the result
+app.use('/i', require('./middleware/images'))
+
 app.use(logger('dev'));
 
 // set up the vignettes for the header and homepage
@@ -100,11 +103,6 @@ app.use(function(req,res,next){
 
 // set the user's main character if applicable
 app.use(require(APPROOT+'/middleware/activeChar'));
-
-app.use((req,res,next) => {
-  debugger;
-  return next()
-})
 
 app.use('/json', (req,res,next)=>{
   req.headers.accept = 'application/json'

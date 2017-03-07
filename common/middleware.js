@@ -1,5 +1,9 @@
-var utilities = require('./utilities');
-var flat = require('flat');
+'use strict';
+
+const utilities = require('./utilities');
+const flat = require('flat');
+const formidable = require('formidable');
+const multer = require('multer');
 
 module.exports = {
   // given a req.body with a number of dot-delimited field names, converts the req.body into the corresponding object
@@ -22,10 +26,28 @@ module.exports = {
     //
     for(var key in req.body) if(!!Number(req.body[key])) req.body[key] = Number(req.body[key])
 
-    console.log("2:",req.body)
+    console.log("2:", req.body)
     req.body = flat.unflatten(req.body)
-    console.log("3:",JSON.stringify(req.body,null,'  '))
+    console.log("3:", JSON.stringify(req.body,null,'  '))
     return next();
+  },
+
+  bufferFile: multer({
+    storage: multer.memoryStorage(),
+    limits: {
+      fileSize: 25000000
+    }
+  }),
+
+  parseMultipart: (req,res,next) => {
+    let form = new formidable.IncomingForm();
+
+    form.parse(req, (err, fields, files) => {
+      req.body = fields
+      req.files = files
+      return next()
+    })
+
   },
 
   // restrict the following routes to logged-in users

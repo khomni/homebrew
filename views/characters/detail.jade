@@ -29,7 +29,7 @@ block content
           .flex.vert
             .flex.pad.js.border
               each image in character.Images
-                img(src="/"+image.key)
+                img(src=image.path)
             .flex.pad.center
               form(action='/'+character.url+'images' method="POST" enctype="multipart/form-data" data-response="json")
                 input(type="file" name="image")

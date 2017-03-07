@@ -3,7 +3,6 @@
 const express = require('express');
 const router = express.Router();
 const request = require('request');
-
 // Images
 
 router.get('/', (req,res,next) => {
@@ -13,7 +12,7 @@ router.get('/', (req,res,next) => {
 });
 
 // uploads an image to the imageable resource
-router.post('/', Common.middleware.requireUser, (req,res,next) => {
+router.post('/', Common.middleware.requireUser, Common.middleware.bufferFile.single('image'), (req,res,next) => {
   if(!res.locals.imageable) return next(Common.error.notfound('Could not locate the imageable resource'));
   debugger;
 
@@ -21,8 +20,8 @@ router.post('/', Common.middleware.requireUser, (req,res,next) => {
 
   // create a comment on this resource as the active character
   return res.locals.imageable.createImage({
-    path: res.locals.imageable.$modelOptions.name.plural,
-    file: req.file,
+    _directory: res.locals.imageable.$modelOptions.name.plural,
+    _file: req.file,
   })
   .then(image => {
     if(req.requestType('json')) return res.json(image.get({plain:true}))

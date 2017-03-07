@@ -15,10 +15,12 @@ module.exports = {
 
     Array.prototype.slice.call(duplicate.childNodes).map(node => {destination.appendChild(node)})
   },
+  
   remove: function(target) {
     target = document.getElementById(target) || source.closest(target)
     target.remove()
   },
+
   collapse: function(target) {
     target = document.getElementById(target) || source.closest(target)
     target.classList.toggle('collapsed')

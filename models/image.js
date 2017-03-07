@@ -18,7 +18,13 @@ module.exports = function(sequelize, DataTypes) {
     url: { // complete link to
       type: DataTypes.VIRTUAL,
       get: function() {
-        return 'https://' + this.s3.region + '.amazonaws.com/' + this.s3.bucket + '/' + this.s3.key
+        return 'https://s3-' + this.s3.region + '.amazonaws.com/' + this.s3.bucket + '/' + this.s3.key
+      }
+    },
+    path: {
+      type: DataTypes.VIRTUAL,
+      get: function() {
+        return '/i/' + this.getDataValue('key')
       }
     },
     imageable: { // the model type of the image
@@ -53,8 +59,8 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     // these virtuals are used for the creation process only
-    file: {type: DataTypes.VIRTUAL},
-    path: {type: DataTypes.VIRTUAL},
+    _file: {type: DataTypes.VIRTUAL},
+    _directory: {type: DataTypes.VIRTUAL},
   }, {
     classMethods: {
       associate: function(models) {
@@ -64,12 +70,12 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   Image.beforeValidate((image, options) => {
-    if(!image.file) throw new Error('No file provided')
-    let filename = crypto.pseudoRandomBytes(16).toString('hex') + Date.now() + path.extname(image.file.originalname);
+    if(!image._file) throw new Error('No file provided')
+    let filename = crypto.pseudoRandomBytes(16).toString('hex') + Date.now() + path.extname(image._file.originalname);
 
     let key = [];
     key.push(CONFIG.aws.directory);
-    key.push(image.path);
+    key.push(image._directory);
     key.push(filename);
 
     image.key = key.join('/')
@@ -86,13 +92,14 @@ module.exports = function(sequelize, DataTypes) {
   Image.beforeCreate((image, options) => {
     // TODO: upload the photo to s3
     // the file object will be included in the `file` field as a virtual object
+    debugger;
 
     let startTime = Date.now();
     return s3.putObjectAsync({
       Bucket: CONFIG.aws.bucket,
       Key: image.s3.key,
-      ContentType: image.file.mimetype,
-      Body: image.file.buffer,
+      ContentType: image._file.mimetype,
+      Body: image._file.buffer,
     })
     .then(response =>{
       s3Log('photo uploaded:', image.s3.key, '('+(Date.now()-startTime)+'ms)')
