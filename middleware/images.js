@@ -12,26 +12,17 @@ const s3 = new AWS.S3({
   region: CONFIG.aws.region,
 });
 
-router.use('/*', (req,res,next) => {
+router.get('/*', (req,res,next) => {
   let key = req.params[0]
 
-  return db.Image.findOne({key:key})
+  return db.Image.findOne({where: {key: key}})
   .then(image => {
-    console.log(image.get({plain:true}))
+    console.log(image.key)
 
     let stream = s3.getObject({
       Key: image.s3.key,
       Bucket: image.s3.bucket,
     }).createReadStream()
-
-    stream.on('close', response => {
-      console.log('close:', response)
-    });
-
-    stream.on('error', err => {
-      console.error(err.stack)
-      throw err
-    });
 
     res.removeHeader('Pragma')
     res.set('Expires',new Date(Date.now() + 31104000000).toUTCString())
@@ -39,7 +30,20 @@ router.use('/*', (req,res,next) => {
     stream.pipe(res)
   })
   .catch(next)
+})
 
+router.delete('/*', (req,res,next) => {
+  let key = req.params[0]
+
+  return db.Image.findOne({where: {key: key}})
+  .then(image => {
+
+    return image.destroy()
+    .then(result =>{
+      res.json({path:image.path})
+    })
+  })
+  .catch(next)
 })
 
 module.exports = router

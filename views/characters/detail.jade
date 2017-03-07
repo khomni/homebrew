@@ -27,11 +27,13 @@ block content
       .tab-panel
         #about.section-body.tab-pane.active
           .flex.vert
-            .flex.pad.js.border
-              each image in character.Images
-                img(src=image.path)
             .flex.pad.center
-              form(action='/'+character.url+'images' method="POST" enctype="multipart/form-data" data-response="json")
+              each image in character.Images
+                img(src=image.path).character-portrait
+                form(action=image.path method="delete" data-response="json" data-reaction="redirect")
+                  button.as-link: i.fa.fa-close
+            .flex.pad.center
+              form(action='/'+character.url+'images' method="POST" enctype="multipart/form-data" data-response="json" data-reaction="redirect")
                 input(type="file" name="image")
                 button.btn Upload
         #inventory.tab-pane.section-body

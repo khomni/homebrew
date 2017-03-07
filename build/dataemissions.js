@@ -2,7 +2,7 @@
 
 (function(){
   // data is sniffed at the document level, but reference to the targeted dom will be e.target
-  document.addEventListener('data',function(e){
+  document.addEventListener('data', function(e){
     var source = e.target
     var data = e.detail
     var method = source.getAttribute('method')

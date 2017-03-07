@@ -1,127 +1,133 @@
 @import '../mixins/mixins.less';
 
+.character-portrait {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 75px;
+  box-shadow: 0px 1px 2px fade(black,25%);
+}
+
 .character-card-container {
-	padding: 0.5em;
-	max-width: 500px;
-	margin: auto;
-	.character-card {
-		.marble-ui();
-		.sm-plus({
-			min-height: 150px;
-			border-radius: 75px 25px 0 75px;
-		});
+  padding: 0.5em;
+  max-width: 500px;
+  margin: auto;
+  .character-card {
+    .marble-ui();
+    .sm-plus({
+      min-height: 150px;
+      border-radius: 75px 25px 0 75px;
+    });
 
-		display: flex;
-		text-decoration: none;
-		color: #333;
-		overflow: hidden;
+    display: flex;
+    text-decoration: none;
+    color: #333;
+    overflow: hidden;
 
-		.character-portrait {
-	    height: 150px;
-	    width: 150px;
-	    overflow: hidden;
-	    border-right: 1px solid rgba(0, 0, 0, 0.25);
-    	border-radius: 75px;
-			background: fade(white,25%);
-			.xs({display: none});
-
-		}
-		.character-stats {
-			flex:1;
-			padding: 1em;
-		}
-
-	}
+    .character-card-portrait {
+      height: 150px;
+      width: 150px;
+      overflow: hidden;
+      border-right: 1px solid rgba(0, 0, 0, 0.25);
+      border-radius: 75px;
+      background: fade(white,25%);
+      .xs({display: none});
+    }
+    .character-stats {
+      flex:1;
+      padding: 1em;
+    }
+  }
 }
 
 .bar {
-	display: flex;
-	border-radius: 4px 0.75em 0.75em 4px;
-	height: 1.5em;
-	width:100%;
-	overflow: hidden;
-	border: 1px solid #333;
-	box-shadow: 0px -1px 1px fade(black,50%), 0px 1px 1px fade(white,50%);
-	margin: 4px 0;
-	.hilt{
-		display: flex;
+  display: flex;
+  border-radius: 4px 0.75em 0.75em 4px;
+  height: 1.5em;
+  width:100%;
+  overflow: hidden;
+  border: 1px solid #333;
+  box-shadow: 0px -1px 1px fade(black,50%), 0px 1px 1px fade(white,50%);
+  margin: 4px 0;
+  .hilt{
+    display: flex;
     align-items: center;
-		justify-content: center;
-		font-size: 10px;
-		padding: 0 0.5em;
-		border-right: 1px solid;
-		font-weight: 700;
-		background: radial-gradient(ellipse at 100% 50%, #ffeecc 0%, #8c713d 50%, #3e2d0a 100%), url('/images/textures/bronze.jpg');
-		background-blend-mode: hard-light;
-	}
-	.data-bar {
-		box-shadow:none;
-		flex: 1;
-		border-radius: 0;
-		border:0;
-		height: 100%;
-	}
+    justify-content: center;
+    font-size: 10px;
+    padding: 0 0.5em;
+    border-right: 1px solid;
+    font-weight: 700;
+    background: radial-gradient(ellipse at 100% 50%, #ffeecc 0%, #8c713d 50%, #3e2d0a 100%), url('/images/textures/bronze.jpg');
+    background-blend-mode: hard-light;
+  }
+  .data-bar {
+    box-shadow:none;
+    flex: 1;
+    border-radius: 0;
+    border:0;
+    height: 100%;
+  }
 }
 
 .data-bar {
-	position: relative;
-	z-index: 1;
-	background: linear-gradient(to bottom, #333 0%, #000 50%, #222 100%);
-	height: 1.5em;
-	border-radius: 0.5em;
-	overflow:hidden;
-	box-shadow: 0px -1px 1px fade(black,50%), 0px 1px 1px fade(white,50%);
-	border: 1px solid #333;
-	display: flex;
-	width:100%;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(to bottom, #333 0%, #000 50%, #222 100%);
+  height: 1.5em;
+  border-radius: 0.5em;
+  overflow:hidden;
+  box-shadow: 0px -1px 1px fade(black,50%), 0px 1px 1px fade(white,50%);
+  border: 1px solid #333;
+  display: flex;
+  width:100%;
 
-	&.red{
-		.value {background-color: #900;}
-	}
-	&.blue{
-		.value {background-color: #0066ff;}
-	}
-	&.green{
-		.value {background-color: #449900;}
-	}
-	&.gold{
-		.value {background-color: #ffab2e;}
-	}
+  &.red{
+    .value {background-color: #900;}
+  }
+  &.blue{
+    .value {background-color: #0066ff;}
+  }
+  &.green{
+    .value {background-color: #449900;}
+  }
+  &.gold{
+    .value {background-color: #ffab2e;}
+  }
 
-	.value {
-		width:100%;
-		max-width:100%;
-		min-width:0%;
-		background-color: #ccc;
-		line-height: 1.5em;
-		word-break: initial;
-		height: 100%;
-		border-radius: 0.1em;
-		box-shadow: inset 0 0 2px fade(black,90%);
-		background-image: linear-gradient(to bottom, fade(white,0%) 0%, fade(white,50%) 50%, fade(black,25%) 50%, fade(white,0%) 100%);
-		transition: 1s ease-in-out;
-		text-align: right;
-		color: white;
+  .value {
+    width:100%;
+    max-width:100%;
+    min-width:0%;
+    background-color: #ccc;
+    line-height: 1.5em;
+    word-break: initial;
+    height: 100%;
+    border-radius: 0.1em;
+    box-shadow: inset 0 0 2px fade(black,90%);
+    background-image: linear-gradient(to bottom, fade(white,0%) 0%, fade(white,50%) 50%, fade(black,25%) 50%, fade(white,0%) 100%);
+    transition: 1s ease-in-out;
+    text-align: right;
+    color: white;
 
-		&.overflow {
-			background-image: linear-gradient(to bottom, fade(goldenrod,0%) 0%, fade(goldenrod,50%) 50%, fade(black,25%) 50%, fade(goldenrod,0%) 100%);;
-		}
+    &.overflow {
+      background-image: linear-gradient(to bottom, fade(goldenrod,0%) 0%, fade(goldenrod,50%) 50%, fade(black,25%) 50%, fade(goldenrod,0%) 100%);;
+    }
 
-		span {
-			padding: 0.5em;
-		}
+    span {
+      padding: 0.5em;
+    }
 
-		&.red {
-			background-color: #900;
-		}
-		&.blue {
-			background-color: #0066ff;
-		}
-		&.green {
-			background-color: #449900;
-		}
-		&.gold {
-			background-color: #ffab2e;
-		}
-	}
+    &.red {
+      background-color: #900;
+    }
+    &.blue {
+      background-color: #0066ff;
+    }
+    &.green {
+      background-color: #449900;
+    }
+    &.gold {
+      background-color: #ffab2e;
+    }
+  }
 }

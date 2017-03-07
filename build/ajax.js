@@ -91,8 +91,7 @@ Ajax.setListeners = function() {
       body:thisForm
     })
     .then(xhr =>{
-
-      var contentType = xhr.getResponseHeader('Content-Type');
+      var contentType = xhr.getResponseHeader('Content-Type') || []
       if(contentType.includes('application/json')) {
         var response = JSON.parse(xhr.response)
         var dataEvent = new CustomEvent('data',{detail: response, bubbles:true})
@@ -132,7 +131,7 @@ Ajax.fetch = Promise.method(function(args) {
       return Ajax.serializeMultipart(args.body)
     }
     args.headers['Content-Type'] = 'application/json'
-    return JSON.stringify(serialize(args.body))
+    return JSON.stringify(Ajax.serialize(args.body))
   })
   .then(data => {
     console.log(data)
