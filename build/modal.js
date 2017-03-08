@@ -131,13 +131,6 @@ var methods = {
 
     },true)
 
-    // modalContainer.addEventListener('click',e => {
-    //   // hide all modals?
-    //   Object.keys(modals).map(key => {
-    //     modals[key].remove()
-    //   })
-    // })
-
   },
 
   loadModal: function(url,callback) {

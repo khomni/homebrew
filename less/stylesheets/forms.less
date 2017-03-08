@@ -174,15 +174,23 @@ a.close,button.close {
 	&:empty {
 		&:before {
 			font-size:24px;
-			content:"×"
+			content:"×";
+		};
+		&.lg:before {
+			font-size: 48px;
 		};
 	};
 	&.float {
 		position:absolute;
 	}
+	&.lg {
+		height: 2em;
+		min-width: 2em;
+		line-height: 2em;
+	}
 	min-width: 1em;
 	font-size: 18px;
-	user-select:none;
+	user-select: none;
 	height: 1em;
 	line-height: 1em;
 	display: flex;

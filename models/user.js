@@ -81,29 +81,26 @@ module.exports = function(sequelize, DataTypes) {
 
   // returns true if a user owns a character owns the character or campaign
   // OR if the user owns the campaign that the character belongs to
-  User.Instance.prototype.controls = Promise.method(function(resource) {
+  User.Instance.prototype.controls = function(resource) {
     var thisUser = this
-    if(thisUser.admin) return [true,{ownership:true, domain:true}]
+    if(thisUser.admin) return {owner:true, permission:true} // admins do whatever they want
     if(resource.$modelOptions) {
-      var resourceType = resource.$modelOptions.name.singular
-      if(resourceType === 'Character') {
-        return Promise.props({
-          owned: thisUser.hasCharacter(resource),
-          dominion: resource.getCampaign().then(campaign=>{return thisUser.hasCampaign(campaign)})
-        }).then(results =>{ //
-          return [results.owned||results.dominion, results]
-        })
+      let resourceType = resource.$modelOptions.name.singular
+
+      if(resourceType === 'Character') { // assumes the character has the campaign populated
+        if(resource.UserId == thisUser.id) return {owner:true, permission:true}
+        if(resource.Campaign && resource.Campaign.UserId == thisUser.id) return {owner:false, permission:true}
       }
 
       if(resourceType === 'Campaign') {
-        return thisUser.hasCampaign(resource)
+        if(resource.UserId == thisUser.id) return {owner:true, permission: true}
       }
 
     }
 
-    throw new Error('The provided argument is not a controllable resource')
+    return {owner:false, byDominion:false}
 
-  });
+  };
 
   return User;
 };

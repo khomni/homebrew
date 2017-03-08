@@ -63,7 +63,6 @@ router.use('/:id', (req,res,next) => {
       res.locals.activeSystem = SYSTEM[character.Campaign.system]
     }
     res.locals.breadcrumbs.add(character.get({plain:true}))
-
     return next()
     // return character.getImages()
     // .then(images =>{
@@ -84,16 +83,13 @@ characterRouter.get('/',(req,res,next) => {
 
 characterRouter.post('/', Common.middleware.requireUser, Common.middleware.objectifyBody, (req,res,next) => {
   // TODO: change the fields that can be modified based on the permission type
-  return req.user.controls(res.locals.character)
-  .spread((controls, controlType) => {
-    if(!controls) throw Common.error.authorization("You aren't authorized to modify that character")
+  if(!req.user.controls(res.locals.character).permission) return next(Common.error.authorization("You aren't authorized to modify that character"))
 
-    return res.locals.character.update(req.body)
-    .then(character => {
-      if(req.requestType('json')) return res.json(character)
-      if(req.requestType('modal')) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
-      return res.redirect(req.headers.referer)
-    })
+  return res.locals.character.update(req.body)
+  .then(character => {
+    if(req.requestType('json')) return res.json(character)
+    if(req.requestType('modal')) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
+    return res.redirect(req.headers.referer)
   })
   .catch(next)
 });
@@ -129,18 +125,11 @@ characterRouter.post('/select', Common.middleware.requireUser, (req,res,next) =>
 })
 
 characterRouter.get('/edit', Common.middleware.requireUser, (req,res,next) => {
-  return req.user.controls(res.locals.character)
-  .spread((controls, controlType)=> {
-    if(!controls) throw Common.error.authorization("You aren't authorized to modify that character")
-    // GM edit
-    if(controlType.dominion) {
-      if(req.requestType('modal')) return res.render('characters/modals/edit',{gm:true})
-    }
+  if(!req.user.controls(res.locals.character).permission) return next(Common.error.authorization("You aren't authorized to modify that character"))
 
-    if(req.requestType('modal')) return res.render('characters/modals/edit')
-    return next()
-  })
-  .catch(next)
+  res.locals.gm = !req.user.controls(res.locals.character).owner
+
+  return res.render('characters/modals/edit')
 
 })
 

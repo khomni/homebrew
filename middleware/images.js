@@ -31,19 +31,19 @@ router.get('/*', (req,res,next) => {
   .catch(next)
 })
 
-router.delete('/*', (req,res,next) => {
-  let key = req.params[0]
-
-  return db.Image.findOne({where: {key: key}})
-  .then(image => {
-    if(!image) return next()
-
-    return image.destroy()
-    .then(result =>{
-      res.json({ref:image, kind: "Image"})
-    })
-  })
-  .catch(next)
-})
+// router.delete('/*', (req,res,next) => {
+//   let key = req.params[0]
+//
+//   return db.Image.findOne({where: {key: key}})
+//   .then(image => {
+//     if(!image) return next()
+//
+//     return image.destroy()
+//     .then(result =>{
+//       res.json({ref:image, kind: "Image"})
+//     })
+//   })
+//   .catch(next)
+// })
 
 module.exports = router

@@ -61,16 +61,19 @@ module.exports = {
     return next();
   },
 
-  confirmDelete: (req,res,next) => {
-    if(req.body.confirm) return next();
-    res.locals.action = req.originalUrl
-    res.locals.body = req.body
-    return res.render('modals/confirmDelete',{
-      action: req.originalUrl,
-      body:req.body
-    })
-    // return res.redirect(req.headers.referer)
-    return next();
+  confirmDelete: (reaction) => {
+    return (req,res,next) => {
+      if(req.body.confirm) return next();
+      res.locals.action = req.originalUrl
+      res.locals.body = req.body
+      return res.render('modals/confirmDelete',{
+        action: req.originalUrl,
+        body: req.body,
+        reaction: reaction
+      })
+      // return res.redirect(req.headers.referer)
+      return next();
+    }
   },
 
   // restrict the following routes to users who have an active character

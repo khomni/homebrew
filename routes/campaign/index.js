@@ -80,7 +80,7 @@ campaignRouter.post('/', Common.middleware.requireGM, (req,res,next) => {
 
 });
 
-campaignRouter.delete('/', Common.middleware.requireUser, Common.middleware.confirmDelete, (req,res,next) =>{
+campaignRouter.delete('/', Common.middleware.requireUser, Common.middleware.confirmDelete('redirect'), (req,res,next) =>{
   return req.user.hasCampaign(res.locals.campaign)
   .then(owned => {
     if(!owned) throw Common.error.authorization("You do not own that campaign")

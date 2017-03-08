@@ -14,6 +14,7 @@ router.get('/', (req,res,next) => {
 // uploads an image to the imageable resource
 router.post('/', Common.middleware.requireUser, Common.middleware.bufferFile.array('files'), (req,res,next) => {
   if(!res.locals.imageable) return next(Common.error.notfound('Could not locate the imageable resource'));
+
   debugger;
   // TODO: image processing library
 
@@ -58,12 +59,12 @@ imageRouter.get('/', (req,res,next) => {
 
 })
 
-imageRouter.delete('/', (req,res,next) => {
+imageRouter.delete('/', Common.middleware.confirmDelete('remove'), (req,res,next) => {
   if(!res.locals.image) return next();
 
   return res.locals.image.destroy()
   .then(()=>{
-    return res.sendStatus(200)
+    return res.json({ref:res.locals.image, kind:"Image"})
   })
   .catch(next)
 

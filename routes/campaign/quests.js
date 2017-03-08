@@ -92,7 +92,7 @@ questRouter.post('/add', Common.middleware.requireUser, (req,res,next) => {
   .catch(next)
 })
 
-questRouter.delete('/', Common.middleware.requireUser, Common.middleware.confirmDelete, (req,res,next) => {
+questRouter.delete('/', Common.middleware.requireUser, Common.middleware.confirmDelete('redirect'), (req,res,next) => {
   if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to delete quests"))
 
   // delete up the tree

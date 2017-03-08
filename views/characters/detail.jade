@@ -11,7 +11,7 @@ block header
 block content
   form.tab-group(action="/"+character.url+"select" method="post")
     a.tab.active Character Sheet
-    if character.ownedBy(currentUser)
+    if currentUser.controls(character).permission
       a.tab(href="/"+character.url+"edit" data-response="modal" data-target="character-"+character.id+"-edit") Edit
       button.tab(disabled=character.isActiveChar(currentUser)) Select
   .content-body
@@ -29,10 +29,18 @@ block content
           .flex.vert.drop-area
             .flex.center.pad
               each image in character.Images
-                .flex.vert(data-kind="Image" data-ref=image.id)
-                  form(action=image.path method="delete" data-response="json" data-reaction="remove"): button.close.as-link.float
+                .flex.vert.border(data-kind="Image" data-ref=image.id)
+                  if currentUser.controls(character).permission
                   a(href='/' + character.url + 'images/' + image.id data-response="modal")
                     img(src=image.path draggable=false).character-portrait
+                  .flex.pad.distribute
+                    if currentUser.controls(character).permission
+                      a.close(href='/' + character.url + 'images/' + image.id + '/edit' data-response="modal"): i.fa.fa-wrench
+                      form(action='/' + character.url + 'images/' + image.id method="delete" data-response="json" data-reaction="remove")
+                        button.close(title="Delete Photo"): i.fa.fa-trash
+                    if !currentUser.controls(character).permission
+                      form(action='/' + character.url + 'images/' + image.id + '/report' method="post" data-response="json" data-reaction="remove")
+                        button.close(title="Report Photo"): i.fa.fa-ban
             form(action='/'+character.url+'images' method="POST" enctype="multipart/form-data" data-response="json" data-reaction="redirect").flex.center.pad.grow.drop-target
               label.btn
                 span Select Files
