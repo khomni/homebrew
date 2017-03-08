@@ -12,8 +12,11 @@ router.get('/', (req,res,next) => {
 });
 
 // uploads an image to the imageable resource
-router.post('/', Common.middleware.requireUser, Common.middleware.bufferFile.array('files'), (req,res,next) => {
+router.post('/', Common.middleware.requireUser, Common.middleware.bufferFile.array('files', CONFIG.aws.PER_RESOURCE_LIMIT), (req,res,next) => {
   if(!res.locals.imageable) return next(Common.error.notfound('Could not locate the imageable resource'));
+  if(res.locals.imageable.Images.length + req.files.length > CONFIG.aws.PER_RESOURCE_LIMIT) {
+    return next(Common.error.request('You can only upload a maximum of ' + CONFIG.aws.PER_RESOURCE_LIMIT + ' images to this resource'))
+  }
 
   debugger;
   // TODO: image processing library

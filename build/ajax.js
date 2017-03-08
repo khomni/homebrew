@@ -13,6 +13,8 @@ Ajax.uploadFiles = (files, options) => {
 
   let xhr = new XMLHttpRequest()
   xhr.open(options.method || 'post', options.url)
+  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+  xhr.setRequestHeader('modal', true);
   xhr.send(formData)
 
   return xhr
@@ -80,7 +82,7 @@ Ajax.serialize = function(form) {
 }
 
 Ajax.setListeners = function() {
-  document.addEventListener('submit',function(e){
+  document.addEventListener('submit', function(e) {
     var thisForm = e.target;
     // TOOD: support for button formmethod and formaction
 

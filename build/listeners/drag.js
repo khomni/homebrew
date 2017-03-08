@@ -3,6 +3,7 @@
 const Promise = require('Promise');
 const dom = require('./dom.js');
 const Ajax = require('../ajax');
+const Modal = require('../modal');
 
 (() => {
 
@@ -34,7 +35,10 @@ const Ajax = require('../ajax');
     document.body.classList.add('loading');
     let upload = Ajax.uploadFiles(e.dataTransfer.files,{url: form.action, method: form.method})
     upload.onreadystatechange = () => {
-      if(upload.readyState == upload.DONE) document.body.classList.remove('loading');
+      if(upload.readyState == upload.DONE) {
+        document.body.classList.remove('loading');
+        if(upload.status != 200) return Modal.methods.createModal(upload.responseText);
+      }
       if (upload.readyState != null && (upload.readyState < 3 || upload.status != 200)) return null
       // incremental upload data here
       console.log(upload.responseText)
