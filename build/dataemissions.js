@@ -3,6 +3,7 @@
 (function(){
   // data is sniffed at the document level, but reference to the targeted dom will be e.target
   document.addEventListener('data', function(e){
+    console.log(e)
     var source = e.target
     var data = e.detail
     var method = source.getAttribute('method')
@@ -20,8 +21,10 @@
     if(source.dataset.reaction == 'remove') {
       if(!Array.isArray(data)) data = [data]
 
+      console.log(data)
       data.map(deletable => {
         var elements = Array.prototype.slice.call(document.querySelectorAll("[data-ref='"+deletable.ref.id+"'][data-kind='"+deletable.kind+"']"))
+        console.log(elements)
         elements.map(element=>{element.remove()})
       })
 

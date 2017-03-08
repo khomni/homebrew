@@ -36,6 +36,11 @@ module.exports = {
     storage: multer.memoryStorage(),
     limits: {
       fileSize: 25000000
+    },
+    fileFilter: function(req,file,cb){
+      if(/^image/.test(file.mimetype)) return cb(null, true)
+      console.log('rejecting:', file.mimetype)
+      return cb(null, false)
     }
   }),
 

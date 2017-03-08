@@ -12,30 +12,34 @@ router.get('/', (req,res,next) => {
 });
 
 // uploads an image to the imageable resource
-router.post('/', Common.middleware.requireUser, Common.middleware.bufferFile.single('image'), (req,res,next) => {
+router.post('/', Common.middleware.requireUser, Common.middleware.bufferFile.array('files'), (req,res,next) => {
   if(!res.locals.imageable) return next(Common.error.notfound('Could not locate the imageable resource'));
   debugger;
-
   // TODO: image processing library
 
-  // create a comment on this resource as the active character
-  return res.locals.imageable.createImage({
-    _directory: res.locals.imageable.$modelOptions.name.plural,
-    _file: req.file,
+  res.set('Content-Type','application/octet-stream');
+
+  return Promise.map(req.files, file => {
+    return res.locals.imageable.createImage({
+      _directory: res.locals.imageable.$modelOptions.name.plural,
+      _file: file,
+    })
+    .then(image => {
+      res.write(image.path)
+      return image.get({plain:true})
+    })
   })
-  .then(image => {
-    if(req.requestType('json')) return res.json(image.get({plain:true}))
-    return res.redirect(req.headers.referer)
+  .then(uploads => {
+    res.end()
   })
   .catch(next)
 });
 
 let imageRouter = express.Router({mergeParams: true})
 
-router.use('/:s3key', (req,res,next) => {
-
+router.use('/:id', (req,res,next) => {
   return db.Image.findOne({
-    where: {key: req.params.key}
+    where: {id: req.params.id}
   })
   .then(image => {
     res.locals.image = image
@@ -45,22 +49,12 @@ router.use('/:s3key', (req,res,next) => {
 
 }, imageRouter);
 
-// pipe from s3
+// get an image in various forms of markup
 imageRouter.get('/', (req,res,next) => {
   if(!res.locals.image) return next();
 
-  let source = request({
-    url: res.locals.image.url,
-    headers: {
-      'Cache-Control': 'public, max-age=3155760'
-    }
-  });
-
-  res.removeHeader('Pragma')
-  res.set('Expires', new Date(Date.now() + 31104000000).toUTCString())
-  res.set('Cache-Control','public, max-age=3155760')
-
-  source.pipe(res)
+  if(req.requestType('modal')) return res.render('images/modals/preview')
+  return res.redirect(res.locals.image.path)
 
 })
 

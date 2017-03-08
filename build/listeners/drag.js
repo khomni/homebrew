@@ -1,13 +1,18 @@
 'use strict';
 
-var dom = require('./dom.js');
+const Promise = require('Promise');
+const dom = require('./dom.js');
+const Ajax = require('../ajax');
 
 (() => {
 
-  function mouseOut(e){
-    console.log('mouseout')
+  var mouseOut = function(e) {
     document.body.classList.remove('dropfile')
   }
+
+  window.addEventListener("dragover", e => {
+    e.preventDefault();
+  },false);
 
   window.addEventListener('dragenter', e => {
     window.addEventListener('mouseout', mouseOut)
@@ -15,16 +20,27 @@ var dom = require('./dom.js');
   }, false)
 
   window.addEventListener('dragend', e => {
-    console.log('exit:', e.target)
     window.removeEventListener('mouseout', mouseOut)
     document.body.classList.remove('dropfile');
-  },false)
+  }, false)
 
   window.addEventListener('drop', e => {
+    e.preventDefault();
     window.removeEventListener('mouseout', mouseOut)
-    if (e.target.tagName != "INPUT") return e.preventDefault();
-    console.log('drop:',e.dataTransfer.files);
-    document.body.classList.remove('dropfile');
-    return e.preventDefault();
+    let dropArea = e.target.closest('.drop-area')
+    let form = dropArea.querySelector('form.drop-target')
+    if(!form || !e.dataTransfer.files.length) return true;
+
+    document.body.classList.add('loading');
+    let upload = Ajax.uploadFiles(e.dataTransfer.files,{url: form.action, method: form.method})
+    upload.onreadystatechange = () => {
+      if(upload.readyState == upload.DONE) document.body.classList.remove('loading');
+      if (upload.readyState != null && (upload.readyState < 3 || upload.status != 200)) return null
+      // incremental upload data here
+      console.log(upload.responseText)
+    }
+
+    return false;
+
   },false)
 })()

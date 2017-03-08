@@ -63,6 +63,7 @@ router.use('/:id', (req,res,next) => {
       res.locals.activeSystem = SYSTEM[character.Campaign.system]
     }
     res.locals.breadcrumbs.add(character.get({plain:true}))
+
     return next()
     // return character.getImages()
     // .then(images =>{

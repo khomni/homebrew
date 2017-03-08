@@ -92,6 +92,13 @@ body {
       z-index: 1001;
       position:relative;
       outline: 2px dashed @color-primary;
+      .drop-target input[type="file"]{
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+        position: absolute;
+        overflow:hidden;
+      }
     }
   }
 

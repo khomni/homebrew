@@ -36,10 +36,11 @@ router.delete('/*', (req,res,next) => {
 
   return db.Image.findOne({where: {key: key}})
   .then(image => {
+    if(!image) return next()
 
     return image.destroy()
     .then(result =>{
-      res.json({path:image.path})
+      res.json({ref:image, kind: "Image"})
     })
   })
   .catch(next)

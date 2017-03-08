@@ -27,20 +27,17 @@ block content
       .tab-panel
         #about.section-body.tab-pane.active
           .flex.vert.drop-area
-            .flex.pad.center
+            .flex.center.pad
               each image in character.Images
-                .flex.vert
-                  img(src=image.path).character-portrait
-                  form(action=image.path method="delete" data-response="json" data-reaction="redirect").flex.pad.center
-                    button.as-link: i.fa.fa-close
-                    a(href='/' + character.url + 'images/' + image.id + '/edit' data-response="modal"): i.fa.fa-wrench
-                    a(href=image.path): i.fa.fa-eye
-            .flex.pad.center
-              form(action='/'+character.url+'images' method="POST" enctype="multipart/form-data" data-response="json" data-reaction="redirect")
-                .flex.pad.center
-                  label.btn(for="addfile") Select Photo
-                    input#addfile(type="file" name="image")
-                  button.btn Upload
+                .flex.vert(data-kind="Image" data-ref=image.id)
+                  form(action=image.path method="delete" data-response="json" data-reaction="remove"): button.close.as-link.float
+                  a(href='/' + character.url + 'images/' + image.id data-response="modal")
+                    img(src=image.path draggable=false).character-portrait
+            form(action='/'+character.url+'images' method="POST" enctype="multipart/form-data" data-response="json" data-reaction="redirect").flex.center.pad.grow.drop-target
+              label.btn
+                span Select Files
+                input(type="file" name="files" accept="image/*" multiple)
+              button.btn Upload
         #inventory.tab-pane.section-body
         #lore.tab-pane.section-body
         #knowledge.tab-pane

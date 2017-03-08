@@ -78,30 +78,40 @@ module.exports = function(sequelize, DataTypes) {
     key.push(image._directory);
     key.push(filename);
 
-    image.key = key.join('/')
-
-    image.s3 = {
-      region: CONFIG.aws.region,
-      bucket: CONFIG.aws.bucket,
-      key: image.key,
-    }
+    image.key = key.join('/');
 
     return image
   })
 
+  // like Image.create() but it returns an event emitter
+  Image.streamCreate = (args) => {
+    if(!args._file) throw new Error('No file provided')
+
+    let image = Image.build(args)
+
+    return s3.upload({Key: image.key, Bucket: CONFIG.aws.bucket})
+    .on('httpUploadProgress', evt => {
+      console.log(evt.loaded, '/', evt.total)
+    })
+    .send()
+  }
+
   Image.beforeCreate((image, options) => {
-    // TODO: upload the photo to s3
-    // the file object will be included in the `file` field as a virtual object
-    debugger;
+    if(image.s3) return image; // if there is already image.s3 credentials, skip the blocking upload
 
     let startTime = Date.now();
     return s3.putObjectAsync({
       Bucket: CONFIG.aws.bucket,
-      Key: image.s3.key,
+      Key: image.key,
       ContentType: image._file.mimetype,
       Body: image._file.buffer,
     })
     .then(response =>{
+      image.s3 = {
+        region: CONFIG.aws.region,
+        bucket: CONFIG.aws.bucket,
+        key: image.key,
+      }
       s3Log('photo uploaded:', image.s3.key, '('+(Date.now()-startTime)+'ms)')
       return image
     })

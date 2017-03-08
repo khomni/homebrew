@@ -4,6 +4,20 @@ const Promise = require('bluebird');
 
 let Ajax = {}
 
+// takes a file (either form an image or a drop event) and uploads it directly to the specified route as multipart/form-data
+Ajax.uploadFiles = (files, options) => {
+  let formData = new FormData()
+  Array.prototype.slice.call(files).forEach((file,i) => {
+    formData.append('files', file)
+  })
+
+  let xhr = new XMLHttpRequest()
+  xhr.open(options.method || 'post', options.url)
+  xhr.send(formData)
+
+  return xhr
+}
+
 Ajax.serializeMultipart = Promise.method(function(form){
   let fields = Array.prototype.slice.call(form.elements)
   let formData = new FormData();
@@ -134,7 +148,6 @@ Ajax.fetch = Promise.method(function(args) {
     return JSON.stringify(Ajax.serialize(args.body))
   })
   .then(data => {
-    console.log(data)
     // for ordinary form data, send the serialized, stingified form data as a string
     let headers = {
       'X-Requested-With': 'XMLHttpRequest'
@@ -170,7 +183,6 @@ Ajax.json = function(args) {
   args.headers = args.headers || {}
   Object.assign(args.headers, {'Content-Type': 'application/json', 'Accept': 'application/json'});
   return this.fetch(args).then(xhr => {
-    console.log(xhr)
     return xhr.response
   });
 };
