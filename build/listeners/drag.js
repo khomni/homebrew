@@ -38,10 +38,11 @@ const Modal = require('../modal');
       if(upload.readyState == upload.DONE) {
         document.body.classList.remove('loading');
         if(upload.status != 200) return Modal.methods.createModal(upload.responseText);
+        return window.location.reload();
       }
       if (upload.readyState != null && (upload.readyState < 3 || upload.status != 200)) return null
       // incremental upload data here
-      console.log(upload.responseText)
+
     }
 
     return false;

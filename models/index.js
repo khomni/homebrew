@@ -35,13 +35,14 @@ db._sync = Promise.method(function(){
   return sequelize.sync({force:CONFIG.database.forcesync})
   .then(syncResults => {
     // individually check to make sure the model associations are valid
-    Promise.map(Object.keys(syncResults.models), key => {
-      return syncResults.models[key].findOne({where:{}})
-      .catch(err => {
-        console.log('force resync:',key)
-        return syncResults.models[key].sync({force: true})
-      })
-    })
+    return syncResults;
+    // Promise.map(Object.keys(syncResults.models), key => {
+    //   return syncResults.models[key].findOne({where:{}})
+    //   .catch(err => {
+    //     console.log('force resync:',key)
+    //     return syncResults.models[key].sync({force: true})
+    //   })
+    // })
   })
 })
 

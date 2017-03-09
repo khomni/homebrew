@@ -63,9 +63,14 @@ module.exports = {
 
   confirmDelete: (reaction) => {
     return (req,res,next) => {
-      if(req.body.confirm) return next();
-      res.locals.action = req.originalUrl
-      res.locals.body = req.body
+      let route = req.baseUrl.replace(/[^a-zA-Z]+/gi,'/')
+      req.session.confirmedDeletes = req.session.confirmedDeletes || {}
+      if(req.body.confirm || req.session.confirmedDeletes[route]) {
+        if(req.body.disable) req.session.confirmedDeletes[route] = true;
+        return next();
+      }
+      res.locals.action = req.originalUrl;
+      res.locals.body = req.body;
       return res.render('modals/confirmDelete',{
         action: req.originalUrl,
         body: req.body,

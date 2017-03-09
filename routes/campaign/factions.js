@@ -9,8 +9,6 @@ router.use((req,res,next) => {
 /* GET faction listing. */
 router.get('/', Common.middleware.requireUser, (req, res, next) => {
 
-  console.log(db.methods(res.locals.character,/membership|faction/gi))
-
   // get the factions, their member and their leader
   var query = {include:[{model:db.Character, as: 'members'},{model:db.Character, as: 'leader'}]}
 
@@ -28,7 +26,6 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
 });
 
 router.get('/new', Common.middleware.requireUser, Common.middleware.objectifyBody, (req, res, next) => {
-
   if(req.requestType('modal')) return res.render('campaign/factions/modals/edit')
   return res.render('campaign/factions/new')
 });

@@ -68,8 +68,6 @@ router.post('/', Common.middleware.requireUser, (req, res, next) => {
   if(!res.locals.permission.write) return next(Common.error.authorization('You are not permitted to add lore to this resource'))
 
   Object.assign(req.body,{authorId:req.user.id, lorable_id: res.locals.lorable.id})
-  console.log(res.locals.lorable.get({plain:true}))
-  console.log(db.methods(res.locals.lorable,/lore/gi))
 
   // create a bit of lore for the lorable
   return res.locals.lorable.createLore(req.body)

@@ -91,13 +91,6 @@ var methods = {
     document.body.addEventListener('click', e => {
       var spawner
       var spawner = e.target.closest('[data-response="modal"]')
-      // for(var i=0; i<e.path.length;i++) {
-      //   // if(!e.path[i]) return true
-      //   if(e.path[i].dataset && e.path[i].dataset.response == 'modal') {
-      //     spawner = e.path[i]
-      //     break;
-      //   }
-      // }
 
       if(!spawner) return true;
       e.preventDefault();
@@ -105,11 +98,12 @@ var methods = {
       var url = spawner.getAttribute('href')
 
       var target = document.getElementById(spawner.dataset.target||url)
+      console.log(target)
 
       if(!target) {
         target = document.createElement('div')
         target.classList.add('modal')
-        target.id = e.target.dataset.target || +Date.now()+url.replace(/\//gi,'-')
+        target.id = spawner.dataset.target || Date.now()+url.replace(/\//gi,'-')
       }
 
       modalContainer.appendChild(target)

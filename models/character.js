@@ -107,7 +107,7 @@ module.exports = function(sequelize, DataTypes) {
         });
 
         Character.addScope('defaultScope', {
-          include: [{model: models.Campaign}, {model:models.Image}]
+          include: [{model: models.Campaign}, {model:models.Image, order:[['order','ASC']]}]
         }, {override:true} )
 
         // Character.belongsTo(models.Party);

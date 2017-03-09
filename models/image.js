@@ -2,7 +2,8 @@
 
 const AWS = require('aws-sdk');
 const crypto = require('crypto');
-const path = require('path')
+const path = require('path');
+const gm = require('gm').subClass({imageMagick: true});;
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -15,7 +16,7 @@ Promise.promisifyAll(s3)
 
 module.exports = function(sequelize, DataTypes) {
   var Image = sequelize.define("Image", {
-    url: { // complete link to
+    url: { // returns the complete link to the s3 resource
       type: DataTypes.VIRTUAL,
       get: function() {
         return 'https://s3-' + this.s3.region + '.amazonaws.com/' + this.s3.bucket + '/' + this.s3.key
@@ -27,24 +28,27 @@ module.exports = function(sequelize, DataTypes) {
         return '/i/' + this.getDataValue('key')
       }
     },
-    imageable: { // the model type of the image
+    imageable: { // the model type of the image (used for joins)
       type: DataTypes.STRING,
     },
 
-    key: {
+    key: { // the routable path to the image (doubles as s3 key)
       type: DataTypes.STRING,
       allowNull: false,
       index: true,
       unique: true,
     },
-    // amazon s3 components
-    s3: {
+
+    s3: { // amazon s3 components
       type: DataTypes.JSONB,
       validate: function(object){
         if(!('region' in object)) throw new Error('Missing s3 region');
         if(!('bucket' in object)) throw new Error('Missing s3 bucket');
         if(!('key' in object)) throw new Error('Missing s3 key');
       }
+    },
+    order: { // used to determine relative ordering
+      type: DataTypes.INTEGER
     },
     public: {
       type: DataTypes.BOOLEAN,
@@ -89,7 +93,10 @@ module.exports = function(sequelize, DataTypes) {
 
     let image = Image.build(args)
 
-    return s3.upload({Key: image.key, Bucket: CONFIG.aws.bucket})
+    let resizeStream = gm(image._file.buffer, image._file.originalname)
+    .resize(null, 900).crop(1600, 900).stream()
+
+    return s3.upload({Key: image.key, Bucket: CONFIG.aws.bucket, Body: resizeStream})
     .on('httpUploadProgress', evt => {
       console.log(evt.loaded, '/', evt.total)
     })
@@ -100,6 +107,7 @@ module.exports = function(sequelize, DataTypes) {
     if(image.s3) return image; // if there is already image.s3 credentials, skip the blocking upload
 
     let startTime = Date.now();
+
     return s3.putObjectAsync({
       Bucket: CONFIG.aws.bucket,
       Key: image.key,

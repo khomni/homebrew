@@ -31,7 +31,7 @@ block content
               each image in character.Images
                 .flex.vert.border(data-kind="Image" data-ref=image.id)
                   if currentUser.controls(character).permission
-                  a(href='/' + character.url + 'images/' + image.id data-response="modal")
+                  a(href='/' + character.url + 'images/' + image.id data-response="modal" data-target="image-"+image.id)
                     img(src=image.path draggable=false).character-portrait
                   .flex.pad.distribute
                     if currentUser.controls(character).permission
