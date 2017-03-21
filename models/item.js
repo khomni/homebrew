@@ -1,5 +1,7 @@
 "use strict";
 
+const icons = require('~/data/icons')
+
 module.exports = function(sequelize, DataTypes) {
   var Item = sequelize.define("Item", {
     // identifier: {
@@ -43,6 +45,12 @@ module.exports = function(sequelize, DataTypes) {
     rarity: {
       type: DataTypes.INTEGER,
       default: 0,
+    },
+    icon: {
+      type: DataTypes.STRING,
+      validate: function(s) {
+        if(s && !icons['rpg-hero'].includes(s)) throw new Error('Not a valid icon')
+      }
     },
     // boolean indicating if the item is one-of-a-kind
     unique: {

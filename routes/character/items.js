@@ -3,6 +3,7 @@ var router = express.Router();
 
 // you can get back to the journal index from this module at any time by rediredting to req.baseURL
 router.use((req,res,next)=> {
+  res.locals.icons = require('~/data/icons')
   // res.locals.THEME = req.session.theme || 'wood'
   return next()
 })

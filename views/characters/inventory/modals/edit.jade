@@ -7,6 +7,7 @@ form(name='item' action='/'+character.url+'inventory/' + (item?item.id:'') metho
     if activeSystem
       .tab-group
         a.tab.active(data-click="tab" data-target="basic-fields") Basic
+        a.tab(data-click="tab" data-target="item-icons") Icon
         a.tab(data-click="tab" data-target="system-fields")= activeSystem.name
     .modal-body
       .tab-panel
@@ -47,6 +48,12 @@ form(name='item' action='/'+character.url+'inventory/' + (item?item.id:'') metho
         if activeSystem
           #system-fields.tab-pane.flex.vert.fill 
             | !{activeSystem.render('itemFields.jade',{item: item||{properties:{}}})}
+        #item-icons.tab-pane.flex.vert.fill
+          label Icon
+          each icon in icons['rpg-awesome']
+            label.checkbox
+              input.form-input(type="radio" name="icon" value=icon checked=item?item.icon==icon:false)
+              span #[i.ra.ra-2x(class=icon)] #{icon}
         
     .modal-footer
         button.btn.block(type='submit')= item ? 'Update Item' : 'Add Item'

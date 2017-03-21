@@ -46,7 +46,8 @@
     "sequelize": "^3.27.0",
     "sequelize-hierarchy": "^1.0.0",
     "serve-favicon": "^2.3.2",
-    "sqlite": "0.0.4"
+    "sqlite": "0.0.4",
+    "wavy": "^1.0.3"
   },
   "devDependencies": {
     "chai": "^3.5.0",
