@@ -1,85 +1,87 @@
-form(method="post" data-response="json" data-reaction="redirect")
-  if !items || items.length == 0
-    .flex.center: label No Items
-  else
-    .scroll.x
-      table.table
-        thead
-          tr
-            if !itemOwner || itemOwner.isActiveChar(currentUser)
-              th
-            th
-            th Name
-            th Quantity
-            th Value
-            th Weight
-            th Properties
-            //- th Blueprint
-            if character.isActiveChar(currentUser)
-              th
-        tbody
-          each item in items
-            tr(data-ref=item.id data-kind="Item")
-              if !itemOwner || itemOwner.isActiveChar(currentUser)
-                td
-                  input(type="hidden" name="item.$.id" value=item.id)
-                  if item.quantity > 1
-                    input.form-input.minimal(type="number" name="item.$.quantity" max=(item.quantity) default=0 min=0 placeholder="#" tabindex=1)
-                  else
-                    label.checkbox
-                      input(type="checkbox" name="item.$.quantity" value=1 default=0 tabindex=1)
-                      span
-              td
-                if item.icon
-                  i.ra(class=item.icon)
-              td
-                a(href="inventory/"+item.id data-response="modal" data-target="item-"+item.id data-rarity=item.rarity tabindex=2)= item.name
-              th= item.quantity > 1 ? item.quantity : "—"
-              td
-                if Number(item.value) == 0
-                  span —
-                else
-                  span= (Number(item.value)*item.quantity).toLocaleString()+" "+activeSystem.terms.CURRENCY
-              td
-                if Number(item.weight) == 0
-                  | —
-                else
-                  if item.quantity > 1
-                    span #{(Number(item.weight)*item.quantity).toFixed(2)}
-                    label  (#{Number(item.weight)})
-                  else
-                    | #{Number(item.weight) || '–'}
-              //- td= item.properties.blueprint
-              td #{Object.keys(item.properties||{}).length||'—'}
-              if itemOwner && itemOwner.isActiveChar(currentUser)
-                td
-                  .flex.je
-                    a.close(href="/"+itemOwner.url+"inventory/"+item.id+"/edit" data-response="modal" data-target="edit-item-"+item.id tabindex=3): i.fa.fa-wrench
-        if meta
-          tfoot
-            tr
-              th Total
-              th
-              if !itemOwner || itemOwner.isActiveChar(currentUser)
-                td 
-              th #{meta.total}
-              th #{meta.value.toLocaleString()} #{activeSystem.terms.CURRENCY.pluralize(meta.value)}
-              th #{meta.weight.toFixed(2)} #{activeSystem.terms.WEIGHT.pluralize(meta.weight)}
-              th
-              if itemOwner && itemOwner.isActiveChar(currentUser)
+section
+  .section-body
+    form(method="post" data-response="json" data-reaction="redirect")
+      if !items || items.length == 0
+        .flex.center: label No Items
+      else
+        .scroll.x
+          table.table
+            thead
+              tr
+                if !itemOwner || itemOwner.isActiveChar(currentUser)
+                  th
                 th
-  .flex.center.pad
-    if itemOwner && itemOwner.isActiveChar(currentUser) && !character.isActiveChar(currentUser)
-      button.btn(formaction="/"+character.url+"inventory/give" formmethod="post" data-response="json" data-reaction="redirect") Give Items
-    else
-      if !itemOwner || itemOwner.isActiveChar(currentUser)
-        //- item is owned or has no owner
-        button.btn(formaction="inventory" formmethod="delete" data-reaction="remove") Destroy
-      if itemOwner && itemOwner.isActiveChar(currentUser)
-        //- this is the MainChar's inventory
-        button.btn(formaction="inventory/drop" formmethod="post" data-reaction="remove") Drop
-        a.btn(href="inventory/new" data-response="modal") New Item
-      else if !itemOwner
-        //- These items are unclaimed
-        if items && items.length>0
-          button.btn(formaction="/"+currentUser.MainChar.url+'inventory/give' method='post') Take Items
+                th Name
+                th Quantity
+                th Value
+                th Weight
+                th Properties
+                //- th Blueprint
+                if !itemOwner || itemOwner.isActiveChar(currentUser)
+                  th
+            tbody
+              each item in items
+                tr(data-ref=item.id data-kind="Item")
+                  if !itemOwner || itemOwner.isActiveChar(currentUser)
+                    td
+                      input(type="hidden" name="item.$.id" value=item.id)
+                      if item.quantity > 1
+                        input.form-input.minimal(type="number" name="item.$.quantity" max=(item.quantity) default=0 min=0 placeholder="#" tabindex=1)
+                      else
+                        label.checkbox
+                          input(type="checkbox" name="item.$.quantity" value=1 default=0 tabindex=1)
+                          span
+                  td
+                    if item.icon
+                      i.ra(class=item.icon)
+                  td
+                    a(href="inventory/"+item.id data-response="modal" data-target="item-"+item.id data-rarity=item.rarity tabindex=2)= item.name
+                  th= item.quantity > 1 ? item.quantity : "—"
+                  td
+                    if Number(item.value) == 0
+                      span —
+                    else
+                      span= (Number(item.value)*item.quantity).toLocaleString()+" "+activeSystem.terms.CURRENCY
+                  td
+                    if Number(item.weight) == 0
+                      | —
+                    else
+                      if item.quantity > 1
+                        span #{(Number(item.weight)*item.quantity).toFixed(2)}
+                        label  (#{Number(item.weight)})
+                      else
+                        | #{Number(item.weight) || '–'}
+                  //- td= item.properties.blueprint
+                  td #{Object.keys(item.properties||{}).length||'—'}
+                  if itemOwner && itemOwner.isActiveChar(currentUser)
+                    td
+                      .flex.je
+                        a.close(href="/"+itemOwner.url+"inventory/"+item.id+"/edit" data-response="modal" data-target="edit-item-"+item.id tabindex=3): i.fa.fa-wrench
+            if meta
+              tfoot
+                tr
+                  th Total
+                  th
+                  if !itemOwner || itemOwner.isActiveChar(currentUser)
+                    td 
+                  th #{meta.total}
+                  th #{meta.value.toLocaleString()} #{activeSystem.terms.CURRENCY.pluralize(meta.value)}
+                  th #{meta.weight.toFixed(2)} #{activeSystem.terms.WEIGHT.pluralize(meta.weight)}
+                  th
+                  if itemOwner && itemOwner.isActiveChar(currentUser)
+                    th
+      .flex.center.pad
+        if itemOwner && itemOwner.isActiveChar(currentUser) && !character.isActiveChar(currentUser)
+          button.btn(formaction="/"+character.url+"inventory/give" formmethod="post" data-response="json" data-reaction="redirect") Give Items
+        else
+          if !itemOwner || itemOwner.isActiveChar(currentUser)
+            //- item is owned or has no owner
+            button.btn(formaction="inventory" formmethod="delete" data-reaction="remove") Destroy
+          if itemOwner && itemOwner.isActiveChar(currentUser)
+            //- this is the MainChar's inventory
+            button.btn(formaction="inventory/drop" formmethod="post" data-reaction="remove") Drop
+            a.btn(href="inventory/new" data-response="modal") New Item
+          else if !itemOwner
+            //- These items are unclaimed
+            if items && items.length>0
+              button.btn(formaction="/"+currentUser.MainChar.url+'inventory/give' method='post') Take Items
