@@ -65,6 +65,8 @@ function Modal(elem) {
 
   // prevent click events from reaching the modals parent
   elem.addEventListener('mousedown', e => {
+    console.log(e)
+    if(e.target.nodeName == "BUTTON" || e.target.nodeName == "A") return true;
     if(e.which == 2) return thisModal.remove();
     if(e.which == 1) return thisModal.focus();
 
@@ -98,7 +100,6 @@ var methods = {
       var url = spawner.getAttribute('href')
 
       var target = document.getElementById(spawner.dataset.target||url)
-      console.log(target)
 
       if(!target) {
         target = document.createElement('div')
@@ -155,10 +156,19 @@ var methods = {
       target.id = Date.now()
     }
     target.innerHTML = html
-    var scripts = Array.prototype.slice.call(target.querySelectorAll('script'))
-    scripts.map(script => {eval(script.innerHTML)})
+    var scripts = Array.prototype.slice.call(target.querySelectorAll('script'));
+    scripts.map(script => {eval(script.innerHTML)});
     Array.prototype.slice.call(target.querySelectorAll('.modal-title')).map(title =>{title.classList.add('handle')})
-    modals[target.id] = new Modal(target)
+    modals[target.id] = new Modal(target);
+
+    if(!target.querySelector('button.close')) {
+      let close = document.createElement('button');
+      close.classList.add('as-link','close', 'lg', 'float');
+      close.dataset.click = 'remove';
+      close.dataset.target = '.modal';
+      target.insertBefore(close, target.firstChild)
+    }
+
     target.modal.show();
   },
 

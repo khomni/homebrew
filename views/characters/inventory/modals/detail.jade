@@ -6,3 +6,12 @@
         div ???
       else
         div= lore.content
+    hr
+    .flex.distribute
+      .flex.vert
+        each property,key in item.properties
+          div=key
+      .flex.vert
+        each property,key in item.properties
+          div=property
+

@@ -28,11 +28,10 @@ body.modal-open {
 
 	&:not(:empty) {
 		.xs({
-			pointer-events:all;
+			// pointer-events:all;
 			display: flex;
 			flex-direction: column-reverse;
 			justify-content:flex-end;
-			overflow-y: auto;
 		})
 	}
 
@@ -101,6 +100,7 @@ body.modal-open {
 		font-size: 24px;
 		font-weight: 500;
 		padding: 1rem;
+		padding-right: 2rem;
 		border-bottom: 1px solid #ddd;
 		text-align: center;
 	}

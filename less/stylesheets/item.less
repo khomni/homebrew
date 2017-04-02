@@ -1,8 +1,8 @@
-[data-rarity="0"] {
+[data-rarity="0"],a[data-rarity="0"] {
   color: inherit;
 }
 
-[data-rarity="1"] {
+[data-rarity="1"],a[data-rarity="1"] {
   color: darken(@color-secondary,10%);
   &:hover,&:active,&:focus {
     color: @color-secondary;
@@ -10,7 +10,7 @@
   // text-shadow: 0 0 2px @color-secondary;
 }
 
-[data-rarity="2"] {
+[data-rarity="2"],[data-rarity="2"] {
   color: darken(@color-primary,10%);
     &:hover,&:active,&:focus {
       color: @color-primary;
@@ -18,24 +18,32 @@
   // text-shadow: 0 0 4px @color-primary;
 }
 
-[data-rarity="3"] {
-  color: #aa00ff;
+[data-rarity="3"],a[data-rarity="3"] {
+  // color: #aa00ff;
+  color: #cd66ff;
   &:hover,&:active,&:focus {
-    color: #cd66ff;
+    color: #dd99ff;
   }
   text-shadow: 0 0 8px #c65dfc;
 }
 
 a.item-tile {
   text-decoration: none;
-  color: @color-ui;
   max-width: 100vh;
   width: 200px;
   height: 200px;
   background: fade(black, 10%);
   box-shadow: inset 0px 0px 8px fade(black, 75%);
+  outline: 1px solid;
+
 
   &:hover,&:active,&:focus {
     text-decoration: none;
+    outline-color: inherit;
   }
+
+  .xs({
+    max-width: ~"calc(50vw - 1em)";
+    max-height: ~"calc(50vw - 1em)";
+  })
 }

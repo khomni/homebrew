@@ -21,7 +21,9 @@ block content
     #owned-items.tab-pane.active
       include ./_itemTiles
     #owned-items-table.tab-pane
-      include ./_itemTable
+      section
+        .section-body
+          include ./_itemTable
     if itemOwner.isActiveChar(currentUser)
       #nearby-items.tab-pane
     else

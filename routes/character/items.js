@@ -142,6 +142,7 @@ router.delete('/', Common.middleware.requireCharacter, Common.middleware.objecti
 
   // req.body.item is an array of object with `id` and `quantity` to drop
   // if the drop quantity is the same as the item quantity, drop the entire item
+  if(!req.body.item) res.json([])
 
   var itemsToDelete = req.body.item.filter(item => {return item.quantity > 0})
 
