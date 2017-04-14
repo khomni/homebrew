@@ -34,6 +34,8 @@ var Navbar = {
       })(thisDrop)
     };
 
+    if(!this.dom) return false;
+
     this.dom.addEventListener('click',function(e){
       // prevent menus from closing if navbar is clicked
       e.stopPropagation();

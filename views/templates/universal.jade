@@ -1,4 +1,4 @@
-include mixins/mixins
+include /mixins/mixins
 doctype html
 html
   head
@@ -13,16 +13,6 @@ html
     block scripts
     link#favicon(rel='shortcut icon' href='/0.ico')
     meta(name='viewport', content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1.0, user-scalable=no")
+    block meta
   body
-    #modals.modals
-    block navigation
-      include components/navbar
-    #content-wrapper
-      //- .overlay
-        +characterCard(activeChar)
-      block header
-        +header(headerColor||null)
-      #content-main&attributes({class: THEME})
-        //- include /components/breadcrumbs
-        block content
-      block footer
+    block main

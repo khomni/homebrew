@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express');
 var router = express.Router();
 var models = require('../models');
@@ -69,15 +71,17 @@ router.get('/about', (req, res, next) => {
   res.render('about');
 });
 
-router.use('/i',require('./images'));
+router.use('/i', require('./images'));
 
-router.use('/u',require('./user'));
-router.use('/pc',require('./character'));
-router.use('/r',require('./reference'));
-router.use('/c',require('./campaign'));
-router.use('/lore',require('./lore'));
-router.use('/knowledge',require('./character/knowledge'));
-router.use('/comment',require('./comment'));
+router.use('/u', require('./user'));
+router.use('/pc', require('./character'));
+router.use('/r', require('./reference'));
+router.use('/c', require('./campaign'));
+router.use('/lore', require('./lore'));
+router.use('/knowledge', require('./character/knowledge'));
+router.use('/comment', require('./comment'));
+
+router.use('/s', require('./system'));
 
 router.use('/settings',require('./settings'));
 
