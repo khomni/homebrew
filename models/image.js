@@ -61,6 +61,12 @@ module.exports = function(sequelize, DataTypes) {
     attribution: {
       type: DataTypes.STRING,
     },
+    width: {
+      type: DataTypes.INTEGER,
+    },
+    height: {
+      type: DataTypes.INTEGER,
+    },
 
     // these virtuals are used for the creation process only
     _file: {type: DataTypes.VIRTUAL},

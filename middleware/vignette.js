@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs');
 
 var vignette = {
@@ -5,7 +7,7 @@ var vignette = {
     var vignetteMeta = require(APPROOT + "/data/vignettes.json");
 
     this.getVignettes(function(files){
-      for(i=0;i<files.length;i++) {
+      for(let i=0; i<files.length; i++) {
         vignetteMeta[files[i]] = vignetteMeta[files[i]] || {path: '/images/vignettes/' + files[i], focus: [50,50], attribution: ""}
       }
       var vignettes = JSON.stringify(vignetteMeta,null,"\t")
@@ -15,6 +17,7 @@ var vignette = {
       })
     })
   },
+
   getVignettes: function(cb){
     fs.readdir(APPROOT + '/public/images/vignettes',function(err,files){
       if(err){
@@ -24,6 +27,7 @@ var vignette = {
       cb(files)
     })
   },
+  
   getVignette: function(cb) {
     this.getVignettes(function(files){
       var vignettes = files
