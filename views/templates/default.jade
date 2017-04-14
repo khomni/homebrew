@@ -1,0 +1,20 @@
+//- default layout, for most site content
+//- navigation: slot for navbar, populated by default navbar component
+//- header: the banner at the top of the page, can be small or fullscreen
+//- content: main content area
+//- footer: footer content (currently unused)
+extends /templates/universal
+
+block main
+  #modals.modals
+  block navigation
+    include /components/navbar
+  #content-wrapper
+    //- .overlay
+      +characterCard(activeChar)
+    block header
+      +header(headerColor||null)
+    #content-main&attributes({class: THEME})
+      //- include /components/breadcrumbs
+      block content
+    block footer
