@@ -8,20 +8,21 @@ router.get('/', (req, res, next) => {
   return next();
 });
 
-router.use('/pathfinder', require('./pathfinder'));
-
 // TODO: develop configuration files that allow systems to be added / removed via modular configuration files
 
 let systemRouter = express.Router({mergeParams: true});
 
 router.use('/:system', (req,res,next) => {
-  res.locals.activeSystem = req.params.system
+  if(!(req.params.system in SYSTEM)) return next(Common.error.notfound('System not found'))
+  res.locals.activeSystem = SYSTEM[req.params.system]
   return next();
 }, systemRouter);
 
-systemRouter.get('/bestiary', (req,res,next) => {
-  return next();
-})
+systemRouter.get('/about', (req,res,next) => {
+  return res.json(res.locals.activeSystem)
+});
+
+systemRouter.use('/reference', require('./reference'));
 
 
 module.exports = router;
