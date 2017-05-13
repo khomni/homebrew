@@ -22,7 +22,7 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
   return req.user.MainChar.getKnowledge(query)
   .then(knowledge => {
 
-    if(req.requestType('json')) return res.json(knowledge)
+    if(req.json) return res.json(knowledge)
 
     var subjects = {}
     knowledge.map(k => {
@@ -30,8 +30,8 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
       subjects[k.lorable].push(k)
     })
 
-    if(req.requestType('xhr')) return res.render('lore/_topics',{subjects:subjects})
-    if(req.requestType('modal')) return res.render('lore/modals/list',{loreList:knowledge})
+    if(req.xhr) return res.render('lore/_topics',{subjects:subjects})
+    if(req.modal) return res.render('lore/modals/list',{loreList:knowledge})
     return res.json(knowledge)
   })
   .catch(next)

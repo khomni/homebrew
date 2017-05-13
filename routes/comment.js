@@ -27,9 +27,9 @@ router.get('/', (req,res,next) => {
   })
   .then(comments => {
     // console.log(comments)
-    if(req.requestType('json')) return res.json(comments)
+    if(req.json) return res.json(comments)
     // ajax comments, load in just the comment markup
-    if(req.requestType('xhr')) return res.render('comments/_comments',{comments:comments});
+    if(req.xhr) return res.render('comments/_comments',{comments:comments});
     return res.json(comments)
   })
   .catch(next)
@@ -47,16 +47,16 @@ router.post('/', Common.middleware.requireUser, (req,res,next) => {
 
   }))
   .then(comment => {
-    if(req.requestType('json')) return res.json(comment)
+    if(req.json) return res.json(comment)
     // TODO add async comment insertion
-    if(req.requestType('xhr')) return res.render('comments/_comment',{comment:comment})
+    if(req.xhr) return res.render('comments/_comment',{comment:comment})
     return res.redirect(req.headers.referer)
   })
   .catch(next)
 });
 
 router.get('/new', Common.middleware.requireUser, (req,res,next) => {
-  if(req.requestType('modal')) return res.render('comments/modals/edit',{comment: null, action:req.baseUrl})
+  if(req.modal) return res.render('comments/modals/edit',{comment: null, action:req.baseUrl})
   return next();
 })
 
@@ -82,15 +82,15 @@ router.use('/:id', (req,res,next) => {
 commentRouter.post('/',(req,res,next) => {
   return res.locals.comment.update(req.body)
   .then(comment => {
-    if(req.requestType('json')) return res.json(comment)
+    if(req.json) return res.json(comment)
     // TODO add async comment insertion
-    if(req.requestType('xhr')) return res.render('comments/_comment',{comment:comment})
+    if(req.xhr) return res.render('comments/_comment',{comment:comment})
     return res.redirect(req.headers.referer)
   })
 })
 
 commentRouter.get('/edit',(req,res,next) => {
-  if(req.requestType('modal')) return res.render('comments/modals/edit',{action:req.baseUrl})
+  if(req.modal) return res.render('comments/modals/edit',{action:req.baseUrl})
   return next()
 })
 
@@ -154,10 +154,10 @@ commentRouter.delete('/',(req,res,next) => {
     })
   })
   .then(comment =>{
-    if(req.requestType('json')) return res.json({ref: comment,kind:'Comment'})
+    if(req.json) return res.json({ref: comment,kind:'Comment'})
     // rerender the comment as an archived comment
     console.log('partial structure:',JSON.stringify(comment,null,'  '))
-    if(req.requestType('xhr')) return res.render('comments/_comment',{comment:comment})
+    if(req.xhr) return res.render('comments/_comment',{comment:comment})
   })
   .catch(next)
 })

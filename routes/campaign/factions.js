@@ -18,15 +18,15 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
     return db.Faction.findAll(query)
   })
   .then(factions => {
-    if(req.requestType('json')) return res.json(factions)
-    if(req.requestType('modal')) return res.render('campaign/factions/modals/index',{factions:factions})
+    if(req.json) return res.json(factions)
+    if(req.modal) return res.render('campaign/factions/modals/index',{factions:factions})
     return res.render('campaign/factions/index',{factions:factions})
   })
   .catch(next)
 });
 
 router.get('/new', Common.middleware.requireUser, Common.middleware.objectifyBody, (req, res, next) => {
-  if(req.requestType('modal')) return res.render('campaign/factions/modals/edit')
+  if(req.modal) return res.render('campaign/factions/modals/edit')
   return res.render('campaign/factions/new')
 });
 
@@ -60,13 +60,13 @@ router.use('/:id', Common.middleware.requireUser, (req, res, next) => {
 
 // get information about faction
 factionRouter.get('/', (req,res,next) => {
-  if(req.requestType('json')) return res.json(res.locals.faction)
-  if(req.requestType('modal')) return res.render('campaign/factions/modals/detail')
+  if(req.json) return res.json(res.locals.faction)
+  if(req.modal) return res.render('campaign/factions/modals/detail')
   return next()
 });
 
 factionRouter.get('/edit', (req,res,next) => {
-  if(req.requestType('modal')) return res.render('campaign/factions/modals/edit')
+  if(req.modal) return res.render('campaign/factions/modals/edit')
   return res.render('campaign/factions/edit')
 });
 

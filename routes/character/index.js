@@ -11,8 +11,8 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
     return db.Character.findAll({include:[{model:db.Campaign}], order: [['CampaignId'],['name']]})
   })
   .then(characters => {
-    if(req.requestType('json')) return res.json(characters)
-    if(req.requestType('modal')) return res.render('characters/modals/select',{characters:characters})
+    if(req.json) return res.json(characters)
+    if(req.modal) return res.render('characters/modals/select',{characters:characters})
     return res.render('characters/', {characters:characters})
   })
   .catch(next)
@@ -33,8 +33,8 @@ router.post('/', Common.middleware.requireUser, Common.middleware.objectifyBody,
     })
   })
   .then(pc => {
-    if(req.requestType('json')) return res.send(pc.get({plain:true}))
-    if(req.requestType('modal')) return res.render('modals/_success', {title: "Character Created", body:"Good job", redirect:pc.url})
+    if(req.json) return res.send(pc.get({plain:true}))
+    if(req.modal) return res.render('modals/_success', {title: "Character Created", body:"Good job", redirect:pc.url})
     return res.redirect(req.headers.referer||req.baseUrl);
   })
   .catch(next);
@@ -42,7 +42,7 @@ router.post('/', Common.middleware.requireUser, Common.middleware.objectifyBody,
 
 router.get('/create', Common.middleware.requireUser, (req, res, next) => {
 
-  if(req.requestType('modal')) return res.render('characters/modals/edit')
+  if(req.modal) return res.render('characters/modals/edit')
   return res.render('characters/new');
 });
 
@@ -75,8 +75,8 @@ router.use('/:id', (req,res,next) => {
 
 characterRouter.get('/',(req,res,next) => {
 
-  if(req.requestType('json')) return res.json(res.locals.character.get({plain:true}))
-  if(req.requestType('modal')) return res.render('characters/detail')
+  if(req.json) return res.json(res.locals.character.get({plain:true}))
+  if(req.modal) return res.render('characters/detail')
   return res.render('characters/detail')
 
 });
@@ -87,8 +87,8 @@ characterRouter.post('/', Common.middleware.requireUser, Common.middleware.objec
 
   return res.locals.character.update(req.body)
   .then(character => {
-    if(req.requestType('json')) return res.json(character)
-    if(req.requestType('modal')) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
+    if(req.json) return res.json(character)
+    if(req.modal) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
     return res.redirect(req.headers.referer)
   })
   .catch(next)
@@ -101,8 +101,8 @@ characterRouter.delete('/', Common.middleware.requireUser, (req,res,next) => {
     if(!owned) throw Common.error.authorization("You don't own that character")
     return res.locals.character.destroy()
     .then(character => {
-      if(req.requestType('json')) return res.send({ref:character,kind:'Character'})
-      if(req.requestType('modal')) return res.render('modals/_success', {title: res.locals.character.name + " deleted", redirect:req.headers.referer || "/pc"})
+      if(req.json) return res.send({ref:character,kind:'Character'})
+      if(req.modal) return res.render('modals/_success', {title: res.locals.character.name + " deleted", redirect:req.headers.referer || "/pc"})
       return res.redirect('/pc')
     })
   })
@@ -116,8 +116,8 @@ characterRouter.post('/select', Common.middleware.requireUser, (req,res,next) =>
     if(!owned) throw Common.error.authorization("You don't own that character")
     return req.user.setMainChar(res.locals.character)
     .then(user => {
-      if(req.requestType('json')) return res.send(res.locals.character.get({plain:true}))
-      if(req.requestType('modal')) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
+      if(req.json) return res.send(res.locals.character.get({plain:true}))
+      if(req.modal) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
       return res.redirect(req.headers.referer||req.baseUrl)
     })
   })

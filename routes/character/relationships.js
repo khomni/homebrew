@@ -30,7 +30,7 @@ router.get('/new', Common.middleware.requireCharacter, (req,res,next) => {
   .then(relationships => {
     // res.locals.activeChar = req.user.MainChar
 
-    if(req.requestType('modal')) return res.render('characters/_connect.jade')
+    if(req.modal) return res.render('characters/_connect.jade')
   })
   .catch(next)
 

@@ -66,7 +66,7 @@ router.use('/:id', (req,res,next) => {
 // get an image in various forms of markup
 imageRouter.get('/', (req,res,next) => {
   if(!res.locals.image) return next();
-  if(req.requestType('modal')) return res.render('images/modals/preview')
+  if(req.modal) return res.render('images/modals/preview')
   return res.redirect(res.locals.image.path)
 })
 

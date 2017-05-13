@@ -17,7 +17,7 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/login',(req,res,next)=>{
-  if(req.requestType('modal')) return res.render('users/_login');
+  if(req.modal) return res.render('users/_login');
   return res.render('users/login');
 });
 
@@ -47,7 +47,7 @@ router.use('/logout',(req,res,next) => {
 });
 
 router.get('/signup',(req,res,next)=>{
-  if(req.requestType('modal')) return res.render('users/_signup');
+  if(req.modal) return res.render('users/_signup');
   return res.render('users/signup');
 });
 

@@ -43,9 +43,9 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
       })
     })
     .then(filtered => {
-      if(req.requestType('json')) return res.json(filtered)
-      if(req.requestType('xhr')) return res.render('lore/_list',{base:req.baseUrl, loreList:filtered})
-      if(req.requestType('modal')) return res.render('lore/modals/list',{base:req.baseUrl, title: res.locals.lorable.name, loreList:filtered})
+      if(req.json) return res.json(filtered)
+      if(req.xhr) return res.render('lore/_list',{base:req.baseUrl, loreList:filtered})
+      if(req.modal) return res.render('lore/modals/list',{base:req.baseUrl, title: res.locals.lorable.name, loreList:filtered})
       return res.json(filtered)
     })
   })
@@ -58,7 +58,7 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
 
 router.get('/new', (req,res,next)=>{
   if(!res.locals.permission.write) return next(Common.error.authorization('You are not permitted to add lore to this resource'))
-  if(req.requestType('modal')) return res.render('lore/modals/edit',{base:req.baseUrl})
+  if(req.modal) return res.render('lore/modals/edit',{base:req.baseUrl})
 })
 
 // Add lore to the lorable object
@@ -123,8 +123,8 @@ loreRouter.get('/', (req, res, next) => {
 
   if(res.locals.lore.hidden) return next(Common.error.request(req.user.MainChar.getName('first') + " does not know this"))
 
-  if(req.requestType('json')) return res.json(res.locals.lore)
-  if(req.requestType('xhr')) return res.render('lore/_lore')
+  if(req.json) return res.json(res.locals.lore)
+  if(req.xhr) return res.render('lore/_lore')
 
 });
 
@@ -132,8 +132,8 @@ loreRouter.get('/edit', Common.middleware.requireUser, (req, res, next) => {
 
   if(!res.locals.lore.owned) return next(Common.error.request("You can't modify lore you haven't written"))
 
-  if(req.requestType('json')) return res.json(res.locals.lore)
-  if(req.requestType('modal')) return res.render('lore/modals/edit')
+  if(req.json) return res.json(res.locals.lore)
+  if(req.modal) return res.render('lore/modals/edit')
 
 });
 
@@ -143,8 +143,8 @@ loreRouter.post('/', Common.middleware.requireUser, (req, res, next) => {
 
   return res.locals.lore.update(req.body)
   .then(lore => {
-    if(req.requestType('json')) return res.json(lore)
-    if(req.requestType('xhr')) return res.render('lore/_lore',{lore:lore})
+    if(req.json) return res.json(lore)
+    if(req.xhr) return res.render('lore/_lore',{lore:lore})
   })
   .catch(next)
 });
@@ -155,8 +155,8 @@ loreRouter.delete('/', Common.middleware.requireGM, (req, res, next) => {
 
   return res.locals.lore.destroy()
   .then(() => {
-    if(req.requestType('json')) return res.json(res.locals.lore)
-    if(req.requestType('xhr')) return res.render('lore/_lore',{lore:null})
+    if(req.json) return res.json(res.locals.lore)
+    if(req.xhr) return res.render('lore/_lore',{lore:null})
   })
   .catch(next)
 
@@ -170,8 +170,8 @@ loreRouter.post('/learn', Common.middleware.requireCharacter, (req, res, next) =
   return req.user.MainChar.addKnowledge(res.locals.lore)
   .then(knowledge => {
     res.locals.lore.hidden = false
-    if(req.requestType('json')) return res.json(res.locals.lore)
-    if(req.requestType('xhr')) return res.render('lore/_lore.jade')
+    if(req.json) return res.json(res.locals.lore)
+    if(req.xhr) return res.render('lore/_lore.jade')
   })
   .catch(next)
 
@@ -193,7 +193,7 @@ loreRouter.get('/teach', Common.middleware.requireCharacter, (req, res, next) =>
       }]
     })
     .then(factions => {
-      if(req.requestType('modal')) return res.render('lore/modals/teach',{factions:factions})
+      if(req.modal) return res.render('lore/modals/teach',{factions:factions})
       return next()
     })
   })

@@ -28,8 +28,6 @@ var sessionMiddleware = session({
   saveUninitialized: true,
 })
 
-app.use(require(APPROOT+'/middleware/requests'));
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -104,10 +102,15 @@ app.use(function(req,res,next){
 // set the user's main character if applicable
 app.use(require(APPROOT+'/middleware/activeChar'));
 
-app.use('/json', (req,res,next)=>{
-  req.headers.accept = 'application/json'
+app.use('/', (req,res,next)=>{
+  if(/\.json$/.test(req.url)) {
+    req.headers.accept = 'application/json'
+    req.url = req.url.slice(0,-5)
+  }
   return next();
-}, require(APPROOT+'/routes/index'))
+});
+
+app.use(require(APPROOT+'/middleware/requests'));
 
 // router
 app.use('/', require(APPROOT+'/routes/index'));

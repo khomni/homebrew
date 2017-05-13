@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express');
 var router = express.Router();
 
@@ -15,7 +17,7 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
 router.get('/new', Common.middleware.requireUser, (req, res, next) => {
 
   // for new campaigns, get the name of all available systems
-  if(req.requestType('modal')) return res.render('campaign/modals/edit',{systems:SYSTEM.names})
+  if(req.modal) return res.render('campaign/modals/edit',{systems:SYSTEM.names})
   return res.render('campaign/new')
 });
 
@@ -55,14 +57,14 @@ router.use('/:id', (req,res,next) => {
 
 // get campaign info
 campaignRouter.get('/',(req,res,next) => {
-  if(req.requestType('json')) return res.send(res.locals.campaign.get({plain:true}))
-  if(req.requestType('modal')) return res.render('campaign/_detail')
+  if(req.json) return res.send(res.locals.campaign.get({plain:true}))
+  if(req.modal) return res.render('campaign/_detail')
   return res.render('campaign/detail')
 });
 
 campaignRouter.get('/edit',(req,res,next) => {
-  if(req.requestType('json')) return res.send(res.locals.campaign.get({plain:true}))
-  if(req.requestType('modal')) return res.render('campaign/modals/edit')
+  if(req.json) return res.send(res.locals.campaign.get({plain:true}))
+  if(req.modal) return res.render('campaign/modals/edit')
   return res.render('campaign/detail')
 });
 
@@ -74,7 +76,7 @@ campaignRouter.post('/', Common.middleware.requireGM, (req,res,next) => {
   return res.locals.campaign.save()
   .then(campaign => {
 
-    if(req.requestType('modal')) return res.send('modals/_success',{title:'Campaign Updated'})
+    if(req.modal) return res.send('modals/_success',{title:'Campaign Updated'})
     return res.redirect(req.headers.referer)
   })
 

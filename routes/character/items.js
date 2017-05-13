@@ -45,8 +45,8 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
       return a
     },{value:0, weight:0, total:0})
 
-    if(req.requestType('json')) return res.json({items: items, total: meta})
-    if(req.requestType('xhr')) return res.render('characters/inventory/_itemTable',{meta:meta})
+    if(req.json) return res.json({items: items, total: meta})
+    if(req.xhr) return res.render('characters/inventory/_itemTable',{meta:meta})
     return res.render('characters/inventory/index',{meta:meta})
   })
   .catch(next)
@@ -56,7 +56,7 @@ router.get('/new', Common.middleware.requireCharacter, (req, res, next) => {
   // access the system rules mounted on the middleware
   var systemItem = res.locals.activeSystem.Item
 
-  if(req.requestType('modal')) return res.render('characters/inventory/modals/edit')
+  if(req.modal) return res.render('characters/inventory/modals/edit')
   return res.redirect(req.baseUrl)
 
 });
@@ -69,8 +69,8 @@ router.get('/give', Common.middleware.requireCharacter, (req,res,next) => {
   return req.user.MainChar.getItems()
   .then(items => {
     res.locals.itemOwner = req.user.MainChar
-    if(req.requestType('modal')) return res.render('characters/inventory/modals/give',{items:items})
-    if(req.requestType('xhr')) return res.render('characters/inventory/_itemTable',{items:items})
+    if(req.modal) return res.render('characters/inventory/modals/give',{items:items})
+    if(req.xhr) return res.render('characters/inventory/_itemTable',{items:items})
   })
   .catch(next)
 });
@@ -131,7 +131,7 @@ router.post('/', Common.middleware.objectifyBody, (req,res,next) => {
      })
    })
    .then(item =>{
-    if(req.requestType('json')) return res.send(item)
+    if(req.json) return res.send(item)
     return res.redirect(req.baseUrl)
   })
   .catch(next)
@@ -172,7 +172,8 @@ router.delete('/', Common.middleware.requireCharacter, Common.middleware.objecti
       })
     })
     .then(results => {
-      if(req.requestType('json')) return res.json(results)
+      if(req.json) return res.json(results)
+      return res.redirect(req.baseUrl)
     })
   })
   .catch(next)
@@ -220,8 +221,8 @@ router.post('/drop', Common.middleware.requireCharacter, Common.middleware.objec
   })
   .then(results => {
 
-    if(req.requestType('json')) return res.json(results)
-    if(req.requestType('modal')) return res.render('modals/_success',{title:results.length+" items dropped"})
+    if(req.json) return res.json(results)
+    if(req.modal) return res.render('modals/_success',{title:results.length+" items dropped"})
     return res.json({item:item, location:location})
   })
   .catch(next)
@@ -241,7 +242,9 @@ router.use('/:id', (req,res,next) => {
 
 
 itemRouter.get('/', (req,res,next) => {
-  if(req.requestType('modal')) return res.render('characters/inventory/modals/detail')
+  console.log(req.json)
+  if(req.modal) return res.render('characters/inventory/modals/detail');
+  if(req.json) return res.json(res.locals.item);
 })
 
 itemRouter.get('/edit', Common.middleware.requireCharacter, (req,res,next) => {
@@ -249,7 +252,8 @@ itemRouter.get('/edit', Common.middleware.requireCharacter, (req,res,next) => {
   var systemItem = res.locals.activeSystem.Item
   if(systemItem) res.locals.systemFields = systemItem.prototype.schema
 
-  if(req.requestType('modal')) return res.render('characters/inventory/modals/edit')
+  if(req.modal) return res.render('characters/inventory/modals/edit')
+  return next();
 
 })
 
@@ -264,7 +268,7 @@ itemRouter.post('/', Common.middleware.requireCharacter, Common.middleware.objec
      })
   })
   .then(item =>{
-    if(req.requestType('json')) return res.send(item)
+    if(req.json) return res.send(item)
     return res.redirect(req.baseUrl)
   })
   .catch(next)
@@ -275,7 +279,7 @@ itemRouter.delete('/', Common.middleware.requireCharacter, (req,res,next) => {
 
   return res.locals.item.destroy()
   .then(() => {
-    if(req.requestType('json')) return res.json({ref:res.locals.item, kind:'Item'})
+    if(req.json) return res.json({ref:res.locals.item, kind:'Item'})
     return res.render('modals/_success',{title:'Item Discarded',redirect:req.headers.referer})
   })
   .catch(next)

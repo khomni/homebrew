@@ -14,7 +14,7 @@ router.use((req,res,next)=> {
 
 /* GET users journals. */
 router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
-  if(req.requestType('json')) return res.send(res.locals.character.Journals)
+  if(req.json) return res.send(res.locals.character.Journals)
   return res.render('characters/journal/index')
 });
 
@@ -33,7 +33,7 @@ router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
 
 router.get('/new', Common.middleware.requireCharacter, (req,res,next) => {
 
-  if(req.requestType('modal')) return res.render('characters/journal/modals/edit')
+  if(req.modal) return res.render('characters/journal/modals/edit')
   return res.render('character/journal/edit')
 
 })
@@ -56,12 +56,12 @@ router.use('/:id', Common.middleware.requireCharacter, (req,res,next) => {
 })
 
 router.get('/:id', (req,res,next) => {
-  if(req.requestType('modal')) return res.render('characters/journal/modals/entry')
+  if(req.modal) return res.render('characters/journal/modals/entry')
   return res.render('characters/journal/entry')
 });
 
 router.get('/:id/edit', Common.middleware.requireCharacter, (req,res,next) => {
-  if(req.requestType('modal')) return res.render('characters/journal/modals/edit')
+  if(req.modal) return res.render('characters/journal/modals/edit')
   return res.render('characters/journal/edit')
 });
 
@@ -72,8 +72,8 @@ router.post('/:id', Common.middleware.requireCharacter, (req,res,next) => {
   .then(entry => {
     res.locals.entry = entry
 
-    if(req.requestType('json')) return res.json(entry)
-    if(req.requestType('modal')) return res.render('characters/journal/_entry')
+    if(req.json) return res.json(entry)
+    if(req.modal) return res.render('characters/journal/_entry')
     return res.redirect(req.baseUrl)
   })
   .catch(next)
@@ -89,8 +89,8 @@ router.delete('/:id', Common.middleware.requireCharacter, (req,res,next) => {
     return res.locals.entry.destroy()
     .then(entry => {
 
-      if(req.requestType('json')) return res.send(res.locals.entry)
-      if(req.requestType('modal')) return res.render('modals/_success')
+      if(req.json) return res.send(res.locals.entry)
+      if(req.modal) return res.render('modals/_success')
       return res.redirect(req.baseUrl);
     })
 

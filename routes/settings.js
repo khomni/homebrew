@@ -12,7 +12,7 @@ router.get('/', (req, res, next) => {
 
 
 router.get('/theme', (req,res,next) => {
-  if(req.requestType('modal')) return res.render('settings/theme')
+  if(req.modal) return res.render('settings/theme')
   return next();
 })
 
@@ -20,7 +20,7 @@ router.post('/theme', (req,res,next) => {
   req.session.theme = req.body.theme
   if(req.session.theme == 'default') delete req.session.theme
 
-  if(req.requestType('json')) return res.send(req.body)
+  if(req.json) return res.send(req.body)
   return res.send(req.body)
 })
 

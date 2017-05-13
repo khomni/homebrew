@@ -2,7 +2,14 @@
 
 // the requests middleware attaches information about the request to req.requestType
 
-module.exports = (req,res,next) => {
+module.exports = (req, res, next) => {
+
+  req.json = /application\/json/.test(req.get('accept'))
+  req.modal = req.get('modal') == 'true'
+
+  console.log({json:req.json, modal:req.modal, xhr:req.xhr});
+
+
   req.requestType = function(args) {
     if(Array.isArray(args)) { // use recursion for arrays
       types = args.map(req.requestType)

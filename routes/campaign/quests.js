@@ -24,7 +24,7 @@ router.post('/', (req,res,next) => {
 
   return res.locals.campaign.createQuest(req.body)
   .then(quest => {
-    if(req.requestType('json')) return res.json({redirect:req.headers.referer})
+    if(req.json) return res.json({redirect:req.headers.referer})
     return res.redirect(req.headers.referer)
   })
   .catch(next);
@@ -33,7 +33,7 @@ router.post('/', (req,res,next) => {
 
 router.get('/new', Common.middleware.requireUser, (req,res,next) => {
   if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to make quests"))
-  if(req.requestType('modal')) return res.render('campaign/quests/modals/edit')
+  if(req.modal) return res.render('campaign/quests/modals/edit')
 })
 
 var questRouter = express.Router({mergeParams: true});
@@ -68,7 +68,7 @@ questRouter.post('/', Common.middleware.requireUser, (req,res,next) => {
   for(var key in req.body) res.locals.quest[key] = req.body[key]
   return res.locals.quest.save()
   .then(quest => {
-    if(req.requestType('json')) return res.json({redirect:req.headers.referer})
+    if(req.json) return res.json({redirect:req.headers.referer})
     return res.redirect(req.headers.referer)
   })
   .catch(next)
@@ -78,7 +78,7 @@ questRouter.post('/', Common.middleware.requireUser, (req,res,next) => {
 
 questRouter.get('/add', Common.middleware.requireUser, (req,res,next) => {
   if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to make quests"))
-  if(req.requestType('modal')) return res.render('campaign/quests/modals/edit',{quest:null,parent:res.locals.quest})
+  if(req.modal) return res.render('campaign/quests/modals/edit',{quest:null,parent:res.locals.quest})
 })
 
 questRouter.post('/add', Common.middleware.requireUser, (req,res,next) => {
@@ -86,7 +86,7 @@ questRouter.post('/add', Common.middleware.requireUser, (req,res,next) => {
 
   return res.locals.quest.createChild(Object.assign(req.body,{CampaignId:res.locals.campaign.id}))
   .then(quest => {
-    if(req.requestType('json')) return res.json({redirect:req.headers.referer})
+    if(req.json) return res.json({redirect:req.headers.referer})
     return res.redirect("/"+res.locals.campaign.url+"quests/"+ quest.id)
   })
   .catch(next)
@@ -108,7 +108,7 @@ questRouter.delete('/', Common.middleware.requireUser, Common.middleware.confirm
   // TODO: delete all child quests at once
   // return res.locals.quest.destroy()
   .then(() => {
-    if(req.requestType('json')) {
+    if(req.json) {
       return res.json({ref:res.locals.quest,kind:"Quest"})
     }
   })
@@ -119,7 +119,7 @@ questRouter.delete('/', Common.middleware.requireUser, Common.middleware.confirm
 // brings up a dialog that allows details of a quest to be modified
 questRouter.get('/edit', Common.middleware.requireUser, (req,res,next) => {
   if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to edit quests"))
-  if(req.requestType('modal')) return res.render('campaign/quests/modals/edit');
+  if(req.modal) return res.render('campaign/quests/modals/edit');
 });
 
 // Quest Linking
@@ -131,7 +131,7 @@ questRouter.get('/link', Common.middleware.requireUser, (req,res,next) => {
   // get the campaign's quests and all of their descendents
   return res.locals.campaign.getQuests({attributes:['name','id'], include: {model:db.Quest, as: 'descendents', hierarchy: true}})
   .then(linkable => {
-    if(req.requestType('modal')) return res.render('campaign/quests/modals/link',{linkable:linkable});
+    if(req.modal) return res.render('campaign/quests/modals/link',{linkable:linkable});
     return next();
   })
   .catch(next)
@@ -168,8 +168,8 @@ questRouter.post('/link', Common.middleware.requireUser, (req,res,next) => {
     })
   })
   .then(quest => {
-    if(req.requestType('json')) return res.json({redirect:req.baseUrl})
-    if(req.requestType('modal')) return res.render('modals/_success',{redirect:req.baseUrl})
+    if(req.json) return res.json({redirect:req.baseUrl})
+    if(req.modal) return res.render('modals/_success',{redirect:req.baseUrl})
   })
   .catch(next)
 });
