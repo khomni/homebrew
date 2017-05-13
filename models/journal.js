@@ -41,14 +41,13 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   Journal.hook('beforeSave', (journal,options) => {
-    console.log('saving journal')
     // search through any pieces of lore that might be referenced in the journal entry and reformat it to be a link
     var words = journal.body.replace(/[\.\!\?](?=\s)/,'').split(/\s+/)
     return db.Character.findAll({
       attributes: ['name'],
       where: {name: {$in: words}}
     }).then(characters => {
-      console.log('mentioned characters:',characters)
+      console.log('mentioned characters:', characters)
       return;
     })
     // OR search for character names

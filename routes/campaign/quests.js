@@ -65,7 +65,7 @@ questRouter.get('/', (req,res,next) => {
 
 questRouter.post('/', Common.middleware.requireUser, (req,res,next) => {
   if(!res.locals.campaign.owned) return next(Common.error.authorization("You must be the GM to make quests"))
-  for(key in req.body) res.locals.quest[key] = req.body[key]
+  for(var key in req.body) res.locals.quest[key] = req.body[key]
   return res.locals.quest.save()
   .then(quest => {
     if(req.requestType('json')) return res.json({redirect:req.headers.referer})

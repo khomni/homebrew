@@ -50,7 +50,8 @@ db._methods = function(doc,regex) {
   let  methods = []
   for(let key in doc) if(typeof doc[key] == 'function') methods.push(key)
   if(regex && regex instanceof RegExp) methods = methods.filter(method => {return regex.test(method)})
-  return methods.sort().join(', ').grey
+  process.stdout.write(methods.sort().join(', ').grey + '\n')
+  return methods
 }
 
 db._sync()

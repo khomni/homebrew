@@ -4,7 +4,7 @@ var update = 0
 
 var promises = {}
 
-for(key in seeds) {
+for(var key in seeds) {
   promises[key] = seeds[key].map(function(r){
     var query = {}
     var uniqueFields = Object.keys(db[key].uniqueKeys).map(function(k){

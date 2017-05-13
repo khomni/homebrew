@@ -69,7 +69,7 @@ campaignRouter.get('/edit',(req,res,next) => {
 // edit campaign
 campaignRouter.post('/', Common.middleware.requireGM, (req,res,next) => {
 
-  for(key in req.body) res.locals.campaign[key] = req.body[key]
+  for(var key in req.body) res.locals.campaign[key] = req.body[key]
 
   return res.locals.campaign.save()
   .then(campaign => {

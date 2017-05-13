@@ -34,7 +34,7 @@
     // I. fills in input fields with the response data
     if(source.dataset.reaction == 'fill') {
       console.log(data)
-      for(key in data) {
+      for(var key in data) {
         var fields = Array.prototype.slice.call(document.getElementsByName(key))
         fields.map(field => {field.value = data[key]})
       }

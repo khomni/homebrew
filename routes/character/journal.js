@@ -66,7 +66,7 @@ router.get('/:id/edit', Common.middleware.requireCharacter, (req,res,next) => {
 });
 
 router.post('/:id', Common.middleware.requireCharacter, (req,res,next) => {
-  for(key in req.body) res.locals.entry[key] = req.body[key]
+  for(var key in req.body) res.locals.entry[key] = req.body[key]
 
   return res.locals.entry.save()
   .then(entry => {
