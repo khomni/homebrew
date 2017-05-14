@@ -30,15 +30,17 @@ module.exports = function(sequelize, DataTypes) {
     },
     // an optional JSONB field for describing your campaign world's proprietary time system,
     // TODO: for more details on valid JSON formats, read accompanying documentation
-    calendar: {
-      type: DataTypes.JSONB
-    }
   }, {
     classMethods: {
       associate: function(models) {
         Campaign.hasMany(models.Quest);
-        Campaign.hasMany(models.Location)
-        Campaign.hasMany(models.Faction,{constraints:false})
+        Campaign.hasMany(models.Location);
+        Campaign.hasMany(models.Faction, {constraints:false, onDelete:'cascade'});
+        Campaign.hasOne(models.Calendar, {onDelete:'cascade'});
+
+        Campaign.addScope('defaultScope', {
+          include: [{model: models.Calendar}]
+        }, {override:true} )
       }
     }
   });

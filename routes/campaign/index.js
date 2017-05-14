@@ -92,6 +92,7 @@ campaignRouter.delete('/', Common.middleware.requireUser, Common.middleware.conf
   // return res.send('<h1>Just some html</h1>')
 });
 
+campaignRouter.use(['/calendar','/e'], require('./calendar'));
 campaignRouter.use('/pc', require('../character'));
 campaignRouter.use('/quests', require('./quests'));
 campaignRouter.use('/factions', require('./factions'));

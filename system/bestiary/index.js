@@ -16,10 +16,8 @@ try {
 	console.error(e);
 	read(APPROOT+"/system/bestiary/bestiary.txt", 'utf8')
 	.then(data => {
-		console.log("Data sample:\n"+data.substring(0,1000))
 		return new Promise(function(resolve,reject) {
 			try {
-				console.log(dataParser)
 				out = dataParser.toSchemaObject(data)
 				resolve(out)
 			} catch(e) {

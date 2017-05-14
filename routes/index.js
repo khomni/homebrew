@@ -27,7 +27,6 @@ router.post('/login', (req,res,next) => {
     if (err) return next(err);
     if (!user) {
       // TODO: indicate login failure
-      return res.send('user not found')
       return res.redirect(origin);
     }
 
@@ -60,7 +59,6 @@ router.post('/signup', (req,res,next) => {
   },{fields:['username','email','password']})
   .then(user => {
     req.logIn(user, err => {
-      console.log("[Log in] as user: ", req.user.get({plain:true}));
       return res.redirect(origin);
     })
   })

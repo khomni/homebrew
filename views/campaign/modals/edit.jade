@@ -7,7 +7,6 @@ form(name='campaign' action=(campaign?campaign.url:'/c/') method='post')
         | Create a New Campaign
     .tab-group
       a.tab.active(data-click="tab" data-target="campaign-about") About
-      a.tab(data-click="tab" data-target="campaign-setting") Setting
     .modal-body
       .tab-panel
         #campaign-about.tab-pane.active.flex.vert.fill
@@ -26,7 +25,6 @@ form(name='campaign' action=(campaign?campaign.url:'/c/') method='post')
               select.form-input(name="system" /*disabled=campaign&&campaign.system*/)
                 each system,key in SYSTEM
                   option.form-input(name="system" value=key selected=campagin&&campaign.system==key)= system.name
-        #campaign-setting.tab-pane.active.flex.vert.fill
     .modal-footer
       .flex.center.pad
         if campaign

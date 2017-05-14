@@ -13,6 +13,7 @@ router.get('/', (req,res,next) => {
   })
   .then(quests => {
     res.locals.quests = quests
+    if(req.json) return res.json(quests)
     return res.render('campaign/quests/index')
   })
   .catch(next)
@@ -59,6 +60,8 @@ questRouter.get('/', (req,res,next) => {
 
   res.locals.quest.getComments()
   .then(comments => {
+    console.log(res.locals.quest.comments = comments)
+    if(req.json) return res.json({quest: res.locals.quest, comments:comments})
     return res.render('campaign/quests/detail', {comments:comments})
   })
 });

@@ -1,0 +1,103 @@
+extends /templates/default
+
+block title
+  title #{campaign.name} Calendar
+  
+block header
+  +header
+    .header-item.page-title 
+      span #{campaign.name} Calendar
+
+mixin weekday(day)
+  .flex.input-group
+    .flex.grow: input.form-input(type="text" name="weekdays" value=day placeholder="Weekday Name" required)
+    .flex.center: a.close(data-click="remove" data-target=".input-group")
+
+mixin month(month)
+  .flex.input-group
+    .flex.grow: input.form-input(type="text" name="months.$.name" value=month&&month.name||"" placeholder="Month Name" required)
+    .flex.grow: input.form-input(type="number" name="months.$.days" value=month&&month.days||"" placeholder="Days in Month" required)
+    .flex.center: a.close(data-click="remove" data-target=".input-group")
+
+block content
+  if calendar
+    .tab-group
+      a.tab(data-click="tab" data-target="calendar") Calendar
+      a.tab.active(data-click="tab" data-target="settings") #[i.fa.fa-gear] Settings
+
+  .tab-panel
+    if calendar
+      #settings.tab-pane.flex.vert.fill(class=calendar&&'active')
+        form(action=campaign.url + 'e/present' method="post" data-response="json" data-reaction="redirect")
+          section: .section-body
+            if calendar.present
+              -var context = calendar.getContext(calendar.present)
+              -console.log(context)
+              label Current Date: #{context.weekday}, #{context.month} #{context.date}, #{context.year}
+            .flex.horz.pad
+              .flex.vert.grow
+                label Year
+                input.form-input(type="number" name="year" value=calendar&&calendar.present&&calendar.present.year)
+              .flex.vert.grow
+                label Month
+                select.form-input(name="month")
+                  option(disabled selected=!context) Select Month
+                  each month,i in calendar.months
+                    option(value=i selected=context&&context.month==month.name) #{i+1}: #{month.name}
+              .flex.vert.grow
+                label Date
+                input.form-input(type="number" name="date" value=context&&context.date)
+              .flex.vert.grow
+                label Current Hour
+                input.form-input(type="number" name="hour" min=0 max=23 value=calendar&&calendar.present&&calendar.present.hour)
+              .flex.vert.grow
+                label Current Minute
+                input.form-input(type="number" name="minute" min=0 max=59 value=calendar&&calendar.present&&calendar.present.minute)
+            .flex.center: button.btn Set Day
+
+    #calendar.tab-pane.flex.vert.fill(class=!calendar&&'active')
+      form(action=campaign.url + 'e/' method="post" data-response="json" data-reaction="redirect")
+        if calendar
+          section
+            .section-body
+              .flex.pad: p.
+                #[strong Warning!] Modifying the total length of years of an existing calendar will affect any events you have created under that calendar.
+              .flex.center
+                label.checkbox
+                  input(type="checkbox" required) 
+                  span I understand
+                label.checkbox
+                  input(type="checkbox" name="deletePastEvents") 
+                  span Delete all existing events under this calendar
+        section
+          .section-body
+            .flex.pad.vert
+              //- label Year Length
+              //- input.form-input(type="number" name="year_length" value=calendar&&calendar.year_length required)
+            
+              label Weekdays
+              .flex.vert.pad.border#weekdays
+                if calendar
+                  each day in calendar.weekdays
+                    +weekday(day)
+                else
+                  +weekday()
+              
+              template#weekday_template
+                +weekday()
+              a.btn(data-click='duplicate' data-target="weekday_template" data-destination="weekdays") Add Weekday
+
+
+              label Months
+              .flex.vert.pad.border#months
+                if calendar
+                  each month in calendar.months
+                    +month(month)
+                else
+                  +month()
+              
+              template#month_template
+                +month()
+              a.btn(data-click='duplicate' data-target="month_template" data-destination="months") Add Month
+          .flex.center
+            button.btn.block(type='submit') Submit

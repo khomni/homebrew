@@ -9,18 +9,22 @@ module.exports = {
   // given a req.body with a number of dot-delimited field names, converts the req.body into the corresponding object
   objectifyBody: (req,res,next) => {
     console.log("1:",req.body)
+
     for(var key in req.body) {
       if(!req.body[key]) delete req.body[key]
       // if(!!Number(req.body[key])) req.body[key] = Number(req.body[key])
       if(!Array.isArray(req.body[key]) && /\.\$\./.test(key)) req.body[key] = [req.body[key]]
+      
       if(Array.isArray(req.body[key])) {
-        req.body[key].map((value,index) => {
-          if(value) {
-            // if(!!Number(value)) value = Number(value)
-            req.body[key.replace('$',index)] = value
-          }
-        })
-        delete req.body[key]
+        req.body[key] = req.body[key].filter(i => {return i!=''})
+
+        if(/\.\$/.test(key)) {
+          req.body[key].map((value,index) => {
+            if(value) req.body[key.replace('$',index)] = value
+          })
+          // delete the placeholder `$` key
+          delete req.body[key]
+        }
       }
     }
     //

@@ -242,7 +242,6 @@ router.use('/:id', (req,res,next) => {
 
 
 itemRouter.get('/', (req,res,next) => {
-  console.log(req.json)
   if(req.modal) return res.render('characters/inventory/modals/detail');
   if(req.json) return res.json(res.locals.item);
 })

@@ -52,7 +52,6 @@ module.exports = function(sequelize, DataTypes) {
         User.hasMany(models.Character, {as: 'characters', constraints: false});
         User.belongsTo(models.Character, {as: 'MainChar'});
         User.hasMany(models.Campaign)
-
       },
       validPassword: function(password, passwd, user){
         return bcrypt.compareAsync(password, passwd)

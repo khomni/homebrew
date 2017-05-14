@@ -15,14 +15,12 @@ router.get('/search',(req,res,next) => {
 
 router.post('/search',(req,res,next) => {
   random = bestiary[Math.floor(Math.random()*bestiary.length)]
-  console.log(random)
   res.render('reference/_creatureBlock',{creature: random})
 });
 
 router.get('/random',(req,res,next) => {
   random = bestiary[Math.floor(Math.random()*bestiary.length)]
   encoded = decodeURIComponent(random.name.toLowerCase().replace(/\s/gi,"-"))
-  console.log(encoded)
   return res.redirect('/reference/bestiary/'+encoded)
 });
 

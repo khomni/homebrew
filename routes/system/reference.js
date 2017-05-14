@@ -9,7 +9,6 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/bestiary', (req, res, next) => {
-  console.log('bestiary')
   return res.json([])
 });
 

@@ -102,9 +102,10 @@ var methods = {
       var target = document.getElementById(spawner.dataset.target||url)
 
       if(!target) {
+        if(!url) return false;
         target = document.createElement('div')
         target.classList.add('modal')
-        target.id = spawner.dataset.target || Date.now()+url.replace(/\//gi,'-')
+        target.id = spawner.dataset.target || Date.now() + url.replace(/\//gi,'-')
       }
 
       modalContainer.appendChild(target)

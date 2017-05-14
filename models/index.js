@@ -31,8 +31,14 @@ db._associate = function(){
 
 // associates the models and syncs to the database
 db._sync = Promise.method(function(){
-  db._associate()
+
+  db._associate();
+
   return sequelize.sync({force:CONFIG.database.forcesync})
+  .catch(err => {
+    console.log(err)
+    return null;
+  })
   .then(syncResults => {
     // individually check to make sure the model associations are valid
     return syncResults;
@@ -47,7 +53,7 @@ db._sync = Promise.method(function(){
 })
 
 db._methods = function(doc,regex) {
-  let  methods = []
+  let methods = []
   for(let key in doc) if(typeof doc[key] == 'function') methods.push(key)
   if(regex && regex instanceof RegExp) methods = methods.filter(method => {return regex.test(method)})
   process.stdout.write(methods.sort().join(', ').grey + '\n')
