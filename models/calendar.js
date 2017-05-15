@@ -1,13 +1,13 @@
 "use strict";
 
+const MILISECOND_DAYS = 86400000
+
 module.exports = function(sequelize, DataTypes) {
   var Calendar = sequelize.define("Calendar", {
     year_length: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 360,
-      validate: {
-        min: 1
+      type: DataTypes.VIRTUAL,
+      get: function() {
+        return this.months.reduce((a,b)=>{ return a + b.days },0)
       }
     },
 
@@ -27,6 +27,13 @@ module.exports = function(sequelize, DataTypes) {
         // month.days:
       }
     },
+
+    today: {
+      type: DataTypes.VIRTUAL,
+      get: function(){
+        return this.dateFromTimestamp(this.present)
+      }
+    }
 
     /*
     moons: {
@@ -96,13 +103,65 @@ module.exports = function(sequelize, DataTypes) {
     }
   }
 
-  // get absolute event information by providing a date
-  // converts a year, month name 
+  // returns a timestamp given an object with keys describing the time
   Calendar.Instance.prototype.convertToTimestamp = function(obj) {
+    let thisCalendar = this;
+
+    let epochTime = 0;
+
+    if('year' in obj) epochTime += Number(obj.year) * thisCalendar.year_length
+    if('month' in obj) epochTime += thisCalendar.months.slice(0,Number(obj.month)).reduce((a,b)=>{
+      return a + b.days
+    }, 0)
+    if('date' in obj) epochTime += Number(obj.date)||0
+    epochTime *= 24 // hours
+    if('hour' in obj) epochTime += Number(obj.hour)||0
+    epochTime *= 60 // minutes
+    if('minute' in obj) epochTime += Number(obj.minute)||0
+    epochTime *= 60 // seconds
+    if('seconds' in obj) epochTime += Number(obj.second)||0
+    epochTime *= 1000
+    if('miliseconds' in obj) epochTime += Number(obj.miliseconds)||0
+
+    console.log(epochTime, obj)
+
+    return epochTime;
 
   }
 
-  Calendar.Instance.prototype.getFromTimestamp = function(event) {
+  Calendar.Instance.prototype.dateFromTimestamp = function(event) {
+    let thisCalendar = this;
+    if(!event) return {}
+    let timestamp = event;
+    if(typeof event == 'object') timestamp = Number(event.timestamp.slice(0,1).pop());
+    if(typeof timestamp != 'number') return {};
+
+    let dateObject = {timestamp: timestamp};
+    let milisecondYears = MILISECOND_DAYS * thisCalendar.year_length
+    dateObject.year = Math.floor(timestamp / milisecondYears)
+
+    let miliseconds = Math.floor(timestamp % (milisecondYears * dateObject.year))
+    for (let i=0; !('month' in dateObject)&&i<thisCalendar.months.length; i++) {
+      if(miliseconds < thisCalendar.months[i].days * MILISECOND_DAYS) {
+        dateObject.month = thisCalendar.months[i].name;
+        dateObject.monthIndex = i;
+      } else {
+        miliseconds -= thisCalendar.months[i].days * MILISECOND_DAYS
+      }
+    }
+
+    dateObject.weekday = thisCalendar.weekdays[Math.floor(timestamp / MILISECOND_DAYS) % thisCalendar.weekdays.length]
+    dateObject.date = Math.floor(miliseconds / MILISECOND_DAYS);
+    miliseconds -= MILISECOND_DAYS * dateObject.date;
+    dateObject.hour = Math.floor(miliseconds / 3600000);
+    miliseconds -= dateObject.hour * 3600000;
+    dateObject.minute = Math.floor(miliseconds / 60000);
+    miliseconds -= dateObject.minute * 60000;
+    dateObject.second = Math.floor(miliseconds / 1000);
+    miliseconds -= dateObject.second * 1000;
+    dateObject.milisecond = miliseconds
+
+    return dateObject;
 
   }
 

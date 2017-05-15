@@ -18,8 +18,20 @@ router.use((req,res,next) => {
 // campaign calendar and time settings
 router.get('/', Common.middleware.requireUser, (req, res, next) => {
   if(!res.locals.campaign.Calendar) return res.redirect(req.baseUrl + '/edit');
+  db._methods(res.locals.campaign.Calendar,/event/i)
+  
+  if(req.json) return res.json({
+    present: res.locals.campaign.Calendar.today, 
+    months: res.locals.campaign.Calendar.months,
+    weekdays: res.locals.campaign.Calendar.weekdays
+  });
 
-  if(req.json) return res.json(res.locals.campaign.Calendar)
+  return res.locals.campaign.Calendar.getEvents({sort:[['year',-1],['day','-1']]})
+  .then(events => {
+
+    return res.json(events.map(e=>Object.assign({name:e.name}, res.locals.campaign.Calendar.dateFromTimestamp(e))))
+  })
+
   return next();
 });
 
@@ -30,10 +42,6 @@ router.get('/edit', Common.middleware.requireGM, (req, res, next) => {
 
 // set the campaign calendar
 router.post('/', Common.middleware.requireGM, Common.middleware.objectifyBody, (req, res, next) => {
-
-  req.body.year_length = req.body.months.reduce((a,b)=>{
-    return a + b.days
-  },0)
 
   return Promise.try(() => { // delete any existing calendar, and all events
     if(!res.locals.campaign.Calendar) return res.locals.campaign.createCalendar(req.body)
@@ -65,10 +73,15 @@ router.post('/present', Common.middleware.requireGM, Common.middleware.objectify
   .then(() => {
     return res.locals.campaign.Calendar.createPresent({
       name: "Present Date",
-      year: [req.body.year],
-      day: [dayOfYear],
-      hour: [req.body.hour],
-      minute: [req.body.minute],
+      timestamp: [res.locals.campaign.Calendar.convertToTimestamp({
+        year: req.body.year,
+        month: req.body.month,
+        date: req.body.date,
+        hour: req.body.hour,
+        minute: req.body.minute,
+        second: 0,
+        milisecond: 0,
+      }),null]
     })
   })
   .then(present => {
@@ -77,8 +90,27 @@ router.post('/present', Common.middleware.requireGM, Common.middleware.objectify
 
   })
   .catch(next)
-
 });
+
+// add a new event to the calendar
+router.post('/event', (req, res, next) => {
+  return res.locals.campaign.Calendar.createEvent(req.body)
+  .then(event => {
+    if(req.json) return res.json(event)
+  })
+  .catch(next)
+});
+
+router.get('/event/:id', (req, res, next) => {
+
+  return db.Event.findOne({where: {id: req.params.id}})
+  .then(event => {
+    if(!event) return next();
+    if(req.json) return res.json(event)
+  })
+  .catch(next)
+
+})
 
 
 module.exports = router;

@@ -29,30 +29,29 @@ block content
     if calendar
       #settings.tab-pane.flex.vert.fill(class=calendar&&'active')
         form(action=campaign.url + 'e/present' method="post" data-response="json" data-reaction="redirect")
+          -var context = calendar.dateFromTimestamp(calendar.present)
           section: .section-body
             if calendar.present
-              -var context = calendar.getContext(calendar.present)
-              -console.log(context)
               label Current Date: #{context.weekday}, #{context.month} #{context.date}, #{context.year}
             .flex.horz.pad
               .flex.vert.grow
                 label Year
-                input.form-input(type="number" name="year" value=calendar&&calendar.present&&calendar.present.year)
+                input.form-input(type="number" name="year" value=context&&context.year)
               .flex.vert.grow
                 label Month
                 select.form-input(name="month")
                   option(disabled selected=!context) Select Month
                   each month,i in calendar.months
-                    option(value=i selected=context&&context.month==month.name) #{i+1}: #{month.name}
+                    option(value=i selected=context&&context.monthIndex==i) #{i+1}: #{month.name}
               .flex.vert.grow
                 label Date
                 input.form-input(type="number" name="date" value=context&&context.date)
               .flex.vert.grow
                 label Current Hour
-                input.form-input(type="number" name="hour" min=0 max=23 value=calendar&&calendar.present&&calendar.present.hour)
+                input.form-input(type="number" name="hour" min=0 max=23 value=context&&context.hour)
               .flex.vert.grow
                 label Current Minute
-                input.form-input(type="number" name="minute" min=0 max=59 value=calendar&&calendar.present&&calendar.present.minute)
+                input.form-input(type="number" name="minute" min=0 max=59 value=context&&context.minute)
             .flex.center: button.btn Set Day
 
     #calendar.tab-pane.flex.vert.fill(class=!calendar&&'active')

@@ -12,6 +12,11 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
 
+    timestamp: {
+      type: DataTypes.RANGE,
+      index: true,
+    },
+
     year: { 
       // events that don't have a year are considered to occur every year
       // the year can be an array of 1 or 2 years, if it is an array of 2 years, it covers the span of those years
@@ -50,10 +55,19 @@ module.exports = function(sequelize, DataTypes) {
     // TODO: for more details on valid JSON formats, read accompanying documentation
   }, {
     scopes: {
+      defaultScope: {
+        sort: [['year',-1],['day',-1],['hour',-1],['minute',-1]]
+      },
       present: {
         attributes: {exclude: 'Calendar'}
       }
     },
+    indexes: [
+      {
+        unique: true,
+        fields: ['timestamp']
+      },
+    ],
     classMethods: {
       associate: function(models) {
         Event.belongsTo(models.Calendar);
