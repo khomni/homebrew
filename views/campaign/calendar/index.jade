@@ -1,0 +1,44 @@
+extends /templates/default
+
+block title
+  title #{campaign.name} Calendar
+  
+block header
+  +header
+    .header-item.page-title 
+      span #{campaign.name} Calendar
+
+block content
+  .content-body
+    section
+      .section-body
+        each year in calendar
+          h2= year.year
+          each month in year.months
+            h3= month.name
+            table.calendar.month
+              thead: tr
+                each day in campaign.Calendar.weekdays
+                  th= day
+              tbody
+                each week in month.weeks
+                  tr.week
+                    each day in week
+                      td.day(class=(!day?'obscured':'') + (day&&day.events.length?'has-events':''))
+                        if day
+                          .date-number= day&&day.date
+                          each event in day.events
+                            a(href=event.id)= event.name
+            hr
+    if campaign.owned
+      section
+        .section-body
+          .flex.pad
+            .flex.vert.border.pad
+              .flex.center: label GM Actions
+              .flex.center.pad
+                a.btn(href=campaign.url+"edit" data-response="modal") Edit
+                form(method=campaign.url+"delete" data-response="json")
+                  button.btn Delete
+                //- form(action=campaign.url, method="DELETE")
+                  button.btn(type="submit") Delete

@@ -33,7 +33,7 @@ module.exports = function(sequelize, DataTypes) {
       get: function(){
         return this.dateFromTimestamp(this.present)
       }
-    }
+    },
 
     /*
     moons: {
@@ -67,40 +67,49 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
 
-  // determines the 
-  Calendar.Instance.prototype.getContext = function(event) {
+  // given an array of events, returns a complete calendar data structure with the events populated
+  Calendar.Instance.prototype.generateCalendar = function(events) {
     let thisCalendar = this;
+    let years = []
 
-    let date = event.day.slice(0,1).pop();
-    let hour = event.hour.slice(0,1).pop();
-    let minute = event.hour.slice(0,1).pop()
+    // sort events chronologically by start timestamp
+    events = events.sort((a,b) => {
+      return a.timestamp[0] - b.timestamp[0]
+    }).map(e => {
+      return thisCalendar.dateFromTimestamp(e);
+    })
+    let maxYear = events[events.length-1].year
+    // establish the boundaries of the calendar so the interceding days can be filled in
+    for(let i = Number(events[0].year); i<= maxYear ; i++) {
+      let epochDay = (i-1) * thisCalendar.year_length // keep track of epochDay for weekdays
+      years.push({
+        year: i, 
+        months: thisCalendar.months.map((m,k) => {
+          let month = {name: m.name, weeks: []}
+          let weekday = thisCalendar.weekdays[epochDay % thisCalendar.weekdays.length]
+          let currentWeek = new Array(Math.max(thisCalendar.weekdays.indexOf(weekday),0))
+          for(let j=1; j<=m.days;j++) {
+            epochDay++;
+            weekday = thisCalendar.weekdays[epochDay % thisCalendar.weekdays.length]
+            let day = {date: j, weekday: weekday, events:[]}
 
-    // get the month by using the event's day
-    let month = thisCalendar.months.reduce((a,b) => {
-      if(isNaN(a)) return a
-      if(a+b.days >= event.day.slice(0,1).pop()) return b
-      date -= b.days
-      a += b.days
-      return a
-    },0)
+            while(events[0] && events[0].year == i && events[0].monthIndex == k && events[0].date == j) {
+              day.events.push(events.shift()) 
+            }
+            currentWeek.push(day)
 
-    // handle event ranges
-    let epochDays = (event.year * thisCalendar.year_length) + event.day.slice(0,1).pop();
-    let epochTimestamp = (epochDays * 86400) + (hour * 3600) + (minute * 60) * 1000
-
-    // get the day of the week by using the start of the calendar
-    let weekday = thisCalendar.weekdays[epochDays % thisCalendar.weekdays.length]
-
-    return {
-      year: event.year.slice(0,1).pop(),
-      month: month.name,
-      date: date,
-      weekday: weekday,
-      hour: minute,
-      minute: minute,
-      epochDays: epochDays,
-      epochTimestamp: epochTimestamp,
+            if(thisCalendar.weekdays.indexOf(weekday) == 0) {
+              month.weeks.push(currentWeek)
+              currentWeek = []
+            }
+          }
+          if(currentWeek.length) month.weeks.push(currentWeek)
+          return month
+        })
+      })
     }
+    return years
+
   }
 
   // returns a timestamp given an object with keys describing the time
@@ -123,8 +132,6 @@ module.exports = function(sequelize, DataTypes) {
     epochTime *= 1000
     if('miliseconds' in obj) epochTime += Number(obj.miliseconds)||0
 
-    console.log(epochTime, obj)
-
     return epochTime;
 
   }
@@ -136,7 +143,7 @@ module.exports = function(sequelize, DataTypes) {
     if(typeof event == 'object') timestamp = Number(event.timestamp.slice(0,1).pop());
     if(typeof timestamp != 'number') return {};
 
-    let dateObject = {timestamp: timestamp};
+    let dateObject = {id: event.id, name: event.name, timestamp: timestamp};
     let milisecondYears = MILISECOND_DAYS * thisCalendar.year_length
     dateObject.year = Math.floor(timestamp / milisecondYears)
 

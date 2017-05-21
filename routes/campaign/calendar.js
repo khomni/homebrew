@@ -3,40 +3,35 @@
 var express = require('express');
 var router = express.Router();
 
-router.use((req,res,next) => {
+router.use((req, res, next) => {
   db._methods(res.locals.campaign, /calendar/i)
 
   return res.locals.campaign.getCalendar()
   .then(calendar => {
     res.locals.calendar = calendar
-
     return next();
   })
-  .catch(next)
+  .catch(next);
+
 })
 
 // campaign calendar and time settings
 router.get('/', Common.middleware.requireUser, (req, res, next) => {
   if(!res.locals.campaign.Calendar) return res.redirect(req.baseUrl + '/edit');
   db._methods(res.locals.campaign.Calendar,/event/i)
-  
-  if(req.json) return res.json({
-    present: res.locals.campaign.Calendar.today, 
-    months: res.locals.campaign.Calendar.months,
-    weekdays: res.locals.campaign.Calendar.weekdays
-  });
+
 
   return res.locals.campaign.Calendar.getEvents({sort:[['year',-1],['day','-1']]})
   .then(events => {
-
-    return res.json(events.map(e=>Object.assign({name:e.name}, res.locals.campaign.Calendar.dateFromTimestamp(e))))
+    let populatedCalendar = res.locals.campaign.Calendar.generateCalendar(events)
+    if(req.json) return res.json({calendar: populatedCalendar})
+    return res.render('campaign/calendar', {calendar: populatedCalendar})
   })
+  .catch(next); 
 
-  return next();
 });
 
 router.get('/edit', Common.middleware.requireGM, (req, res, next) => {
-
   return res.render('campaign/calendar/edit')
 });
 
@@ -48,16 +43,16 @@ router.post('/', Common.middleware.requireGM, Common.middleware.objectifyBody, (
     return res.locals.campaign.Calendar.update(req.body)
   })
   .then(newCalendar => {
-    if(req.json) return res.send(newCalendar)
+    if(req.json) return res.json(newCalendar)
     return res.redirect(req.baseUrl);
   })
   .catch(next)
 
 });
 
-router.get('/present', (req, res, next) => {
-  if(req.json) return res.json(res.locals.campaign.Calendar.getContext(res.locals.campaign.Calendar.present))
-})
+// router.get('/present', (req, res, next) => {
+//   if(req.json) return res.json(res.locals.campaign.Calendar.getContext(res.locals.campaign.Calendar.present))
+// })
 
 router.post('/present', Common.middleware.requireGM, Common.middleware.objectifyBody, (req, res, next) => {
 
