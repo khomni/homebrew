@@ -67,6 +67,8 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
 
+  Calendar.MILISECOND_DAYS = 86400000
+
   // given an array of events, returns a complete calendar data structure with the events populated
   Calendar.Instance.prototype.generateCalendar = function(events) {
     let thisCalendar = this;
@@ -78,6 +80,7 @@ module.exports = function(sequelize, DataTypes) {
     }).map(e => {
       return thisCalendar.dateFromTimestamp(e);
     })
+
     let maxYear = events[events.length-1].year
     // establish the boundaries of the calendar so the interceding days can be filled in
     for(let i = Number(events[0].year); i<= maxYear ; i++) {
@@ -118,8 +121,10 @@ module.exports = function(sequelize, DataTypes) {
 
     let epochTime = 0;
 
+    console.log(obj)
+
     if('year' in obj) epochTime += Number(obj.year) * thisCalendar.year_length
-    if('month' in obj) epochTime += thisCalendar.months.slice(0,Number(obj.month)).reduce((a,b)=>{
+    if('month' in obj) epochTime += thisCalendar.months.slice(0,Math.max(Number(obj.month)-1,0)).reduce((a,b)=>{
       return a + b.days
     }, 0)
     if('date' in obj) epochTime += Number(obj.date)||0
@@ -143,7 +148,8 @@ module.exports = function(sequelize, DataTypes) {
     if(typeof event == 'object') timestamp = Number(event.timestamp.slice(0,1).pop());
     if(typeof timestamp != 'number') return {};
 
-    let dateObject = {id: event.id, name: event.name, timestamp: timestamp};
+
+    let dateObject = {id: event.id, name: event.name, timestamp: event.timestamp};
     let milisecondYears = MILISECOND_DAYS * thisCalendar.year_length
     dateObject.year = Math.floor(timestamp / milisecondYears)
 
@@ -171,6 +177,8 @@ module.exports = function(sequelize, DataTypes) {
     return dateObject;
 
   }
+
+  
 
   return Calendar;
 };

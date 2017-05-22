@@ -2,6 +2,7 @@ module.exports = {
   error: require('./errors'),
   middleware: require('./middleware'),
   utilities: require('./utilities'),
+
   hashString: function(string){
     if (Array.prototype.reduce){
       return string.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
@@ -15,5 +16,11 @@ module.exports = {
     }
     return hash;
   },
+
+  zeropad: function(n, width, z) {
+  z = z || '0';
+  n = n + '';
+  return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+}
 
 };

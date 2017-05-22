@@ -1,0 +1,71 @@
+table.calendar {
+  border: 1px solid #ccc;
+
+  thead {
+    th {
+      background: fade(white,10%);
+    }
+  }
+
+  tbody {
+    tr {
+      border: none;
+    }
+
+    td {
+      border: 1px solid #ccc;
+      width: 200px;
+      height: 100px;
+    }
+  }
+
+  td,th {
+    padding: 5px;
+    border: 1px solid #ccc;
+
+    &.obscured {
+      background: fade(black,10%);
+      pointer-events:none;
+    }
+
+  }
+
+  .day {
+    vertical-align: top;
+    padding: 0;
+    transition: 0.25s;
+    box-shadow: 0px 0px 8px fade(black,0%);
+
+   .date-number {
+    font-weight: 600;
+    pointer-events: none;
+    padding: 4px;
+    margin-right: 5px;
+    float: left;
+   }
+
+   .events {
+     .event {
+       display: block;
+       padding: 2px;
+       text-decoration: none;
+     }
+   }
+
+   &.has-events {
+     background: fade(@color-primary,5%);
+   };
+
+   &:hover {
+     background: fade(white,25%);
+     box-shadow: 0px 0px 8px fade(black,25%);
+   }
+
+  }
+
+  a {
+    display: block;
+    height: 100%;
+  }
+
+}
