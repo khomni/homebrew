@@ -54,6 +54,9 @@ table.calendar {
 
    &.has-events {
      background: fade(@color-primary,5%);
+     &>a {
+       outline: 1px solid;
+     }
    };
 
    &:hover {
@@ -64,6 +67,7 @@ table.calendar {
   }
 
   a {
+    
     display: block;
     height: 100%;
   }

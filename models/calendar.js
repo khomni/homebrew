@@ -123,7 +123,7 @@ module.exports = function(sequelize, DataTypes) {
 
     console.log(obj)
 
-    if('year' in obj) epochTime += Number(obj.year) * thisCalendar.year_length
+    if('year' in obj) epochTime += (Number(obj.year)-1) * thisCalendar.year_length
     if('month' in obj) epochTime += thisCalendar.months.slice(0,Math.max(Number(obj.month)-1,0)).reduce((a,b)=>{
       return a + b.days
     }, 0)
@@ -149,13 +149,14 @@ module.exports = function(sequelize, DataTypes) {
     if(typeof timestamp != 'number') return {};
 
 
+
     let dateObject = {id: event.id, name: event.name, timestamp: event.timestamp};
     let milisecondYears = MILISECOND_DAYS * thisCalendar.year_length
-    dateObject.year = Math.floor(timestamp / milisecondYears)
+    dateObject.year = Math.floor(timestamp / milisecondYears)+1
 
-    let miliseconds = Math.floor(timestamp % (milisecondYears * dateObject.year))
+    let miliseconds = Math.floor(timestamp % (milisecondYears * (dateObject.year-1)))
     for (let i=0; !('month' in dateObject)&&i<thisCalendar.months.length; i++) {
-      if(miliseconds < thisCalendar.months[i].days * MILISECOND_DAYS) {
+      if(miliseconds <= thisCalendar.months[i].days * MILISECOND_DAYS) {
         dateObject.month = thisCalendar.months[i].name;
         dateObject.monthIndex = i;
       } else {
@@ -163,8 +164,9 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
 
-    dateObject.weekday = thisCalendar.weekdays[Math.floor(timestamp / MILISECOND_DAYS) % thisCalendar.weekdays.length]
-    dateObject.date = Math.floor(miliseconds / MILISECOND_DAYS);
+    dateObject.weekday = thisCalendar.weekdays[(Math.floor(timestamp / MILISECOND_DAYS)-1) % thisCalendar.weekdays.length]
+    dateObject.date = Math.floor(miliseconds / MILISECOND_DAYS); //get the number of days
+    console.log(dateObject.date,dateObject.weekday)
     miliseconds -= MILISECOND_DAYS * dateObject.date;
     dateObject.hour = Math.floor(miliseconds / 3600000);
     miliseconds -= dateObject.hour * 3600000;

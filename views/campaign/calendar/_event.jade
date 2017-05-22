@@ -1,0 +1,9 @@
+form(name='event' action=campaign.url + 'event' method='post')
+  .modal-content&attributes({class:THEME})
+    .modal-title #{day.month} #{day.date}, #{day.year} – #{day.weekday}
+    .modal-body
+      each event in events
+        pre= JSON.stringify(event,null,' ')
+    .modal-footer
+      .flex.center.pad
+        button.btn(type='submit') Submit

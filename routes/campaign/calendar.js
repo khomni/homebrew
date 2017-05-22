@@ -126,8 +126,9 @@ router.get('/:year-:month-:day', (req, res, next) => {
 
   return db.Event.findAll(query)
   .then(events => {
+    events = events.map(e => res.locals.campaign.Calendar.dateFromTimestamp(e))
     if(req.json) return res.json(events)
-    if(req.modal) return res.json(events)
+    if(req.modal) return res.render('campaign/calendar/_event', {events: events, day: res.locals.campaign.Calendar.dateFromTimestamp(start)})
     return next();
   })
   .catch(next)

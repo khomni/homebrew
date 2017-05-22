@@ -72,7 +72,7 @@ block content
                                 .date-number= day&&day.date
                                 .events
                                   each event in day.events
-                                    .event= event.name
+                                    .event(id="event-"+event.id)= event.name
                 hr
         if campaign.owned
           section
