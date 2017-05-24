@@ -7,7 +7,11 @@ block header
   +header
     .header-item.page-title 
       span #{campaign.name} Calendar
-
+    .header-item
+      .flex.pad
+        a(href=campaign.url + 'calendar?year=' + (year - 1))= (year - 1)
+        span= year
+        a(href=campaign.url + 'calendar?year=' + (year + 1))= (year + 1)
 mixin weekday(day)
   .flex.input-group
     .flex.grow: input.form-input(type="text" name="weekdays" value=day placeholder="Weekday Name" required)
@@ -26,109 +30,94 @@ block content
                 //- form(action=campaign.url, method="DELETE")
                   button.btn(type="submit") Delete
   .tab-panel
-     #calendar.tab-pane.flex.vert.fill.active
+    #calendar.tab-pane.flex.vert.fill.active
+      if campaign.owned
         form(action=campaign.url + 'e/present' method="post" data-response="json" data-reaction="redirect")
           -var context = campaign.Calendar.dateFromTimestamp(campaign.Calendar.present)
           section: .section-body
             if campaign.Calendar.present
               label Current Date: #{context.weekday}, #{context.month} #{context.date}, #{context.year}
             .flex.horz.pad
-              .flex.vert.grow
-                label Year
-                input.form-input(type="number" name="year" value=context&&context.year)
-              .flex.vert.grow
-                label Month
-                select.form-input(name="month")
-                  option(disabled selected=!context) Select Month
-                  each month,i in campaign.Calendar.months
-                    option(value=i+1 selected=context&&context.monthIndex==i) #{i+1}: #{month.name}
-              .flex.vert.grow
-                label Date
-                input.form-input(type="number" name="date" value=context&&context.date)
-              .flex.vert.grow
-                label Current Hour
-                input.form-input(type="number" name="hour" min=0 max=23 value=context&&context.hour)
-              .flex.vert.grow
-                label Current Minute
-                input.form-input(type="number" name="minute" min=0 max=59 value=context&&context.minute)
+              +dateFields(context, campaign.Calendar, {hour:true, minute:true})
             .flex.center: button.btn Set Day
+      section
+        .section-body
+          each year in calendar
+            h2= year.year
+            each month,i in year.months
+              h3= month.name
+              table.calendar.month
+                thead: tr
+                  each day in campaign.Calendar.weekdays
+                    th= day
+                tbody
+                  each week in month.weeks
+                    tr.week
+                      each day in week
+                        td.day(class=(!day?'obscured':'') + (day&&day.events.length?'has-events':''))
+                          if day
+                            -var slug = year.year + '-' + Common.zeropad(i+1,2) + '-' + Common.zeropad(day.date,2)
+                            a(href=campaign.url + 'calendar/' + slug data-response="modal" data-target="event-" + slug)
+                              .date-number= day&&day.date
+                              .events
+                                each event in day.events
+                                  .event(id="event-"+event.id)= event.name
+              hr
+      if campaign.owned
         section
           .section-body
-            each year in calendar
-              h2= year.year
-              each month,i in year.months
-                h3= month.name
-                table.calendar.month
-                  thead: tr
-                    each day in campaign.Calendar.weekdays
-                      th= day
-                  tbody
-                    each week in month.weeks
-                      tr.week
-                        each day in week
-                          td.day(class=(!day?'obscured':'') + (day&&day.events.length?'has-events':''))
-                            if day
-                              a(href=campaign.url + 'calendar/' + year.year + '-' + Common.zeropad(i+1,2) + '-' + Common.zeropad(day.date,2) data-response="modal")
-                                .date-number= day&&day.date
-                                .events
-                                  each event in day.events
-                                    .event(id="event-"+event.id)= event.name
-                hr
-        if campaign.owned
-          section
-            .section-body
-              .flex.pad
-                .flex.vert.border.pad
-                  .flex.center: label GM Actions
-                  .flex.center.pad
-                    a.btn(href=campaign.url+"edit" data-response="modal") Edit
-                    form(method=campaign.url+"delete" data-response="json")
-                      button.btn Delete
+            .flex.pad
+              .flex.vert.border.pad
+                .flex.center: label GM Actions
+                .flex.center.pad
+                  a.btn(href=campaign.url+"edit" data-response="modal") Edit
+                  form(method=campaign.url+"delete" data-response="json")
+                    button.btn Delete
 
 
-      #settings.tab-pane.flex.vert.fill
-        form(action=campaign.url + 'calendar/' method="post" data-response="json" data-reaction="redirect")
-          if calendar
-            section
-              .section-body
-                .flex.pad: p.
-                  #[strong Warning!] Modifying the total length of years of an existing calendar will affect any events you have created under that calendar.
-                .flex.center
-                  label.checkbox
-                    input(type="checkbox" required) 
-                    span I understand
-                  label.checkbox
-                    input(type="checkbox" name="deletePastEvents") 
-                    span Delete all existing events under this calendar
+    #settings.tab-pane.flex.vert.fill
+      form(action=campaign.url + 'calendar/' method="post" data-response="json" data-reaction="redirect")
+        if calendar
           section
             .section-body
-              .flex.pad.vert
-                //- label Year Length
-                //- input.form-input(type="number" name="year_length" value=calendar&&calendar.year_length required)
-              
-                label Weekdays
-                .flex.vert.pad.border#weekdays
-                  if calendar
-                    each day in campaign.Calendar.weekdays
-                      +weekday(day)
-                  else
-                    +weekday()
-                
-                template#weekday_template
+              .flex.pad: p.
+                #[strong Warning!] Modifying the total length of years of an existing calendar will affect any events you have created under that calendar.
+              .flex.center
+                label.checkbox
+                  input(type="checkbox" required) 
+                  span I understand
+                label.checkbox
+                  input(type="checkbox" name="deletePastEvents") 
+                  span Delete all existing events under this calendar
+        section
+          .section-body
+            .flex.pad.vert
+              //- label Year Length
+              //- input.form-input(type="number" name="year_length" value=calendar&&calendar.year_length required)
+            
+              label Weekdays
+              .flex.vert.pad.border#weekdays
+                if calendar
+                  each day in campaign.Calendar.weekdays
+                    +weekday(day)
+                else
                   +weekday()
-                a.btn(data-click='duplicate' data-target="weekday_template" data-destination="weekdays") Add Weekday
+              
+              template#weekday_template
+                +weekday()
+              a.btn(data-click='duplicate' data-target="weekday_template" data-destination="weekdays") Add Weekday
 
 
-                label Months
-                .flex.vert.pad.border#months
-                  if campaign.Calendar
-                    each month in campaign.Calendar.months
-                      +month(month)
-                  else
-                    +month()
-                
-                template#month_template
+              label Months
+              .flex.vert.pad.border#months
+                if campaign.Calendar
+                  each month in campaign.Calendar.months
+                    +month(month)
+                else
                   +month()
-                a.btn(data-click='duplicate' data-target="month_template" data-destination="months") Add Month
-            .flex.center
-              button.btn.block(type='submit') Submit
+              
+              template#month_template
+                +month()
+              a.btn(data-click='duplicate' data-target="month_template" data-destination="months") Add Month
+          .flex.center
+            button.btn.block(type='submit') Submit

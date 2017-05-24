@@ -59,13 +59,14 @@ function Modal(elem) {
     thisModal.recenter();
   }
 
-  elem.addEventListener('data', e => {
-    return thisModal.remove()
-  })
+  // elem.addEventListener('data', e => {
+  //   let data = e.detail
+  //   if(!data.error) return thisModal.remove()
+  // })
 
   // prevent click events from reaching the modals parent
   elem.addEventListener('mousedown', e => {
-    console.log(e)
+    // allow alternate clicks for buttons or links
     if(e.target.nodeName == "BUTTON" || e.target.nodeName == "A") return true;
     if(e.which == 2) return thisModal.remove();
     if(e.which == 1) return thisModal.focus();

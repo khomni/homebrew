@@ -89,6 +89,8 @@ module.exports = function(sequelize, DataTypes) {
         // a character is part of a campaign, so it contains a reference to that campaign
         Character.belongsTo(models.Campaign, {constraints: false});
 
+        Character.belongsTo(models.Event,{as: 'birthday', constraints:false});
+
         // a character has lore in the form of their bio and backstory
         Character.hasMany(models.Lore, {
           as: 'lore',

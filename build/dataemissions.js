@@ -3,7 +3,6 @@
 (function(){
   // data is sniffed at the document level, but reference to the targeted dom will be e.target
   document.addEventListener('data', function(e){
-    console.log(e)
     var source = e.target
     var data = e.detail
     var method = source.getAttribute('method')
@@ -13,7 +12,7 @@
     if(!source.dataset.reaction) return false;
 
     if(source.dataset.reaction == 'redirect') {
-      console.log('redirect with data:',data)
+      if(data.error) return false;
       if(data.redirect) return window.location = data.redirect
       return window.location.reload()
     }

@@ -1,0 +1,26 @@
+//- insert fields
+mixin dateFields(event, calendar, options)
+  -options = Object.assign({year: true, month: true, date: true},options||{})
+  if options.year
+    .flex.vert.grow
+      label Year
+      input.form-input(type="number" name="year" value=event&&event.year)
+  if options.month
+    .flex.vert.grow
+      label Month
+      select.form-input(name="month")
+        option(disabled selected=!context) Select Month
+        each month,i in calendar.months
+          option(value=i+1 selected=event&&event.monthIndex==i) #{i+1}: #{month.name}
+  if options.date
+    .flex.vert.grow
+      label Date
+      input.form-input(type="number" name="date" value=event&&event.date)
+  if options.hour
+    .flex.vert.grow
+      label Hour
+      input.form-input(type="number" name="hour" min=0 max=23 value=event&&event.hour)
+  if options.minute
+    .flex.vert.grow
+      label Minute
+      input.form-input(type="number" name="minute" min=0 max=59 value=event&&event.minute)

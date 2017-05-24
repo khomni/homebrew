@@ -40,6 +40,14 @@ module.exports = function(sequelize, DataTypes) {
         Event.hasMany(models.Lore,{
           as: 'lore',
           foreignKey: 'lorable_id',
+          scope: {
+            lorable: 'Event'
+          }
+        });
+
+        Event.hasMany(models.Lore,{
+          as: 'lore',
+          foreignKey: 'lorable_id',
           onDelete: 'cascade',
           scope: {
             lorable: 'Event'

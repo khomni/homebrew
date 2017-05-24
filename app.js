@@ -103,9 +103,9 @@ app.use(function(req,res,next){
 app.use(require(APPROOT+'/middleware/activeChar'));
 
 app.use('/', (req,res,next)=>{
-  if(/\.json$/.test(req.url)) {
+  if(/\.json(.*)?$/.test(req.url)) {
     req.headers.accept = 'application/json'
-    req.url = req.url.slice(0,-5)
+    req.url = req.url.replace(/\.json(.*)?$/,'')
   }
   return next();
 });

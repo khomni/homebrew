@@ -70,7 +70,8 @@ module.exports = function(sequelize, DataTypes) {
   Calendar.MILISECOND_DAYS = 86400000
 
   // given an array of events, returns a complete calendar data structure with the events populated
-  Calendar.Instance.prototype.generateCalendar = function(events) {
+  Calendar.Instance.prototype.generateCalendar = function(events, options) {
+    options = options || {}
     let thisCalendar = this;
     let years = []
 
@@ -81,19 +82,22 @@ module.exports = function(sequelize, DataTypes) {
       return thisCalendar.dateFromTimestamp(e);
     })
 
-    let maxYear = events[events.length-1].year
+
+    let startYear = options.year || events[0] && events[0].year || undefined
+    let endYear = options.year || events.length>0 && events[events.length-1].year || undefined
+
     // establish the boundaries of the calendar so the interceding days can be filled in
-    for(let i = Number(events[0].year); i<= maxYear ; i++) {
+    for(let i = startYear; i<= endYear ; i++) {
       let epochDay = (i-1) * thisCalendar.year_length // keep track of epochDay for weekdays
       years.push({
         year: i, 
         months: thisCalendar.months.map((m,k) => {
           let month = {name: m.name, weeks: []}
-          let weekday = thisCalendar.weekdays[epochDay % thisCalendar.weekdays.length]
+          let weekday = thisCalendar.weekdays[(epochDay-1) % thisCalendar.weekdays.length]
           let currentWeek = new Array(Math.max(thisCalendar.weekdays.indexOf(weekday),0))
           for(let j=1; j<=m.days;j++) {
             epochDay++;
-            weekday = thisCalendar.weekdays[epochDay % thisCalendar.weekdays.length]
+            weekday = thisCalendar.weekdays[(epochDay-1) % thisCalendar.weekdays.length]
             let day = {date: j, weekday: weekday, events:[]}
 
             while(events[0] && events[0].year == i && events[0].monthIndex == k && events[0].date == j) {
@@ -101,7 +105,7 @@ module.exports = function(sequelize, DataTypes) {
             }
             currentWeek.push(day)
 
-            if(thisCalendar.weekdays.indexOf(weekday) == 0) {
+            if(currentWeek.length == thisCalendar.weekdays.length) {
               month.weeks.push(currentWeek)
               currentWeek = []
             }
@@ -120,8 +124,6 @@ module.exports = function(sequelize, DataTypes) {
     let thisCalendar = this;
 
     let epochTime = 0;
-
-    console.log(obj)
 
     if('year' in obj) epochTime += (Number(obj.year)-1) * thisCalendar.year_length
     if('month' in obj) epochTime += thisCalendar.months.slice(0,Math.max(Number(obj.month)-1,0)).reduce((a,b)=>{
@@ -166,7 +168,6 @@ module.exports = function(sequelize, DataTypes) {
 
     dateObject.weekday = thisCalendar.weekdays[(Math.floor(timestamp / MILISECOND_DAYS)-1) % thisCalendar.weekdays.length]
     dateObject.date = Math.floor(miliseconds / MILISECOND_DAYS); //get the number of days
-    console.log(dateObject.date,dateObject.weekday)
     miliseconds -= MILISECOND_DAYS * dateObject.date;
     dateObject.hour = Math.floor(miliseconds / 3600000);
     miliseconds -= dateObject.hour * 3600000;
