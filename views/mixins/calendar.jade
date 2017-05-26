@@ -1,26 +1,39 @@
 //- insert fields
 mixin dateFields(event, calendar, options)
-  -options = Object.assign({year: true, month: true, date: true},options||{})
+  -options = Object.assign({year: true, month: true, date: true, end:true},options||{})
   if options.year
     .flex.vert.grow
       label Year
-      input.form-input(type="number" name="year" value=event&&event.year)
+      input.form-input(type="number" name="timestamp.$.year" value=event&&event.year placeholder="Start Year")
+      if options.end
+        input.form-input(type="number" name="timestamp.$.year" value=event&&event.year placeholder="End Year")
   if options.month
     .flex.vert.grow
       label Month
-      select.form-input(name="month")
-        option(disabled selected=!context) Select Month
+      select.form-input(name="timestamp.$.month")
+        option(selected=!context value='') Select Start Month
         each month,i in calendar.months
           option(value=i+1 selected=event&&event.monthIndex==i) #{i+1}: #{month.name}
+      if options.end
+        select.form-input(name="timestamp.$.month")
+          option(selected=!context value='') Select End Month
+          each month,i in calendar.months
+            option(value=i+1 selected=event&&event.monthIndex==i) #{i+1}: #{month.name}
   if options.date
     .flex.vert.grow
       label Date
-      input.form-input(type="number" name="date" value=event&&event.date)
+      input.form-input(type="number" name="timestamp.$.date" value=event&&event.date placeholder="Start Date")
+      if options.end
+        input.form-input(type="number" name="timestamp.$.date" value=event&&event.date placeholder="End Date")
   if options.hour
     .flex.vert.grow
       label Hour
-      input.form-input(type="number" name="hour" min=0 max=23 value=event&&event.hour)
+      input.form-input(type="number" name="timestamp.$.hour" min=0 max=23 value=event&&event.hour placeholder="Start Hour")
+      if options.end
+        input.form-input(type="number" name="timestamp.$.hour" min=0 max=23 value=event&&event.hour placeholder="End Hour")
   if options.minute
     .flex.vert.grow
       label Minute
-      input.form-input(type="number" name="minute" min=0 max=59 value=event&&event.minute)
+      input.form-input(type="number" name="timestamp.$.minute" min=0 max=59 value=event&&event.minute placeholder="Start Minute")
+      if options.end
+        input.form-input(type="number" name="timestamp.$.minute" min=0 max=59 value=event&&event.minute placeholder="End Minute")

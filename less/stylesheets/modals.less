@@ -1,13 +1,5 @@
 @import '../mixins/mixins.less';
 
-/*
-MODALS
-
-.modal
-
-
-*/
-
 body.modal-open {
 	overflow: hidden;
 }
@@ -52,6 +44,8 @@ body.modal-open {
 .modal {
 	flex-shrink:0;
 	transition: filter 0.2s;
+
+	// .animation(fadeDown 0.25s forwards @bezier-bounce);
 
 	&:not(:last-child) {
 		.sm-plus({

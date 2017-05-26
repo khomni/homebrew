@@ -23,7 +23,7 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
   let query = {}
 
   // for normal page navigation, assume that the user wants the CURRENT_YEAR
-  if(!req.json) req.query.year = req.query.year || res.locals.campaign.Calendar.today.year
+  if(!req.json) req.query.year = req.query.year || res.locals.campaign.Calendar.now.year
   res.locals.year = Number(req.query.year);
   // if a year is specified, get the timestamps for the start of this year and the start of the next to get all events in the year
   if(req.query.year) {
@@ -35,7 +35,7 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
   // if a range is provided, generate a calendar that covers the entire range
   if(req.query.start && req.query.end) {
     start = res.locals.campaign.Calendar.convertToTimestamp({year:req.query.start})
-    end  = res.locals.campaign.Calendar.convertToTimestamp({year:Number(req.query.end)})
+    end = res.locals.campaign.Calendar.convertToTimestamp({year:Number(req.query.end)})
     query.where = {timestamp: {$contained: [start,end]}}
   }
 
@@ -72,34 +72,23 @@ router.post('/', Common.middleware.requireGM, Common.middleware.objectifyBody, (
 //   if(req.json) return res.json(res.locals.campaign.Calendar.getContext(res.locals.campaign.Calendar.present))
 // })
 router.get('/present', (req, res, next) => {
-  if(req.json) return res.json(res.locals.campaign.Calendar.today)
+  if(req.json) return res.json(res.locals.campaign.Calendar.now)
 })
 
 router.post('/present', Common.middleware.requireGM, Common.middleware.objectifyBody, (req, res, next) => {
 
-  db._methods(res.locals.campaign.Calendar, /present/i)
-
-  let dayOfYear = (res.locals.campaign.Calendar.months.slice(0,Number(req.body.month))
-  .reduce((a,b)=>{return a+b.days},0) + req.body.date) % res.locals.campaign.Calendar.year_length
+  let timestamp = res.locals.campaign.Calendar.convertToTimestamp(req.body.timestamp)
+  timestamp.push(timestamp[0])
 
   return Promise.try(()=> {
     if(!res.locals.campaign.Calendar.present) return;
     return res.locals.campaign.Calendar.present.destroy();
   })
   .then(() => {
-    let timestamp = res.locals.campaign.Calendar.convertToTimestamp({
-      year: req.body.year,
-      month: req.body.month,
-      date: req.body.date,
-      hour: req.body.hour,
-      minute: req.body.minute,
-      second: 0,
-      milisecond: 0,
-    })
 
     return res.locals.campaign.Calendar.createPresent({
       name: "Present Date",
-      timestamp: [{ value: timestamp, inclusive: true}, {value: timestamp, inclusive: true}]
+      timestamp: [{ value: timestamp[0], inclusive: true}, {value: timestamp[1], inclusive: true}]
     })
   })
   .then(present => {
@@ -111,11 +100,11 @@ router.post('/present', Common.middleware.requireGM, Common.middleware.objectify
 });
 
 // add a new event to the calendar
-router.post('/event', (req, res, next) => {
+router.post('/event', Common.middleware.objectifyBody, (req, res, next) => {
 
-  let timestamp = res.locals.campaign.Calendar.convertToTimestamp(req.body)
+  let timestamp = res.locals.campaign.Calendar.convertToTimestamp(req.body.timestamp)
 
-  return res.locals.campaign.Calendar.createEvent(Object.assign(req.body,{timestamp: [{value: timestamp, inclusive:true}, {value: timestamp, inclusive: true}]}))
+  return res.locals.campaign.Calendar.createEvent(Object.assign(req.body,{timestamp: [{value: timestamp[0], inclusive:true}, {value: timestamp[1], inclusive: true}]}))
   .then(event => {
     if(req.json) return res.json(event)
     return res.render('modals/_success', {title:'Event Posted', redirect:req.headers.referer})
@@ -132,15 +121,8 @@ router.get('/:year-:month-:day', (req, res, next) => {
     date: req.params.day
   })
 
-  let end = res.locals.campaign.Calendar.convertToTimestamp({
-    year: req.params.year,
-    month: req.params.month,
-    date: req.params.day,
-    hour: 23,
-    minute: 59,
-    second: 59,
-    milisecond: 999
-  })
+  // get the whole day to the last milisecond
+  let end = start + db.Calendar.MILISECOND_DAYS - 1
 
   // choose between only showing events that occur entirely within the day and all events that are happening during this day
   let query = {where: {timestamp: {}}}
@@ -149,19 +131,30 @@ router.get('/:year-:month-:day', (req, res, next) => {
 
   return db.Event.findAll(query)
   .then(events => {
-    console.log(events)
     let day = res.locals.campaign.Calendar.dateFromTimestamp(start)
-    events = events.map(e => res.locals.campaign.Calendar.dateFromTimestamp(e))
+    events.map(e => e.time = res.locals.campaign.Calendar.dateFromTimestamp(e))
     if(req.json) return res.json({year: day.year, month: day.month, date: day.date, weekday: day.weekday, events: events})
-    if(req.modal) return res.render('campaign/calendar/_event', {events: events, day: day})
+    if(req.modal) return res.render('campaign/calendar/_day', {events: events, day: day})
     return next();
   })
   .catch(next)
 });
 
 // update an event
-router.post('/:id', (req, res, next) => {
-  return next();
+router.post('/:id', Common.middleware.objectifyBody, (req, res, next) => {
+
+  let timestamp = res.locals.campaign.Calendar.convertToTimestamp(req.body.timestamp)
+  .map(v=> {return {value: v, inclusive: true}})
+  
+  return db.Event.find({where:{id:req.params.id}})
+  .then(event => {
+    return event.update({name: req.body.name, timestamp:timestamp})
+  })
+  .then(event => {
+    if(req.json) return res.json({ref:res.locals.item, kind:'Item'})
+    return res.render('modals/_success', {title:'Event Deleted', redirect:req.headers.referer})
+  })
+  .catch(next);
 })
 
 // delete an event

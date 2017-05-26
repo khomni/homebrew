@@ -16,6 +16,12 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.RANGE,
       index: true,
     },
+
+    // the human-readable time based on the owning calendar
+    // TODO: figure out of its feasible to include the owning calendar by default so this can be populated automatically
+    time : { 
+      type: DataTypes.VIRTUAL
+    }
     // an optional JSONB field for describing your campaign world's proprietary time system,
     // TODO: for more details on valid JSON formats, read accompanying documentation
   }, {

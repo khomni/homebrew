@@ -1,0 +1,8 @@
+include /mixins/mixins
+
+.modal-content&attributes({class:THEME})
+  .modal-title #{day.month} #{day.date}, #{day.year} – #{day.weekday}
+  .modal-body
+    ul
+      each event in events
+        li #[a(href=campaign.url + 'events/' + event.id)= event.name] #[label — #{event.time[0].readableTime}] 

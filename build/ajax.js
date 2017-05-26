@@ -82,6 +82,7 @@ Ajax.serialize = function(form) {
 }
 
 Ajax.setListeners = function() {
+
   document.addEventListener('submit', function(e) {
     var thisForm = e.target;
     // TOOD: support for button formmethod and formaction
@@ -110,7 +111,7 @@ Ajax.setListeners = function() {
       var contentType = xhr.getResponseHeader('Content-Type') || []
       if(contentType.includes('application/json')) {
         var response = JSON.parse(xhr.response)
-        var dataEvent = new CustomEvent('data',{detail: response, bubbles:true})
+        var dataEvent = new CustomEvent('data', {detail: response, bubbles:true})
         return thisForm.dispatchEvent(dataEvent)
       }
 

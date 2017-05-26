@@ -33,12 +33,12 @@ block content
     #calendar.tab-pane.flex.vert.fill.active
       if campaign.owned
         form(action=campaign.url + 'e/present' method="post" data-response="json" data-reaction="redirect")
-          -var context = campaign.Calendar.dateFromTimestamp(campaign.Calendar.present)
           section: .section-body
             if campaign.Calendar.present
-              label Current Date: #{context.weekday}, #{context.month} #{context.date}, #{context.year}
+              label Current Date: #{campaign.Calendar.now.weekday}, #{campaign.Calendar.now.month} #{campaign.Calendar.now.date}, #{campaign.Calendar.now.year}
             .flex.horz.pad
-              +dateFields(context, campaign.Calendar, {hour:true, minute:true})
+              -console.log(campaign.Calendar.now)
+              +dateFields(campaign.Calendar.now, campaign.Calendar, {hour:true, minute:true, end:false})
             .flex.center: button.btn Set Day
       section
         .section-body
