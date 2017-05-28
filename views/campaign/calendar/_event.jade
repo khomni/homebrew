@@ -1,24 +1,21 @@
 include /mixins/mixins
 
 .modal-content&attributes({class:THEME})
-  .modal-title #{day.month} #{day.date}, #{day.year} – #{day.weekday}
+  if event.name
+    .modal-title= event.name
+  else
+    .modal-title New Event
   .modal-body
-    each event in events
-      form.flex.pad.border(name='event' action=campaign.url + 'calendar/' + event.id method="post" data-response="json")
+    if !event.ownerId || event.owned
+      form.flex.pad.vert.border(name='event' action=action method="post")
         .flex.vert
-          .flex.vert.pad
-            input.form-input(type="text" name="name" value=event.name)
-          .flex.horz.pad
-            +dateFields(event, campaign.Calendar, {hour: true, minute: true})
-          .flex.center.pad.horz
-            button.btn(type="submit") Update Event
-            button.btn(type="submit" formmethod="delete") Delete
-    form.flex.pad.border(name='event' action=campaign.url + 'calendar/event' method='post' data-response="json")
-      .flex.vert
-        .flex.vert.pad
-          label New Event
-          input.form-input(type="text" name="name")
-        .flex.horz.pad
-          +dateFields(day, campaign.Calendar, {hour: true, minute: true})
+          label Event Name
+          input.form-input(name="name" value=event.name required)
+        .flex.pad.border
+          +dateFields(event.time||event, campaign.Calendar, {hour: true, minute: true, miliseconds: true})
         .flex.center.pad
-          button.btn(type="submit") Add Event
+          if event.name
+            button.btn(type="submit") Update Event
+            button.btn(formmethod="delete") Delete Event
+          else
+            button.btn(type="submit") Add Event

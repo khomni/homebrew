@@ -83,19 +83,26 @@ Ajax.serialize = function(form) {
 
 Ajax.setListeners = function() {
 
+  // FORM SUBMIT OVERRIDE
+  // listens for form submissions at the document-level and
+  //    1) modifies the request based on the attributes of the form and inputs
+  //      1a) Allows buttons to change the method or action of the containing form
+  //    2) Changes the default form behavior on response based on the provided request header
+
   document.addEventListener('submit', function(e) {
     var thisForm = e.target;
+    var Modal = require('./modal');
     // TOOD: support for button formmethod and formaction
 
-    // if the form doesn't specify a response and the form method is a normal post, then treat as a normal form submission
-    if(!thisForm.dataset.response && thisForm.getAttribute('method').toLowerCase() == 'post') return true;
     e.preventDefault();
     e.stopPropagation();
 
+    // collect the method and action from the form or the button pressed, if applicable
     var thisFocus = thisForm.querySelector(':focus')
     var method = thisFocus.getAttribute('formmethod') || thisForm.getAttribute('method')
     var action = thisFocus.getAttribute('formaction') || thisForm.action
-    var Modal = require('./modal');
+
+    console.log(method, action)
 
     // proprietary form handler!
     return Ajax.fetch({
@@ -107,7 +114,10 @@ Ajax.setListeners = function() {
       },
       body:thisForm
     })
-    .then(xhr =>{
+    .then(xhr => {
+      if(xhr.getResponseHeader('X-Redirect')) return window.location = xhr.getResponseHeader('X-Redirect')
+
+      // if the router responds with JSON data, emit it from the form as a 'data' event
       var contentType = xhr.getResponseHeader('Content-Type') || []
       if(contentType.includes('application/json')) {
         var response = JSON.parse(xhr.response)
@@ -115,7 +125,13 @@ Ajax.setListeners = function() {
         return thisForm.dispatchEvent(dataEvent)
       }
 
+      // otherwise, collect the HTML response and handle accordingly
       var html = xhr.response
+
+      // TODO: have the router coerce the response type with headers, rather than rely on the form to make that decision
+      if(xhr.getResponseHeader('X-Modal')) {
+        return Modal.methods.createModal(html)
+      }
 
       if(thisForm.dataset.response == 'insert' || thisForm.dataset.response == 'replace') {
         if(!thisForm.dataset.target) throw new Error('No target to insert data')

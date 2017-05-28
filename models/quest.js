@@ -29,6 +29,7 @@ module.exports = function(sequelize, DataTypes) {
           as: 'comments',
           constraints: false,
           foreignKey: 'commentable_id',
+          onDelete: 'cascade',
           scope: {
             commentable: 'Quest'
           }
@@ -38,6 +39,7 @@ module.exports = function(sequelize, DataTypes) {
         Quest.hasMany(models.Lore, {
           as: 'lore',
           foreignKey: 'lorable_id',
+          onDelete: 'cascade',
           scope: {
             lorable: 'Quest'
           }

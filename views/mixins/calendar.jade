@@ -1,39 +1,44 @@
 //- insert fields
 mixin dateFields(event, calendar, options)
   -options = Object.assign({year: true, month: true, date: true, end:true},options||{})
+  if Array.isArray(event)
+    -var start = event.shift()
+    -var end = event.pop()
+  else
+    -var start = end = event
   if options.year
     .flex.vert.grow
       label Year
-      input.form-input(type="number" name="timestamp.$.year" value=event&&event.year placeholder="Start Year")
+      input.form-input(type="number" name="timestamp.$.year" value=start&&start.year placeholder="Start Year" tabindex=1)
       if options.end
-        input.form-input(type="number" name="timestamp.$.year" value=event&&event.year placeholder="End Year")
+        input.form-input(type="number" name="timestamp.$.year" value=end&&end.year placeholder="End Year" tabindex=2)
   if options.month
     .flex.vert.grow
       label Month
-      select.form-input(name="timestamp.$.month")
+      select.form-input(name="timestamp.$.month" tabindex=1)
         option(selected=!context value='') Select Start Month
         each month,i in calendar.months
-          option(value=i+1 selected=event&&event.monthIndex==i) #{i+1}: #{month.name}
+          option(value=i+1 selected=start&&start.monthIndex==i) #{i+1}: #{month.name}
       if options.end
-        select.form-input(name="timestamp.$.month")
+        select.form-input(name="timestamp.$.month" tabindex=2)
           option(selected=!context value='') Select End Month
           each month,i in calendar.months
-            option(value=i+1 selected=event&&event.monthIndex==i) #{i+1}: #{month.name}
+            option(value=i+1 selected=end&&end.monthIndex==i) #{i+1}: #{month.name}
   if options.date
     .flex.vert.grow
       label Date
-      input.form-input(type="number" name="timestamp.$.date" value=event&&event.date placeholder="Start Date")
+      input.form-input(type="number" name="timestamp.$.date" value=start&&start.date placeholder="Start Date" tabindex=1)
       if options.end
-        input.form-input(type="number" name="timestamp.$.date" value=event&&event.date placeholder="End Date")
+        input.form-input(type="number" name="timestamp.$.date" value=end&&end.date placeholder="End Date" tabindex=2)
   if options.hour
     .flex.vert.grow
       label Hour
-      input.form-input(type="number" name="timestamp.$.hour" min=0 max=23 value=event&&event.hour placeholder="Start Hour")
+      input.form-input(type="number" name="timestamp.$.hour" min=0 max=23 value=start&&start.hour placeholder="Start Hour" tabindex=1)
       if options.end
-        input.form-input(type="number" name="timestamp.$.hour" min=0 max=23 value=event&&event.hour placeholder="End Hour")
+        input.form-input(type="number" name="timestamp.$.hour" min=0 max=23 value=end&&end.hour placeholder="End Hour" tabindex=2)
   if options.minute
     .flex.vert.grow
       label Minute
-      input.form-input(type="number" name="timestamp.$.minute" min=0 max=59 value=event&&event.minute placeholder="Start Minute")
+      input.form-input(type="number" name="timestamp.$.minute" min=0 max=59 value=start&&start.minute placeholder="Start Minute" tabindex=1)
       if options.end
-        input.form-input(type="number" name="timestamp.$.minute" min=0 max=59 value=event&&event.minute placeholder="End Minute")
+        input.form-input(type="number" name="timestamp.$.minute" min=0 max=59 value=end&&end.minute placeholder="End Minute" tabindex=2)

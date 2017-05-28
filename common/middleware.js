@@ -110,7 +110,16 @@ module.exports = {
     if(res.locals.campaign.owned) return next();
     // otherwise, reject
     return next(Common.error.authorization("You must be logged in as the GM to access this resource"))
+  },
+
+  // 
+  // a string pointing to a boolean in res.locals can be included to provide an alternative method of authorization
+  verifyOwner: pathToBoolean => {
+
+    return (req, res, next) => {
+      if(res.locals.campaign && res.locals.campaign.owned) return next();
+      if(!pathToBoolean) return next();
+      if(!Common.utilities.get(res.locals, pathToBoolean)) throw Common.error.authorization("You do not have permission to access this resource")
+    }
   }
-
-
 }

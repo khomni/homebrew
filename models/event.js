@@ -13,8 +13,18 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     timestamp: {
-      type: DataTypes.RANGE,
+      type: DataTypes.RANGE(DataTypes.BIGINT),
       index: true,
+      set: function(i) {
+        if(!Array.isArray(i)) i = [i]
+        if(i.length < 2) i.push(i[0])
+        if(i[1] < i[0]) i[1] = i[0]
+        return this.setDataValue('timestamp', i.map(t => {return {value:t, inclusive: true}}))
+      }
+    },
+
+    eventable: {
+      type: DataTypes.STRING
     },
 
     // the human-readable time based on the owning calendar
@@ -27,7 +37,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     scopes: {
       defaultScope: {
-        sort: ['timestamp',1]
+        sort: {timestamp: 1}
       },
       present: {
         attributes: {exclude: 'Calendar'}
@@ -43,13 +53,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Event.belongsTo(models.Calendar);
 
-        Event.hasMany(models.Lore,{
-          as: 'lore',
-          foreignKey: 'lorable_id',
-          scope: {
-            lorable: 'Event'
-          }
-        });
+        Event.belongsTo(models.User, {as: 'owner'});
 
         Event.hasMany(models.Lore,{
           as: 'lore',
@@ -58,6 +62,16 @@ module.exports = function(sequelize, DataTypes) {
           scope: {
             lorable: 'Event'
           },
+        });
+
+        Event.hasMany(models.Comment, {
+          as: 'comments',
+          constraints: false,
+          foreignKey: 'commentable_id',
+          onDelete: 'cascade',
+          scope: {
+            commentable: 'Quest'
+          }
         });
 
         // change the default event scope to include the owning calendar

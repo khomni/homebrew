@@ -1,3 +1,4 @@
+'use strict';
 
 function Breadcrumbs(array) {
   this.url = ""
@@ -51,7 +52,6 @@ function get(object, string) {
 
   return null
 }
-
 
 module.exports = {
   Breadcrumbs: Breadcrumbs,

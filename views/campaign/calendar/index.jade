@@ -7,11 +7,15 @@ block header
   +header
     .header-item.page-title 
       span #{campaign.name} Calendar
-    .header-item
-      .flex.pad
-        a(href=campaign.url + 'calendar?year=' + (year - 1))= (year - 1)
-        span= year
-        a(href=campaign.url + 'calendar?year=' + (year + 1))= (year + 1)
+    if navigation
+      .header-item
+        .flex.pad
+          if navigation.next
+            a(href=navigation.previous.anchor)= navigation.previous.name || "Previous"
+          a(href=campaign.url + 'calendar') Present
+          if navigation.next
+            a(href=navigation.next.anchor)= navigation.next.name || "Next"
+
 mixin weekday(day)
   .flex.input-group
     .flex.grow: input.form-input(type="text" name="weekdays" value=day placeholder="Weekday Name" required)
@@ -37,14 +41,13 @@ block content
             if campaign.Calendar.present
               label Current Date: #{campaign.Calendar.now.weekday}, #{campaign.Calendar.now.month} #{campaign.Calendar.now.date}, #{campaign.Calendar.now.year}
             .flex.horz.pad
-              -console.log(campaign.Calendar.now)
               +dateFields(campaign.Calendar.now, campaign.Calendar, {hour:true, minute:true, end:false})
             .flex.center: button.btn Set Day
       section
         .section-body
           each year in calendar
             h2= year.year
-            each month,i in year.months
+            each month in year.months
               h3= month.name
               table.calendar.month
                 thead: tr
@@ -54,14 +57,15 @@ block content
                   each week in month.weeks
                     tr.week
                       each day in week
-                        td.day(class=(!day?'obscured':'') + (day&&day.events.length?'has-events':''))
+                        td.day(class=(!day?'obscured':'') + (day&&day.events&&day.events.length?'has-events':''))
                           if day
-                            -var slug = year.year + '-' + Common.zeropad(i+1,2) + '-' + Common.zeropad(day.date,2)
+                            -var slug = year.year + '/' + Common.zeropad(month.monthIndex+1,2) + '/' + Common.zeropad(day.date,2)
                             a(href=campaign.url + 'calendar/' + slug data-response="modal" data-target="event-" + slug)
                               .date-number= day&&day.date
                               .events
-                                each event in day.events
-                                  .event(id="event-"+event.id)= event.name
+                                if day.events
+                                  each event in day.events
+                                    .event(id="event-"+event.id)= event.name
               hr
       if campaign.owned
         section

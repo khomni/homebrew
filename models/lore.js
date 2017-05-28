@@ -36,7 +36,7 @@ module.exports = function(sequelize, DataTypes) {
     freezeTableName: true,
     classMethods: {
       associate: function(models) {
-        Lore.belongsTo(models.User, {as:'author'})
+        Lore.belongsTo(models.User, {as:'owner'})
       }
     }
   });
