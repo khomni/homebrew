@@ -102,7 +102,7 @@ module.exports = function(sequelize, DataTypes) {
 
     // TODO: find a way to filter out events that start before the time range but not ones that end after it
     // for now, just include events that fall entirely within the range
-    let query = {where: {timestamp: /*{$and: */ {$contained: timestamps, /* $strictRight: timestamps /* this poorly-documented horseshit probably doesn't event work in sequelize }*/}}}
+    let query = {where: {timestamp: /*{$and: */ {$overlap: timestamps, /* $strictRight: timestamps /* this poorly-documented horseshit probably doesn't event work in sequelize }*/}}}
     if(options.where) Object.assign(query.where, options.where)
 
     // query all events that fall within the range
