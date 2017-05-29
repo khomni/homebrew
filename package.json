@@ -43,7 +43,7 @@
     "react": "^0.14.8",
     "react-dom": "^0.14.8",
     "request": "^2.79.0",
-    "sequelize": "^3.27.0",
+    "sequelize": "^3.30.4",
     "sequelize-hierarchy": "^1.0.0",
     "serve-favicon": "^2.3.2",
     "sqlite": "0.0.4",
