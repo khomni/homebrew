@@ -5,7 +5,8 @@ include /mixins/mixins
   .modal-body
     ul
       each event in events
-        li #[a(href=campaign.url + 'calendar/' + event.id data-response="modal")= event.name] #[label — #{event.time[0].readableTime}]
+        li #[a(href=campaign.url + 'calendar/event/' + event.id data-response="modal")= event.name] #[label — #{event.time[0].readableTime}]
+
   .modal-footer
     .flex.center
       a.btn(href=campaign.url +'calendar/'+ day.slug + '/new' data-response="modal") New Event

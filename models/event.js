@@ -14,6 +14,7 @@ module.exports = function(sequelize, DataTypes) {
 
     timestamp: {
       type: DataTypes.RANGE(DataTypes.BIGINT),
+      unique: false,
       index: true,
       set: function(i) {
         if(!Array.isArray(i)) i = [i]
@@ -43,12 +44,12 @@ module.exports = function(sequelize, DataTypes) {
         attributes: {exclude: 'Calendar'}
       }
     },
-    indexes: [
-      {
-        unique: true,
-        fields: ['timestamp']
-      },
-    ],
+    // indexes: [
+    //   {
+    //     unique: false,
+    //     fields: ['timestamp']
+    //   },
+    // ],
     classMethods: {
       associate: function(models) {
         Event.belongsTo(models.Calendar);

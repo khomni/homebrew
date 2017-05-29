@@ -94,7 +94,9 @@ module.exports = {
     // allow if the user is an admin
     if(req.user.admin) return next(); // admins get privilege regardless
     // reject if the user doesn't have an active character
-    if(!req.user.MainChar) return next(Common.error.authorization("You need an active character to access this"))
+    if(!req.user.MainChar) return next(Common.error.authorization("You need an active character to access this"));
+
+    if(res.locals.campaign && req.user.MainChar.CampaignId != res.locals.campaign.id) return next(Common.error.authorization("Your active character is not part of this campaign"))
     // contine if they do
     return next()
   },

@@ -11,10 +11,10 @@ block header
       .header-item
         .flex.pad
           if navigation.next
-            a(href=navigation.previous.anchor)= navigation.previous.name || "Previous"
+            a(href=navigation.previous.anchor)= navigation.previous.name || "<<"
           a(href=campaign.url + 'calendar') Present
           if navigation.next
-            a(href=navigation.next.anchor)= navigation.next.name || "Next"
+            a(href=navigation.next.anchor)= navigation.next.name || ">>"
 
 mixin weekday(day)
   .flex.input-group
@@ -30,7 +30,8 @@ mixin month(month)
 block content
   .tab-group
     a.tab(data-click="tab" data-target="calendar").active Calendar
-    a.tab(data-click="tab" data-target="settings") #[i.fa.fa-gear] Settings
+    if campaign.owned
+      a.tab(data-click="tab" data-target="settings") #[i.fa.fa-gear] Settings
                 //- form(action=campaign.url, method="DELETE")
                   button.btn(type="submit") Delete
   .tab-panel
@@ -48,7 +49,7 @@ block content
           each year in calendar
             h2= year.year
             each month in year.months
-              h3= month.name
+              h3: a(href=campaign.url + 'calendar/' + year.year + '/' + Common.zeropad(month.monthIndex+1,2) )= month.name
               table.calendar.month
                 thead: tr
                   each day in campaign.Calendar.weekdays
@@ -57,7 +58,7 @@ block content
                   each week in month.weeks
                     tr.week
                       each day in week
-                        td.day(class=(!day?'obscured':'') + (day&&day.events&&day.events.length?'has-events':''))
+                        td.day(class=(!day?'obscured ':'') + (day&&day.events&&day.events.length?'has-events ':'') + (day&&day.present&&'present '||''))
                           if day
                             -var slug = year.year + '/' + Common.zeropad(month.monthIndex+1,2) + '/' + Common.zeropad(day.date,2)
                             a(href=campaign.url + 'calendar/' + slug data-response="modal" data-target="event-" + slug)
@@ -67,61 +68,51 @@ block content
                                   each event in day.events
                                     .event(id="event-"+event.id)= event.name
               hr
-      if campaign.owned
-        section
-          .section-body
-            .flex.pad
-              .flex.vert.border.pad
-                .flex.center: label GM Actions
-                .flex.center.pad
-                  a.btn(href=campaign.url+"edit" data-response="modal") Edit
-                  form(method=campaign.url+"delete" data-response="json")
-                    button.btn Delete
 
-
-    #settings.tab-pane.flex.vert.fill
-      form(action=campaign.url + 'calendar/' method="post" data-response="json" data-reaction="redirect")
-        if calendar
+    if campaign.owned
+      #settings.tab-pane.flex.vert.fill
+        form(action=campaign.url + 'calendar/' method="post" data-response="json" data-reaction="redirect")
+          if calendar
+            section
+              .section-body
+                .flex.pad: p.
+                  #[strong Warning!] Modifying the total length of years of an existing calendar will affect any events you have created under that calendar.
+                .flex.center
+                  label.checkbox
+                    input(type="checkbox" required) 
+                    span I understand
+                  label.checkbox
+                    input(type="checkbox" name="deletePastEvents") 
+                    span Delete all existing events under this calendar
           section
             .section-body
-              .flex.pad: p.
-                #[strong Warning!] Modifying the total length of years of an existing calendar will affect any events you have created under that calendar.
-              .flex.center
-                label.checkbox
-                  input(type="checkbox" required) 
-                  span I understand
-                label.checkbox
-                  input(type="checkbox" name="deletePastEvents") 
-                  span Delete all existing events under this calendar
-        section
-          .section-body
-            .flex.pad.vert
-              //- label Year Length
-              //- input.form-input(type="number" name="year_length" value=calendar&&calendar.year_length required)
-            
-              label Weekdays
-              .flex.vert.pad.border#weekdays
-                if calendar
-                  each day in campaign.Calendar.weekdays
-                    +weekday(day)
-                else
+              .flex.pad.vert
+                //- label Year Length
+                //- input.form-input(type="number" name="year_length" value=calendar&&calendar.year_length required)
+              
+                label Weekdays
+                .flex.vert.pad.border#weekdays
+                  if calendar
+                    each day in campaign.Calendar.weekdays
+                      +weekday(day)
+                  else
+                    +weekday()
+                
+                template#weekday_template
                   +weekday()
-              
-              template#weekday_template
-                +weekday()
-              a.btn(data-click='duplicate' data-target="weekday_template" data-destination="weekdays") Add Weekday
+                a.btn(data-click='duplicate' data-target="weekday_template" data-destination="weekdays") Add Weekday
 
 
-              label Months
-              .flex.vert.pad.border#months
-                if campaign.Calendar
-                  each month in campaign.Calendar.months
-                    +month(month)
-                else
+                label Months
+                .flex.vert.pad.border#months
+                  if campaign.Calendar
+                    each month in campaign.Calendar.months
+                      +month(month)
+                  else
+                    +month()
+                
+                template#month_template
                   +month()
-              
-              template#month_template
-                +month()
-              a.btn(data-click='duplicate' data-target="month_template" data-destination="months") Add Month
-          .flex.center
-            button.btn.block(type='submit') Submit
+                a.btn(data-click='duplicate' data-target="month_template" data-destination="months") Add Month
+            .flex.center
+              button.btn.block(type='submit') Submit

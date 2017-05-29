@@ -49,6 +49,9 @@ table.calendar {
        display: block;
        padding: 2px;
        text-decoration: none;
+       & + .event {
+        border-top: 1px dashed;
+       }
      }
    }
 
@@ -56,6 +59,17 @@ table.calendar {
      background: fade(@color-primary,5%);
      &>a {
        outline: 1px solid;
+     }
+   };
+
+   &.present {
+     background: fade(@color-secondary,5%);
+     &>a {
+       color: darken(@color-secondary,15%);
+       outline: 1px solid;
+       &:hover {
+         text-decoration: none;
+       }
      }
    };
 
