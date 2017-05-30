@@ -114,8 +114,8 @@ module.exports = function(sequelize, DataTypes) {
     return instance.getPermission(defaultQuery)
     .then(p => p.pop())
     .then(permission => {
-      instance.permission = permission
-      return permission
+      instance.Permission = permission.Permission
+      return permission.Permission
     })
   }
 

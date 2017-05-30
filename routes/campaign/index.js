@@ -73,6 +73,7 @@ router.use('/:id', (req,res,next) => {
     // if there is a user, check their permission
     return req.user.checkPermission(campaign,{read:true})
     .then(permission => {
+      if(permission.owner) campaign.owned = true;
       // if the campaign is hidden to the user, treat it as though it doesn't exist
       if(!permission && campaign.privacy_level == 'hidden') throw Common.error.notfound('Campaign')
       // otherwise return the campaign with attached permission info
@@ -91,24 +92,35 @@ router.use('/:id', (req,res,next) => {
 
 // get campaign info
 campaignRouter.get('/', (req,res,next) => {
-  console.log(res.locals.campaign.permission)
   if(req.json) return res.send(res.locals.campaign.get({plain:true}))
   if(req.modal) return res.render('campaign/_detail')
   return res.render('campaign/detail')
 });
 
 campaignRouter.post('/request', Common.middleware.requireUser, (req,res,next) => {
-  return next()
+
+  return req.user.hasPermission(res.locals.campaign)
+  .then(hasPermission => {
+    if(hasPermission) throw Common.error.request('You have already requested access to this campaign');
+
+    return req.user.addPermission(res.locals.campaign)
+  })
+  .then(permission => {
+    return res.set('X-Redirect', req.baseUrl).sendStatus(302);
+  })
+  .catch(next)
 })
 
 // all routers beyond this are subject to privacy rules
 campaignRouter.use('/', (req,res,next) => {
-  if(res.locals.campaign.prermission) return next(); // permission already checked
   // public campaigns are accessible to visitors who aren't logged in
   if(res.locals.campaign.privacy_level == 'public') return next();
   if(!req.user) throw Common.error.authorization("This campaign's privacy settings require you to have an account to view its resources")
 
-  return req.user.checkPermission(res.locals.campaign, {read: true})
+  return Promise.try(()=>{
+    if(res.locals.campaign.Permission) return res.locals.campaign.Permission
+    return req.user.checkPermission(res.locals.campaign, {read: true})
+  })
   .then(permission => {
     if(permission) return next();
     if(req.xhr) {
@@ -125,7 +137,7 @@ campaignRouter.use('/', (req,res,next) => {
 })
 
 
-campaignRouter.get('/edit', Common.middleware.requirePermission('campaign',{owner:true}), (req,res,next) => {
+campaignRouter.get('/edit', Common.middleware.requirePermission('campaign', {owner:true}), (req,res,next) => {
   if(req.json) return res.send(res.locals.campaign.get({plain:true}))
   if(req.modal) return res.render('campaign/modals/edit')
   return res.render('campaign/detail')
