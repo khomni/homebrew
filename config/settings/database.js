@@ -30,9 +30,8 @@ module.exports = {
       dialect: "postgres",
       host: "127.0.0.1",
       logging: false
-      // function(){
-      //   console.log(colors.grey.apply(null, Array.prototype.slice.call(arguments)))
-      // }
+        // console.log(colors.grey.apply(null, Array.prototype.slice.call(arguments).join('').match(/\b[A-Z]+\b/g)))
+        // console.log(colors.grey.apply(null, Array.prototype.slice.call(arguments)))
     }
   }
 }

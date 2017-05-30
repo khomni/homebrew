@@ -51,32 +51,73 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         User.hasMany(models.Character, {as: 'characters', constraints: false});
         User.belongsTo(models.Character, {as: 'MainChar'});
-        User.hasMany(models.Campaign)
-      },
-      validPassword: function(password, passwd, user){
-        return bcrypt.compareAsync(password, passwd)
-        .then(isMatch => {
-          if(isMatch) return user
-          return false
+        User.hasMany(models.Campaign, {foreignKey:'ownerId'});
+
+        User.belongsToMany(models.Campaign, {
+          as: 'permission', 
+          through: {
+            model: models.Permission,
+            scope: {
+              permissionType: 'Campaign'
+            }
+          }
+        });
+
+        User.addScope('session', {
+          attributes: ['id','username'],
+          include: [{
+            model: models.Character.scope('session'),
+            as: 'MainChar'
+          }]
         })
-      }
+      },
     }
   });
 
-  User.hook('beforeCreate', function(user, options, callback) {
-    options.updatesOnDuplicate = options.updatesOnDuplicate || []
-    options.updatesOnDuplicate.push('password')
-    var salt = bcrypt.genSalt(CONFIG.security.SALT_WORK_FACTOR, function(err, salt){
-      if(err) return callback(err)
-      bcrypt.genSalt(CONFIG.security.SALT_WORK_FACTOR, function(err, salt){
-        bcrypt.hash(user.password, salt, null, function(err, hash){
-          if(err) return callback(err);
-          user.password = hash;
-          callback(null, user)
-        });
-      });
-    });
-  })
+  User.validPassword = function(password, passwd, user) {
+    return bcrypt.compareAsync(password, passwd)
+    .then(isMatch => {
+      if(isMatch) return user
+      return false
+    })
+  }
+
+  User.hook('beforeSave', function(user, options) {
+    return Promise.try(()=>{
+      if(!user.changed('password')) return user; // if password wasn't changed, skip the password hashing
+
+      console.log('hashing password');
+
+      options.updatesOnDuplicate = options.updatesOnDuplicate || [];
+      options.updatesOnDuplicate.push('password');
+
+      return bcrypt.genSaltAsync(CONFIG.security.SALT_WORK_FACTOR)
+      .then(salt => {
+        return bcrypt.hashAsync(user.password, salt, null)
+        .then(hash => {
+          user.password = hash
+          return user
+        })
+      })
+    })
+  });
+
+  // convenience method for users
+  // takes an instance as an argument and returns the permission instance if it exists, returns false otherwise
+  // can be used in lieu of hasPermission or getPermission
+  User.Instance.prototype.checkPermission = function(instance, options) {
+    let thisUser = this;
+
+    let defaultQuery = {through: {where: {permissionType: instance.$modelOptions.name.singular, permission_id: instance.id}}}
+    Object.assign(defaultQuery.through.where, options)
+
+    return instance.getPermission(defaultQuery)
+    .then(p => p.pop())
+    .then(permission => {
+      instance.permission = permission
+      return permission
+    })
+  }
 
   // returns true if a user owns a character owns the character or campaign
   // OR if the user owns the campaign that the character belongs to
@@ -87,18 +128,15 @@ module.exports = function(sequelize, DataTypes) {
       let resourceType = resource.$modelOptions.name.singular
 
       if(resourceType === 'Character') { // assumes the character has the campaign populated
-        if(resource.UserId == thisUser.id) return {owner:true, permission:true}
-        if(resource.Campaign && resource.Campaign.UserId == thisUser.id) return {owner:false, permission:true}
+        if(resource.ownerId == thisUser.id) return {owner:true, permission:true}
+        if(resource.Campaign && resource.Campaign.ownerId == thisUser.id) return {owner:false, permission:true}
       }
 
       if(resourceType === 'Campaign') {
-        if(resource.UserId == thisUser.id) return {owner:true, permission: true}
+        if(resource.ownerId == thisUser.id) return {owner:true, permission: true}
       }
-
     }
-
     return {owner:false, byDominion:false}
-
   };
 
   return User;

@@ -85,6 +85,18 @@ module.exports = {
     }
   },
 
+  //
+  requirePermission: (pathToInstance,query) => (req,res,next) => {
+    if(!req.user) return next(Common.error.authorization('You must be logged in to access this resource'));
+
+    return req.user.checkPermission(Common.utilities.get(res.locals,pathToInstance), query)
+    .then(permission => {
+      if(!permission) throw Common.error.authorization('You do not have permission to modify this resource');
+      return next();
+    })
+    .catch(next)
+  },
+
   // restrict the following routes to users who have an active character
   // Owners can access their own characters
   // Admins can access any characters

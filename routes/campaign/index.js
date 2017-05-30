@@ -3,11 +3,17 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET users listing. */
+// Campaign Index
+// returns a list of all existing campaigns that have their privacy setting
 router.get('/', Common.middleware.requireUser, (req, res, next) => {
-  var query = {}
-  if(res.locals.user) query = {where:{UserId:res.locals.user.id}}
-  db.Campaign.findAll(query)
+  let query = { privacy_level: {$not: 'hidden'} }
+
+  return Promise.try(()=>{
+    // if the campaign route is mounted on top of a user, get all campaigns they have permissions for
+    if(res.locals.user) return res.locals.user.getPermission()
+    // otherwise, find all non-hidden campaigns
+    return db.Campaign.findAll({privacy_level: {$not: 'hidden'}})
+  })
   .then(campaigns => {
     return res.render('campaign/index', {campaigns: campaigns})
   })
@@ -21,11 +27,14 @@ router.get('/new', Common.middleware.requireUser, (req, res, next) => {
   return res.render('campaign/new')
 });
 
-router.post('/',Common.middleware.requireUser, (req,res,next) => {
+router.post('/', Common.middleware.requireUser, (req,res,next) => {
 
   return req.user.createCampaign(req.body)
   .then((campaign) => {
-    return res.redirect(campaign.url)
+    return req.user.addPermission(campaign, {owner: true, read:true, write:true})
+    .then(permission => {
+      return res.redirect(campaign.url)
+    })
   })
   .catch(next)
 
@@ -33,36 +42,90 @@ router.post('/',Common.middleware.requireUser, (req,res,next) => {
 
 var campaignRouter = express.Router({mergeParams: true});
 
+router.post('/:id/request', Common.middleware.requireUser, (req,res,next) => {
+
+  var query = isNaN(req.params.id) ? {url:req.params.id} : {id:req.params.id}
+  return db.Campaign.findOne({where: query})
+  .then(campaign => {
+    //
+    return req.user.addPermission(campaign)
+    .then()
+
+  })
+  .catch(next)
+
+})
+
 router.use('/:id', (req,res,next) => {
 
-  // res.locals.campaign is already set by activeChar's campaign
-  if(res.locals.campaign) {
-    // if the routed campaign is the same, skip the database query
-    if(req.params.id == res.locals.campaign.id || req.params.id == res.locals.campaign.getDataValue('url')) return next();
-  }
+  // if the res campaign has already been set, skip the query
+  if(res.locals.campaign && res.locals.campaign.permission) return next();
+  // if(req.params.id == res.locals.campaign.id || req.params.id == res.locals.campaign.getDataValue('url')) return next();
 
   // find the campaign by the url or id
   var query = isNaN(req.params.id) ? {url:req.params.id} : {id:req.params.id}
   return db.Campaign.findOne({where: query})
   .then(campaign => {
+    // campaign does not appear if it doesn't exist, or if it is hidden and there is no user
+    if(!campaign || !req.user && campaign.privacy_level == 'hidden') throw Common.error.notfound('Campaign')
+    if(!req.user) return campaign 
+
+    // if there is a user, check their permission
+    return req.user.checkPermission(campaign,{read:true})
+    .then(permission => {
+      // if the campaign is hidden to the user, treat it as though it doesn't exist
+      if(!permission && campaign.privacy_level == 'hidden') throw Common.error.notfound('Campaign')
+      // otherwise return the campaign with attached permission info
+      return campaign;
+    })
+    // hidden campaigns do not route at all, they are totally invisible (privacy!)
+  })
+  .then(campaign => {
     res.locals.campaign = campaign
     res.locals.breadcrumbs.add(campaign.get({plain:true}))
-    if(!req.user) return next()
-    if(req.user && req.user.id == campaign.UserId) campaign.owned = true
-    return next()
+    return next();
   })
   .catch(next)
 
 }, campaignRouter)
 
 // get campaign info
-campaignRouter.get('/',(req,res,next) => {
+campaignRouter.get('/', (req,res,next) => {
+  console.log(res.locals.campaign.permission)
   if(req.json) return res.send(res.locals.campaign.get({plain:true}))
   if(req.modal) return res.render('campaign/_detail')
   return res.render('campaign/detail')
 });
 
-campaignRouter.get('/edit',(req,res,next) => {
+campaignRouter.post('/request', Common.middleware.requireUser, (req,res,next) => {
+  return next()
+})
+
+// all routers beyond this are subject to privacy rules
+campaignRouter.use('/', (req,res,next) => {
+  if(res.locals.campaign.prermission) return next(); // permission already checked
+  // public campaigns are accessible to visitors who aren't logged in
+  if(res.locals.campaign.privacy_level == 'public') return next();
+  if(!req.user) throw Common.error.authorization("This campaign's privacy settings require you to have an account to view its resources")
+
+  return req.user.checkPermission(res.locals.campaign, {read: true})
+  .then(permission => {
+    if(permission) return next();
+    if(req.xhr) {
+      res.set('X-Modal', true)
+      res.set('X-Redirect', req.baseUrl).sendStatus(302)
+    }
+
+    if(res.locals.campaign.password) return res.render('campaign/password');
+    return res.render('campaign/requestInvite');
+    
+  })
+  .catch(next)
+
+})
+
+
+campaignRouter.get('/edit', Common.middleware.requirePermission('campaign',{owner:true}), (req,res,next) => {
   if(req.json) return res.send(res.locals.campaign.get({plain:true}))
   if(req.modal) return res.render('campaign/modals/edit')
   return res.render('campaign/detail')
@@ -71,23 +134,42 @@ campaignRouter.get('/edit',(req,res,next) => {
 // edit campaign
 campaignRouter.post('/', Common.middleware.requireGM, (req,res,next) => {
 
-  for(var key in req.body) res.locals.campaign[key] = req.body[key]
+  return req.user.checkPermission(res.locals.campaign, {owner: true})
+  .then(permission => {
+    if(!permission) throw Common.error.authorization('You do not have permission to modify this campaign')
 
-  return res.locals.campaign.save()
-  .then(campaign => {
+    for(var key in req.body) res.locals.campaign[key] = req.body[key]
 
-    if(req.modal) return res.send('modals/_success',{title:'Campaign Updated'})
-    return res.redirect(req.headers.referer)
+    return res.locals.campaign.save()
+    .then(campaign => {
+
+      if(req.modal) return res.send('modals/_success',{title:'Campaign Updated'})
+      if(req.xhr) return res.set('X-Redirect', req.headers.referer).sendStatus(302);
+      return res.redirect(req.headers.referer)
+
+    })
   })
-
+  .catch(next);
 });
 
-campaignRouter.delete('/', Common.middleware.requireUser, Common.middleware.confirmDelete('redirect'), (req,res,next) =>{
-  return req.user.hasCampaign(res.locals.campaign)
-  .then(owned => {
-    if(!owned) throw Common.error.authorization("You do not own that campaign")
+// see all users who have requested access to your campaign
+campaignRouter.get('/requests', Common.middleware.requirePermission('campaign', {$or:[{owner:true},{write:true}]}), (req,res,next) => {
+  return res.locals.campaign.getPermission({through: {where: {owner:false, read:false, write:false}}})
+  .then(users => {
+    return res.json(users)
+  })
+  .catch(next)
+})
+
+campaignRouter.delete('/', /*Common.middleware.requirePermission('campaign',{write:true}),*/ Common.middleware.confirmDelete('redirect'), (req,res,next) => {
+
+  return res.locals.campaign.destroy()
+  .then(campaign => {
+    if(req.xhr) return res.set('X-Redirect', '/c/').sendStatus(302)
     return res.render('modals/_success',{title:"Campaign Deleted", redirect:'/c/'})
   })
+  .catch(next)
+
   // return res.send(res.locals.campaign)
   // return res.send('<h1>Just some html</h1>')
 });

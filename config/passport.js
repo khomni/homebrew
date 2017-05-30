@@ -8,13 +8,7 @@ passport.serializeUser(function(user, done){
 
 //Deserialize Sessions
 passport.deserializeUser(function(user, done){
-  return db.User.find({
-    where: {id: user.id},
-    include: [{
-      model:db.Character,
-      as:'MainChar',
-    }]
-  })
+  return db.User.scope('session').find({ where: {id: user.id} })
   .then(user => {
     return done(null, user)
   })

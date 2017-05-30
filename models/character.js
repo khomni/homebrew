@@ -89,31 +89,56 @@ module.exports = function(sequelize, DataTypes) {
         // a character is part of a campaign, so it contains a reference to that campaign
         Character.belongsTo(models.Campaign, {constraints: false});
 
-        Character.belongsTo(models.Event,{as: 'birthday', constraints:false});
+        Character.belongsTo(models.Event,{
+          as: 'birthday', 
+          constraints:false,
+          scope: {
+            eventable: 'birthday'
+          }
+        });
 
         // a character has lore in the form of their bio and backstory
         Character.hasMany(models.Lore, {
           as: 'lore',
           foreignKey: 'lorable_id',
+          constraints: false,
           scope: {
             lorable: 'Character'
-          }
+          },
         });
 
         Character.hasMany(models.Image, {
           // as: 'images',
           foreignKey: 'imageable_id',
+          constraints: false,
           scope: {
             imageable: 'Character'
-          }
+          },
         });
 
         Character.addScope('defaultScope', {
-          include: [{model: models.Campaign}, {model:models.Image, order:[['order','ASC']]}]
+          attributes: ['id','name','url','title'],
+          include: [
+            {
+              model: models.Campaign,
+              attributes: ['id','url','system','name']
+            }, 
+            {
+              model:models.Image, order:[['order','ASC']]
+            }
+          ]
+        }, {override:true} )
+
+        Character.addScope('session', {
+          attributes: ['id','name','url','title', 'CampaignId'],
+          include: [
+            { model: models.Campaign.scope('session') }, 
+            { model: models.Image, order:[['order','ASC']] }
+          ]
         }, {override:true} )
 
         // Character.belongsTo(models.Party);
-        Character.belongsToMany(models.Character, {as: 'relationship',through: models.Relationship});
+        Character.belongsToMany(models.Character, {as: 'relationship', through: models.Relationship});
         // a character has access to some pieces of lore, the association being 'knowledge'
         Character.belongsToMany(models.Lore, {as: 'knowledge', through: models.Knowledge});
         // a character can be a member of one or more factions
@@ -132,8 +157,8 @@ module.exports = function(sequelize, DataTypes) {
   Character.hook('beforeSave', (character, options) => {
     return character.getCampaign()
     .then((campaign)=>{
-      console.log('NPC?', campaign.OwnerId == character.UserId)
-      if(campaign.OwnerId == character.UserId) character.npc = true
+      console.log('NPC?', campaign.OwnerId == character.ownerId)
+      if(campaign.OwnerId == character.ownerId) character.npc = true
       return Promise.resolve(character);
     })
   })
@@ -150,7 +175,7 @@ module.exports = function(sequelize, DataTypes) {
 
   // returns true if the input user owns the character instance
   Character.Instance.prototype.ownedBy = function(user) {
-    return user.id === this.UserId
+    return user.id === this.ownerId
   }
 
   // returns true if the input user has this character selected as their main

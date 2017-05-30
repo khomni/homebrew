@@ -55,10 +55,10 @@ router.use('/:id', (req,res,next) => {
   .then(character => {
     if(!character) throw Common.error.notfound('Character')
     if(req.user && character.id == req.user.MainCharId) character.active = true
-    if(req.user && character.UserId == req.user.id) character.owned = true
+    if(req.user && character.ownerId == req.user.id) character.owned = true
     res.locals.character = character
     if(character.Campaign) {
-      if(req.user.id == character.Campaign.UserId) character.Campaign.owned = true
+      if(req.user.id == character.Campaign.ownerId) character.Campaign.owned = true
       res.locals.campaign = character.Campaign
       res.locals.activeSystem = SYSTEM[character.Campaign.system]
     }

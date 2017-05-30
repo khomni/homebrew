@@ -75,6 +75,9 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
 
+        Image.addScope('defaultScope', {
+          attributes: ['id','url']
+        }, {override:true})
       },
     }
   });

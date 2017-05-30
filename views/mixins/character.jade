@@ -7,7 +7,7 @@ mixin characterCard(character)
             img(src=character.portrait.src)
         .character-stats
           .name(href=character.url)= character.name
-          if currentUser.id === character.UserId
+          if currentUser.id === character.ownerId
             .btn-group
               a.btn(href="/"+character.url) Character Sheet
               form(action="/"+character.url+"/select" method="POST")
