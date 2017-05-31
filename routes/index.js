@@ -57,6 +57,7 @@ router.post('/signup', (req,res,next) => {
   },{fields:['username','email','password']})
   .then(user => {
     req.logIn(user, err => {
+      if(req.xhr) return res.set('X-Redirect', user.url).sendStatus(302);
       return res.redirect(origin);
     })
   })

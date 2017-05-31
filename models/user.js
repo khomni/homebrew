@@ -49,7 +49,7 @@ module.exports = function(sequelize, DataTypes) {
     ],
     classMethods: {
       associate: function(models) {
-        User.hasMany(models.Character, {as: 'characters', constraints: false});
+        User.hasMany(models.Character, {as: 'characters', foreignKey: 'ownerId', constraints: false});
         User.belongsTo(models.Character, {as: 'MainChar'});
         User.hasMany(models.Campaign, {foreignKey:'ownerId'});
 
@@ -111,7 +111,7 @@ module.exports = function(sequelize, DataTypes) {
     let defaultQuery = {through: {where: {permissionType: instance.$modelOptions.name.singular, permission_id: instance.id}}}
     Object.assign(defaultQuery.through.where, options)
 
-    return instance.getPermission(defaultQuery)
+    return thisUser.getPermission(defaultQuery)
     .then(p => p.pop())
     .then(permission => {
       instance.Permission = permission.Permission
@@ -127,6 +127,7 @@ module.exports = function(sequelize, DataTypes) {
     if(resource.$modelOptions) {
       let resourceType = resource.$modelOptions.name.singular
 
+      console.log(resource)
       if(resourceType === 'Character') { // assumes the character has the campaign populated
         if(resource.ownerId == thisUser.id) return {owner:true, permission:true}
         if(resource.Campaign && resource.Campaign.ownerId == thisUser.id) return {owner:false, permission:true}

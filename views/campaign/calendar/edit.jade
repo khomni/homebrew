@@ -28,7 +28,7 @@ block content
   .tab-panel
     if calendar
       #settings.tab-pane.flex.vert.fill(class=calendar&&'active')
-        form(action=campaign.url + 'e/present' method="post" data-response="json" data-reaction="redirect")
+        form(action=campaign.url + 'calendar/present' method="post" data-response="json" data-reaction="redirect")
           -var context = calendar.dateFromTimestamp(calendar.present)
           section: .section-body
             if calendar.present
@@ -55,7 +55,7 @@ block content
             .flex.center: button.btn Set Day
 
     #calendar.tab-pane.flex.vert.fill(class=!calendar&&'active')
-      form(action=campaign.url + 'e/' method="post" data-response="json" data-reaction="redirect")
+      form(action=campaign.url + 'calendar/' method="post" data-response="json" data-reaction="redirect")
         if calendar
           section
             .section-body
@@ -98,5 +98,5 @@ block content
               template#month_template
                 +month()
               a.btn(data-click='duplicate' data-target="month_template" data-destination="months") Add Month
-          .flex.center
-            button.btn.block(type='submit') Submit
+            .flex.center
+              button.btn.block(type='submit') Submit

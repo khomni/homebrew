@@ -97,6 +97,19 @@ module.exports = function(sequelize, DataTypes) {
           }
         });
 
+        /* Tentative: Character permissions?
+        Character.belongsToMany(models.User, {
+          as: 'owner', 
+          foreignKey: 'permission_id',
+          through: {
+            model: models.Permission,
+            scope: {
+              permissionType: 'Campaign'
+            }
+          }
+        });
+        */
+
         // a character has lore in the form of their bio and backstory
         Character.hasMany(models.Lore, {
           as: 'lore',
@@ -117,7 +130,7 @@ module.exports = function(sequelize, DataTypes) {
         });
 
         Character.addScope('defaultScope', {
-          attributes: ['id','name','url','title'],
+          attributes: ['id','name','url','title','ownerId'],
           include: [
             {
               model: models.Campaign,

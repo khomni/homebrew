@@ -25,6 +25,7 @@ router.post('/', Common.middleware.requireGM, Common.middleware.objectifyBody, (
   })
   .then(newCalendar => {
     if(req.json) return res.json(newCalendar)
+    if(req.xhr) return res.set('X-Redirect', req.baseUrl).sendStatus(302)
     return res.redirect(req.baseUrl);
   })
   .catch(next)
@@ -127,8 +128,11 @@ eventRouter.delete('/', Common.middleware.verifyOwner('event.owned'), (req, res,
 
 // the default calendar page, defaults to displaying the month around the present day, if possible
 router.get('/:year?/:month?', (req,res,next) => {
+
+  if(!res.locals.campaign.Calendar) return res.redirect(req.baseUrl + '/edit')
+
   let calendarRange
-  let targetDate = res.locals.campaign.Calendar.now || {year:1,monthIndex:1}
+  let targetDate = res.locals.campaign.Calendar&&res.locals.campaign.Calendar.now || {year:1,monthIndex:0}
   res.locals.navigation = {}
 
   if(req.params.month || !req.params.year) {

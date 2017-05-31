@@ -88,8 +88,10 @@ module.exports = {
   //
   requirePermission: (pathToInstance,query) => (req,res,next) => {
     if(!req.user) return next(Common.error.authorization('You must be logged in to access this resource'));
+    let instance = Common.utilities.get(res.locals,pathToInstance)
+    if(!instance) return next() // no instance by that name mounted
 
-    return req.user.checkPermission(Common.utilities.get(res.locals,pathToInstance), query)
+    return req.user.checkPermission(instance, query)
     .then(permission => {
       if(!permission) throw Common.error.authorization('You do not have permission to modify this resource');
       return next();

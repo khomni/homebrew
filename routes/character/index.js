@@ -18,7 +18,7 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
   .catch(next)
 });
 
-router.post('/', Common.middleware.requireUser, Common.middleware.objectifyBody, (req,res,next) => {
+router.post('/', Common.middleware.requirePermission('campaign',{write:true}), Common.middleware.objectifyBody, (req,res,next) => {
 
   return req.user.createCharacter(req.body)
   .then(pc => {
@@ -35,6 +35,7 @@ router.post('/', Common.middleware.requireUser, Common.middleware.objectifyBody,
   .then(pc => {
     if(req.json) return res.send(pc.get({plain:true}))
     if(req.modal) return res.render('modals/_success', {title: "Character Created", body:"Good job", redirect:pc.url})
+    if(req.xhr) return res.set('X-Redirect', req.baseUrl + '/' + pc.id).sendStatus(302);
     return res.redirect(req.headers.referer||req.baseUrl);
   })
   .catch(next);
@@ -85,12 +86,21 @@ characterRouter.post('/', Common.middleware.requireUser, Common.middleware.objec
   // TODO: change the fields that can be modified based on the permission type
   if(!req.user.controls(res.locals.character).permission) return next(Common.error.authorization("You aren't authorized to modify that character"))
 
-  return res.locals.character.update(req.body)
-  .then(character => {
-    if(req.json) return res.json(character)
-    if(req.modal) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
-    return res.redirect(req.headers.referer)
+  return Promise.try(()=>{
+    if(res.locals.character.CampaignId)
+    if(!res.locals.campaign) return true
+    return req.user.checkPermission(res.locals.campaign, {write: true})
   })
+  .then(permission => {
+    return res.locals.character.update(req.body)
+    .then(character => {
+      if(req.json) return res.json(character)
+      if(req.modal) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
+      if(req.xhr) return res.set('X-Redirect', req.baseUrl).sendStatus(302)
+      return res.redirect(req.headers.referer)
+    })
+  })
+
   .catch(next)
 });
 
@@ -101,8 +111,9 @@ characterRouter.delete('/', Common.middleware.requireUser, (req,res,next) => {
     if(!owned) throw Common.error.authorization("You don't own that character")
     return res.locals.character.destroy()
     .then(character => {
-      if(req.json) return res.send({ref:character,kind:'Character'})
-      if(req.modal) return res.render('modals/_success', {title: res.locals.character.name + " deleted", redirect:req.headers.referer || "/pc"})
+      if(req.json) return res.send({ref:character,kind:'Character'});
+      if(req.modal) return res.render('modals/_success', {title: res.locals.character.name + " deleted", redirect:req.headers.referer || "/pc"});
+      if(req.xhr) return res.set('X-Redirect',req.user.url).sendStatus(302);
       return res.redirect('/pc')
     })
   })
@@ -116,8 +127,9 @@ characterRouter.post('/select', Common.middleware.requireUser, (req,res,next) =>
     if(!owned) throw Common.error.authorization("You don't own that character")
     return req.user.setMainChar(res.locals.character)
     .then(user => {
-      if(req.json) return res.send(res.locals.character.get({plain:true}))
-      if(req.modal) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
+      if(req.json) return res.send(res.locals.character.get({plain:true}));
+      if(req.modal) return res.render('modals/_success',{title: res.locals.character.name + " selected"});
+      if(req.xhr) return res.set('X-Redirect',req.baseUrl).sendStatus(302);
       return res.redirect(req.headers.referer||req.baseUrl)
     })
   })

@@ -130,10 +130,8 @@ campaignRouter.use('/', (req,res,next) => {
 
     if(res.locals.campaign.password) return res.render('campaign/password');
     return res.render('campaign/requestInvite');
-    
   })
   .catch(next)
-
 })
 
 
@@ -165,13 +163,15 @@ campaignRouter.post('/', Common.middleware.requireGM, (req,res,next) => {
 });
 
 // see all users who have requested access to your campaign
-campaignRouter.get('/requests', Common.middleware.requirePermission('campaign', {$or:[{owner:true},{write:true}]}), (req,res,next) => {
-  return res.locals.campaign.getPermission({through: {where: {owner:false, read:false, write:false}}})
+campaignRouter.get('/requests', Common.middleware.requirePermission('campaign', {$or:[{owner:true},{'rights.invite':true}]}), (req,res,next) => {
+  return res.locals.campaign.getMember({through: {where: {owner:false, read:false, write:false}}})
   .then(users => {
     return res.json(users)
+    // TODO: Render page for all invites that allows campaign managers to set permission levels
+
   })
   .catch(next)
-})
+});
 
 campaignRouter.delete('/', /*Common.middleware.requirePermission('campaign',{write:true}),*/ Common.middleware.confirmDelete('redirect'), (req,res,next) => {
 

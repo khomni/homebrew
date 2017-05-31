@@ -22,8 +22,8 @@ module.exports = function(sequelize, DataTypes) {
       default: false,
     },
 
-    rights: { // an array of any other terms that describe the type of permissions the user has
-      type: DataTypes.ARRAY(DataTypes.STRING)
+    rights: { // all other arbitrary permissions may be stored here as keyed booleans
+      type: DataTypes.JSONB,
     }
 
   }, {

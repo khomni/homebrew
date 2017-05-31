@@ -18,8 +18,17 @@ form(name='campaign' action=(campaign?campaign.url:'/c/') method='post')
               label URL (Optional)
               input.form-input(type='text' name="url" placeholder="Allowed characters: a-z A-Z 0-9 _-" pattern="^[a-zA-Z0-9_-]*$" maxlength=32 value=campaign?campaign.getDataValue('url'):'' disabled=campaign&&campaign.url)
             .flex.vert.fill.js
+              label Privacy
+              select.form-input(name="privacy_level")
+                option(value="public" selected=campaign&&campaign.privacy_level=='public') Visible to Public
+                option(value="private" selected=campaign&&campaign.privacy_level=='private') Visible to Members
+                option(value="hidden" selected=campaign&&campaign.privacy_level=='hidden') Hidden (Invite Only)
+            .flex.vert.fill.js
+              label Password
+              input.form-input(type='text' name='password' value=campaign&&campaign.password)
+            .flex.vert.fill.js
               label Description
-              textarea.form-input(type='text' name="description" value=campaign?campaign.description:'' disabled=campaign&&campaign.description)
+              textarea.form-input(type='text' name="description" value=campaign&&campaign.description disabled=campaign&&campaign.description)
             .flex.vert.fill.js
               label System
               select.form-input(name="system" /*disabled=campaign&&campaign.system*/)

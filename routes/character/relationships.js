@@ -16,11 +16,11 @@ router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
 
   return req.user.MainChar.addRelationship(res.locals.character,{quality:req.body.quality})
   .then(results => {
-    return res.send(results)
+    if(req.json) return res.json(results)
+    if(req.xhr) return res.set('X-Redirect', req.headers.referer).sendStatus(302);
+    return res.redirect(req.headers.referer);
   })
   .catch(next)
-
-  return next()
 
 })
 
