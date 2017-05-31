@@ -114,6 +114,7 @@ module.exports = function(sequelize, DataTypes) {
     return thisUser.getPermission(defaultQuery)
     .then(p => p.pop())
     .then(permission => {
+      if(!permission) return permission
       instance.Permission = permission.Permission
       return permission.Permission
     })

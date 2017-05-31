@@ -12,7 +12,7 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
     // if the campaign route is mounted on top of a user, get all campaigns they have permissions for
     if(res.locals.user) return res.locals.user.getPermission()
     // otherwise, find all non-hidden campaigns
-    return db.Campaign.findAll({privacy_level: {$not: 'hidden'}})
+    return db.Campaign.findAll({where: {privacy_level: {$not: 'hidden'}}})
   })
   .then(campaigns => {
     return res.render('campaign/index', {campaigns: campaigns})
@@ -73,7 +73,7 @@ router.use('/:id', (req,res,next) => {
     // if there is a user, check their permission
     return req.user.checkPermission(campaign,{read:true})
     .then(permission => {
-      if(permission.owner) campaign.owned = true;
+      if(permission&&permission.owner) campaign.owned = true;
       // if the campaign is hidden to the user, treat it as though it doesn't exist
       if(!permission && campaign.privacy_level == 'hidden') throw Common.error.notfound('Campaign')
       // otherwise return the campaign with attached permission info
