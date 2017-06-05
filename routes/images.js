@@ -7,6 +7,7 @@ const request = require('request');
 
 router.get('/', (req,res,next) => {
   if(!res.locals.imageable) return next(Common.error.notfound('Could not locate the imageable resource'));
+  res.locals.breadcrumbs.push({name: "Images", url:req.baseUrl});
   return res.json(res.locals.imageable.Images)
   return next();
 });

@@ -26,7 +26,6 @@ try {
 		})
 	})
 	.then(data => {
-		console.log(typeof data[0], data[0])
 		var json = JSON.stringify(data,null,"\t")
 		return write(APPROOT+"/system/bestiary/bestiary.json", json)
 	})

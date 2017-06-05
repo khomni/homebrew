@@ -21,12 +21,14 @@ router.use('/:username',(req,res,next) => {
   .then(user => {
     if(!user) throw Common.error.notfound('User');
     res.locals.user = user
-    res.locals.breadcrumbs.add({name:user.username,url:'u/'+user.username+"/"})
+    res.locals.breadcrumbs.push({name:user.username,url:req.baseUrl})
     return next();
   }).catch(next);
 },userRouter);
 
 userRouter.get('/', (req,res,next) => {
+
+  if(req.json) return res.json(res.locals.user)
   return res.render('users/profile',{mainchar:res.locals.user.MainChar, characters:res.locals.user.characters})
 });
 

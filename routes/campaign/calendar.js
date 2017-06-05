@@ -5,6 +5,8 @@ var router = express.Router();
 
 router.use((req, res, next) => {
 
+  res.locals.breadcrumbs.push({name: "Calendar", url:req.baseUrl});
+
   return res.locals.campaign.getCalendar()
   .then(calendar => {
     return next();

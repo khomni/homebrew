@@ -4,6 +4,8 @@ var router = express.Router();
 router.get('/', (req,res,next) => {
   if(!res.locals.campaign) return next();
 
+  res.locals.breadcrumbs.push({name: "Quests", url:req.baseUrl});
+
   return res.locals.campaign.getQuests({
     where:{hierarchyLevel:1}, // make sure the campaign quests only get populated once per index
     include: [
@@ -60,7 +62,6 @@ questRouter.get('/', (req,res,next) => {
 
   res.locals.quest.getComments()
   .then(comments => {
-    console.log(res.locals.quest.comments = comments)
     if(req.json) return res.json({quest: res.locals.quest, comments:comments})
     return res.render('campaign/quests/detail', {comments:comments})
   })

@@ -9,6 +9,7 @@ var router = express.Router();
 router.use('/knowledge',require('../character/knowledge'))
 
 router.get('/', Common.middleware.requireCharacter, (req,res,next) => {
+  res.locals.breadcrumbs.push({name: "Lore", url:req.baseUrl});
   if(res.locals.lorable) return next();
   // no lorable item
   return res.redirect('/knowledge');

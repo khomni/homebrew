@@ -7,7 +7,7 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
   return Promise.resolve().then(()=>{
     if(res.locals.faction) return res.locals.faction.getMembers()
     if(res.locals.user) return res.locals.user.getCharacters()
-    if(res.locals.campaign) return db.Character.findAll({where:{CampaignId:res.locals.campaign.id}})
+    if(res.locals.campaign) return res.locals.campaign.getCharacters()
     return db.Character.findAll({include:[{model:db.Campaign}], order: [['CampaignId'],['name']]})
   })
   .then(characters => {
@@ -63,7 +63,7 @@ router.use('/:id', (req,res,next) => {
       res.locals.campaign = character.Campaign
       res.locals.activeSystem = SYSTEM[character.Campaign.system]
     }
-    res.locals.breadcrumbs.add(character.get({plain:true}))
+    res.locals.breadcrumbs.push({name: character.name, url: req.baseUrl})
     return next()
     // return character.getImages()
     // .then(images =>{

@@ -4,6 +4,7 @@ var router = express.Router();
 // you can get back to the journal index from this module at any time by rediredting to req.baseURL
 router.use((req,res,next)=> {
   res.locals.icons = require('~/data/icons')
+  res.locals.breadcrumbs.push({name: "Inventory", url:req.baseUrl});
   // res.locals.THEME = req.session.theme || 'wood'
   return next()
 })
@@ -12,6 +13,7 @@ router.use((req,res,next)=> {
 router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
   var order = ['updatedAt','desc']
 
+  res.locals.breadcrumbs.pop();
   if(req.query.sort) {
     order[0] = req.query.sort
     if(req.query.order && ['asc','desc'].indexOf(req.query.order.toLowerCase())>=0) order[1] = req.query.order.toLowerCase()
@@ -21,6 +23,7 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
     if(req.query.nearby) {
       // use the character's current location to find nearby items
       var here = req.user.MainChar.location.coordinates
+      var here = res.locals.character.location.coordinates
       return db.Item.findAll({
         attributes: {exclude: ['CharacterId']},
         where: [{CharacterId:null}, db.sequelize.fn('ST_DWithin', db.sequelize.col('location'), db.sequelize.fn('ST_MakePoint', here[0], here[1]),10000)],
@@ -131,7 +134,7 @@ router.post('/', Common.middleware.objectifyBody, (req,res,next) => {
      })
    })
    .then(item =>{
-    if(req.json) return res.send(item)
+    if(req.json) return res.json(item)
     return res.redirect(req.baseUrl)
   })
   .catch(next)

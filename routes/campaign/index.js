@@ -83,7 +83,7 @@ router.use('/:id', (req,res,next) => {
   })
   .then(campaign => {
     res.locals.campaign = campaign
-    res.locals.breadcrumbs.add(campaign.get({plain:true}))
+    res.locals.breadcrumbs.push({name:campaign.name, url: req.baseUrl})
     return next();
   })
   .catch(next)
@@ -92,6 +92,7 @@ router.use('/:id', (req,res,next) => {
 
 // get campaign info
 campaignRouter.get('/', (req,res,next) => {
+  res.locals.breadcrumbs.pop()
   if(req.json) return res.send(res.locals.campaign.get({plain:true}))
   if(req.modal) return res.render('campaign/_detail')
   return res.render('campaign/detail')

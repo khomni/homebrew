@@ -3,6 +3,7 @@ var router = express.Router();
 
 router.use((req,res,next) => {
   if(!res.locals.campaign) return next(Common.error.request('Campaign is required'))
+  res.locals.breadcrumbs.push({name: "Factions", url:req.baseUrl});
   return next()
 })
 

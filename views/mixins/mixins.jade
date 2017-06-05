@@ -60,6 +60,9 @@ mixin header(options)
   header#header&attributes(attributes)
     .header-content
       block
+      if breadcrumbs.length > 0
+        .header-item
+          include /components/breadcrumbs
     if vignettes
       -var vignetteKeys = Object.keys(vignettes)
       -var subSet = []
@@ -68,3 +71,4 @@ mixin header(options)
       - subSet.push(vignettes[vignetteKeys.splice(randomChoice,1)])
       -}
       +vignettes(subSet, options.color)
+      

@@ -12,6 +12,7 @@ var router = express.Router();
 // get all comments on the resource indicated by `res.locals.commentable`
 router.get('/', (req,res,next) => {
   if(!res.locals.commentable) return next(Common.error.notfound('Could not locate the commentable resource'))
+  res.locals.breadcrumbs.push({name: "Comments", url:req.baseUrl});
 
   return res.locals.commentable.getComments({
     include:[
