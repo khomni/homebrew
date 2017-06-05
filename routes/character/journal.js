@@ -14,12 +14,15 @@ router.use((req,res,next)=> {
 })
 
 /* GET users journals. */
-router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
+router.get('/', (req, res, next) => {
+  res.locals.breadcrumbs.pop();
   if(req.json) return res.send(res.locals.character.Journals)
+  
+  if(req.xhr) return res.render('characters/journal/_list')
   return res.render('characters/journal/index')
 });
 
-router.post('/', Common.middleware.requireCharacter, (req,res,next) => {
+router.post('/', (req,res,next) => {
 
   return res.locals.character.createJournal({
     title: req.body.title,

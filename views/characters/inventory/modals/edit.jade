@@ -1,4 +1,4 @@
-form(name='item' action='/'+character.url+'inventory/' + (item?item.id:'') method='post' data-response="json" data-reaction="redirect")
+form(name='item' action=character.url+'inventory/' + (item?item.id:'') method='post' data-response="json" data-reaction="redirect")
   .modal-content&attributes({class: THEME})
     if item
       .modal-title= item.name

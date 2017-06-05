@@ -18,25 +18,25 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
   .catch(next)
 });
 
-router.post('/', Common.middleware.requirePermission('campaign',{write:true}), Common.middleware.objectifyBody, (req,res,next) => {
+router.post('/', Common.middleware.requirePermission('campaign', {write:true}), Common.middleware.objectifyBody, (req,res,next) => {
 
   return req.user.createCharacter(req.body)
   .then(pc => {
 
     return Promise.props({
-      campaign: res.locals.campaign ? pc.setCampaign(res.locals.campaign) : Promise.resolve(null),
+      permission: pc.addPermission(req.user, {owner: true, read:true, write:true}),
+      campaign: res.locals.campaign ? pc.setCampaign(res.locals.campaign) : Promise.resolve(),
       // sets the character's public lore from their description
-      lore: req.body.description ? pc.createLore({content:req.body.description, obscurity:0}) : Promise.resolve(null),
+      lore: req.body.description ? pc.createLore({content:req.body.description, obscurity:0}) : Promise.resolve(),
     })
-    .then(results =>{
-      return pc
-    })
+    .then( results => pc )
   })
   .then(pc => {
+
     if(req.json) return res.send(pc.get({plain:true}))
     if(req.modal) return res.render('modals/_success', {title: "Character Created", body:"Good job", redirect:pc.url})
-    if(req.xhr) return res.set('X-Redirect', req.baseUrl + '/' + pc.id).sendStatus(302);
-    return res.redirect(req.headers.referer||req.baseUrl);
+    if(req.xhr) return res.set('X-Redirect', character.url).sendStatus(302);
+    return res.redirect(character.url);
   })
   .catch(next);
 });
@@ -52,11 +52,15 @@ var characterRouter = express.Router({mergeParams: true});
 // character router handles individual subpages that pertain to the individual character
 router.use('/:id', (req,res,next) => {
   if(res.locals.character) return next();
-  return db.Character.findOne({where: {id: req.params.id}})
+
+  let query = {where: isNaN(req.params.id) ? {url:req.params.id} : {id:req.params.id}}
+  if(!res.locals.campaign) query.include = [{ model: db.Campaign, attributes: ['id','url','system','name'] }]
+
+  return db.Character.findOne({where: isNaN(req.params.id) ? {url:req.params.id} : {id:req.params.id}})
   .then(character => {
     if(!character) throw Common.error.notfound('Character')
-    if(req.user && character.id == req.user.MainCharId) character.active = true
-    if(req.user && character.ownerId == req.user.id) character.owned = true
+    character.active = (req.user && req.user.MainChar && character.id == req.user.MainChar.id)
+    character.owned = (req.user && character.ownerId == req.user.id)
     res.locals.character = character
     if(character.Campaign) {
       if(req.user.id == character.Campaign.ownerId) character.Campaign.owned = true
@@ -86,18 +90,18 @@ characterRouter.post('/', Common.middleware.requireUser, Common.middleware.objec
   // TODO: change the fields that can be modified based on the permission type
   if(!req.user.controls(res.locals.character).permission) return next(Common.error.authorization("You aren't authorized to modify that character"))
 
-  return Promise.try(()=>{
-    if(res.locals.character.CampaignId)
+  return Promise.try(() => {
     if(!res.locals.campaign) return true
     return req.user.checkPermission(res.locals.campaign, {write: true})
   })
   .then(permission => {
     return res.locals.character.update(req.body)
     .then(character => {
+
       if(req.json) return res.json(character)
       if(req.modal) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
-      if(req.xhr) return res.set('X-Redirect', req.baseUrl).sendStatus(302)
-      return res.redirect(req.headers.referer)
+      if(req.xhr) return res.set('X-Redirect', character.url).sendStatus(302)
+      return res.redirect(character.url)
     })
   })
 
@@ -113,7 +117,7 @@ characterRouter.delete('/', Common.middleware.requireUser, (req,res,next) => {
     .then(character => {
       if(req.json) return res.send({ref:character,kind:'Character'});
       if(req.modal) return res.render('modals/_success', {title: res.locals.character.name + " deleted", redirect:req.headers.referer || "/pc"});
-      if(req.xhr) return res.set('X-Redirect',req.user.url).sendStatus(302);
+      if(req.xhr) return res.set('X-Redirect', req.user.url).sendStatus(302);
       return res.redirect('/pc')
     })
   })

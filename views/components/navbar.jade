@@ -35,9 +35,9 @@ nav#nav
       else
         +dropdown({id:'charactermenu', text: currentUser.MainChar.getName('first')})
           +navlink({url: "/u/"+currentUser.username+"/pc", text:'Switch'})(data-response="modal" data-target="switch-character")
-          +navlink({url: "/"+currentUser.MainChar.url, text:'Status'})
-          +navlink({url: "/"+currentUser.MainChar.url + 'inventory',text:'Inventory'})
-          +navlink({url: "/"+currentUser.MainChar.url + 'journal',text:'Journal'})
+          +navlink({url: currentUser.MainChar.url, text:'Status'})
+          +navlink({url: currentUser.MainChar.url + 'inventory',text:'Inventory'})
+          +navlink({url: currentUser.MainChar.url + 'journal',text:'Journal'})
           
         //- CAMPAIGN MENU
         if !currentUser.MainChar.Campaign

@@ -1,4 +1,4 @@
-form(action=(campaign?campaign.url:"/") + "pc/" + (character ? character.id : '') method="post")
+form(action=(character ? character.url : (campaign?campaign.url:'/') + 'pc/') method="post")
   .modal-content
     if character
       .modal-title= character.name
@@ -20,11 +20,11 @@ form(action=(campaign?campaign.url:"/") + "pc/" + (character ? character.id : ''
               input.form-input(name="name" placeholder="Name" value=character?character.name:false required)
             .flex.center.grow
               label Race
-              input.form-input(name="race" placeholder="Name" value=character?character.race:false)
+              input.form-input(name="race" placeholder="Race" value=character?character.race:false)
           .flex.pad.center
             label.form-group-label Sex
             select.form-input(name="sex")
-              option(selected=character&&character.sex=="n/a" value=" ") Unspecified
+              option(selected=character&&character.sex=="n/a" value="") Unspecified
               option(value="male" selected=character&&character.sex=="male") Male
               option(value="female" selected=character&&character.sex=="female") Female
           .flex.pad.center.vert

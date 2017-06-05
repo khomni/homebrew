@@ -7,12 +7,13 @@ module.exports = function(sequelize, DataTypes) {
     url: {
       type: DataTypes.STRING,
       unique: true,
+      allowNull: true,
       validate: {
-        len: [0,32]
+        len: [0,64]
       },
       get: function() {
-        return 'pc/' + (this.getDataValue('url') || this.id) + "/"
-      }
+        return (this.Campaign&&this.Campaign.url||'') + 'pc/' + (this.getDataValue('url') || this.id) + "/"
+      },
     },
     // character name is an array of strings
     // a character many have a name of any length
@@ -29,14 +30,14 @@ module.exports = function(sequelize, DataTypes) {
     },
     race: {
       type: DataTypes.STRING,
-      allowNull:true,
+      allowNull: true,
       validate: {
         len: [0,32]
       }
     },
     sex: {
       type: DataTypes.ENUM,
-      allowNull:true,
+      allowNull: true,
       values: ['male','female']
     },
     title: {
@@ -97,18 +98,17 @@ module.exports = function(sequelize, DataTypes) {
           }
         });
 
-        /* Tentative: Character permissions?
+        /* Tentative: Character permissions? */
         Character.belongsToMany(models.User, {
-          as: 'owner', 
+          as: 'permission', 
           foreignKey: 'permission_id',
           through: {
             model: models.Permission,
             scope: {
-              permissionType: 'Campaign'
+              permissionType: 'Character'
             }
           }
         });
-        */
 
         // a character has lore in the form of their bio and backstory
         Character.hasMany(models.Lore, {
@@ -130,7 +130,7 @@ module.exports = function(sequelize, DataTypes) {
         });
 
         Character.addScope('defaultScope', {
-          attributes: ['id','name','url','title','ownerId'],
+          // attributes: ['id','name','url','title','ownerId'],
           include: [
             {
               model: models.Campaign,
@@ -143,7 +143,7 @@ module.exports = function(sequelize, DataTypes) {
         }, {override:true} )
 
         Character.addScope('session', {
-          attributes: ['id','name','url','title', 'CampaignId'],
+          attributes: ['id','name','url','title', 'CampaignId', 'location'],
           include: [
             { model: models.Campaign.scope('session') }, 
             { model: models.Image, order:[['order','ASC']] }
@@ -167,11 +167,42 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
 
-  Character.hook('beforeSave', (character, options) => {
+  Character.hook('beforeUpdate', function(character, options){
+    if(!character.changed('name')) return character;
+
+    let originalUrl = character.getDataValue('url');
+    let isUnique = false;
+    let iteration = 0;
+    let nameComponents = 1;
+    let slugComponents = character.getDataValue('name').slice(0,nameComponents);
+
+    return Promise.while(()=>!isUnique,()=>{
+      let url = slugComponents.join('-').toLowerCase();
+      character.url = url;
+
+      return Character.count({where: {url: {$eq: url, $not: originalUrl}}})
+      .then(n => {
+        if(!n) return isUnique = true;
+
+        if(nameComponents < character.getDataValue('name').length) {
+          nameComponents++
+          return slugComponents = character.getDataValue('name').slice(0,nameComponents)
+        } else {
+          slugComponents = character.getDataValue('name').slice()
+          return slugComponents.push(++iteration)
+        }
+      })
+    })
+    .then( ()=> {
+      return character;
+    });
+
+  })
+
+  Character.hook('beforeUpdate', (character, options) => {
     return character.getCampaign()
-    .then((campaign)=>{
-      console.log('NPC?', campaign.OwnerId == character.ownerId)
-      if(campaign.OwnerId == character.ownerId) character.npc = true
+    .then((campaign) => {
+      character.npc = campaign.ownerId == character.ownerId
       return Promise.resolve(character);
     })
   })
@@ -193,7 +224,7 @@ module.exports = function(sequelize, DataTypes) {
 
   // returns true if the input user has this character selected as their main
   Character.Instance.prototype.isActiveChar = function(user) {
-    return user.MainCharId === this.id
+    return user.MainCharId === this.id || user.MainChar.id == this.id
   }
 
   return Character;

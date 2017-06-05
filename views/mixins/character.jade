@@ -9,8 +9,8 @@ mixin characterCard(character)
           .name(href=character.url)= character.name
           if currentUser.id === character.ownerId
             .btn-group
-              a.btn(href="/"+character.url) Character Sheet
-              form(action="/"+character.url+"/select" method="POST")
+              a.btn(href=character.url) Character Sheet
+              form(action=character.url+"/select" method="POST")
                 button.btn(type="submit") Set As Main
-              form(action="/"+character.url method="delete" data-response="modal")
+              form(action=character.url method="delete" data-response="modal")
                 button.btn(type="submit") Delete

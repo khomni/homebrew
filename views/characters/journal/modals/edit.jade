@@ -1,4 +1,4 @@
-form(name='journal' action='/'+character.url+'journal' + (entry?'/'+entry.id:'') method='post')
+form(name='journal' action=character.url+'journal' + (entry?'/'+entry.id:'') method='post')
   .modal-content&attributes({class:THEME})
     .modal-title 
       if entry 
@@ -8,7 +8,7 @@ form(name='journal' action='/'+character.url+'journal' + (entry?'/'+entry.id:'')
     .modal-body
       .flex.vert.fill.pad
         .flex
-          input.form-input.grow(type='text' required name='title' value=entry?entry.title:false)
+          input.form-input.grow(type='text' required name='title' value=entry?entry.title:false placeholder="Entry Title")
         .flex
           textarea.form-input.grow(type='text' name='body' height=300)= entry?entry.body:''
         //- div

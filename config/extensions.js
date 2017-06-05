@@ -13,3 +13,8 @@ Array.prototype.find = function(func) {
   }
   return null
 }
+
+Promise.while = Promise.method(function(condition, action) {
+    if (!condition()) return;
+    return action().then(Promise.while.bind(null, condition, action));
+});

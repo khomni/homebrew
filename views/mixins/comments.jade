@@ -27,7 +27,7 @@ mixin comment(comment,parent)
 						else
 							label ???
 						if parent && !parent.archived && parent.Character
-							label(style="margin-left:0.5rem") (to #[a(href="/"+campaign.url + parent.Character.url)= parent.Character.getName('first')])
+							label(style="margin-left:0.5rem") (to #[a(href=campaign.url + parent.Character.url)= parent.Character.getName('first')])
 					.flex.no-size.je
 						.timestamp= comment.updatedAt.toLocaleString()
 				.comment-body!= markdown(comment.body)

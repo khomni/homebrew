@@ -1,5 +1,5 @@
-if breadcrumbs.store.length > 0
+if breadcrumbs.length > 0
   .breadcrumbs.flex
-    each crumb in breadcrumbs.store
+    each crumb in breadcrumbs
       .crumb
-        a(href="/"+crumb.url||crumb)= crumb.name||crumb
+        a(href=crumb.url)= crumb.name

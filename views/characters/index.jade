@@ -6,9 +6,10 @@ block title
 block header
   +header
     .header-item.page-title
-      span Characters
-    if breadcrumbs.length > 0
-      include /components/breadcrumbs
+      if campaign
+        span #{campaign.name} Characters
+      else
+        span Characters
 
 block content
   .content-body
@@ -28,7 +29,7 @@ block content
             a(href=character.url)= character.name
           //- .float.right
             .timestamp= character.updatedAt.toLocaleString()
-        if character.Campaign
+        if !campaign && character.Campaign
           .section-body
             a(href=character.Campaign.url)= character.Campaign.name
         if currentUser
