@@ -1,4 +1,4 @@
-form(method="post" data-response="json" data-reaction="redirect")
+form(method="post" data-response="json" data-reaction="reload")
   if !items || items.length == 0
     .flex.center: label No Items
   else
@@ -19,7 +19,7 @@ form(method="post" data-response="json" data-reaction="redirect")
               th
         tbody
           each item in items
-            tr(data-ref=item.id data-kind="Item")
+            tr(data-ref=item.id data-kind="Item" data-rarity=item.rarity)
               if !itemOwner || itemOwner.isActiveChar(currentUser)
                 td
                   input(type="hidden" name="item.$.id" value=item.id)
@@ -32,9 +32,9 @@ form(method="post" data-response="json" data-reaction="redirect")
               th= item.quantity > 1 ? item.quantity : "—"
               td
                 if item.icon
-                  i.ra(class=item.icon data-rarity=item.rarity)
+                  i.ra(class=item.icon )
               td
-                a(href="inventory/"+item.id data-response="modal" data-target="item-"+item.id data-rarity=item.rarity tabindex=2)= item.name
+                a(href="inventory/"+item.id data-response="modal" data-target="item-"+item.id tabindex=2)= item.name
               td
                 if Number(item.value) == 0
                   span —

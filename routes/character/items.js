@@ -241,7 +241,6 @@ router.post('/drop', Common.middleware.requireCharacter, Common.middleware.objec
 var itemRouter = express.Router({mergeParams:true})
 
 router.use('/:id', (req,res,next) => {
-  db._methods(res.locals.character, /item|inventory/gi);
 
   let query = {where:{id:req.params.id, $or: [{CharacterId: res.locals.character.id},{CharacterId:null}]}, include:[{model: db.Lore, as:'lore'}]}
 

@@ -11,7 +11,10 @@
     // the data-reaction attribute will specify some predefined behaviors for emitted form data
     if(!source.dataset.reaction) return false;
 
-    if(source.dataset.reaction == 'reload') return source.dispatchEvent(new Event('reload',{bubbles:true, cancelable:true}))
+    if(source.dataset.reaction == 'reload') {
+      console.log(source, 'reload')
+      return source.dispatchEvent(new Event('reload', {bubbles:true, cancelable:true}))
+    }
 
     if(source.dataset.reaction == 'remove') {
       if(!Array.isArray(data)) data = [data]

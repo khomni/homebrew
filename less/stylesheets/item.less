@@ -1,39 +1,49 @@
+[data-rarity] a {
+  color: inherit;
+}
+
 [data-rarity="0"],a[data-rarity="0"] {
   color: inherit;
 }
 
 [data-rarity="1"],a[data-rarity="1"] {
-  color: darken(@color-secondary,10%);
-  &:hover,&:active,&:focus {
-    color: @color-secondary;
-  }
+  background: fade(darken(@color-secondary,10%), 15%);
+  text-shadow: 0 0 8px fade(@color-secondary,25%);
+  // color: darken(@color-secondary,10%);
+  // &:hover,&:active,&:focus {
+  //   color: @color-secondary;
+  // }
   // text-shadow: 0 0 2px @color-secondary;
 }
 
 [data-rarity="2"],[data-rarity="2"] {
-  color: darken(@color-primary,10%);
-    &:hover,&:active,&:focus {
-      color: @color-primary;
-    }
+  background: fade(darken(@color-primary,10%), 15%);
+  text-shadow: 0 0 8px fade(@color-primary,50%);
+  // color: darken(@color-primary,10%);
+  //   &:hover,&:active,&:focus {
+  //     color: @color-primary;
+  //   }
   // text-shadow: 0 0 4px @color-primary;
 }
 
 [data-rarity="3"],a[data-rarity="3"] {
   // color: #aa00ff;
-  color: #cd66ff;
-  &:hover,&:active,&:focus {
-    color: #dd99ff;
-  }
+  background: fade(#cd66ff, 15%);
+  // color: #cd66ff;
+  // &:hover,&:active,&:focus {
+  //   color: #dd99ff;
+  // }
   text-shadow: 0 0 8px #c65dfc;
 }
 
 a.item-tile {
+  color: inherit;
   text-decoration: none;
   max-width: 100vh;
   width: 200px;
   height: 200px;
-  background: fade(black, 10%);
-  box-shadow: inset 0px 0px 8px fade(black, 75%);
+  // background: fade(black, 10%);
+  // box-shadow: inset 0px 0px 8px fade(black, 75%);
   outline: 1px solid;
 
 
@@ -43,7 +53,12 @@ a.item-tile {
   }
 
   .xs({
+    font-size: 12px;
+    width: 100px;
+    height: 100px;
+
     max-width: ~"calc(50vw - 1em)";
     max-height: ~"calc(50vw - 1em)";
   })
+
 }

@@ -17,6 +17,9 @@ global.db = db
 
 var app = express();
 
+var browserify = require('browserify-middleware');
+app.use('/javascripts', browserify('./build'));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -31,9 +34,6 @@ var marked = require('marked');
 app.locals.basedir = APPROOT+'/views'
 app.locals.markdown = marked
 app.locals.SYSTEM = SYSTEM
-
-var browserify = require('browserify-middleware');
-app.use('/javascripts', browserify('./build'));
 
 // stylesheets
 var lessMiddleware = require('less-middleware');

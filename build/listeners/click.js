@@ -25,7 +25,8 @@ var dom = require('./dom.js');
     }
 
     if(clickAction == 'tab' && source.dataset.target) {
-      return dom.tab(source)
+      return source.dispatchEvent(new Event('show.tab', {bubbles:true, cancelable:true}))
+      // return dom.tab(source)
     }
 
   })
