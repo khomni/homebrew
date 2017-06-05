@@ -10,21 +10,17 @@ block header
 
 block content
   .tab-group
-    a.tab.active(data-click="tab" data-target="owned-items") #{itemOwner.getName('first')}'s Items
-    a.tab(data-click="tab" data-target="owned-items-table") Table View
-    if itemOwner.isActiveChar(currentUser)
-      a.tab(href="?nearby=true" data-click="tab" data-target="nearby-items") Nearby
+    a.tab.active(href="?format=tiles" data-click="tab" data-target="owned-items" data-reload) #{character.getName('first')}'s Items
+    a.tab(href="?format=table" data-click="tab" data-target="owned-items-table" data-reload) Table View
+    if character.active
+      a.tab(href="?nearby=true" data-click="tab" data-target="nearby-items" data-reload) Nearby
       a.tab(href="inventory/new" data-response="modal"): i.fa.fa-plus
     else if currentUser.MainChar
       a.tab(href="inventory/give" data-click="tab" data-target="give-items") #{currentUser.MainChar.getName('first')}'s Items
   .tab-panel
     #owned-items.tab-pane.active
-      include ./_itemTiles
     #owned-items-table.tab-pane
-      section
-        .section-body
-          include ./_itemTable
-    if itemOwner.isActiveChar(currentUser)
+    if character.active
       #nearby-items.tab-pane
     else
       #give-items.tab-pane

@@ -1,3 +1,23 @@
+
+mixin propTable(input, level)
+  -level = level || 0
+  if Array.isArray(input)
+    each i in input
+      +propTable(i, level+1)
+  else if typeof input == 'object'
+    table
+      each value,key in input
+        tr
+          if level == 0
+            th= key
+          else
+            td= key
+          td
+            +propTable(value, level+1)
+  else
+    span= input
+
+
 .modal-content&attributes({class:THEME})
   .modal-title= item.name
   .modal-body
@@ -8,10 +28,40 @@
         div= lore.content
     hr
     .flex.distribute
-      .flex.vert
-        each property,key in item.properties
-          div=key
-      .flex.vert
-        each property,key in item.properties
-          div=property
+      if item.properties
+        +propTable(item.properties)
+  .modal-footer
+    .flex.center
+      a.btn(href="inventory/" + item.id + "/edit" data-response="modal" data-target="item-" + item.id + "-edit") Edit
+      form(method="post" data-reaction="reload" data-response="json")
 
+        input(type="hidden" name="item.$.id" value=item.id)
+        input(type="hidden" name="item.$.quantity" value=item.quantity)
+
+        if currentUser && currentUser.MainChar 
+          if currentUser.MainChar.id == item.CharacterId
+            button.btn(formaction="inventory/drop" ) Drop
+          else if !item.CharacterId
+            button.btn(formaction="inventory/give" ) Take
+        //- .flex.vert
+          each property,key in item.properties
+            div=key
+        //- .flex.vert
+          each property,key in item.properties
+            div=property
+  //- if items && items.length > 0
+    .flex.center.pad
+      if itemOwner && itemOwner.isActiveChar(currentUser) && !character.isActiveChar(currentUser)
+        button.btn(formaction=character.url+"inventory/give" formmethod="post" data-response="json" data-reaction="redirect") Give Items
+      else
+        if !itemOwner || itemOwner.isActiveChar(currentUser)
+          //- item is owned or has no owner
+          button.btn(formaction="inventory" formmethod="delete" data-reaction="remove") Destroy
+        if itemOwner && itemOwner.isActiveChar(currentUser)
+          //- this is the MainChar's inventory
+          button.btn(formaction="inventory/drop" formmethod="post" data-reaction="remove") Drop
+          a.btn(href="inventory/new" data-response="modal") New Item
+        else if !itemOwner
+          //- These items are unclaimed
+          if items && items.length>0
+            button.btn(formaction=currentUser.MainChar.url+'inventory/give' method='post') Take Items

@@ -1,0 +1,24 @@
+
+if character
+  if character.Journals
+    each entry in character.Journals
+      a(href=character.url + 'journal/' + entry.id)= entry.title
+  .flex.center
+    a.btn(href=character.url + 'journal/new' data-response="modal") New Entry
+
+
+  //- section
+    .section-title
+      .float.left= entry.title
+      .float.right
+        .timestamp= entry.updatedAt.toLocaleString()
+    .section-body
+      .journal-markup!= markdown(entry.body.split('\n').slice(0,10).join('\n'))
+    if character.active
+      .section-footer
+        .flex.center.pad(data-pad="1em")
+          a.btn(href="journal/"+entry.id) View Entry
+          a.btn(href="journal/"+entry.id+"/edit" data-response="modal" data-target="edit-journal-"+id) Edit Entry
+          form(action="journal/"+entry.id method="delete" data-response="json")
+            button.btn Delete Entry
+  

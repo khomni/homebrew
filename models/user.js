@@ -18,6 +18,12 @@ module.exports = function(sequelize, DataTypes) {
         len: [2,16]
       }
     },
+    url: {
+      type: DataTypes.VIRTUAL,
+      get: function(){
+        return '/u/' + this.username
+      }
+    },
     email: {
       type: DataTypes.STRING,
       unique: true,
@@ -63,6 +69,16 @@ module.exports = function(sequelize, DataTypes) {
           }
         });
 
+        User.belongsToMany(models.Character, {
+          as: 'characterPermission', 
+          through: {
+            model: models.Permission,
+            scope: {
+              permissionType: 'Character'
+            }
+          }
+        });
+
         User.addScope('session', {
           attributes: ['id','username'],
           include: [{
@@ -80,13 +96,11 @@ module.exports = function(sequelize, DataTypes) {
       if(isMatch) return user
       return false
     })
-  }
+  };
 
   User.hook('beforeSave', function(user, options) {
     return Promise.try(()=>{
       if(!user.changed('password')) return user; // if password wasn't changed, skip the password hashing
-
-      console.log('hashing password');
 
       options.updatesOnDuplicate = options.updatesOnDuplicate || [];
       options.updatesOnDuplicate.push('password');
@@ -108,10 +122,10 @@ module.exports = function(sequelize, DataTypes) {
   User.Instance.prototype.checkPermission = function(instance, options) {
     let thisUser = this;
 
-    let defaultQuery = {through: {where: {permissionType: instance.$modelOptions.name.singular, permission_id: instance.id}}}
+    let defaultQuery = {through: {where: {permissionType: instance.$modelOptions.name.singular, UserId: thisUser.id}}}
     Object.assign(defaultQuery.through.where, options)
 
-    return thisUser.getPermission(defaultQuery)
+    return instance.getPermission(defaultQuery)
     .then(p => p.pop())
     .then(permission => {
       if(!permission) return permission
@@ -128,7 +142,6 @@ module.exports = function(sequelize, DataTypes) {
     if(resource.$modelOptions) {
       let resourceType = resource.$modelOptions.name.singular
 
-      console.log(resource)
       if(resourceType === 'Character') { // assumes the character has the campaign populated
         if(resource.ownerId == thisUser.id) return {owner:true, permission:true}
         if(resource.Campaign && resource.Campaign.ownerId == thisUser.id) return {owner:false, permission:true}

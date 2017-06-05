@@ -9,11 +9,14 @@ router.use((req,res,next)=> {
   return next()
 })
 
-/* GET users listing. */
-router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
+router.get('/', (req, res, next) => {
+
   var order = ['updatedAt','desc']
 
   res.locals.breadcrumbs.pop();
+
+  if(!req.xhr && !req.json && !req.modal) return res.render('characters/inventory/index')
+  
   if(req.query.sort) {
     order[0] = req.query.sort
     if(req.query.order && ['asc','desc'].indexOf(req.query.order.toLowerCase())>=0) order[1] = req.query.order.toLowerCase()
@@ -22,7 +25,6 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
   return Promise.resolve().then(()=>{
     if(req.query.nearby) {
       // use the character's current location to find nearby items
-      var here = req.user.MainChar.location.coordinates
       var here = res.locals.character.location.coordinates
       return db.Item.findAll({
         attributes: {exclude: ['CharacterId']},
@@ -49,7 +51,12 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
     },{value:0, weight:0, total:0})
 
     if(req.json) return res.json({items: items, total: meta})
-    if(req.xhr) return res.render('characters/inventory/_itemTable',{meta:meta})
+
+    if(req.xhr) {
+      if(req.query.format=='table') return res.render('characters/inventory/_itemTable',{meta:meta})
+      if(req.query.format=='tiles') return res.render('characters/inventory/_itemTiles',{meta:meta})
+      return res.render('characters/inventory/_itemTiles',{meta:meta})
+    }
     return res.render('characters/inventory/index',{meta:meta})
   })
   .catch(next)
@@ -78,7 +85,7 @@ router.get('/give', Common.middleware.requireCharacter, (req,res,next) => {
   .catch(next)
 });
 
-router.post('/give', Common.middleware.requireCharacter,Common.middleware.objectifyBody, (req,res,next) => {
+router.post('/give', Common.middleware.requireCharacter, Common.middleware.objectifyBody, (req,res,next) => {
 
   // req.body.item is an array of object with `id` and `quantity` to drop
   // if the drop quantity is the same as the item quantity, drop the entire item
@@ -113,7 +120,8 @@ router.post('/give', Common.middleware.requireCharacter,Common.middleware.object
         })
       })
     })
-    .then(items =>{
+    .then(() =>{
+      if(req.json) return res.json(items)
       return res.redirect(req.headers.referer)
     })
   })
@@ -217,16 +225,14 @@ router.post('/drop', Common.middleware.requireCharacter, Common.middleware.objec
       })
       .then(itemToDrop => {
         return req.user.MainChar.removeItem(itemToDrop).then(() => {
-          return {ref:item.get({plain:true}),kind:'Item'}
+          return itemToDrop
         })
       })
     })
   })
   .then(results => {
-
-    if(req.json) return res.json(results)
     if(req.modal) return res.render('modals/_success',{title:results.length+" items dropped"})
-    return res.json({item:item, location:location})
+    return res.json(results)
   })
   .catch(next)
 
@@ -235,7 +241,11 @@ router.post('/drop', Common.middleware.requireCharacter, Common.middleware.objec
 var itemRouter = express.Router({mergeParams:true})
 
 router.use('/:id', (req,res,next) => {
-  return db.Item.findOne({where:{id:req.params.id}, include:[{model: db.Lore, as:'lore'}]})
+  db._methods(res.locals.character, /item|inventory/gi);
+
+  let query = {where:{id:req.params.id, $or: [{CharacterId: res.locals.character.id},{CharacterId:null}]}, include:[{model: db.Lore, as:'lore'}]}
+
+  return db.Item.findOne(query)
   .then(item => {
     res.locals.item = item
     return next()

@@ -1,0 +1,16 @@
+if character
+  .character-card-container(id="character-"+character.id data-characterId=character.id)
+    .character-card
+      .character-portrait
+        if character.Images.length > 0
+          img(src=character.Images[0].src)
+      .character-stats
+        .name(href=character.url)= character.name
+        if character.ownedBy(currentUser)
+          .btn-group
+            a.btn(href=character.url) Character Sheet
+            if !character.isActiveChar(currentUser)
+              form(action=character.url+"/select" method="POST")
+                button.btn(type="submit") Set As Main
+            form(action=character.url method="delete")
+              button.btn(type="submit") Delete

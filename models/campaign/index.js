@@ -63,9 +63,10 @@ module.exports = function(sequelize, DataTypes) {
         Campaign.hasMany(models.Faction, {constraints:false, onDelete:'cascade'});
         Campaign.hasOne(models.Calendar, {onDelete:'cascade'});
         Campaign.belongsTo(models.User, {as:'owner', onDelete:'cascade'});
+        Campaign.hasMany(models.Character, {constraints: false});
 
         Campaign.belongsToMany(models.User, {
-          as: 'member', 
+          as: 'permission', 
           foreignKey: 'permission_id',
           through: {
             model: models.Permission,

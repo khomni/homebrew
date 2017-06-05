@@ -11,11 +11,7 @@
     // the data-reaction attribute will specify some predefined behaviors for emitted form data
     if(!source.dataset.reaction) return false;
 
-    if(source.dataset.reaction == 'redirect') {
-      if(data.error) return false;
-      if(data.redirect) return window.location = data.redirect
-      return window.location.reload()
-    }
+    if(source.dataset.reaction == 'reload') return source.dispatchEvent(new Event('reload',{bubbles:true, cancelable:true}))
 
     if(source.dataset.reaction == 'remove') {
       if(!Array.isArray(data)) data = [data]

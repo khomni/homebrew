@@ -33,6 +33,8 @@ router.post('/', Common.middleware.requireUser, (req,res,next) => {
   .then((campaign) => {
     return req.user.addPermission(campaign, {owner: true, read:true, write:true})
     .then(permission => {
+
+      if(req.xhr) return res.set('X-Redirect', campaign.url).sendStatus(302)
       return res.redirect(campaign.url)
     })
   })
@@ -47,9 +49,13 @@ router.post('/:id/request', Common.middleware.requireUser, (req,res,next) => {
   var query = isNaN(req.params.id) ? {url:req.params.id} : {id:req.params.id}
   return db.Campaign.findOne({where: query})
   .then(campaign => {
-    //
+    
+    // add empty permission
     return req.user.addPermission(campaign)
-    .then()
+    .then(permission => {
+      if(req.xhr) return res.set('X-Redirect', req.baseUrl).sendStatus(302)
+      return res.redirect(req.baseUrl)
+    })
 
   })
   .catch(next)

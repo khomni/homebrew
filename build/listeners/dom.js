@@ -42,8 +42,10 @@ module.exports = {
       return node.classList.add('active');
     });
 
-    var href = source.getAttribute('href')
-    if(href && (source.dataset.reload || !source.dataset.loaded)) {
+    var href = source.getAttribute('href');
+
+    console.log(href, source.dataset.reload, source.dataset.loaded)
+    if(href && ('reload' in source.dataset || !source.dataset.loaded)) {
       Ajax.html({url:href, method:'get'})
       .then(html => {
         target.innerHTML = html
