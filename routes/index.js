@@ -13,6 +13,7 @@ var LocalStrategy = require('passport-local').Strategy;
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
+  if(req.user && req.user.MainChar) return next();
   res.render('index');
 });
 
@@ -77,6 +78,19 @@ router.use('/c', require('./campaign'));
 router.use('/lore', require('./lore'));
 router.use('/knowledge', require('./character/knowledge'));
 router.use('/comment', require('./comment'));
+
+// Convenience Routers!
+// If your session also has an active character and campaign, you can route to these to skip permissions
+
+router.use((req,res,next) => {
+  res.locals.character = req.user.MainChar;
+  if(res.locals.character) res.locals.campaign = res.locals.character.Campaign;
+  res.locals.breadcrumbs.push({name:res.locals.campaign.name, url: res.locals.campaign.url});
+  res.locals.breadcrumbs.push({name:res.locals.character.name, url: '/status'});
+  return next();
+})
+
+router.use('/', require('./character/character-router'));
 
 router.use('/s', require('./system'));
 

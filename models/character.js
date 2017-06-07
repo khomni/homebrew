@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes) {
         len: [0,64]
       },
       get: function() {
-        return (this.Campaign&&this.Campaign.url||'') + 'pc/' + (this.getDataValue('url') || this.id) + "/"
+        return /* (this.Campaign&&this.Campaign.url||'')  + */ '/pc/' + (this.getDataValue('url') || this.id) + '/'
       },
     },
     // character name is an array of strings

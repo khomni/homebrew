@@ -47,8 +47,6 @@ router.get('/create', Common.middleware.requireUser, (req, res, next) => {
   return res.render('characters/new');
 });
 
-var characterRouter = express.Router({mergeParams: true});
-
 // character router handles individual subpages that pertain to the individual character
 router.use('/:id', (req,res,next) => {
   if(res.locals.character) return next();
@@ -76,101 +74,6 @@ router.use('/:id', (req,res,next) => {
     // })
   })
   .catch(next)
-}, characterRouter)
-
-characterRouter.get('/',(req,res,next) => {
-
-  if(req.json) return res.json(res.locals.character.get({plain:true}))
-  if(req.modal) return res.render('characters/detail')
-  return res.render('characters/detail')
-
-});
-
-characterRouter.post('/', Common.middleware.requireUser, Common.middleware.objectifyBody, (req,res,next) => {
-  // TODO: change the fields that can be modified based on the permission type
-  if(!req.user.controls(res.locals.character).permission) return next(Common.error.authorization("You aren't authorized to modify that character"))
-
-  return Promise.try(() => {
-    if(!res.locals.campaign) return true
-    return req.user.checkPermission(res.locals.campaign, {write: true})
-  })
-  .then(permission => {
-    return res.locals.character.update(req.body)
-    .then(character => {
-
-      if(req.json) return res.json(character)
-      if(req.modal) return res.render('modals/_success',{title: res.locals.character.name + " selected"})
-      if(req.xhr) return res.set('X-Redirect', character.url).sendStatus(302)
-      return res.redirect(character.url)
-    })
-  })
-
-  .catch(next)
-});
-
-characterRouter.delete('/', Common.middleware.requireUser, (req,res,next) => {
-
-  return req.user.hasCharacter(res.locals.character)
-  .then(owned => {
-    if(!owned) throw Common.error.authorization("You don't own that character")
-    return res.locals.character.destroy()
-    .then(character => {
-      if(req.json) return res.send({ref:character,kind:'Character'});
-      if(req.modal) return res.render('modals/_success', {title: res.locals.character.name + " deleted", redirect:req.headers.referer || "/pc"});
-      if(req.xhr) return res.set('X-Redirect', req.user.url).sendStatus(302);
-      return res.redirect('/pc')
-    })
-  })
-  .catch(next)
-
-});
-
-characterRouter.post('/select', Common.middleware.requireUser, (req,res,next) => {
-  return req.user.hasCharacter(res.locals.character)
-  .then(owned => {
-    if(!owned) throw Common.error.authorization("You don't own that character")
-    return req.user.setMainChar(res.locals.character)
-    .then(user => {
-      if(req.json) return res.send(res.locals.character.get({plain:true}));
-      if(req.modal) return res.render('modals/_success',{title: res.locals.character.name + " selected"});
-      if(req.xhr) return res.set('X-Redirect',req.baseUrl).sendStatus(302);
-      return res.redirect(req.headers.referer||req.baseUrl)
-    })
-  })
-  .catch(next)
-})
-
-characterRouter.get('/edit', Common.middleware.requireUser, (req,res,next) => {
-  if(!req.user.controls(res.locals.character).permission) return next(Common.error.authorization("You aren't authorized to modify that character"))
-
-  res.locals.gm = !req.user.controls(res.locals.character).owner
-
-  return res.render('characters/modals/edit')
-
-})
-
-
-characterRouter.use('/journal', require('./journal'));
-characterRouter.use('/inventory', require('./items'));
-characterRouter.use('/relationship', require('./relationships'));
-characterRouter.use('/factions', require('../campaign/factions'));
-
-characterRouter.use('/lore', (req,res,next) => {
-  res.locals.lorable = res.locals.character
-
-  // give user access to add lore and automatically learn existing lore if they own the character or the campaign
-  if(res.locals.character.isActiveChar(req.user) || res.locals.campaign.owned) {
-    res.locals.permission.read = true
-    res.locals.permission.write = true
-  }
-  return next();
-}, require('../lore'));
-
-characterRouter.use('/images', (req,res,next) => {
-  res.locals.imageable = res.locals.character
-  return next();
-}, require('../images'));
-
-characterRouter.use('/knowledge', require('./knowledge'));
+}, require('./character-router'));
 
 module.exports = router;
