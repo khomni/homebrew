@@ -20,6 +20,8 @@ router.post('/', Common.middleware.requireUser, Common.middleware.objectifyBody,
     return req.user.checkPermission(res.locals.campaign, {write: true})
   })
   .then(permission => {
+    if(!permission) throw new err
+
     return res.locals.character.update(req.body)
     .then(character => {
 
@@ -83,6 +85,10 @@ router.use('/factions', require('../campaign/factions'));
 router.use('/lore', (req,res,next) => {
   res.locals.lorable = res.locals.character
 
+  return req.user.checkPermission(res.locals.campaign, {write: true})
+  .then(permission => {
+
+  })
   // give user access to add lore and automatically learn existing lore if they own the character or the campaign
   if(res.locals.character.isActiveChar(req.user) || res.locals.campaign.owned) {
     res.locals.permission.read = true

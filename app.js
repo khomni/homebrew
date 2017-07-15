@@ -84,9 +84,7 @@ var sessionMiddleware = session({
 
 app.use(sessionMiddleware);
 
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-require('./config/passport');
+var passport = require('./config/passport');
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -102,7 +100,7 @@ app.use((req,res,next) => {
 });
 
 // set the user's main character if applicable
-app.use(require(APPROOT+'/middleware/activeChar'));
+app.use(require('./middleware/activeChar'));
 
 app.use('/', (req,res,next)=>{
   if(/\.json(.*)?$/.test(req.url)) {
@@ -112,10 +110,10 @@ app.use('/', (req,res,next)=>{
   return next();
 });
 
-app.use(require(APPROOT+'/middleware/requests'));
+app.use(require('./middleware/requests'));
 
 // Main Router
-app.use('/', require(APPROOT+'/routes/index'));
+app.use('/', require('./routes/index'));
 
 // Error Handlers
 
@@ -127,6 +125,6 @@ app.use(function(req, res, next) {
 });
 
 // error handler
-app.use(require(APPROOT+'/middleware/error'))
+app.use(require('./middleware/error'))
 
 module.exports = app;

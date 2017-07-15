@@ -1,5 +1,7 @@
-var passport = require('passport')
-  , LocalStrategy = require('passport-local').Strategy
+'use strict';
+
+const passport = require('passport')
+const LocalStrategy = require('passport-local').Strategy
 
 // Serialize Sessions
 passport.serializeUser(function(user, done){
@@ -21,10 +23,12 @@ passport.use(new LocalStrategy({usernameField: 'email', passwordField: 'password
     var user = db.User.find({where: {$or: [{email: email}, {username: email}]}})
     .then(user => {
       if(!user) return done(null)
-      passwd = user ? user.password : ''
+      let passwd = user ? user.password : ''
       return db.User.validPassword(password, passwd, user)
-      .then(isValid =>{return done(null, isValid)})
+      .then(isValid => done(null, isValid) )
     })
     .catch(done)
   }
 ));
+
+module.exports = passport

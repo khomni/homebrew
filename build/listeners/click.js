@@ -16,7 +16,8 @@ var dom = require('./dom.js');
 
     // removes the targeted element by id, or finds the closest parent that matches the target selector
     if(clickAction == 'remove' && source.dataset.target) {
-      return dom.remove(source)
+        dom.remove(source)
+        return false;
     }
 
     // adds the 'collapsed' class to the target element or the closest parent with the target selector

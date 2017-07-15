@@ -196,7 +196,6 @@ module.exports = function(sequelize, DataTypes) {
     .then( ()=> {
       return character;
     });
-
   })
 
   Character.hook('beforeUpdate', (character, options) => {

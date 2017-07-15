@@ -25,12 +25,14 @@ router.get('/login',(req,res,next)=>{
 router.post('/login', (req,res,next) => {
   var origin = req.headers.referer || '/';
 
-  passport.authenticate('local',(err,user,info) => {
+  passport.authenticate('local', (err,user,info) => {
     if (err) return next(err);
     if (!user) return next(Common.error.request('Invalid Credentials')); 
 
     req.logIn(user, err => {
       if (err) return next(err);
+
+      return res.set('X-Redirect', origin).sendStatus(200);
       return res.redirect(origin);
     })
   })(req, res, next)

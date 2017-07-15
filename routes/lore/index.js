@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express');
 var router = express.Router();
 
@@ -68,7 +70,7 @@ router.post('/', Common.middleware.requireUser, (req, res, next) => {
   if(!res.locals.lorable.createLore) return next(Common.error.request('That resource cannot have lore'))
   if(!res.locals.permission.write) return next(Common.error.authorization('You are not permitted to add lore to this resource'))
 
-  Object.assign(req.body,{authorId:req.user.id, lorable_id: res.locals.lorable.id})
+  Object.assign(req.body,{ownerId:req.user.id, lorable_id: res.locals.lorable.id})
 
   // create a bit of lore for the lorable
   return res.locals.lorable.createLore(req.body)
@@ -83,7 +85,7 @@ router.post('/', Common.middleware.requireUser, (req, res, next) => {
   .catch(next)
 });
 
-loreRouter = express.Router({mergeParams: true});
+let loreRouter = express.Router({mergeParams: true});
 
 router.use('/:id', Common.middleware.requireCharacter, (req,res,next) => {
 

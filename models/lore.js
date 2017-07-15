@@ -42,7 +42,8 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   Lore.Instance.prototype.ownedBy = function(user) {
-    return user.id === this.authorId
+    console.log(this)
+    return user.id === this.ownerId
   }
 
   return Lore;
