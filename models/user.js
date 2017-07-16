@@ -92,15 +92,13 @@ module.exports = function(sequelize, DataTypes) {
 
   User.validPassword = function(password, passwd, user) {
     return bcrypt.compareAsync(password, passwd)
-    .then(isMatch => {
-      if(isMatch) return user
-      return false
-    })
+    .then(isMatch => isMatch && user )
   };
 
-  User.hook('beforeSave', function(user, options) {
+  function hashPassWord(user, options) {
     return Promise.try(()=>{
-      if(!user.changed('password')) return user; // if password wasn't changed, skip the password hashing
+      if(user.password && !user.changed('password')) return user; // if password wasn't changed, skip the password hashing
+      console.log('hashing password')
 
       options.updatesOnDuplicate = options.updatesOnDuplicate || [];
       options.updatesOnDuplicate.push('password');
@@ -114,7 +112,11 @@ module.exports = function(sequelize, DataTypes) {
         })
       })
     })
-  });
+  }
+
+  User.hook('beforeSave', hashPassWord);
+  User.hook('beforeCreate', hashPassWord);
+  User.hook('beforeUpdate', hashPassWord);
 
   // convenience method for users
   // takes an instance as an argument and returns the permission instance if it exists, returns false otherwise
