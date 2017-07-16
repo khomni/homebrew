@@ -190,7 +190,9 @@ router.get('/:year?/:month?', (req,res,next) => {
   return res.locals.campaign.Calendar.constructCalendar(calendarRange, {truncate: false})
   .then(calendar => {
     if(req.json) return res.json(calendar)
-    return res.render('campaign/calendar', {calendar:calendar})
+    if(req.isTab) return res.render('campaign/calendar/_calendar', {calendar});
+    if(req.modal) return res.render('campaign/calendar/$calendar', {calendar});
+    return res.render('campaign/calendar', {calendar})
   })
   .catch(next);
 })

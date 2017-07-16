@@ -7,13 +7,22 @@ extends /templates/universal
 
 block main
   #modals.modals
-  block navigation
+  //- block navigation
     include /components/navbar
+  //- content-wrapper encompasses header/content/footer
   #content-wrapper
-    //- .overlay
-      +characterCard(activeChar)
     block header
-      +header(headerColor||null)
+      header#header
+        if headerImage
+          img(src=headerImage draggable="false")
     #content-main&attributes({class: THEME})
-      block content
+      .tab-group
+        //- the main navigation areas
+        //- these only update on full page reload, and may not even be necessary
+        block navigation
+      .tab-pane-group
+        //- element that receives all XHR page content
+        //- the content loaded can also have nested page tabs
+        #main.tab-pane.active(href=href)
+          block content
     block footer

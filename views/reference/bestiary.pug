@@ -1,15 +1,12 @@
 extends /templates/default
 
-block title
-	title= "Bestiary"
-	
 block header
-	+header
-		.header-item.page-title 
-			span Bestiary
+    +header
+	.header-item.page-title 
+	    span Bestiary
 		
 block content
-	.content-body
-		+section()
-			form.form-group(action="/r/bestiary/search" method="post")
-				input.form-input(name="search")
+    .content-body
+	+section()
+	    form.form-group(action="/r/bestiary/search" method="post")
+		input.form-input(name="search")

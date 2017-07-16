@@ -1,29 +1,9 @@
 extends /templates/default
 
-block title
-  title= campaign.name
-  
 block header
   +header
     .header-item.page-title 
       span= campaign.name
 
 block content
-  .content-body
-    +section('Contents')
-      .flex.center.pad
-        a.btn(href=campaign.url+"pc") Characters
-        a.btn(href=campaign.url+"quests") Quests
-        a.btn(href=campaign.url+"calendar") Calendar
-    if campaign.owned
-      section
-        .section-body
-          .flex.pad
-            .flex.vert.border.pad
-              .flex.center: label GM Actions
-              .flex.center.pad
-                a.btn(href=campaign.url+"edit" data-response="modal") Edit
-                form(action=campaign.url method="delete" data-response="json")
-                  button.btn(type="submit") Delete
-                //- form(action=campaign.url, method="DELETE")
-                  button.btn(type="submit") Delete
+  include ./_detail

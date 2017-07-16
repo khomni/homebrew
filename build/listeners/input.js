@@ -27,7 +27,7 @@
 
   document.addEventListener('change', e => {
     if(e.target.type == 'file') {
-      console.log(e.target.files.length)
+      
     }
   }, false)
 })()

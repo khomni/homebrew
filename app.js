@@ -34,6 +34,8 @@ var marked = require('marked');
 app.locals.basedir = APPROOT+'/views'
 app.locals.markdown = marked
 app.locals.SYSTEM = SYSTEM
+app.locals.SITE_NAME = global.SITE_NAME = "Homebre.ws"
+app.use(Common.middleware.title());
 
 // stylesheets
 var lessMiddleware = require('less-middleware');

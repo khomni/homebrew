@@ -8,7 +8,7 @@ mixin navlink(options)
     default
       li(style=options.color ? {color: options.color} :"")
         block if block
-        a(href=options.url)&attributes(attributes)= options.text
+        a(href=options.url data-click="tab" data-target="main")&attributes(attributes)= options.text
         
 mixin dropdown(options)
   if !block

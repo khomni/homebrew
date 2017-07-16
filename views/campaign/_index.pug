@@ -1,0 +1,18 @@
+.tab-group
+  a.tab.active(data-click="tab" data-target="all-campaigns") Campaigns
+.tab-pane-group
+  .tab-pane#campaign-detail
+  .tab-pane.active#all-campaigns
+    .content-body
+      each campaign in campaigns
+        section
+          .section-title
+            a(href=campaign.url data-click="tab" data-target="campaign-detail")= campaign.name
+          .section-body
+            .flex.pad
+              section
+                .section-body
+                  a.btn(href="/c/new" data-response="modal") New Campaign
+          
+  
+

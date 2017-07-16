@@ -11,7 +11,9 @@ var basename = path.basename(module.filename);
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
-/* GET home page. */
+// Home Page
+// if not logged in, render a splash page
+// TODO: Could be a React App if the user is logged in
 router.get('/', (req, res, next) => {
   if(req.user && req.user.MainChar) return next();
   res.render('index');

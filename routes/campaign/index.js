@@ -99,8 +99,9 @@ router.use('/:id', (req,res,next) => {
 // get campaign info
 campaignRouter.get('/', (req,res,next) => {
   res.locals.breadcrumbs.pop()
+  console.log(req.isTab);
   if(req.json) return res.send(res.locals.campaign.get({plain:true}))
-  if(req.modal) return res.render('campaign/_detail')
+  if(req.isTab) return res.render('campaign/_detail')
   return res.render('campaign/detail')
 });
 

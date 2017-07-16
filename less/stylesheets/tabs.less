@@ -10,6 +10,10 @@
   overflow:hidden;
   overflow-x: auto;
 
+  &:empty {
+    display: none;
+  }
+
   &::after{
     content:"";
     display: block;
@@ -21,6 +25,7 @@
   .tab {
     .marble();
     .cursor(pointer);
+    text-transform: capitalize;
     position: relative;
     z-index: 1;
     box-shadow:none;
@@ -34,6 +39,8 @@
     text-decoration:none;
     border: none;
     border-bottom: 1px solid fade(black,25%);
+
+    transition: 0.25s;
 
     &:hover {
       text-decoration:none;
@@ -67,15 +74,26 @@
       opacity: 0.5;
     }
 
-    // &.error {
-    //   background-color: #f00;
-    //   background-blend-mode: darken;
-    // }
+    &.error {
+      color: @color-primary;
+      background-color: fade(@color-primary,25%);
+      background-blend-mode: darken;
+      outline:none;
+      .filter(none);
+    }
+
+    &.obscured {
+      .filter(saturate(0) brightness(0.25));
+    }
+
+    &.last{
+      order:2;
+    }
 
   }
 }
 
-.tab-panel {
+.tab-pane-group {
   .tab-pane {
     &:not(.active) {
       display: none;

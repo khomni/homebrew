@@ -1,9 +1,9 @@
-include /mixins/mixins
+include /mixins/index
 doctype html
 html
   head
     block title
-      title= title || "OmniCampaign"
+      title#pageTitle= title || SITE_NAME
     link(rel='stylesheet', href='/stylesheets/style.css')
     link(rel='stylesheet', href='/stylesheets/css/rpg-awesome.min.css')
     link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Lato:400,700,300'  type='text/css')

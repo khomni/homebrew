@@ -44,9 +44,8 @@ module.exports = {
 
     var href = source.getAttribute('href');
 
-    console.log(href, source.dataset.reload, source.dataset.loaded)
     if(href && ('reload' in source.dataset || !source.dataset.loaded)) {
-      Ajax.html({url:href, method:'get'})
+      Ajax.html({url:href, method:'get', headers:{'X-Tab-Content': true}})
       .then(html => {
         target.innerHTML = html
         source.dataset.loaded = true

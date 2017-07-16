@@ -1,23 +1,9 @@
 extends /templates/default
 
-block title
-  title Campaigns
-  
-//- block header
+block header
   +header
     .header-item.page-title 
-      span Characters
+      span Campaigns
 
 block content
-  .content-body
-    for campaign in campaigns
-      section
-        .section-title
-          a(href=campaign.url)= campaign.name
-        .section-body
-          .flex.pad
-    section
-      .section-body
-        a.btn(href="/c/new" data-response="modal") New Campaign
-            
-    
+  include ./_index

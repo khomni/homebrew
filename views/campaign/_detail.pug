@@ -1,0 +1,24 @@
+.tab-group
+  a.tab.active(data-target="campaign-about" data-click="tab")= campaign.name
+  a.tab(href=campaign.url + 'calendar' data-click="tab" data-target="campaign-tabs" data-reload) Calendar
+  a.tab(href=campaign.url + 'quests' data-click="tab" data-target="campaign-tabs" data-reload) Quests
+  a.tab(href=campaign.url + 'pc' data-click="tab" data-target="campaign-tabs" data-reload) Characters
+  a.tab(href=campaign.url + 'factions' data-click="tab" data-target="campaign-tabs" data-reload) Factions
+
+.tab-pane-group
+  #campaign-tabs.tab-pane
+  #campaign-about.tab-pane.active
+    .content-body
+      if campaign.owned
+        section
+          .section-body
+            .flex.pad
+              .flex.vert.border.pad
+                .flex.center: label GM Actions
+                .flex.center.pad
+                  a.btn(href=campaign.url+"edit" data-response="modal") Edit
+                  form(action=campaign.url method="delete" data-response="json")
+                    button.btn(type="submit") Delete
+                  //- form(action=campaign.url, method="DELETE")
+                    button.btn(type="submit") Delete
+

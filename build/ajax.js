@@ -101,21 +101,24 @@ Ajax.setListeners = function() {
     var thisFocus = thisForm.querySelector(':focus')
     var method = thisFocus.getAttribute('formmethod') || thisForm.getAttribute('method')
     var action = thisFocus.getAttribute('formaction') || thisForm.action
-
-    console.log(method, action)
-
+    var reaction = thisFocus.dataset.response || thisForm.dataset.response
     // proprietary form handler!
     return Ajax.fetch({
       method: method, // supports PUT PATCH DELETE POST
       url: action,
       headers:{ // allow the form to suggest ways of receiving the data
-        modal: thisForm.dataset.response == 'modal',
+        modal: true,
         Accept: thisForm.dataset.response == 'json' ? 'application/json' : undefined,
       },
       body:thisForm
     })
     .then(xhr => {
-      if(xhr.getResponseHeader('X-Redirect')) return window.location = xhr.getResponseHeader('X-Redirect')
+      let redirect = xhr.getResponseHeader('X-Redirect')
+      if(redirect) {
+        history.pushState({href: redirect},null,redirect);
+        return document.getElementById('main').dispatchEvent(new CustomEvent('load.pane', {detail:{href:redirect}, bubbles:true, cancelable:true}))
+        // load the redirect content to main
+      }
 
       // if the router responds with JSON data, emit it from the form as a 'data' event
       var contentType = xhr.getResponseHeader('Content-Type') || []
@@ -133,20 +136,22 @@ Ajax.setListeners = function() {
         return Modal.methods.createModal(html)
       }
 
-      if(thisForm.dataset.response == 'insert' || thisForm.dataset.response == 'replace') {
-        if(!thisForm.dataset.target) throw new Error('No target to insert data')
-        var target = document.getElementById(thisForm.dataset.target);
-        if(thisForm.dataset.response == 'insert') target.innerHTML = html
-        if(thisForm.dataset.response == 'replace') {
-          var response = document.createElement('div')
-          response.innerHTML = html
-          var elems = Array.prototype.slice.call(response.childNodes)
+      var target = document.getElementById(thisFocus.dataset.target || thisForm.dataset.target)
+      
+      if(reaction == 'insert' || reaction == 'replace') {
+        if(!target) throw new Error('No target to insert data')
+        if(reaction == 'insert') target.innerHTML = html
+        if(reaction == 'replace') {
+          reaction = document.createElement('div')
+          reaction.innerHTML = html
+          var elems = Array.prototype.slice.call(reaction.childNodes)
           elems.map(e=>{target.parentNode.insertBefore(e,target)})
           target.remove();
         }
         return;
       }
-      return Modal.methods.createModal(html);
+
+      // return Modal.methods.createModal(html);
     })
     .catch(err =>{
       console.error(err)
@@ -177,7 +182,7 @@ Ajax.fetch = Promise.method(function(args) {
 
       Object.assign(headers, args.headers)
 
-      xhr.open(args.method, args.url)
+      xhr.open(args.method.toUpperCase(), args.url)
 
       for(let key in headers) xhr.setRequestHeader(key, headers[key]);
 
@@ -190,8 +195,8 @@ Ajax.fetch = Promise.method(function(args) {
         }
       }
 
-      xhr.onerror = function() {
-        return reject(xhr)
+      xhr.onerror = function(e) {
+        return reject(new Error('An error occurred with the XHR Request'))
       }
 
     })
