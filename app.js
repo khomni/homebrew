@@ -57,7 +57,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // pipes images from Amazon AWS s3 service to the result
 app.use('/i', require('./middleware/images'))
 
-app.use(logger('dev'));
+app.use(require('./config/logs')); 
 // set up the vignettes for the header and homepage
 app.use(require('./middleware/vignette'));
 

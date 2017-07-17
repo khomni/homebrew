@@ -16,8 +16,8 @@ mixin quest(quest, collapsed)
       .flex.pad.center.no-size
         if quest.children && quest.children.length > 0
           .flex.no-size.collapse-handle(data-click="collapse" data-target=".quest-container")
-        a.close(href=campaign.url+"quests/"+quest.id+"/edit" data-response="modal" title="Edit Quest") ?
-        a.close(href=campaign.url+"quests/"+quest.id+"/add" data-response="modal" title="Add Subquest") +
+        a.close(href=campaign.url+"quests/"+quest.id+"/edit" data-click="modal" title="Edit Quest") ?
+        a.close(href=campaign.url+"quests/"+quest.id+"/add" data-click="modal" title="Add Subquest") +
         form.no-size.flex.vert.fill(action=campaign.url+"quests/"+quest.id method="delete" data-response="json" data-reaction="remove")
           button.close(title="Delete Quest")
             

@@ -26,14 +26,6 @@ mixin month(month)
                     button.btn(type="submit") Delete
     .tab-pane-group
       #calendar-view.tab-pane.flex.vert.fill.active
-        if campaign.owned
-          form(action=campaign.url + 'e/present' method="post" data-response="json" data-reaction="redirect")
-            section: .section-body
-              if campaign.Calendar.present
-                label Current Date: #{campaign.Calendar.now.weekday}, #{campaign.Calendar.now.month} #{campaign.Calendar.now.date}, #{campaign.Calendar.now.year}
-              .flex.horz.pad
-                +dateFields(campaign.Calendar.now, campaign.Calendar, {hour:true, minute:true, end:false})
-              .flex.center: button.btn Set Day
         section
           .section-body
             each year in calendar
@@ -58,6 +50,15 @@ mixin month(month)
                                     each event in day.events
                                       .event(id="event-"+event.id)= event.name
                 hr
+        //- TODO: another place for the Current Date form?
+        if campaign.owned
+          form(action=campaign.url + 'e/present' method="post" data-response="json" data-reaction="redirect")
+            section: .section-body
+              if campaign.Calendar.present
+                label Current Date: #{campaign.Calendar.now.weekday}, #{campaign.Calendar.now.month} #{campaign.Calendar.now.date}, #{campaign.Calendar.now.year}
+              .flex.horz.pad
+                +dateFields(campaign.Calendar.now, campaign.Calendar, {hour:true, minute:true, end:false})
+              .flex.center: button.btn Set Day
 
       if campaign.owned
         #calendar-settings.tab-pane.flex.vert.fill

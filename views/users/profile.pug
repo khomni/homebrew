@@ -22,7 +22,7 @@ block content
           .tab-group
             each character in user.characters
               a.tab(data-click="tab" data-target='user-character-'+character.id)= character.getName('first')
-            a.tab(href="/pc/create" data-response="modal"): i.fa.fa-plus
+            a.tab(href="/pc/create" data-click="modal"): i.fa.fa-plus
           .tab-panel
             each character in user.characters
               .tab-pane.section-body(id='user-character-'+character.id)

@@ -1,0 +1,38 @@
+.content-body
+  if campaign
+    section
+      .section-body
+        .flex.pad
+          a.btn(href='pc/create' data-click="modal") Create Character
+          if currentUser && currentUser.MainChar && currentUser.MainChar.CampaignId != campaign.id
+            form(action=currentUser.MainChar.url method="post")
+              input(type="hidden" name="CampaignId" value=campaign.id)
+              button.btn Move #{currentUser.MainChar.getName('first')} to this Campaign
+  for character in characters
+    section
+      .section-title
+        .float.left
+          a(href=character.url data-click="tab")= character.name
+        //- .float.right
+          .timestamp= character.updatedAt.toLocaleString()
+      if !campaign && character.Campaign
+        .section-body
+          a(href=character.Campaign.url data-click="tab")= character.Campaign.name
+      if currentUser
+        .section-footer
+          .flex.pad
+            if character.ownedBy(currentUser)
+              .flex.vert.border.pad
+                .flex.center: label Owned Actions
+                .flex.center.pad
+                  form(action=character.url+"select" method="post")
+                    button.btn(disabled=character.isActiveChar(currentUser)) Select
+                  a.btn(href=character.url+"edit" data-click="modal") Edit
+            if currentUser.MainChar && !character.isActiveChar(currentUser)
+              .flex.vert.border.pad
+                .flex.center: label Interactions
+                .flex.center.pad
+                  a.btn(href=character.url+"relationship/new" data-click="modal") Relate
+                  a.btn(href=character.url+"chat" data-click="modal") Chat
+                  a.btn(href=character.url+"lore" data-click="modal") Lore
+

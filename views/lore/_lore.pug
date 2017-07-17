@@ -15,5 +15,5 @@ else
         if lore.owned
           form(action=base method="delete" data-response="replace" data-target="lore-"+lore.id)
             button.close(title="Delete Lore")
-          a.close(href=base+"/edit" data-response="modal" data-target="edit-lore-"+lore.id): i.fa.fa-wrench
-        a.close(href=base+"/teach" data-response="modal" data-target="teach-lore-"+lore.id title="Teach"): i.fa.fa-commenting
+          a.close(href=base+"/edit" data-click="modal" data-target="edit-lore-"+lore.id): i.fa.fa-wrench
+        a.close(href=base+"/teach" data-click="modal" data-target="teach-lore-"+lore.id title="Teach"): i.fa.fa-commenting

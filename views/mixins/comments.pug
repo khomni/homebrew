@@ -3,13 +3,13 @@ mixin comments(url)
 	-var hash = Common.hashString(url)
 	.comment-area(id='comment-'+Math.abs(hash) href=url data-visible="load")
 	.flex.center.pad
-		a.btn(href=url+"/new" data-response="modal" data-target="quest-"+quest.id+"-comment") Add Comment
+		a.btn(href=url+"/new" data-click="modal" data-target="quest-"+quest.id+"-comment") Add Comment
 
 mixin newComment(action)
 	form.add-comment(action=(action||'comment') method="post" data-response="json" data-reaction="redirect")
 		textarea.form-input(name="body")
 		.flex.center.pad
-			a.btn(href=(action||'comment') data-response="modal") Add Comment
+			a.btn(href=(action||'comment') data-click="modal") Add Comment
 				
 mixin comment(comment,parent)
 	.comments-section(id=comment?"comment-"+comment.id:false)
@@ -34,10 +34,10 @@ mixin comment(comment,parent)
 				.comment-footer
 					.flex.je
 						if (comment.Character && comment.Character.isActiveChar(currentUser)) || (comment.User && comment.User.id == currentUser.id)
-							a(href='/comment/'+comment.id+'/edit' data-response="modal") Edit
+							a(href='/comment/'+comment.id+'/edit' data-click="modal") Edit
 							form(action='/comment/'+comment.id method='delete' data-response="replace" data-target="comment-"+comment.id)
 								button.as-link(role="button" type="submit") Delete
-						a(href='/comment/'+comment.id+'/comment/new' data-response="modal" data-target="comment-"+comment.id+"-comment") Reply
+						a(href='/comment/'+comment.id+'/comment/new' data-click="modal" data-target="comment-"+comment.id+"-comment") Reply
 		if comment && comment.comments && comment.comments.length > 0
 			each child in comment.comments
 				+comment(child, comment)

@@ -4,7 +4,7 @@ if character
     each entry in character.Journals
       a(href=character.url + 'journal/' + entry.id)= entry.title
   .flex.center
-    a.btn(href=character.url + 'journal/new' data-response="modal") New Entry
+    a.btn(href=character.url + 'journal/new' data-click="modal") New Entry
 
 
   //- section
@@ -18,7 +18,7 @@ if character
       .section-footer
         .flex.center.pad(data-pad="1em")
           a.btn(href="journal/"+entry.id) View Entry
-          a.btn(href="journal/"+entry.id+"/edit" data-response="modal" data-target="edit-journal-"+id) Edit Entry
+          a.btn(href="journal/"+entry.id+"/edit" data-click="modal" data-target="edit-journal-"+id) Edit Entry
           form(action="journal/"+entry.id method="delete" data-response="json")
             button.btn Delete Entry
   

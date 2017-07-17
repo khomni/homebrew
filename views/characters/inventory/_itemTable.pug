@@ -34,7 +34,7 @@ form(method="post" data-response="json" data-reaction="reload")
                 if item.icon
                   i.ra(class=item.icon )
               td
-                a(href="inventory/"+item.id data-response="modal" data-target="item-"+item.id tabindex=2)= item.name
+                a(href="inventory/"+item.id data-click="modal" data-target="item-"+item.id tabindex=2)= item.name
               td
                 if Number(item.value) == 0
                   span —
@@ -54,7 +54,7 @@ form(method="post" data-response="json" data-reaction="reload")
               if itemOwner && itemOwner.isActiveChar(currentUser)
                 td
                   .flex.je
-                    a.close(href=itemOwner.url+"inventory/"+item.id+"/edit" data-response="modal" data-target="edit-item-"+item.id tabindex=3): i.fa.fa-wrench
+                    a.close(href=itemOwner.url+"inventory/"+item.id+"/edit" data-click="modal" data-target="edit-item-"+item.id tabindex=3): i.fa.fa-wrench
         if meta
           tfoot
             tr
@@ -79,7 +79,7 @@ form(method="post" data-response="json" data-reaction="reload")
         if itemOwner && itemOwner.isActiveChar(currentUser)
           //- this is the MainChar's inventory
           button.btn(formaction="inventory/drop" formmethod="post" data-reaction="remove") Drop
-          a.btn(href="inventory/new" data-response="modal") New Item
+          a.btn(href="inventory/new" data-click="modal") New Item
         else if !itemOwner
           //- These items are unclaimed
           if items && items.length>0

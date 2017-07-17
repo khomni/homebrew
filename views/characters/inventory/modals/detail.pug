@@ -33,7 +33,7 @@ mixin propTable(input, level)
   .modal-footer
       
     form(method="post" data-response="json").flex.center.pad
-      a.btn(href=character.url +"inventory/" + item.id + "/edit" data-response="modal" data-target="item-" + item.id + "-edit") Edit
+      a.btn(href=character.url +"inventory/" + item.id + "/edit" data-click="modal" data-target="item-" + item.id + "-edit") Edit
       input(type="hidden" name="item.$.id" value=item.id)
       input(type="hidden" name="item.$.quantity" value=item.quantity)
 

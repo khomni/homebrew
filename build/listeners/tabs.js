@@ -2,12 +2,13 @@
 
 const Anim = require('../extensions/anim');
 const Effects = require('../effects');
+const Modal = require('../modal');
 
 window.addEventListener('popstate', e => {
   if(!e.state.href) return true;
-  let main = document.getElementById('main');
+  let panel = document.getElementById(e.state.target) || document.getElementById('main');
   let triggerTab = document.querySelector('[href="'+e.state.href+'"]')
-  main.dispatchEvent(new CustomEvent('load.pane', {detail: {href:e.state.href}, bubbles:true, cancelable:true}))
+  panel.dispatchEvent(new CustomEvent('load.pane', {detail: {href:e.state.href}, bubbles:true, cancelable:true}))
   if(triggerTab) triggerTab.dispatchEvent(new Event('shown.tab',{bubbles:true, cancelable:true}))
   e.preventDefault();
   return false;
@@ -15,9 +16,10 @@ window.addEventListener('popstate', e => {
 
 document.addEventListener('show.tab', function(e) {
   let source = e.target;
-  let target = document.getElementById(source.dataset.target) || document.querySelector(source.dataset.target);
-
-  if(!target) return false;
+  let target = document.getElementById(source.dataset.target) || document.querySelector(source.dataset.target) || source.closest('.tab-pane')
+  let alternate = e.detail.alt
+  
+  if(!target && !alternate) return false;
 
   var href = source.getAttribute('href');
 
@@ -32,6 +34,8 @@ document.addEventListener('show.tab', function(e) {
   if(!href || (source.dataset.loaded && !('reload' in source.dataset))) {
     return target.dispatchEvent(new Event('show.pane', {bubbles:true, cancelable:true}))
   }
+
+  // if(alternate) Modal.createModal
   
   // state is pushed here instead of the load so the panel can be loaded and reloaded without adding additional history states
   target.dispatchEvent(new CustomEvent('load.pane', {detail: {href: href}, bubbles:true, cancelable:true}))
@@ -45,7 +49,7 @@ document.addEventListener('show.tab', function(e) {
   }
 
   target.addEventListener('loaded', function tabLoaded(e){
-    history.pushState({href: e.detail.responseURL}, null, e.detail.responseURL)
+    history.pushState({target: target.id, href: e.detail.responseURL}, null, e.detail.responseURL)
     target.classList.remove('loading');
     // exampine the tab's XHR response
     let xhr = e.detail;

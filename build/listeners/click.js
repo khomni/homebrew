@@ -24,10 +24,14 @@ var dom = require('./dom.js');
       return dom.toggle(source, 'collapsed')
     }
 
-    if(clickAction == 'tab' && source.dataset.target) {
+    if(clickAction == 'tab') {
       // let href = source.getAttribute('href')
       // if(href) history.pushState({href: href}, null, href)
-      return source.dispatchEvent(new Event('show.tab', {bubbles:true, cancelable:true}))
+      return source.dispatchEvent(new CustomEvent('show.tab', {
+        detail: {alt: e.ctrlKey },
+        bubbles:true, 
+        cancelable:true
+      }))
       // return dom.tab(source)
     }
 

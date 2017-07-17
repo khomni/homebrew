@@ -8,9 +8,9 @@ block header
 block content
   if campaign.owned
     form.tab-group(action=quest.id  data-response="json" data-reaction="redirect")
-      a.tab(href=quest.id+'/add' data-response="modal") Add Subquest
-      a.tab(href=quest.id+"/edit" data-response="modal") Edit Quest
-      a.tab(href=quest.id+"/link" data-response="modal") Link Quest
+      a.tab(href=quest.id+'/add' data-click="modal") Add Subquest
+      a.tab(href=quest.id+"/edit" data-click="modal") Edit Quest
+      a.tab(href=quest.id+"/link" data-click="modal") Link Quest
       button.tab(formmethod="delete") Delete Quest
     
   .content-body
