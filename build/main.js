@@ -19,7 +19,7 @@ document.onreadystatechange = function(){
   // add document-level event listeners for the application
 
   Drag.init();
-  Modal.methods.init();
+  // Modal.methods.init();
   // Favicon.startSpin();
   Ajax.setListeners();
   window.Ajax = Ajax

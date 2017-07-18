@@ -35,6 +35,14 @@ var dom = require('./dom.js');
       // return dom.tab(source)
     }
 
+    // modal spawner
+    // 1. check to see if the modal already exists
+    if(clickAction == 'modal') {
+
+      return new Modal({target:source.dataset.target, href: source.getAttribute('href')});
+
+    }
+
   })
 
 })()

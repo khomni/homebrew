@@ -16,12 +16,16 @@ window.addEventListener('popstate', e => {
 
 document.addEventListener('show.tab', function(e) {
   let source = e.target;
-  let target = document.getElementById(source.dataset.target) || document.querySelector(source.dataset.target) || source.closest('.tab-pane')
   let alternate = e.detail.alt
+
+  let target = document.getElementById(source.dataset.target) || document.querySelector(source.dataset.target) || source.closest('.tab-pane')
   
   if(!target && !alternate) return false;
 
   var href = source.getAttribute('href');
+  
+  // if(alternate) Modal.createModal
+  if(alternate) return new Modal({target: href + '-modal', href: href}); 
 
 
   target.addEventListener('shown.pane', function tabShown(e) {
@@ -35,7 +39,6 @@ document.addEventListener('show.tab', function(e) {
     return target.dispatchEvent(new Event('show.pane', {bubbles:true, cancelable:true}))
   }
 
-  // if(alternate) Modal.createModal
   
   // state is pushed here instead of the load so the panel can be loaded and reloaded without adding additional history states
   target.dispatchEvent(new CustomEvent('load.pane', {detail: {href: href}, bubbles:true, cancelable:true}))

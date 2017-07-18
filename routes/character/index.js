@@ -12,7 +12,7 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
   })
   .then(characters => {
     if(req.json) return res.json(characters)
-    if(req.modal) return res.render('characters/modals/select',{characters})k;
+    if(req.modal) return res.render('characters/modals/select',{characters});
     if(req.isTab) return res.render('characters/_index', {characters});
     return res.render('characters/', {characters})
   })
