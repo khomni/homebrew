@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "debug": "node debug ./bin/www",
+    "dev": "start webpack -dw & nodemon",
+    "prestart": "node ./node_modules/webpack/bin/webpack -p",
     "start": "node ./bin/www",
     "test": "set \"NODE_ENV=test\" && mocha --recursive",
     "cover-test": "set \"NODE_ENV=test\" && istanbul cover --report lcov node_modules/mocha/bin/_mocha -- --recursive",
@@ -11,6 +13,11 @@
   },
   "dependencies": {
     "aws-sdk": "^2.22.0",
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-latest": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
     "bcrypt-nodejs": "0.0.3",
     "bluebird": "^3.4.6",
     "body-parser": "^1.15.2",
@@ -40,14 +47,15 @@
     "pg-hstore": "^2.3.2",
     "promise": "^7.1.1",
     "pug": "^2.0.0-rc.2",
-    "react": "^0.14.8",
-    "react-dom": "^0.14.8",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
     "request": "^2.79.0",
     "sequelize": "^3.30.4",
     "sequelize-hierarchy": "^1.0.0",
     "serve-favicon": "^2.3.2",
     "sqlite": "0.0.4",
-    "wavy": "^1.0.3"
+    "wavy": "^1.0.3",
+    "webpack": "^3.3.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
