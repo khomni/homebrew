@@ -9,7 +9,7 @@ router.use((req,res,next)=> {
   return next()
 })
 
-router.get('/', (req, res, next) => {
+router.get('/', Common.middleware.querify, (req, res, next) => {
 
   var order = ['updatedAt','desc']
 
@@ -50,14 +50,16 @@ router.get('/', (req, res, next) => {
       return a
     },{value:0, weight:0, total:0})
 
+    res.locals.action = req.baseUrl;
     if(req.json) return res.json({items: items, total: meta})
-
     if(req.xhr) {
       if(req.query.format=='table') return res.render('characters/inventory/_itemTable',{meta:meta})
       if(req.query.format=='tiles') return res.render('characters/inventory/_itemTiles',{meta:meta})
-      return res.render('characters/inventory/_itemTiles',{meta:meta})
+      if(req.query.nearby) return res.render('characters/inventory/_itemTiles',{meta:meta})
     }
-    return res.render('characters/inventory/index',{meta:meta})
+    if(req.isTab) return res.render('characters/inventory/_index', {meta});
+    if(req.modal) return res.render('characters/inventory/$index', {meta});
+    // return res.render('characters/inventory/index',{meta:meta})
   })
   .catch(next)
 });

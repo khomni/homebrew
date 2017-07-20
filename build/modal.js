@@ -3,6 +3,7 @@
 const Promise = require('bluebird');
 const Ajax = require('./ajax');
 const Drag = require('./ui/drag');
+let onXhrContentLoad = require('./dataemissions');
 
 // Modal Constructor:
 function Modal(options) {
@@ -14,15 +15,15 @@ function Modal(options) {
   let href = options.href
   let elem = document.getElementById(options.target);
   if(elem) return elem.dispatchEvent(new Event('show.modal',{bubbles:true, cancelable:true}));
-  if(!href) return false;
+  if(!href && !options.html) return false;
 
   elem = document.createElement('div');
-  // elem.setAttribute('data', href);
-  elem.setAttribute('id', options.target);
+  elem.setAttribute('id', options.target || href);
   elem.classList.add('modal');
+  if(options.html) elem.innerHTML = options.html
 
   elem.addEventListener('load', e => {
-    if(!href) return false;
+    if(!href) return elem.dispatchEvent(new CustomEvent('loaded', {bubbles:true, cancelable:true})); 
 
     return Ajax.fetch({
       method: "GET",
@@ -31,6 +32,7 @@ function Modal(options) {
     })
     .then(xhr => {
       elem.innerHTML = xhr.responseText;
+      console.log('about to dispatch "loaded" event');
       elem.dispatchEvent(new CustomEvent('loaded', {detail:xhr, bubbles:true, cancelable:true}))
     })
     .catch(err => console.error(err));  
@@ -69,7 +71,7 @@ function Modal(options) {
   },true);
 
   
-  if(!href) return elem.dispatchEvent(new Event('show.modal', {bubbles:true, cancelable:true}));
+  // if(!href) return elem.dispatchEvent(new Event('show.modal', {bubbles:true, cancelable:true}));
 
   // load the content for the first time:
   elem.dispatchEvent(new Event('load', {bubbles:true, cancelable:true}));

@@ -16,7 +16,7 @@ window.addEventListener('popstate', e => {
 
 document.addEventListener('show.tab', function(e) {
   let source = e.target;
-  let alternate = e.detail.alt
+  let alternate = e.detail&&e.detail.alt
 
   let target = document.getElementById(source.dataset.target) || document.querySelector(source.dataset.target) || source.closest('.tab-pane')
   
@@ -87,7 +87,7 @@ document.addEventListener('load.pane', function(e){
   thisPane.setAttribute('href', href);
   thisPane.classList.add('loading');
 
-  Ajax.fetch({url:href, method:'get', headers:{'Accept': 'text/html', 'X-Tab-Content': true}})
+  return Ajax.fetch({url:href, method:'get', headers:{'Accept': 'text/html', 'X-Tab-Content': true}})
   .then(xhr => {
     let redirect = xhr.getResponseHeader('X-Redirect')
     if(redirect) {
@@ -98,12 +98,14 @@ document.addEventListener('load.pane', function(e){
     let title = xhr.getResponseHeader('X-Page-Title');
     if(title) document.getElementById('pageTitle').innerHTML = decodeURIComponent(title);
 
-    if(xhr.getResponseHeader('X-Modal')) return Modal.methods.createModal(html);
+    if(xhr.getResponseHeader('X-Modal')) return new Modal({html: html});
 
     thisPane.classList.remove('error');
     thisPane.innerHTML = html;
+    console.log(xhr.responseURL);
     if(!xhr.responseURL) xhr.responseURL = href
     thisPane.dispatchEvent(new CustomEvent('loaded', {detail: xhr, bubbles:true, cancelable:true}));
+    return Promise.resolve();
   })
   .catch(err => {
     console.error(err);

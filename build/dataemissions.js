@@ -9,6 +9,11 @@ function onXhrContentLoad(e) {
     timestamp.innerHTML = localdate
   })
 
+  Array.prototype.slice.call(source.querySelectorAll('a.tab.active'))
+  .map(activeTab => {
+    activeTab.dispatchEvent(new CustomEvent('show.tab', {bubbles:true, cancelable:true}));
+  })
+
   // load any panels that are active and have hrefs
   Array.prototype.slice.call(source.querySelectorAll('.tab-pane.active[href]'))
   .map(preloadPanel => {
@@ -96,3 +101,4 @@ document.addEventListener('data', function(e){
 })
 
 onXhrContentLoad({target:document})
+module.exports = onXhrContentLoad;

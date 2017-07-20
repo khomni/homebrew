@@ -6,7 +6,8 @@ var router = express.Router({mergeParams: true});
 router.get('/',(req,res,next) => {
 
   if(req.json) return res.json(res.locals.character.get({plain:true}))
-  if(req.modal) return res.render('characters/detail')
+  if(req.isTab) return res.render('characters/_detail')
+  if(req.modal) return res.render('characters/$detail')
   return res.render('characters/detail')
 
 });

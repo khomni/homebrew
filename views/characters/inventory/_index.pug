@@ -1,0 +1,16 @@
+.tab-group
+  a.tab.active(href="?format=tiles" data-click="tab" data-target="owned-items" data-reload) #{character.getName('first')}'s Items
+  a.tab(href=action + "?format=table" data-click="tab" data-target="owned-items-table" data-reload) Table View
+  if character.active
+    a.tab(href=action + "?nearby=true" data-click="tab" data-target="nearby-items" data-reload) Nearby
+    a.tab(href=action + "/new" data-click="modal"): i.fa.fa-plus
+  else if currentUser.MainChar
+    a.tab(href=action + "/give" data-click="tab" data-target="give-items") #{currentUser.MainChar.getName('first')}'s Items
+.tab-pane-group
+  #owned-items.tab-pane
+  #owned-items-table.tab-pane
+  if character.active
+    #nearby-items.tab-pane
+  else
+    #give-items.tab-pane
+

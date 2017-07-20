@@ -1,53 +1,51 @@
-form.tab-group(action="/"+character.url+"select" method="post")
+form.tab-group(action=character.url+"select" method="post")
   a.tab.active Character Sheet
   if currentUser.controls(character).permission
-    a.tab(href="/"+character.url+"edit" data-click="modal" data-target="character-"+character.id+"-edit") Edit
+    a.tab(href=character.url+"edit" data-click="modal" data-target="character-"+character.id+"-edit") Edit
     button.tab(disabled=character.active) Select
-.content-body
-  //- if character.active
-  //- if !character.active
-  section
-    .tab-group
-      a.tab.active(data-click="tab" data-target="about") About
-      a.tab(href=character.url+"inventory" data-click="tab" data-target="inventory") Inventory
-      a.tab(href=character.url+"lore" data-click="tab" data-target="lore") Lore
-      a.tab(href=character.url+"knowledge" data-click="tab" data-target="knowledge") Knowledge
-      a.tab(href=character.url+"journal" data-click="tab" data-target="lore") Journal
-    .tab-panel
-      #about.section-body.tab-pane.active
-        .flex.vert.drop-area
-          .flex.center.pad
-            each image in character.Images
-              .flex.vert.border(data-kind="Image" data-ref=image.id)
-                if currentUser.controls(character).permission
-                a(href=character.url + 'images/' + image.id data-click="modal" data-target="image-"+image.id)
-                  img(src=image.path draggable=false).character-portrait
-                .flex.pad.distribute
-                  if currentUser.controls(character).permission
-                    a.close(href=character.url + 'images/' + image.id + '/edit' data-click="modal"): i.fa.fa-wrench
-                    form(action=character.url + 'images/' + image.id method="delete" data-response="json" data-reaction="remove")
-                      button.close(title="Delete Photo"): i.fa.fa-trash
-                  if !currentUser.controls(character).permission
-                    form(action=character.url + 'images/' + image.id + '/report' method="post" data-response="json" data-reaction="remove")
-                      button.close(title="Report Photo"): i.fa.fa-ban
-          form(action=character.url+'images' method="POST" enctype="multipart/form-data" data-response="json" data-reaction="redirect").flex.center.pad.grow.drop-target
-            label.btn
-              span Select Files
-              input(type="file" name="files" accept="image/*" multiple)
-            button.btn Upload
-      #inventory.tab-pane.section-body
-      #lore.tab-pane.section-body
-      #knowledge.tab-pane
-      #journal.tab-pane.section-body
+//- if character.active
+//- if !character.active
+.tab-group
+  a.tab.active(data-click="tab" data-target="about") About
+  a.tab(href=character.url+"inventory" data-click="tab" data-target="inventory") Inventory
+  a.tab(href=character.url+"lore" data-click="tab" data-target="lore") Lore
+  a.tab(href=character.url+"knowledge" data-click="tab" data-target="knowledge") Knowledge
+  a.tab(href=character.url+"journal" data-click="tab" data-target="lore") Journal
+.tab-pane-group
+  #about.section-body.tab-pane.active
+    .flex.vert.drop-area
+      .flex.center.pad
+        each image in character.Images
+          .flex.vert.border(data-kind="Image" data-ref=image.id)
+            if currentUser.controls(character).permission
+            a(href=character.url + 'images/' + image.id data-click="modal" data-target="image-"+image.id)
+              img(src=image.path draggable=false).character-portrait
+            .flex.pad.distribute
+              if currentUser.controls(character).permission
+                a.close(href=character.url + 'images/' + image.id + '/edit' data-click="modal"): i.fa.fa-wrench
+                form(action=character.url + 'images/' + image.id method="delete" data-response="json" data-reaction="remove")
+                  button.close(title="Delete Photo"): i.fa.fa-trash
+              if !currentUser.controls(character).permission
+                form(action=character.url + 'images/' + image.id + '/report' method="post" data-response="json" data-reaction="remove")
+                  button.close(title="Report Photo"): i.fa.fa-ban
+      form(action=character.url+'images' method="POST" enctype="multipart/form-data" data-response="json" data-reaction="redirect").flex.center.pad.grow.drop-target
+        label.btn
+          span Select Files
+          input(type="file" name="files" accept="image/*" multiple)
+        button.btn Upload
+  #inventory.tab-pane.section-body
+  #lore.tab-pane.section-body
+  #knowledge.tab-pane
+  #journal.tab-pane.section-body
         
-  if !character.active
-    section
-      .section-body
-        .flex.pad.distribute
-          a.close(href=character.url+"relationship/new" data-click="modal" data-target="character-"+character.id+"-relate") 
-            i.fa.fa-users
-          a.close(href=character.url+"chat" data-click="modal" data-target="character-"+character.id+"-chat")
-            i.fa.fa-comments
-          a.close(href=character.url+"inventory/give" data-click="modal" data-target="character-"+character.id+"-give")
-            i.fa.fa-gift
+if !character.active
+  section
+    .section-body
+      .flex.pad.distribute
+        a.close(href=character.url+"relationship/new" data-click="modal" data-target="character-"+character.id+"-relate") 
+          i.fa.fa-users
+        a.close(href=character.url+"chat" data-click="modal" data-target="character-"+character.id+"-chat")
+          i.fa.fa-comments
+        a.close(href=character.url+"inventory/give" data-click="modal" data-target="character-"+character.id+"-give")
+          i.fa.fa-gift
 
