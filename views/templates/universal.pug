@@ -8,11 +8,11 @@ html
     link(rel='stylesheet', href='/stylesheets/css/rpg-awesome.min.css')
     link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Lato:400,700,300'  type='text/css')
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' type='text/css')
-    script(src='/javascripts/main.js')
     //- Any other scripts can be included here
-    block scripts
     link#favicon(rel='shortcut icon' href='/0.ico')
     meta(name='viewport', content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1.0, user-scalable=no")
     block meta
   body
     block main
+    block scripts
+      script(src='/javascripts/main.js')

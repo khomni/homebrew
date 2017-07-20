@@ -3,12 +3,13 @@
 const path = require('path');
 
 const BUILD_DIR = path.resolve(__dirname, 'public/javascripts');
-const APP_DIR = path.resolve(__dirname, 'build/react');
+const APP_DIR = path.resolve(__dirname, 'build');
 const LOCAL = process.env.NODE_ENV === 'local';
 
 let config = {
   entry: {
-    bundle: ['babel-polyfill', APP_DIR + '/index.jsx'],
+    main: ['babel-polyfill', APP_DIR + '/main.js'],
+    bundle: ['babel-polyfill', APP_DIR + '/react/index.jsx'],
   },
   output: {
     path: BUILD_DIR,

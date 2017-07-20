@@ -15,11 +15,18 @@ var LocalStrategy = require('passport-local').Strategy;
 // if not logged in, render a splash page
 // TODO: Could be a React App if the user is logged in
 router.get('/', (req, res, next) => {
-  if(req.user && req.user.MainChar) return next();
-  res.render('index');
+  if(req.json) {
+    return res.json({
+      user: req.user || null,
+      character: req.user && req.user.MainChar || null,
+      campaign: req.user && req.user.MainChar && req.user.MainChar.Campaign || null
+    })
+  }
+  if(!req.user) return res.redirect('/login');
+  res.render('react');
 });
 
-router.get('/login',(req,res,next)=>{
+router.get('/login',(req,res,next) => {
   if(req.modal) return res.render('users/_login');
   return res.render('users/login');
 });
@@ -34,8 +41,8 @@ router.post('/login', (req,res,next) => {
     req.logIn(user, err => {
       if (err) return next(err);
 
-      return res.set('X-Redirect', origin).sendStatus(200);
-      return res.redirect(origin);
+      if(req.xhr) return res.set('X-Redirect', '/').sendStatus(200);
+      return res.redirect('/');
     })
   })(req, res, next)
 });
@@ -62,8 +69,8 @@ router.post('/signup', (req,res,next) => {
   },{fields:['username','email','password']})
   .then(user => {
     req.logIn(user, err => {
-      if(req.xhr) return res.set('X-Redirect', user.url).sendStatus(302);
-      return res.redirect(origin);
+      if(req.xhr) return res.set('X-Redirect', '/').sendStatus(302);
+      return res.redirect('/');
     })
   })
   .catch(next);
@@ -87,6 +94,7 @@ router.use('/comment', require('./comment'));
 // If your session also has an active character and campaign, you can route to these to skip permissions
 
 router.use((req,res,next) => {
+  if(!req.user) return next();
   res.locals.character = req.user.MainChar;
   if(res.locals.character) res.locals.campaign = res.locals.character.Campaign;
   res.locals.breadcrumbs.push({name:res.locals.campaign.name, url: res.locals.campaign.url});

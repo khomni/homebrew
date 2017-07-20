@@ -159,9 +159,9 @@ Ajax.setListeners = function() {
   })
 }
 
-Ajax.fetch = Promise.method(function(args) {
-  document.body.classList.add('loading');
+Ajax.fetch = Promise.method(function(args={}) {
   return Promise.resolve().then(() => {
+    args = Object.assign({headers:{}, method:'GET'},args)
     if(!args.body) return null;
     if(args.body.enctype === "multipart/form-data") {
       // return the file uploader or convert data into multipart/form-data
@@ -176,6 +176,8 @@ Ajax.fetch = Promise.method(function(args) {
     let headers = {
       'X-Requested-With': 'XMLHttpRequest'
     };
+
+    console.log(args)
 
     return new Promise(function(resolve,reject) {
       let xhr = new XMLHttpRequest()
@@ -206,9 +208,7 @@ Ajax.fetch = Promise.method(function(args) {
 Ajax.json = function(args) {
   args.headers = args.headers || {}
   Object.assign(args.headers, {'Content-Type': 'application/json', 'Accept': 'application/json'});
-  return this.fetch(args).then(xhr => {
-    return xhr.response
-  });
+  return this.fetch(args).then(xhr => xhr.response).then(JSON.parse)
 };
 
 Ajax.html = function(args) {

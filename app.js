@@ -1,3 +1,5 @@
+'use strict';
+
 require('dotenv').config();
 var path = require('path');
 // global.APPROOT = path.resolve(__dirname);
@@ -17,8 +19,8 @@ global.db = db
 
 var app = express();
 
-var browserify = require('browserify-middleware');
-app.use('/javascripts', browserify('./build'));
+// var browserify = require('browserify-middleware');
+// app.use('/javascripts', browserify('./build'));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

@@ -37,7 +37,10 @@ module.exports = function(sequelize, DataTypes) {
     // TODO: validate based on internal source files and build out system support
     system: {
       type: DataTypes.STRING,
-      values: SYSTEM.names
+      values: SYSTEM.names,
+      get: function(){
+        return SYSTEM[this.getDataValue('system')]
+      }
     },
 
     // privacy level determines what other users can see

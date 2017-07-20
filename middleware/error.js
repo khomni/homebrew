@@ -20,7 +20,7 @@ module.exports = (err, req, res, next) => {
   .catch(err => {console.error(err)})
   .finally(()=>{
     // if(req.json) return res.status(err.status).send(err)
-    if(req.xhr) {
+    if(req.modal) {
       res.set('X-Modal', true)
       return res.render('modals/_error', {message: err.message, error: err})
     }
