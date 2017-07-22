@@ -1,99 +1,93 @@
 @import '../mixins/mixins.less';
 
 .breadcrumbs {
-	position:relative;
-	.crumb {
-		color: @color-primary;
+  position:relative;
+  .crumb {
+    color: @color-primary;
 
-		& + .crumb {
-			&:before {
-				content: '/';
-				padding: 0 0.5rem;
-				opacity: 0.25;
-			}
-		}
+    & + .crumb {
+      &:before {
+	content: '/';
+	padding: 0 0.5rem;
+	opacity: 0.25;
+      }
+    }
 
-		a {
-			opacity: 0.25;
-			text-decoration: none;
-			&:hover,&:focus {
-				opacity: 1;
-			}
-		}
-	}
+    a {
+      opacity: 0.25;
+      text-decoration: none;
+      &:hover,&:focus {
+	opacity: 1;
+      }
+    }
+  }
 }
 
-#nav {
-	color: @color-ui;
-	font-weight: 500;
-	font-size: 12px;
-	position: fixed;
-	width: 100%;
-	z-index: 1000;
-	transform: translateY(~"calc(-100% + 3em - 4px)");
-	text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.8);
-	.no-select();
+nav.navigation {
+  display: flex;
+  position: fixed;
+  background: #333;
+  color: #eee;
+  width: 100vw;
+  z-index:3;
+  .animation(dropdown 0.25s ease-out forwards);
+  .filter(drop-shadow(0px 1px 2px fade(black,50%)));
 
-	a,button {
-		white-space: nowrap;
-		cursor: pointer;
-		background: none;
-		outline: none !important;
-		color: @color-ui;
-		text-transform: uppercase;
-		line-height: 1em;
-		text-decoration: none;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		padding: ~"calc(1em - 2px)";
-		transition: @transition;
-		&:hover {
-			color: inherit;
-		}
-	}
+  // clickable item in the nav
+  .nav-item() {
+    .cursor(pointer);
+    background: inherit;
+    display: block;
+    padding: 0.5em;
+    user-select: none;
+    color: #eee;
+    text-decoration: none;
 
-	ul.navlinks {
-		list-style: none;
-		padding:0;
-		margin:0;
-		display: flex;
-    align-items: flex-end;
-		justify-content: flex-end;
-		padding: 0 2em;
+    &:hover,&:active,&:focus {
+      color: @color-primary;
+    }
+  }
 
-		li {
-			&.disabled {
-				pointer-events: none;
-				a,button{
-					color: fade(@color-ui,50%);
-				}
-			}
-		}
-	}
+  .dropdown {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    z-index: 2;
+    background:inherit;
 
-	.dropdown {
-		display: flex;
-		flex-direction: column-reverse;
-		transition: 0.5s;
-		&:not(.disabled){
-			&:hover {
-				background: fade(black,25%);
-				transform: translateY(5px);
-			}
-			&.active{
-				background: fade(black,50%);
-				transform: translateY(~"calc(100% - 3em + 4px)");
-				.toggle{
-					color: darken(@color-ui,50%);
-				}
+    &.active {
+      color: white;
 
-			}
-		}
-		.dropdown-menu {
-			list-style: none;
-			padding: 0;
-		}
-	}
+      &>.dropdown-label {
+	background: fade(black,25%);
+      }
+    }
+  }
 
+  .dropdown-label {
+    .nav-item;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    z-index: 1;
+    background:inherit;
+    min-width: 100%;
+    // .animation(dropdown 0.25s forwards);
+    .animation(fadeto 0.25s forwards);
+
+    .dropdown-menu {
+      // position:static;
+      left: 100%;
+      top:0;
+    }
+
+  }
+
+  .navlink {
+    .nav-item;
+  }
 }
+
+
+

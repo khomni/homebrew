@@ -8,29 +8,34 @@ global.Ajax = Ajax;
 global.Promise = Promise;
 
 import Navbar from './components/navbar';
+import Draggable from './components/draggable.jsx';
+import CharStatus from './components/character/status.jsx';
 
 export default class Root extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      initialized: false,
       user: null,
       campaign: null,
       character: null,
-    } 
+      view: 'home'
+    }
   }
 
   componentDidMount() {
     if(!this.state.user) {
       return Ajax.json({url: '/?session'})
       .then(data => {
-        this.setState(data);
+        this.setState(Object.assign(data,{initialized:true}));
       })
       .catch(err => console.error(err.stack))
     }
   }
 
   render() {
+
     return <div>
 
       <Navbar  
@@ -38,8 +43,12 @@ export default class Root extends React.Component {
         campaign={this.state.campaign} 
         character={this.state.character} />
       <div className="" id="content-wrapper" className="marble">
-
-        // good stuff goes here
+      
+      {this.state.character && 
+        <Draggable>
+          <CharStatus character={this.state.character} />
+        </Draggable>
+      }
 
       </div>
       
