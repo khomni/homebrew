@@ -1,4 +1,5 @@
 import React from 'react'
+import { findDOMNode } from 'react-dom';
 
 export default class Draggable extends React.Component {
   constructor(props) {
@@ -12,6 +13,11 @@ export default class Draggable extends React.Component {
     }
   }
 
+  componentDidMount(){
+    let offsetParent = findDOMNode(this).offsetParent
+    console.log(offset.parent.getBoundingClientRect());
+  }
+
   handleMouseDown(event){
     this.setState({dragging:true});
   }
@@ -21,16 +27,25 @@ export default class Draggable extends React.Component {
   }
 
   handleDrag(event){
-    console.log(event)
-  
+    // TODO: 
+    // 1. constrain element to its offsetParent
+    // 2. set the x and y relative to the part of the draggable object clicked
+    this.setState({x:event.screenX, y: event.screenY})
+
   }
 
   render() {
+    let thisStyle
+    if('x' in this.state && 'y' in this.state) {
+      thisStyle = {top: this.state.y, left: this.state.x}
+    }
+
     return <div className="draggable" 
+      style={thisStyle}
       onMouseDown={this.handleMouseDown}
-      onMouseUp={this.handleMouseUp}>
-      onMouseMove={this.state.dragging && this.handleDrag}
-      {this.props.children}
+      onMouseUp={this.handleMouseUp}
+      onMouseMove={this.state.dragging && this.handleDrag}>
+        {this.props.children}
     </div>
   }
 
