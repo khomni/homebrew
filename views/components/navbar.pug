@@ -1,65 +1,62 @@
 mixin navlink(options)
   case options.button
     when true
-      li
-        form(action=options.url method="post")&attributes(attributes)
-          block if block
-          button(type="submit")= options.text
-    default
-      li(style=options.color ? {color: options.color} :"")
+      form(action=options.url method="post")&attributes(attributes)
         block if block
-        a(href=options.url data-click="tab" data-target="main")&attributes(attributes)= options.text
+        button.navlink(type="submit")= options.text
+    default
+      a.navlink(href=options.url data-click="tab" data-target="main")&attributes(attributes)= options.text
+        block if block
         
 mixin dropdown(options)
   if !block
     -attributes.class = "disabled"
-  li.dropdown(data-target=options.id style=options.color ? {color: options.color} :"")&attributes(attributes)
-    a.toggle(href="#")= options.text
-    ul.dropdown-menu(id=options.id)
+  .dropdown(data-target=options.id)&attributes(attributes)
+    .dropdown-label= options.text
+    .dropdown-menu
       block
   
-nav#nav
-  ul.navlinks
-    +navlink({url:"/", text: "Home"})
+nav.navigation#nav
+  +navlink({url:"/", text: "Home"})
+  
+  if currentUser
     
-    if currentUser
-      
-      //- CHARACTER MENU
-      if !currentUser.MainChar
-        +dropdown({id:'charselect',text:"Character"})
-          +navlink({url:'/pc', text: 'Select Character'})
-          +navlink({url:'/pc/create', text: 'Create a Character'})(data-click="modal" data-target="create-character")
-        +dropdown({id:'campaignmenu',text:"Campaign"})
-          +navlink({url:'/c', text: 'Find Campaign'})
-          +navlink({url:'/c/new', text: 'Create Campaign'})(data-click="modal")
-      else
-        +dropdown({id:'charactermenu', text: currentUser.MainChar.getName('first')})
-          +navlink({url: "/u/"+currentUser.username+"/pc", text:'Switch'})(data-click="modal" data-target="switch-character")
-          +navlink({url: currentUser.MainChar.url, text:'Status'})
-          +navlink({url: currentUser.MainChar.url + 'inventory',text:'Inventory'})
-          +navlink({url: currentUser.MainChar.url + 'journal',text:'Journal'})
-          
-        //- CAMPAIGN MENU
-        if !currentUser.MainChar.Campaign
-          +navlink({url: '/c/', text:'Find Campaign'})
-        else
-          +dropdown({id: 'campaignmenu', text: 'Campaign'})
-            +navlink({url: currentUser.MainChar.Campaign.url, text:'Home'})
-            +navlink({url: currentUser.MainChar.Campaign.url+'quests',text:'Quests'})
-            +navlink({url: currentUser.MainChar.Campaign.url+'calendar',text:'Calendar'})
-            +navlink({url: currentUser.MainChar.Campaign.url+'locations',text:'Locations'})
-            +navlink({url: currentUser.MainChar.Campaign.url + 'factions', text:'Factions'})
-        
-            if !currentUser.MainChar.party
-      
-      
-      +dropdown({id: 'accountmenu', text: 'Account'})
-        +navlink({url:'/u/'+currentUser.username, text: 'Profile'})
-        +navlink({url:'/settings', text: 'Settings'})
-        +navlink({url:'/logout', text: 'Log Out'})
-        +navlink({url:'/settings/theme', text: 'Theme'})(data-click="modal" data-target="theme-modal")
+    //- CHARACTER MENU
+    if !currentUser.MainChar
+      +dropdown({id:'charselect',text:"Character"})
+        +navlink({url:'/pc', text: 'Select Character'})
+        +navlink({url:'/pc/create', text: 'Create a Character'})(data-click="modal" data-target="create-character")
+      +dropdown({id:'campaignmenu',text:"Campaign"})
+        +navlink({url:'/c', text: 'Find Campaign'})
+        +navlink({url:'/c/new', text: 'Create Campaign'})(data-click="modal")
     else
-      +navlink({url:'/about',text:'About'})
-      +dropdown({id: 'account', text:'Log In / Sign Up'})(class="signup")
-        +navlink({url:'/login', text: 'Log In'})(data-click="modal" data-target="login")
-        +navlink({url:'/signup', text: 'Sign Up'})(data-click="modal" data-target="signup")
+      +dropdown({id:'charactermenu', text: currentUser.MainChar.getName('first')})
+        +navlink({url: "/u/"+currentUser.username+"/pc", text:'Switch'})(data-click="modal" data-target="switch-character")
+        +navlink({url: currentUser.MainChar.url, text:'Status'})
+        +navlink({url: currentUser.MainChar.url + 'inventory',text:'Inventory'})
+        +navlink({url: currentUser.MainChar.url + 'journal',text:'Journal'})
+        
+      //- CAMPAIGN MENU
+      if !currentUser.MainChar.Campaign
+        +navlink({url: '/c/', text:'Find Campaign'})
+      else
+        +dropdown({id: 'campaignmenu', text: 'Campaign'})
+          +navlink({url: currentUser.MainChar.Campaign.url, text:'Home'})
+          +navlink({url: currentUser.MainChar.Campaign.url+'quests',text:'Quests'})
+          +navlink({url: currentUser.MainChar.Campaign.url+'calendar',text:'Calendar'})
+          +navlink({url: currentUser.MainChar.Campaign.url+'locations',text:'Locations'})
+          +navlink({url: currentUser.MainChar.Campaign.url + 'factions', text:'Factions'})
+      
+          if !currentUser.MainChar.party
+    
+    
+    +dropdown({id: 'accountmenu', text: 'Account'})
+      +navlink({url:'/u/'+currentUser.username, text: 'Profile'})
+      +navlink({url:'/settings', text: 'Settings'})
+      +navlink({url:'/logout', text: 'Log Out'})
+      +navlink({url:'/settings/theme', text: 'Theme'})(data-click="modal" data-target="theme-modal")
+  else
+    +navlink({url:'/about',text:'About'})
+    +dropdown({id: 'account', text:'Log In / Sign Up'})(class="signup")
+      +navlink({url:'/login', text: 'Log In'})(data-click="modal" data-target="login")
+      +navlink({url:'/signup', text: 'Sign Up'})(data-click="modal" data-target="signup")

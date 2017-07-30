@@ -19,12 +19,12 @@ module.exports = {
   },
 
   remove: function(source) {
-    target = document.getElementById(source.dataset.target) || source.closest(source.dataset.target)
+    let target = document.getElementById(source.dataset.target) || source.closest(source.dataset.target)
     target.remove()
   },
 
   toggle: function(source, className) {
-    target = document.getElementById(source.dataset.target) || source.closest(source.dataset.target)
+    let target = document.getElementById(source.dataset.target) || source.closest(source.dataset.target)
     target.classList.toggle(className)
   },
 
@@ -32,7 +32,7 @@ module.exports = {
   tab: function(source) {
     // source.dataset.target
     // source.dataset.container
-    var target = document.getElementById(source.dataset.target) || document.querySelector(source.dataset.target);
+    let target = document.getElementById(source.dataset.target) || document.querySelector(source.dataset.target);
     if(!target) return false;
 
     var allPanes = Array.prototype.slice.call(target.parentNode.childNodes)

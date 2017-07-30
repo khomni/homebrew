@@ -133,7 +133,7 @@ Ajax.setListeners = function() {
 
       // TODO: have the router coerce the response type with headers, rather than rely on the form to make that decision
       if(xhr.getResponseHeader('X-Modal')) {
-        return Modal.methods.createModal(html)
+        return new Modal({html, target: Date.now()})
       }
 
       var target = document.getElementById(thisFocus.dataset.target || thisForm.dataset.target)
@@ -177,7 +177,6 @@ Ajax.fetch = Promise.method(function(args={}) {
       'X-Requested-With': 'XMLHttpRequest'
     };
 
-    console.log(args)
 
     return new Promise(function(resolve,reject) {
       let xhr = new XMLHttpRequest()

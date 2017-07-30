@@ -8,46 +8,81 @@ global.Ajax = Ajax;
 global.Promise = Promise;
 
 import Navbar from './components/navbar';
-import Draggable from './components/draggable.jsx';
-import CharStatus from './components/character/status.jsx';
+import Draggable from './components/draggable';
+import CharStatus from './components/character/status';
+import Views from './views/index'
 
 export default class Root extends React.Component {
   constructor(props) {
     super(props);
+    this.loadView = this.loadView.bind(this);
 
     this.state = {
       initialized: false,
-      user: null,
-      campaign: null,
-      character: null,
-      view: 'home'
+      _user: null,
+      _campaign: null,
+      _character: null,
+      view: 'Home', // the keyed value of the homepage
+      locals: {},
     }
+  }
+
+  // loads resources into local variables and changes the view
+  // can take any kind of request, and will load the component with the response as props
+  loadView(view, request) { 
+    if(!request) return this.setState({view:view})
+    return Ajax.json(request)
+    .then(response => {
+      this.setState({
+        view: view,
+        locals: response
+      })
+    })
+  
   }
 
   componentDidMount() {
     if(!this.state.user) {
       return Ajax.json({url: '/?session'})
       .then(data => {
-        this.setState(Object.assign(data,{initialized:true}));
+        this.setState({
+          initialized:true,
+          _user: data.user,
+          _character: data.character,
+          _campaign: data.campaign
+        });
       })
       .catch(err => console.error(err.stack))
     }
   }
 
   render() {
+    let CurrentView = Views[this.state.view]
 
     return <div>
 
       <Navbar  
-        user={this.state.user} 
-        campaign={this.state.campaign} 
-        character={this.state.character} />
-      <div className="" id="content-wrapper" className="marble">
+        loadView={this.loadView}
+        user={this.state._user} 
+        campaign={this.state._campaign} 
+        character={this.state._character} />
+      <div id="content-wrapper" className="marble">
       
       {this.state.character && 
         <Draggable>
           <CharStatus character={this.state.character} />
         </Draggable>
+      }
+
+      {this.state.view && 
+        <div className="app-area">
+          <CurrentView 
+            user={this.state.user} 
+            character={this.state.character}
+            campaign={this.state.campaign}
+            {...this.state.locals}
+          /> 
+        </div>
       }
 
       </div>

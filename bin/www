@@ -5,6 +5,7 @@ require('../config/globals');
 
 const cluster = require('cluster');
 const COLORS = ['white', 'blue', 'cyan', 'green', 'yellow', 'red', 'magenta']
+let healthy = false;
 
 if(cluster.isMaster) {
 
@@ -22,6 +23,7 @@ if(cluster.isMaster) {
     var connectedWorkers = 0
 
     cluster.on('listening', (worker, code, signal) => { 
+      helathy = true;
       connectedWorkers++;
       if(process.stdout.isTTY) process.stdout.write(colors[COLORS[worker.id % 7]]('■'))
       if(connectedWorkers >= CONFIG.process.threads) {
@@ -37,6 +39,7 @@ if(cluster.isMaster) {
     })
 
     cluster.on('exit', (worker, code, signal) => {
+      if(!healthy) return process.exit(1);
       connectedWorkers--;
       if(worker.exitedAfterDisconnect || code == 0) return console.log(`${connectedWorkers} workers listening`);
 

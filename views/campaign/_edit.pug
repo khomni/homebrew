@@ -13,8 +13,8 @@
           .flex.vert.fill.js
             label System
             select.form-input(name="system")
-              each name in SYSTEM.names
-                option.form-input(value=name)= name
+              each system,key in SYSTEM
+                option.form-input(value=key)= system.name
         .flex.center.pad
           a.btn(href="/login" data-click="modal") Login
           button.btn(type='submit') New Campaign

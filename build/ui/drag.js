@@ -26,8 +26,8 @@ var drag = {
 
         // get dimensions from the center of the handle
         let handleRect = drag.dragging.handle.getBoundingClientRect();
-        handleRect.width = handleRect.right - handleRect.left;
-        handleRect.height = handleRect.bottom - handleRect.top;
+        if(!handleRect.width) handleRect.width = handleRect.right - handleRect.left;
+        if(!handleRect.height) handleRect.height = handleRect.bottom - handleRect.top;
         handleRect.offsetTop = drag.dragging.handle.offsetTop
         handleRect.offsetLeft = drag.dragging.handle.offsetLeft
 

@@ -97,8 +97,8 @@ router.use((req,res,next) => {
   if(!req.user) return next();
   res.locals.character = req.user.MainChar;
   if(res.locals.character) res.locals.campaign = res.locals.character.Campaign;
-  res.locals.breadcrumbs.push({name:res.locals.campaign.name, url: res.locals.campaign.url});
-  res.locals.breadcrumbs.push({name:res.locals.character.name, url: '/status'});
+  if(res.locals.campaign) res.locals.breadcrumbs.push({name:res.locals.campaign.name, url: res.locals.campaign.url});
+  if(res.locals.character) res.locals.breadcrumbs.push({name:res.locals.character.name, url: '/status'});
   return next();
 })
 

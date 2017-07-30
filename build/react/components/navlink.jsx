@@ -13,9 +13,9 @@ export default class Navlink extends React.Component {
   }
 
   handleClick(event){
-    if(this.props.handleClick) {
+    if(this.props.loadView && !this.props.disabled) {
       event.preventDefault();
-      return this.props.handleClick(event)
+      return this.props.loadView(this.props.view, this.props.href && {url: this.props.href})
     }
   }
 
@@ -28,8 +28,8 @@ export default class Navlink extends React.Component {
   }
 
   render() {
-    return <a href={this.props.href} className="navlink" onClick={this.handleClick}>
-      {this.props.label}
+    return <a href={this.props.href} className="navlink" disabled={this.props.disabled} onClick={this.handleClick}>
+      {this.props.children}
     </a>
   }
 

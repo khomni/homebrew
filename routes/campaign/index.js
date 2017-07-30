@@ -15,16 +15,16 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
     return db.Campaign.findAll({where: {privacy_level: {$not: 'hidden'}}})
   })
   .then(campaigns => {
+    if(req.json) return res.json({campaigns: campaigns})
     return res.render('campaign/index', {campaigns: campaigns})
   })
   .catch(next);
 });
 
 router.get('/new', Common.middleware.requireUser, (req, res, next) => {
-
   // for new campaigns, get the name of all available systems
-  if(req.modal) return res.render('campaign/modals/edit',{systems:SYSTEM.names})
-  return res.render('campaign/new')
+  if(req.modal) return res.render('campaign/$edit' )
+  return res.render('campaign/edit')
 });
 
 router.post('/', Common.middleware.requireUser, (req,res,next) => {

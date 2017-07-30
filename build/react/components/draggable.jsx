@@ -15,7 +15,7 @@ export default class Draggable extends React.Component {
 
   componentDidMount(){
     let offsetParent = findDOMNode(this).offsetParent
-    console.log(offset.parent.getBoundingClientRect());
+    console.log(offsetParent.getBoundingClientRect());
   }
 
   handleMouseDown(event){

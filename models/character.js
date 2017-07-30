@@ -106,8 +106,11 @@ module.exports = function(sequelize, DataTypes) {
             model: models.Permission,
             scope: {
               permissionType: 'Character'
-            }
-          }
+            },
+            constraints: false,
+          },
+          constraints: false,
+
         });
 
         // a character has lore in the form of their bio and backstory

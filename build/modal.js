@@ -20,10 +20,14 @@ function Modal(options) {
   elem = document.createElement('div');
   elem.setAttribute('id', options.target || href);
   elem.classList.add('modal');
-  if(options.html) elem.innerHTML = options.html
+  if('width' in options) elem.style.width = options.width
+  if('height' in options) elem.style.height = options.height
 
   elem.addEventListener('load', e => {
-    if(!href) return elem.dispatchEvent(new CustomEvent('loaded', {bubbles:true, cancelable:true})); 
+    if(options.html) elem.innerHTML = options.html
+    if(!href) {
+      return elem.dispatchEvent(new CustomEvent('loaded', {detail: null, bubbles:true, cancelable:true})); 
+    }
 
     return Ajax.fetch({
       method: "GET",
@@ -32,7 +36,6 @@ function Modal(options) {
     })
     .then(xhr => {
       elem.innerHTML = xhr.responseText;
-      console.log('about to dispatch "loaded" event');
       elem.dispatchEvent(new CustomEvent('loaded', {detail:xhr, bubbles:true, cancelable:true}))
     })
     .catch(err => console.error(err));  
@@ -59,7 +62,7 @@ function Modal(options) {
   })
 
   elem.addEventListener('keydown', e => {
-    console.log(e.which);
+
   });
   elem.addEventListener('mousedown', e => {
     // allow alternate clicks for buttons or links
@@ -73,8 +76,6 @@ function Modal(options) {
   
   // if(!href) return elem.dispatchEvent(new Event('show.modal', {bubbles:true, cancelable:true}));
 
-  // load the content for the first time:
-  elem.dispatchEvent(new Event('load', {bubbles:true, cancelable:true}));
   // this listener performs any setup that needs to happen once when the modal is 
   elem.addEventListener('loaded', function onceLoaded(e){
     elem.removeEventListener('loaded', onceLoaded);
@@ -120,6 +121,8 @@ function Modal(options) {
     
     elem.dispatchEvent(new Event('show.modal', {bubbles:true, cancelable:true}));
   })
+  // load the content for the first time:
+  elem.dispatchEvent(new Event('load', {bubbles:true, cancelable:true}));
 }
 
 module.exports = Modal;

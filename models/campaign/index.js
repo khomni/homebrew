@@ -49,6 +49,7 @@ module.exports = function(sequelize, DataTypes) {
     // 'public' - all campaign resources are visible to public, but users still need to add characters 
     privacy_level: {
       type: DataTypes.STRING,
+      defaultValue: 'public',
       values: ['hidden','private','public'],
     },
 
@@ -75,8 +76,10 @@ module.exports = function(sequelize, DataTypes) {
             model: models.Permission,
             scope: {
               permissionType: 'Campaign'
-            }
-          }
+            },
+            constraints: false,
+          },
+          constraints: false,
         });
 
         Campaign.addScope('defaultScope', {
