@@ -12,7 +12,7 @@ mixin dropdown(options)
   if !block
     -attributes.class = "disabled"
   .dropdown(data-target=options.id)&attributes(attributes)
-    .dropdown-label= options.text
+    .dropdown-label(data-click="activate" data-target=".dropdown")= options.text
     .dropdown-menu
       block
   

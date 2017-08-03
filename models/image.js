@@ -25,7 +25,7 @@ module.exports = function(sequelize, DataTypes) {
     path: {
       type: DataTypes.VIRTUAL,
       get: function() {
-        return '/i/' + this.getDataValue('key')
+        return '/i' + this.getDataValue('key')
       }
     },
     imageable: { // the model type of the image (used for joins)
@@ -75,9 +75,6 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
 
-        Image.addScope('defaultScope', {
-          attributes: ['id','url']
-        }, {override:true})
       },
     }
   });

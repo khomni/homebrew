@@ -44,12 +44,12 @@ export default class Navbar extends React.Component {
       {this.props.character ? ( 
         <Dropdown label={this.props.character.name} >
           <Dropdown label="Switch">
-            <Navlink label="New Character" href="/pc/new" {...this.props}/>
+            <Navlink href="/pc/new" {...this.props}> New Character </Navlink>
           </Dropdown>
-          <Navlink label="Character Sheet" href={this.props.character.url}/>
-          <Navlink label="Inventory" href={this.props.character.url + '/inventory'} {...this.props}/>
-          <Navlink label="Journal" href={this.props.character.url + '/journal'} {...this.props}/>
-          <Navlink label="Knowledge" href={this.props.character.url + '/knowledge'} {...this.props}/>
+          <Navlink href={this.props.character.url} view="Character" {...this.props}> Character Sheet </Navlink>
+          <Navlink href={this.props.character.url + '/inventory'} {...this.props}> Inventory </Navlink>
+          <Navlink href={this.props.character.url + '/journal'} {...this.props}> Journal </Navlink>
+          <Navlink href={this.props.character.url + '/knowledge'} {...this.props}> Knowledge </Navlink>
         </Dropdown>
       ) : (
         <Navlink disabled={!this.props.campaign} href="/pc/new">New Character</Navlink>

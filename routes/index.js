@@ -22,6 +22,7 @@ router.get('/', (req, res, next) => {
       campaign: req.user && req.user.MainChar && req.user.MainChar.Campaign || null
     })
   }
+  if(!req.user) return res.render('index');
   if(!req.user) return res.redirect('/login');
   res.render('react');
 });

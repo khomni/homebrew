@@ -1,5 +1,13 @@
-.app-area {
-  padding-top: 2rem;
+.app {
+  width: 100vw;
+  height: 100vh;
+  .marble();
+}
+
+.app-panel {
+  margin: 0.25em;
+  padding:0.5em;
+  border: 1px solid fade(black,25%);
 }
 
 .draggable {
@@ -7,4 +15,27 @@
 }
 
 .character-status {
+  
 }
+
+.sidebar {
+  background: #ddd;
+  outline: 1px solid #ccc;
+  height: 100%;
+  overflow-y: auto;
+  flex-wrap: nowrap;
+
+  label {
+    padding: 0.5em;
+    .no-select();
+    .cursor(pointer);
+
+    &[disabled] {
+      .cursor(default);
+      color: #999;
+    }
+  }
+}
+
+
+

@@ -60,7 +60,7 @@ mixin header(options)
   header#header&attributes(attributes)
     .header-content
       block
-      if breadcrumbs.length > 0
+      if breadcrubs && breadcrumbs.length > 0
         .header-item
           include /components/breadcrumbs
     if vignettes

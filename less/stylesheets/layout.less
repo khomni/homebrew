@@ -104,21 +104,21 @@ body {
 
 }
 
-// a:not(.no-link):not(.btn):not(.tab),.as-link {
-//   color: darken(@color-primary,30%);
-//   transition: 0.5s;
-//   text-decoration:none;
-// 
-//   &[disabled] {
-//     pointer-events:none;
-//   }
-// 
-//   &:focus,&:hover {
-//     color: @color-primary;
-//     outline:none;
-//     text-decoration:underline;
-//   }
-// }
+a {
+  color: darken(@color-primary,30%);
+  transition: 0.5s;
+  text-decoration:none;
+
+  &[disabled] {
+    pointer-events:none;
+  }
+
+  &:focus,&:hover {
+    color: @color-primary;
+    outline:none;
+    text-decoration:underline;
+  }
+}
 
 a.no-link {
   

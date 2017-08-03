@@ -64,7 +64,7 @@ router.use('/:id', (req,res,next) => {
     if(character.Campaign) {
       if(req.user.id == character.Campaign.ownerId) character.Campaign.owned = true
       res.locals.campaign = character.Campaign
-      res.locals.activeSystem = SYSTEM[character.Campaign.system]
+      res.locals.activeSystem = character.Campaign.system
     }
     res.locals.breadcrumbs.push({name: character.name, url: req.baseUrl})
     return next()

@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express');
 var router = express.Router();
 
@@ -14,8 +16,8 @@ router.get('/search',(req,res,next) => {
 });
 
 router.post('/search',(req,res,next) => {
-  random = bestiary[Math.floor(Math.random()*bestiary.length)]
-  res.render('reference/_creatureBlock',{creature: random})
+  let random = bestiary[Math.floor(Math.random()*bestiary.length)]
+  res.set('X-Modal', true).render('reference/_creatureBlock',{creature: random})
 });
 
 router.get('/random',(req,res,next) => {

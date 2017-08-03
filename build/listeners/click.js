@@ -20,10 +20,8 @@ var dom = require('./dom.js');
     }
 
     if(clickAction == 'activate' && source.dataset.target) {
-      var source = e.target
-      if(!('click' in source.dataset)) source = source.closest('[data-click]')
-      if(!source) return true;
-      return dom.remove(source)
+      source.classList.toggle('active');
+      return dom.toggle(source, 'active');
     }
 
     // adds the 'collapsed' class to the target element or the closest parent with the target selector

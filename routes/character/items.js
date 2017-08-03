@@ -15,6 +15,7 @@ router.get('/', Common.middleware.querify, (req, res, next) => {
 
   res.locals.breadcrumbs.pop();
 
+  res.locals.action = req.baseUrl;
   if(!req.xhr && !req.json && !req.modal) return res.render('characters/inventory/index')
   
   if(req.query.sort) {
@@ -50,7 +51,6 @@ router.get('/', Common.middleware.querify, (req, res, next) => {
       return a
     },{value:0, weight:0, total:0})
 
-    res.locals.action = req.baseUrl;
     if(req.json) return res.json({items: items, total: meta})
     if(req.xhr) {
       if(req.query.format=='table') return res.render('characters/inventory/_itemTable',{meta:meta})

@@ -6,7 +6,7 @@ module.exports = (req,res,next) => {
     // if the user owns the campaign, flag the owned virtual to true for the purposes of GM controls
     if(req.user.id == campaign.ownerId) campaign.owned = true
     res.locals.campaign = campaign
-    res.locals.activeSystem = SYSTEM[campaign.system]
+    res.locals.activeSystem = campaign.system
   }
 
   return next()
