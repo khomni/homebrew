@@ -8,6 +8,10 @@
   margin: 0.25em;
   padding:0.5em;
   border: 1px solid fade(black,25%);
+
+  &.active {
+    border-color: @color-primary;
+  }
 }
 
 .draggable {
@@ -37,5 +41,7 @@
   }
 }
 
-
+.grabbable {
+  .cursor(grab);
+}
 

@@ -193,10 +193,6 @@ campaignRouter.delete('/', /*Common.middleware.requirePermission('campaign',{wri
   // return res.send('<h1>Just some html</h1>')
 });
 
-campaignRouter.get('/init', (req,res,next) => {
-  return res.render('applet/initiative')
-});
-
 campaignRouter.use(['/calendar','/e'], require('./calendar'));
 campaignRouter.use('/pc', require('../character'));
 campaignRouter.use('/quests', require('./quests'));

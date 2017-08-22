@@ -1,5 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 
 import Ajax from '../ajax';
 import Promise from 'bluebird';
@@ -8,11 +10,15 @@ global.Ajax = Ajax;
 global.Promise = Promise;
 
 import CharOption from './components/character/charoption'
-import Combatant from './components/character/combatant'
+import Actor from './components/character/actor'
+import ActorList from './components/ActorList'
+
+require('../../config/extensions');
+
 // INITIATIVE:
 // An applet that
 
-export default class Initiative extends React.Component {
+class Initiative extends React.Component {
   constructor(props) {
     super(props);
     // campaign: CampaignId obtained from the root element
@@ -23,15 +29,11 @@ export default class Initiative extends React.Component {
 
     this.state = {
       campaign: null, // 
+      // all known actor data
+      actors: [],
       characters: {}, //
       combatants: {},
     }
-  }
-
-  getMonster(){
-    
-    return 
-  
   }
 
   // fetches an updated character list from the server
@@ -46,9 +48,7 @@ export default class Initiative extends React.Component {
         return this.state.campaign
       })
     })
-    .then(campaign => {
-      return Ajax.json({url: campaign.url + 'pc'})
-    })
+    .then(campaign => Ajax.json({url: campaign.url + 'pc'}) )
     .then(characters => {
       characters.map(c => this.state.characters[c.id] = c)
       this.forceUpdate();
@@ -97,35 +97,27 @@ export default class Initiative extends React.Component {
       <div className="initiative flex horz grow">
         <div className="character-list sidebar flex vert">
           {characters.map(character => {
-            return <CharOption key={character.id} disabled={!!this.state.combatants[character.id]} character={character} onClick={this.addToInitiative}>
+            if(character.id in this.state.combatants) return null;
+            return <Actor key={character.id} actor={character}>
               {character.Images[0] && <img src={character.Images[0].path} className="character-image"/>}
               {character.name} 
-            </CharOption>
+            </Actor>
           })}
 
           <label onClick={this.getCharacterList}>
             <i className="fa fa-refresh" />
           </label>
-
         </div>
 
-        <div className="combat-area grow">
-
+        <ActorList onDrop={this.addToInitiative}>
           {combatants.map(character => {
-            return <Combatant key={character.id} character={character} removeChar={this.removeFromInitiative}/>
-            return (
-              <div className="combatant app-panel grow" key={character.id}>
-                <CharOption character={character} onClick={this.removeFromInitiative}>
-                  <a className="close float right"/>
-                </CharOption>
-                <label>{character.name}</label>
-              </div>
-            )
-
-
+            return <Actor key={character.id} actor={character}> 
+              {character.Images[0] && <img src={character.Images[0].path} className="character-image"/>}
+              {character.name} 
+            </Actor>
           })}
-        </div>
-        
+        </ActorList> 
+
       </div>
     )
 
@@ -138,4 +130,6 @@ let initiative = document.getElementById('initiative-app');
 let user = initiative.dataset.user;
 let campaign = initiative.dataset.campaign;
 
-render(<Initiative user={user} campaign={campaign}/>, initiative);
+let App = DragDropContext(HTML5Backend)(Initiative)
+
+render(<App user={user} campaign={campaign}/>, initiative);

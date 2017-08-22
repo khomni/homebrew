@@ -24,5 +24,9 @@ systemRouter.get('/about', (req,res,next) => {
 
 systemRouter.use('/reference', require('./reference'));
 
+systemRouter.get('/init', (req,res,next) => {
+  return res.render('applet/initiative')
+});
+
 
 module.exports = router;
