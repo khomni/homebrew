@@ -1,5 +1,7 @@
 "use strict";
 
+const marked = require('marked');
+
 /* JOURNAL
     Similar to lore, but localized to a character and comprised entirely of user content.
     A 'journal' instance is an individual journal entry belonging to a single character.
@@ -19,6 +21,17 @@ module.exports = function(sequelize, DataTypes) {
     },
     body: {
       type: DataTypes.TEXT,
+    },
+    $body: { // markup version of the body; automatically adds images in the footnotes
+      type: DataTypes.VIRTUAL,
+      get: function() {
+        if(!this.body) return null;
+        let processedBody = this.body
+        if(this.Images) {
+          processedBody += '\r' + this.Images.map((image, i) => `[${i}]: ${image.path}`).join('\n')
+        }
+        return marked(processedBody)
+      }
     },
     // an array of strings that describe what type of relation a user needs to read this entry. By default, journals are only visible to their owner character
     // public: this entry is visible to all site users
@@ -47,7 +60,6 @@ module.exports = function(sequelize, DataTypes) {
       attributes: ['name'],
       where: {name: {$in: words}}
     }).then(characters => {
-      console.log('mentioned characters:', characters)
       return;
     })
     // OR search for character names

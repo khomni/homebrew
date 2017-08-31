@@ -23,6 +23,7 @@ function onXhrContentLoad(e) {
       preloadPanel.setReload = true;
       preloadPanel.addEventListener('reload', function reloadTab(e){
         e.stopPropagation();
+        console.log('reload event reached xhrLoaded content');
         preloadPanel.dispatchEvent(new Event('load.pane', {bubbles:true, cancelable:true}))
       });
     }
@@ -65,6 +66,11 @@ document.addEventListener('replaceImage', function(e){
 })
 
 document.addEventListener('loaded', onXhrContentLoad);
+
+document.addEventListener('reload', e => {
+  console.log('reload event reached document level');
+  window.location.reload();
+});
   // run all necessary scripts on dynamic content here
 // data is sniffed at the document level, but reference to the targeted dom will be e.target
 document.addEventListener('data', function(e){

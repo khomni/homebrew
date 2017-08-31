@@ -52,7 +52,7 @@ mixin month(month)
                 hr
         //- TODO: another place for the Current Date form?
         if campaign.owned
-          form(action=campaign.url + 'e/present' method="post" data-response="json" data-reaction="redirect")
+          form(action=campaign.url + 'e/present' method="post" data-response="json" data-reaction="reload")
             section: .section-body
               if campaign.Calendar.present
                 label Current Date: #{campaign.Calendar.now.weekday}, #{campaign.Calendar.now.month} #{campaign.Calendar.now.date}, #{campaign.Calendar.now.year}

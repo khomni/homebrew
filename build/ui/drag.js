@@ -77,7 +77,7 @@ function Draggable(elem,handle) {
   // the listeners for moving and mouseup are handled at the document level
   thisDraggable.handle.addEventListener('mousedown', e => {
     // intercept clicks on elements that shouldn't start a drag
-    let intercept = e.target.closest('button,input,select,textarea')
+    let intercept = e.target.closest('button,input,select,textarea,a')
     if(intercept) return true;
 
     if(e.which != 1) return true;

@@ -214,7 +214,7 @@ module.exports = function(sequelize, DataTypes) {
   Character.Instance.prototype.getName = function(string) {
     switch (string) {
       case "first": return this.getDataValue('name')[0]
-      case "formal": return this.title + " " + this.name
+      case "formal": return `${this.title||''} ${this.name||''}`
       default: return this.name
     }
   }

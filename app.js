@@ -94,7 +94,7 @@ app.use(passport.session());
 
 app.use((req,res,next) => {
   // permission object passed between routers to determine the level of permission available to the user
-  res.locals.permission = {write: false, read: false}
+  // res.locals.permission = {write: false, read: false}
   Object.seal(res.locals.permission)
 
   res.locals.currentUser = req.user || false

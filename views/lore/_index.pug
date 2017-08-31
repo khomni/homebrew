@@ -1,0 +1,6 @@
+.flex.vert.pad.lore-section
+  - let subBase = base
+  each lore in loreList
+    -let base = subBase + '/' + lore.id
+    include _lore
+    // pre= JSON.stringify(lore)

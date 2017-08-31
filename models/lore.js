@@ -1,5 +1,7 @@
 "use strict";
 
+const marked = require('marked');
+
 /* LORE
     The crux of the knowledge system for this platform.
     Each record in the lore table represents a single insular fact.
@@ -19,12 +21,24 @@ module.exports = function(sequelize, DataTypes) {
     content: {
       type: DataTypes.TEXT,
     },
+    $content: { // markup version of the body; automatically adds images in the footnotes
+      type: DataTypes.VIRTUAL,
+      get: function() {
+        if(!this.content) return null;
+        let processedContent = this.content
+        return marked(processedContent)
+      }
+    },
     hidden: {type: DataTypes.VIRTUAL},
     new: {type: DataTypes.VIRTUAL},
     owned: {type: DataTypes.VIRTUAL},
     // lore obscurity represents the likelihood of a person knowning it
     // a piece of lore with an obscurity of 0 is common knowledge
     // (think DC for knowledge checks)
+    obscure: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     obscurity: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
@@ -42,7 +56,6 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   Lore.Instance.prototype.ownedBy = function(user) {
-    console.log(this)
     return user.id === this.ownerId
   }
 

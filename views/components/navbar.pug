@@ -33,8 +33,9 @@ nav.navigation#nav
       +dropdown({id:'charactermenu', text: currentUser.MainChar.getName('first')})
         +navlink({url: "/u/"+currentUser.username+"/pc", text:'Switch'})(data-click="modal" data-target="switch-character")
         +navlink({url: currentUser.MainChar.url, text:'Status'})
-        +navlink({url: currentUser.MainChar.url + 'inventory',text:'Inventory'})
-        +navlink({url: currentUser.MainChar.url + 'journal',text:'Journal'})
+        +navlink({url: currentUser.MainChar.url + 'inventory', text:'Inventory'})
+        +navlink({url: currentUser.MainChar.url + 'journal', text:'Journal'})
+        +navlink({url: currentUser.MainChar.url + 'knowledge', text:'Knowledge'})
         
       //- CAMPAIGN MENU
       if !currentUser.MainChar.Campaign
@@ -45,6 +46,7 @@ nav.navigation#nav
           +navlink({url: currentUser.MainChar.Campaign.url+'quests',text:'Quests'})
           +navlink({url: currentUser.MainChar.Campaign.url+'calendar',text:'Calendar'})
           +navlink({url: currentUser.MainChar.Campaign.url+'locations',text:'Locations'})
+          +navlink({url: currentUser.MainChar.Campaign.url+'lore',text:'Lore'})
           +navlink({url: currentUser.MainChar.Campaign.url + 'factions', text:'Factions'})
       
           if !currentUser.MainChar.party

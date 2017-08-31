@@ -173,8 +173,8 @@ campaignRouter.post('/', Common.middleware.requireGM, (req,res,next) => {
 campaignRouter.get('/requests', Common.middleware.requirePermission('campaign', {$or:[{owner:true},{'rights.invite':true}]}), (req,res,next) => {
   return res.locals.campaign.getMember({through: {where: {owner:false, read:false, write:false}}})
   .then(users => {
-    return res.json(users)
     // TODO: Render page for all invites that allows campaign managers to set permission levels
+    return res.json(users)
 
   })
   .catch(next)

@@ -3,6 +3,6 @@
   .modal-body
     .flex.vert.pad.as
       each character in characters
-        form(action=character.url+"/select" method="POST")
+        form(action=character.url+"select" method="POST" data-reaction="reload" data-response="json")
           button.as-link(type="submit" disabled=character.isActiveChar(currentUser))= character.name
       a.btn(href=(campaign?campaign.url:"/")+"pc/create" data-click="modal") New Character

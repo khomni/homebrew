@@ -108,14 +108,14 @@ Ajax.setListeners = function() {
       url: action,
       headers:{ // allow the form to suggest ways of receiving the data
         modal: true,
-        Accept: thisForm.dataset.response == 'json' ? 'application/json' : undefined,
+        Accept: /json/gi.test(thisForm.dataset.response) ? 'application/json' : undefined,
       },
       body:thisForm
     })
     .then(xhr => {
       let redirect = xhr.getResponseHeader('X-Redirect')
       if(redirect) {
-        history.pushState({href: redirect},null,redirect);
+        history.pushState({href: redirect}, null, redirect);
         return document.getElementById('main').dispatchEvent(new CustomEvent('load.pane', {detail:{href:redirect}, bubbles:true, cancelable:true}))
         // load the redirect content to main
       }

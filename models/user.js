@@ -98,18 +98,15 @@ module.exports = function(sequelize, DataTypes) {
   function hashPassWord(user, options) {
     return Promise.try(()=>{
       if(user.password && !user.changed('password')) return user; // if password wasn't changed, skip the password hashing
-      console.log('hashing password')
 
       options.updatesOnDuplicate = options.updatesOnDuplicate || [];
       options.updatesOnDuplicate.push('password');
 
       return bcrypt.genSaltAsync(CONFIG.security.SALT_WORK_FACTOR)
-      .then(salt => {
-        return bcrypt.hashAsync(user.password, salt, null)
-        .then(hash => {
-          user.password = hash
-          return user
-        })
+      .then(salt => bcrypt.hashAsync(user.password, salt, null))
+      .then(hash => {
+        user.password = hash
+        return user
       })
     })
   }

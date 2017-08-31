@@ -30,8 +30,8 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
       subjects[k.lorable].push(k)
     })
 
-    if(req.xhr) return res.render('lore/_topics',{subjects:subjects})
-    if(req.modal) return res.render('lore/modals/list',{loreList:knowledge})
+    if(req.modal) return res.render('lore/$topics', {subjects:subjects})
+    if(req.xhr) return res.render('lore/_topics', {subjects:subjects})
     return res.json(knowledge)
   })
   .catch(next)

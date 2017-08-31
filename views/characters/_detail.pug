@@ -1,8 +1,8 @@
-form.tab-group(action=character.url+"select" method="post")
+form.tab-group(action=character.url + "select" method="post" data-response="json" data-reaction="reload")
   a.tab.active Character Sheet
   if currentUser.controls(character).permission
     a.tab(href=character.url+"edit" data-click="modal" data-target="character-"+character.id+"-edit") Edit
-    button.tab(disabled=character.active) Select
+    button.tab(formaction=character.url + "select" disabled=character.active) Select
 //- if character.active
 //- if !character.active
 .tab-group
