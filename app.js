@@ -8,14 +8,13 @@ require('./config/globals');
 var express = require('express');
 
 var favicon = require('serve-favicon');
-var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 
 var sequelize = require(APPROOT+'/config/database');
-const db = require(APPROOT+'/models/index');
-global.db = db
+var db = require(APPROOT+'/models/index');
+global.db = db;
 
 var app = express();
 
@@ -33,10 +32,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 var marked = require('marked');
 
-app.locals.basedir = APPROOT+'/views'
-app.locals.markdown = marked
-app.locals.SYSTEM = SYSTEM
-app.locals.SITE_NAME = global.SITE_NAME = "Homebre.ws"
+app.locals.basedir = APPROOT+'/views';
+app.locals.markdown = marked;
+app.locals.SYSTEM = SYSTEM;
+app.locals.SITE_NAME = global.SITE_NAME = "Homebre.ws";
 app.use(Common.middleware.title());
 
 // stylesheets
@@ -44,9 +43,7 @@ var lessMiddleware = require('less-middleware');
 app.use(lessMiddleware(path.join(__dirname, 'less', '_output'),{
   dest: path.join(__dirname,'public'),
   preprocess: {
-    path: function(pathname, req) { // given a path, returns the same path with "/stylesheets/" replaced by "/"
-      return pathname.replace(path.sep + 'stylesheets' + path.sep, path.sep);
-    }
+    path: pathname => pathname.replace(path.sep + 'sytlesheets' + path.sep, path.sep),
   },
   render: {
     compress: app.get('env') !== 'local'
@@ -57,7 +54,7 @@ app.use(lessMiddleware(path.join(__dirname, 'less', '_output'),{
 app.use(express.static(path.join(__dirname, 'public')));
 
 // pipes images from Amazon AWS s3 service to the result
-app.use('/i', require('./middleware/images'))
+app.use('/i', require('./middleware/images'));
 
 app.use(require('./config/logs')); 
 // set up the vignettes for the header and homepage
@@ -84,7 +81,7 @@ var sessionMiddleware = session({
   proxy:true,
   resave:false,
   saveUninitialized: true,
-})
+});
 
 app.use(sessionMiddleware);
 
@@ -95,11 +92,11 @@ app.use(passport.session());
 app.use((req,res,next) => {
   // permission object passed between routers to determine the level of permission available to the user
   // res.locals.permission = {write: false, read: false}
-  Object.seal(res.locals.permission)
+  Object.seal(res.locals.permission);
 
-  res.locals.currentUser = req.user || false
-  res.locals.THEME = req.session.theme || 'marble'
-  res.locals.breadcrumbs = []
+  res.locals.currentUser = req.user || false;
+  res.locals.THEME = req.session.theme || 'marble';
+  res.locals.breadcrumbs = [];
   next();
 });
 
@@ -108,8 +105,8 @@ app.use(require('./middleware/activeChar'));
 
 app.use('/', (req,res,next)=>{
   if(/\.json(.*)?$/.test(req.url)) {
-    req.headers.accept = 'application/json'
-    req.url = req.url.replace(/\.json(.*)?$/,'')
+    req.headers.accept = 'application/json';
+    req.url = req.url.replace(/\.json(.*)?$/,'');
   }
   return next();
 });
@@ -129,6 +126,6 @@ app.use(function(req, res, next) {
 });
 
 // error handler
-app.use(require('./middleware/error'))
+app.use(require('./middleware/error'));
 
 module.exports = app;

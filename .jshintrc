@@ -1,0 +1,8 @@
+{
+	"extends": "/Users/Kyle/.jshintrc",
+	"globals": {
+		"APPROOT": true,
+		"Common": true,
+		"SYSTEM": true
+	}
+}
