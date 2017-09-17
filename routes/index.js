@@ -2,14 +2,8 @@
 
 var express = require('express');
 var router = express.Router();
-var models = require('../models');
-
-var fs = require('fs');
-var path = require('path');
-var basename = path.basename(module.filename);
 
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
 
 // Home Page
 // if not logged in, render a splash page
@@ -20,11 +14,14 @@ router.get('/', (req, res, next) => {
       user: req.user || null,
       character: req.user && req.user.MainChar || null,
       campaign: req.user && req.user.MainChar && req.user.MainChar.Campaign || null
-    })
+    });
   }
   if(!req.user) return res.render('index');
   if(!req.user) return res.redirect('/login');
-  res.render('react');
+
+  return res.render('index');
+
+  // res.render('react');
 });
 
 router.get('/login',(req,res,next) => {
@@ -33,7 +30,7 @@ router.get('/login',(req,res,next) => {
 });
 
 router.post('/login', (req,res,next) => {
-  var origin = req.headers.referer || '/';
+  // var origin = req.headers.referer || '/';
 
   passport.authenticate('local', (err,user,info) => {
     if (err) return next(err);
@@ -62,8 +59,9 @@ router.get('/signup',(req,res,next)=>{
 });
 
 router.post('/signup', (req,res,next) => {
-  var origin = req.headers.referer || '/';
-  var user = db.User.create({
+  let origin = req.headers.referer || '/';
+
+  db.User.create({
     username: req.body.username,
     email: req.body.email,
     password: req.body.password
@@ -71,7 +69,7 @@ router.post('/signup', (req,res,next) => {
   .then(user => {
     req.logIn(user, err => {
       if(req.xhr) return res.set('X-Redirect', '/').sendStatus(302);
-      return res.redirect('/');
+      return res.redirect(origin);
     })
   })
   .catch(next);

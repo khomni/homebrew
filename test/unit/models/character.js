@@ -20,4 +20,23 @@ describe('Character', ()=>{
 
   schemaTests(db.Character)
 
+  describe('Unique Slug Generation', () => {
+
+    let generatedSlugs = []
+
+    it('Generates a unique URL without duplicates', () => {
+      return Promise.mapSeries(Array(15), () => {
+        return db.Character.create({name: "Drizzt Daermon N'a'shezbaernon"})
+        .then(character => {
+          expect(generatedSlugs).to.not.include(character.url);
+          generatedSlugs.push(character.getDataValue('url'));
+        })
+      })
+    });
+
+    it('Generates a slug that is URL-safe', () => {
+      generatedSlugs.map(slug => expect(slug).to.match(/^[a-zA-Z0-9_-]+$/));
+    })
+  });
+
 })

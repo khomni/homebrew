@@ -9,7 +9,6 @@ const marked = require('marked');
     Every instance in the database should be 'knowable' by characters.
     Anything resembling a description should be handled in the form of a lore record.
     Anything that is lorable should have a 'name' field that returns an appropriate label for the thing
-
 */
 
 module.exports = function(sequelize, DataTypes) {
@@ -56,6 +55,7 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   Lore.Instance.prototype.ownedBy = function(user) {
+    console.log(user.id, this.ownerId);
     return user.id === this.ownerId
   }
 

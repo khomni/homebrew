@@ -3,15 +3,17 @@
     if(e.target.nodeName === 'INPUT') {
       var url = e.target.getAttribute('href')
       if(!url) return false;
-      var body = {}
+      let body = {};
       body[e.target.name] = e.target.value
 
       if(e.target.searchDelay) clearTimeout(e.target.searchDelay)
+      let method = e.target.dataset.method || 'post';
+      if(method.toLowerCase() === 'get') url += `?${e.target.name}=${e.target.value}`
 
       e.target.classList.add('pending')
       e.target.searchDelay = setTimeout(function(){
         e.target.classList.add('loading')
-        return Ajax.json({url:url, method:'post', body: body})
+        return Ajax.json({url, method, body})
         .then(response => {
           clearTimeout(e.target.searchDelay)
           var dataEvent = new CustomEvent('data',{detail:response,bubbles:true})

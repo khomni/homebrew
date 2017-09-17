@@ -4,13 +4,24 @@ var router = express.Router();
 /* GET users listing. */
 router.get('/', Common.middleware.requireUser, (req, res, next) => {
 
-  return Promise.resolve().then(()=>{
-    if(res.locals.faction) return res.locals.faction.getMembers()
-    if(res.locals.user) return res.locals.user.getCharacters()
-    if(res.locals.campaign) return res.locals.campaign.getCharacters()
-    return db.Character.findAll({include:[{model:db.Campaign}], order: [['CampaignId'],['name']]})
+  let query = {}
+
+  if('n' in req.query) {
+    query.limit = Number(req.query.n);
+  }
+
+  if('search' in req.query) {
+    query.where = {$name: {$like: '%' + req.query.search.toLowerCase() + '%'}}
+  }
+
+  return Promise.try(() => {
+    if(res.locals.faction) return res.locals.faction.getMembers(query)
+    if(res.locals.user) return res.locals.user.getCharacters(query)
+    if(res.locals.campaign) return res.locals.campaign.getCharacters(query)
+    return db.Character.findAll(Object.assign(query, {include:[{model:db.Campaign}], order: [['CampaignId'],['name']]}))
   })
   .then(characters => {
+
     if(req.json) return res.json(characters)
     if(req.modal) return res.render('characters/modals/select',{characters});
     if(req.isTab) return res.render('characters/_index', {characters});

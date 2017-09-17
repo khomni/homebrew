@@ -160,8 +160,8 @@ Ajax.setListeners = function() {
 }
 
 Ajax.fetch = Promise.method(function(args={}) {
-  return Promise.resolve().then(() => {
-    args = Object.assign({headers:{}, method:'GET'},args)
+  return Promise.try(() => {
+    args = Object.assign({headers:{}, method:'GET'}, args)
     if(!args.body) return null;
     if(args.body.enctype === "multipart/form-data") {
       // return the file uploader or convert data into multipart/form-data
@@ -182,6 +182,12 @@ Ajax.fetch = Promise.method(function(args={}) {
       let xhr = new XMLHttpRequest()
 
       Object.assign(headers, args.headers)
+
+      // convert body to query string for get requests
+      if(args.method.toUpperCase() === 'GET' && data) {
+        args.url += Object.toQueryString(args.body)
+        console.log(data, args.body, args.url)
+      }
 
       xhr.open(args.method.toUpperCase(), args.url)
 

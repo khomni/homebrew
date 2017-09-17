@@ -48,6 +48,7 @@ function Modal(options) {
     if(elem.parentNode && elem == elem.parentNode.lastChild) return true;
     let allModals = document.getElementById('modals');
     allModals.appendChild(elem); 
+    elem.dispatchEvent(new Event('shown.modal', {bubbles:true, cancelable:true}));
   });
 
   elem.addEventListener('hide.modal', e => {

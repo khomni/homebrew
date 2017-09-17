@@ -26,6 +26,7 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
   // get all lore belonging to the lorable
   return res.locals.lorable.getLore()
   .then(lore => {
+
     // for each piece of lore associated with the lorable, determine if it is known by the activeChar
     return Promise.map(lore, piece => {
       piece.owned = piece.ownedBy(req.user) || res.locals.campaign.owned || req.user.admin
@@ -195,19 +196,8 @@ loreRouter.get('/teach', Common.middleware.requireCharacter, (req, res, next) =>
   return req.user.MainChar.hasKnowledge(res.locals.lore)
   .then(hasKnowledge => {
     if(!hasKnowledge) throw Common.error.request("You can't teach what you don't know.")
+    if(req.modal) return res.render('lore/modals/teach')
 
-    return req.user.MainChar.getMembership({
-      include:[{
-        model:db.Character,
-        as: 'members',
-        where: {id: {$ne: req.user.MainChar.id}},
-        include: [{model:db.Lore, as: 'knowledge'}]
-      }]
-    })
-    .then(factions => {
-      if(req.modal) return res.render('lore/modals/teach', {factions:factions})
-      return next()
-    })
   })
   .catch(next)
 
@@ -216,14 +206,22 @@ loreRouter.get('/teach', Common.middleware.requireCharacter, (req, res, next) =>
 // teach a piece of lore
 loreRouter.post('/teach', Common.middleware.requireCharacter, (req, res, next) => {
 
-  var bulk = Common.utilities.dedupe(req.body.pc).map(id => {
+  console.log(req.body);
+
+  var bulk = Common.utilities.dedupe(req.body.id).map(id => {
     return {CharacterId: id, LoreId: res.locals.lore.id}
   })
 
-  return db.Knowledge.bulkCreate(bulk)
-  .then(knowledge => {
-    return res.json(res.locals.lore)
+  return Promise.map(bulk, knowledge => {
+    return db.Knowledge.create(knowledge).catch(err => null)
   })
+  .then(knowledge => {
+    return res.json(knowledge);
+  })
+
+  // TODO: better upserting
+
+  return db.Knowledge.bulkCreate(bulk)
   .catch(next)
 });
 

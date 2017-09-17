@@ -7,6 +7,7 @@ module.exports = (req,res,next) => {
     if(req.user.id == campaign.ownerId) campaign.owned = true
     res.locals.campaign = campaign
     res.locals.activeSystem = campaign.system
+
   }
 
   return next()

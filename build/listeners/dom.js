@@ -20,7 +20,8 @@ module.exports = {
 
   remove: function(source) {
     let target = document.getElementById(source.dataset.target) || source.closest(source.dataset.target)
-    target.remove()
+    target.dispatchEvent(new Event('destroy', {bubbles:true, cancelable:true}))
+    // target.remove()
   },
 
   toggle: function(source, className) {

@@ -1,5 +1,7 @@
 'use strict';
 
+const flat = require('flat');
+
 function Breadcrumbs(array) {
   this.url = ""
   this.store = array || []
@@ -54,8 +56,8 @@ function get(object, string) {
 }
 
 module.exports = {
-  Breadcrumbs: Breadcrumbs,
-  renderAsync: renderAsync,
-  get: get,
-  dedupe: dedupe,
+  Breadcrumbs,
+  renderAsync,
+  get,
+  dedupe,
 }

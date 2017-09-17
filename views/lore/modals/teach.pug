@@ -1,11 +1,14 @@
 form(name='lore' action=base+"/teach" method='post' data-response="json")
   .modal-content
     .modal-title Teach Lore
-    .tab-group
+    //- .tab-group
       each faction,i in factions
         a.tab(data-click="tab" data-target="teach-faction-"+faction.id)= faction.name
     .tab-panel.modal-body
-      each faction in factions
+      div(data-widget="CharacterSearch" data-method="get" data-limit=10 data-search-key="search" data-action="/pc" data-input-type="checkbox" data-placeholder="Type the name of the character you want to teach this lore to")
+      .character-search
+      //- input#character-search.form-input(href="/pc/" name="search" data-method="get" type="text" placeholder="Search for a Character")
+      //- each faction in factions
         .tab-pane(id="teach-faction-"+faction.id)
           each member in faction.members
             if member.knowledge.map(k => {return k.id}).indexOf(lore.id) < 0

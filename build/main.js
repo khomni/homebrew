@@ -2,12 +2,14 @@
 /*jslint node: true */
 
 const Promise = require('bluebird');
+require('../config/extensions');
 const Ajax = require('./ajax');
 const Navbar = require('./navbar');
 const Favicon = require('./favicon');
 const Modal = require('./modal');
 const Drag = require('./ui/drag');
 var pageInitialized = false;
+
 
 document.onreadystatechange = function(){
   if(pageInitialized) return;
@@ -27,5 +29,7 @@ document.onreadystatechange = function(){
 
   require('./listeners');
   require('./dataemissions');
+
+  require('./react/widgets');
 
 }

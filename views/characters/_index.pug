@@ -21,6 +21,7 @@
       if currentUser
         .section-footer
           .flex.pad
+            -console.log(character.get({plain:true}), currentUser.get({plain:true}))
             if character.ownedBy(currentUser)
               .flex.vert.border.pad
                 .flex.center: label Owned Actions

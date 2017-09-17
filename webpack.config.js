@@ -11,6 +11,7 @@ let config = {
     main: ['babel-polyfill', APP_DIR + '/main.js'],
     bundle: ['babel-polyfill', APP_DIR + '/react/index.jsx'],
     initiative: ['babel-polyfill', APP_DIR + '/react/initiative.jsx'],
+    // widgets: [ APP_DIR + '/react/widgets.jsx'],
   },
   output: {
     path: BUILD_DIR,

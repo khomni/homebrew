@@ -60,7 +60,7 @@ app.use(require('./config/logs'));
 // set up the vignettes for the header and homepage
 app.use(require('./middleware/vignette'));
 
-app.use(function(req,res,next){
+app.use((req,res,next) => {
   res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
   res.header('Expires', '-1');
   res.header('Pragma', 'no-cache');
@@ -119,7 +119,7 @@ app.use('/', require('./routes/index'));
 // Error Handlers
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);

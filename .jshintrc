@@ -1,8 +1,10 @@
 {
 	"extends": "/Users/Kyle/.jshintrc",
+	"unused": "vars",
 	"globals": {
 		"APPROOT": true,
 		"Common": true,
+		"db": true,
 		"SYSTEM": true
 	}
 }

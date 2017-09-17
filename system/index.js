@@ -5,11 +5,19 @@ function System(args) {
   Object.assign(this,args)
 }
 
+// When being JSONified, just return basic information
+System.prototype.toJSON = function(){
+  return {
+    name: this.name,
+    publisher: this.publisher,
+  }
+}
+
 // System prototype methods here
 // this should be the API interface used to request various resources from the system
 // each system can define its own methods of responding to such requests.
 System.prototype.render = function(path,locals){
-  return pug.renderFile(this.view + path, Object.assign(this,locals))
+  return pug.renderFile(this.view + path, Object.assign({}, this, locals))
 }
 
 // export the system constructor so rulesets can access it
@@ -21,4 +29,5 @@ var RuleSets = {
 }
 
 // export the rulesets object
+
 module.exports = RuleSets

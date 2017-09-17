@@ -3,4 +3,6 @@
   each lore in loreList
     -let base = subBase + '/' + lore.id
     include _lore
-    // pre= JSON.stringify(lore)
+
+  .flex.center.pad
+    button.btn(href=base + '/new' data-click="modal") Create Lore

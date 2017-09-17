@@ -65,10 +65,10 @@ document.addEventListener('replaceImage', function(e){
   }
 })
 
+// safely dismantle an element
 document.addEventListener('loaded', onXhrContentLoad);
 
 document.addEventListener('reload', e => {
-  console.log('reload event reached document level');
   window.location.reload();
 });
   // run all necessary scripts on dynamic content here
@@ -91,7 +91,8 @@ document.addEventListener('data', function(e){
 
     data.map(deletable => {
       var elements = Array.prototype.slice.call(document.querySelectorAll("[data-ref='"+deletable.ref.id+"'][data-kind='"+deletable.kind+"']"))
-      elements.map(element=>{element.remove()})
+      // elements.map(element => {element.remove()})
+      elements.map(element => element.dispatchEvent(new Event('destroy', {bubbles:true, cancelable:true})))
     })
 
     return false;

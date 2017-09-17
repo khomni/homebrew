@@ -57,8 +57,6 @@ module.exports = function(sequelize, DataTypes) {
     password: {
       type: DataTypes.STRING
     }
-    // an optional JSONB field for describing your campaign world's proprietary time system,
-    // TODO: for more details on valid JSON formats, read accompanying documentation
   }, {
     classMethods: {
       associate: function(models) {
@@ -83,8 +81,13 @@ module.exports = function(sequelize, DataTypes) {
         });
 
         Campaign.addScope('defaultScope', {
-          include: [{model: models.Calendar}]
         }, {override:true} )
+
+        Campaign.addScope('calendar', {
+          include: [{model: models.Calendar}],
+          attributes: ['id','url','name'],
+          include: [],
+        })
 
         Campaign.addScope('session', {
           attributes: ['id','url','system','name']

@@ -20,7 +20,7 @@ module.exports = function(sequelize, DataTypes) {
     name: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       get: function() {
-        var nameArray = this.getDataValue('name') || []
+        var nameArray = this.getDataValue('name') || [];
         return nameArray.join(' ')
       },
       set: function(val) {
@@ -34,6 +34,9 @@ module.exports = function(sequelize, DataTypes) {
       validate: {
         len: [0,32]
       }
+    },
+    $name: { // searchable name
+      type: DataTypes.STRING,
     },
     sex: {
       type: DataTypes.ENUM,
@@ -133,7 +136,8 @@ module.exports = function(sequelize, DataTypes) {
         });
 
         Character.addScope('defaultScope', {
-          // attributes: ['id','name','url','title','ownerId'],
+          // exclude hidden fields
+          // attributes: {exclude: ['$name']},
           include: [
             {
               model: models.Campaign,
@@ -146,7 +150,7 @@ module.exports = function(sequelize, DataTypes) {
         }, {override:true} )
 
         Character.addScope('session', {
-          attributes: ['id','name','url','title', 'CampaignId', 'location'],
+          attributes: ['id','name','url','title', 'CampaignId', 'location', 'ownerId'],
           include: [
             { model: models.Campaign.scope('session') }, 
             { model: models.Image, order:[['order','ASC']] }
@@ -170,8 +174,15 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
 
-  Character.hook('beforeUpdate', function(character, options){
+  Character.hook('beforeCreate', generateSlug);
+  Character.hook('beforeUpdate', generateSlug);
+  Character.hook('beforeSave', generateSlug);
+
+  function generateSlug(character, options){
     if(!character.changed('name')) return character;
+
+    character.$name = character.name.toLowerCase();
+    console.log(character.get({plain:true}));
 
     let originalUrl = character.getDataValue('url');
     let isUnique = false;
@@ -179,27 +190,36 @@ module.exports = function(sequelize, DataTypes) {
     let nameComponents = 1;
     let slugComponents = character.getDataValue('name').slice(0,nameComponents);
 
-    return Promise.while(()=>!isUnique,()=>{
-      let url = slugComponents.join('-').toLowerCase();
-      character.url = url;
+    let url = slugComponents.join('-').toLowerCase().replace(/[^a-zA-Z0-9_-]/g,'');
+    character.url = url;
 
-      return Character.count({where: {url: {$eq: url, $not: originalUrl}}})
-      .then(n => {
-        if(!n) return isUnique = true;
+    // get an array of all slugs with the same base
+    return Character.aggregate('Character.url', 'DISTINCT', {where: {url: {$like: url + '%', $not:originalUrl}}, plain:false})
+    .map(distinct => distinct.DISTINCT)
+    .then(existingSlugs => {
+
+      while(!isUnique) {
+        let url = slugComponents.join('-').toLowerCase().replace(/[^a-zA-Z0-9_-]/g,'');
+        character.url = url;
+
+        if(!existingSlugs.includes(url)) return isUnique = true;
 
         if(nameComponents < character.getDataValue('name').length) {
-          nameComponents++
-          return slugComponents = character.getDataValue('name').slice(0,nameComponents)
+          // if there are more nameComponents, try using more of the name components before incrementing
+          nameComponents++;
         } else {
-          slugComponents = character.getDataValue('name').slice()
-          return slugComponents.push(++iteration)
+          // if all name components have been utilized, add a number to the end and repeat
+          nameComponents = 1;
+          iteration++;
         }
-      })
+        slugComponents = character.getDataValue('name').slice(0,nameComponents);
+        if(iteration) slugComponents.push(iteration)
+
+        // if the character has multiple names, try them before adding numbers
+      }
     })
-    .then( ()=> {
-      return character;
-    });
-  })
+    .then(() => character);
+  }
 
   Character.hook('beforeUpdate', (character, options) => {
     return character.getCampaign()
@@ -221,7 +241,8 @@ module.exports = function(sequelize, DataTypes) {
 
   // returns true if the input user owns the character instance
   Character.Instance.prototype.ownedBy = function(user) {
-    return user.id === this.ownerId
+    console.log(user.id, this.ownerId);
+    return user.id === this.ownerId 
   }
 
   // returns true if the input user has this character selected as their main

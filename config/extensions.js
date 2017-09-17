@@ -1,4 +1,8 @@
+const flat = require('flat');
+global.Promise = require('bluebird');
+
 // given an array of object, maps all values of the provided key
+
 Array.prototype.mapKey = function(key) {
   return this.map(elem => {
     return elem[key]
@@ -38,4 +42,14 @@ Object.get = function get(object, string) {
   }
 
   return null
+}
+
+Object.toQueryString = function(object){
+  if(!object || typeof object !== 'object') return '';
+  object = flat.flatten(object);
+
+  let queryString = "?"
+  let queryArray = []
+  for(let key in object) queryArray.push(encodeURIComponent(key) + '=' + encodeURIComponent(object[key]));
+  return "?" + queryArray.join('&'); 
 }

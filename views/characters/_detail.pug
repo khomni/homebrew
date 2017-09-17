@@ -21,11 +21,11 @@ form.tab-group(action=character.url + "select" method="post" data-response="json
             a(href=character.url + 'images/' + image.id data-click="modal" data-target="image-"+image.id)
               img(src=image.path draggable=false).character-portrait
             .flex.pad.distribute
-              if currentUser.controls(character).permission
+              if character.ownedBy(currentUser)
                 a.close(href=character.url + 'images/' + image.id + '/edit' data-click="modal"): i.fa.fa-wrench
                 form(action=character.url + 'images/' + image.id method="delete" data-response="json" data-reaction="remove")
                   button.close(title="Delete Photo"): i.fa.fa-trash
-              if !currentUser.controls(character).permission
+              if !character.ownedBy(currentUser)
                 form(action=character.url + 'images/' + image.id + '/report' method="post" data-response="json" data-reaction="remove")
                   button.close(title="Report Photo"): i.fa.fa-ban
       form(action=character.url+'images' method="POST" enctype="multipart/form-data" data-response="json" data-reaction="redirect").flex.center.pad.grow.drop-target
@@ -33,6 +33,9 @@ form.tab-group(action=character.url + "select" method="post" data-response="json
           span Select Files
           input(type="file" name="files" accept="image/*" multiple)
         button.btn Upload
+    //- div(href=character.url + "lore" data-visible="load")
+    .flex.pad.distribute
+      button.btn(href=character.url + 'lore/new' data-click="modal") Create Lore
   #inventory.tab-pane.section-body
   #lore.tab-pane.section-body
   #knowledge.tab-pane
