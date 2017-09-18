@@ -43,7 +43,7 @@ var lessMiddleware = require('less-middleware');
 app.use(lessMiddleware(path.join(__dirname, 'less', '_output'),{
   dest: path.join(__dirname,'public'),
   preprocess: {
-    path: pathname => pathname.replace(path.sep + 'sytlesheets' + path.sep, path.sep),
+    path: (pathname, req) => pathname.replace(path.sep + 'stylesheets' + path.sep, path.sep),
   },
   render: {
     compress: app.get('env') !== 'local'

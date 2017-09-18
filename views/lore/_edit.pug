@@ -4,7 +4,8 @@ form(name='lore' action=base method='post' data-response=lore?"replace":"json" d
       label Content
       textarea.form-input(type='text' name='content' rows=10 cols=50)= lore?lore.content:''
     .flex.vert.center
-      label Obscurity
-      input.form-input(type="number" name="obscurity" value=lore?lore.obscurity:false)
+      label.checkbox
+        input.form-input(type="checkbox" name="obscure" checked=lore&&lore.obscure)
+        span Obscure?
   .modal-footer
       button.btn.block(type='submit')= lore ? 'Update Lore' : 'Add Lore'

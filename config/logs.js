@@ -29,7 +29,11 @@ module.exports = morgan((tokens, req, res) => {
   else if(responseTime < 500) log.push(colors.yellow(`${responseTime} ms`))
   else log.push(colors.green(`${responseTime} ms`))
 
-  log.push(tokens.url(req, res))
+  let url = tokens.url(req,res).split(/(?=\?)/)
+  if(url[1]) url[1] = colors.gray(url[1])
+  url
+
+  log.push(url.join(''));
 
   return log.join('\t');
 

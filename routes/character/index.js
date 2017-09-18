@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET users listing. */
 router.get('/', Common.middleware.requireUser, (req, res, next) => {
 
   let query = {}
@@ -21,7 +20,6 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
     return db.Character.findAll(Object.assign(query, {include:[{model:db.Campaign}], order: [['CampaignId'],['name']]}))
   })
   .then(characters => {
-
     if(req.json) return res.json(characters)
     if(req.modal) return res.render('characters/modals/select',{characters});
     if(req.isTab) return res.render('characters/_index', {characters});
@@ -58,6 +56,23 @@ router.get('/create', Common.middleware.requireUser, (req, res, next) => {
   if(req.modal) return res.render('characters/modals/edit')
   return res.render('characters/new');
 });
+
+router.post('/select', Common.middleware.requireUser, (req, res, next) => {
+
+  return req.user.getCharacters({where: isNaN(req.body.id) ? {url:req.body.id} : {id:req.body.id}})
+  .then(characters => {
+    let character = characters[0];
+    if(!character) throw Common.error.authorization("You don't own that character")
+    return req.user.setMainChar(character)
+    .then(user => {
+      if(req.json) return res.send(character.get({plain:true}));
+      if(req.modal) return res.render('modals/_success',{title: character.name + " selected"});
+      if(req.xhr) return res.set('X-Redirect',req.baseUrl).sendStatus(302);
+      return res.redirect(req.headers.referer||req.baseUrl)
+    })
+  })
+  .catch(next)
+})
 
 // character router handles individual subpages that pertain to the individual character
 router.use('/:id', (req,res,next) => {

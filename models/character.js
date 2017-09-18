@@ -182,7 +182,6 @@ module.exports = function(sequelize, DataTypes) {
     if(!character.changed('name')) return character;
 
     character.$name = character.name.toLowerCase();
-    console.log(character.get({plain:true}));
 
     let originalUrl = character.getDataValue('url');
     let isUnique = false;
@@ -241,7 +240,6 @@ module.exports = function(sequelize, DataTypes) {
 
   // returns true if the input user owns the character instance
   Character.Instance.prototype.ownedBy = function(user) {
-    console.log(user.id, this.ownerId);
     return user.id === this.ownerId 
   }
 

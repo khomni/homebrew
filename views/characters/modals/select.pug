@@ -1,8 +1,10 @@
-.modal-content
-  .modal-title Select Character
-  .modal-body
-    .flex.vert.pad.as
-      each character in characters
-        form(action=character.url+"select" method="POST" data-reaction="reload" data-response="json")
-          button.as-link(type="submit" disabled=character.isActiveChar(currentUser))= character.name
-      a.btn(href=(campaign?campaign.url:"/")+"pc/create" data-click="modal") New Character
+form(name='select-character' action="/pc/select" data-reaction="reload" method='post' data-response="json")
+  .modal-content
+    .modal-title Select Character
+    .modal-body
+      div(data-widget="CharacterSearch" data-method="get" data-limit=10 data-search-key="search" data-action=currentUser.url + "/pc" data-placeholder="Search by character name")
+      //- .flex.vert.pad.as
+        each character in characters
+          form(action=character.url+"select" method="POST" data-reaction="reload" data-response="json")
+            button.as-link(type="submit" disabled=character.isActiveChar(currentUser))= character.name
+        a.btn(href=(campaign?campaign.url:"/")+"pc/create" data-click="modal") New Character

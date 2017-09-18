@@ -8,7 +8,7 @@ var router = express.Router();
 // declare `res.locals.lorable` to choose a lorable item to work with
 
 // this will reach the knowledge router and insert the lorable object
-router.use('/knowledge',require('../character/knowledge'))
+router.use('/knowledge', require('../character/knowledge'))
 
 router.get('/', Common.middleware.requireCharacter, (req,res,next) => {
   res.locals.breadcrumbs.push({name: "Lore", url:req.baseUrl});
@@ -21,10 +21,21 @@ router.get('/', Common.middleware.requireCharacter, (req,res,next) => {
 router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
   if(!res.locals.lorable.getLore) return next(Common.error.request('That resource cannot have lore'))
 
-  // TODO: nifty way of determining if the user has dominion over the lorable
+  var query = {where:{}}
 
+  if('n' in req.query) {
+    query.limit = Number(req.query.n);
+  }
+
+  if('search' in req.query) {
+    let re = new RegExp(req.query.search.toLowerCase(), 'i')
+    //query.where = {content: {$iRegexp: re}}
+    query.where = {content: {$iLike: '%' + req.query.search.toLowerCase() + '%'}}
+  }
+
+  // TODO: nifty way of determining if the user has dominion over the lorable
   // get all lore belonging to the lorable
-  return res.locals.lorable.getLore()
+  return res.locals.lorable.getLore(query)
   .then(lore => {
 
     // for each piece of lore associated with the lorable, determine if it is known by the activeChar
@@ -179,11 +190,13 @@ loreRouter.delete('/', Common.middleware.requireGM, (req, res, next) => {
 // learn a piece of lore
 loreRouter.post('/learn', Common.middleware.requireCharacter, (req, res, next) => {
 
+  // TODO: prevent obscure lore from being learned automatically
+
   return req.user.MainChar.addKnowledge(res.locals.lore)
   .then(knowledge => {
     res.locals.lore.hidden = false
     if(req.json) return res.json(res.locals.lore)
-    if(req.xhr) return res.render('lore/_lore.jade')
+    if(req.xhr) return res.render('lore/_lore')
     return res.redirect(req.baseUrl);
   })
   .catch(next)

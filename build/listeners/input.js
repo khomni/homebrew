@@ -13,6 +13,7 @@
       e.target.classList.add('pending')
       e.target.searchDelay = setTimeout(function(){
         e.target.classList.add('loading')
+
         return Ajax.json({url, method, body})
         .then(response => {
           clearTimeout(e.target.searchDelay)

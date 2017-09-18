@@ -50,6 +50,10 @@ Object.toQueryString = function(object){
 
   let queryString = "?"
   let queryArray = []
-  for(let key in object) queryArray.push(encodeURIComponent(key) + '=' + encodeURIComponent(object[key]));
+  for(let key in object) {
+    if(![undefined,null].includes(object[key])) {
+      queryArray.push(encodeURIComponent(key) + '=' + encodeURIComponent(object[key]));
+    }
+  }
   return "?" + queryArray.join('&'); 
 }

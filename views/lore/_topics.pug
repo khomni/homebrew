@@ -1,12 +1,12 @@
 -listBase = base
 
-.tab-group
+//- .tab-group
   each array,key in subjects
     a.tab(data-click="tab" data-target="knowledge-"+key)= key
-.tab-panel
-  each array,key in subjects
-    .tab-pane(id="knowledge-"+key)
-      .flex.vert.pad.lore-section
-        each lore in array
-          -base = listBase + "/" + lore.id
-          include _lore
+each array,key in subjects
+  h3= key
+  .flex.vert.pad.lore-section
+    each lore in array
+      -base = listBase + "/" + lore.id
+      include _lore
+

@@ -9,7 +9,7 @@ form.tab-group(action=character.url + "select" method="post" data-response="json
   a.tab.active(data-click="tab" data-target="about") About
   a.tab(href=character.url+"inventory" data-click="tab" data-target="inventory") Inventory
   a.tab(href=character.url+"lore" data-click="tab" data-target="lore") Lore
-  a.tab(href=character.url+"knowledge" data-click="tab" data-target="knowledge") Knowledge
+  a.tab(data-click="tab" data-target="knowledge") Knowledge
   a.tab(href=character.url+"journal" data-click="tab" data-target="lore") Journal
 .tab-pane-group
   #about.section-body.tab-pane.active
@@ -39,6 +39,9 @@ form.tab-group(action=character.url + "select" method="post" data-response="json
   #inventory.tab-pane.section-body
   #lore.tab-pane.section-body
   #knowledge.tab-pane
+    form.flex.pad(action=character.url + 'knowledge', method="GET" data-response="insert" data-target="knowledge-results")
+      input.form-input(name="search" placeholder=`Search lore known by ${character.name}`)
+    #knowledge-results
   #journal.tab-pane.section-body
         
 if !character.active

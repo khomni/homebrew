@@ -13,12 +13,27 @@ var router = express.Router();
 
 // get all things this character knows (about a topic, if mounted on top of a lorable router middleware)
 router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
-  var query = {}
+  var query = {where:{}}
+
+  if('n' in req.query) {
+    query.limit = Number(req.query.n);
+  }
+
+  if('search' in req.query) {
+    query.where = {content: {$iLike: '%' + req.query.search.toLowerCase() + '%'}}
+  }
 
   res.locals.base = res.locals.campaign.url+ "lore"
 
+  // TODO: figure out how to join the lorable items, or store relevant information in the lore record
   // if there is a lorable item in the middleware stack, specify that as the topic
-  if(res.locals.lorable) query = {where:{lorable:res.locals.lorable.$modelOptions.name.singular, lorable_id: res.locals.lorable.id}}
+  if(res.locals.lorable) {
+    Object.assign(query.where, {
+      lorable: res.locals.lorable.$modelOptions.name.singular, 
+      lorable_id: res.locals.lorable.id
+    });
+  }
+
   return req.user.MainChar.getKnowledge(query)
   .then(knowledge => {
 
@@ -30,8 +45,8 @@ router.get('/', Common.middleware.requireCharacter, (req, res, next) => {
       subjects[k.lorable].push(k)
     })
 
-    if(req.modal) return res.render('lore/$topics', {subjects:subjects})
     if(req.xhr) return res.render('lore/_topics', {subjects:subjects})
+    if(req.modal) return res.render('lore/$topics', {subjects:subjects})
     return res.json(knowledge)
   })
   .catch(next)

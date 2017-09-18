@@ -38,11 +38,15 @@ Ajax.serialize = function(form) {
   var obj = {};
   var field, s = [];
 
+  // TODO: attach focused button, if applicable
+
   // make sure that the provided argument is a form node
   if (typeof form == 'object' && form.nodeName == "FORM") {
     var len = form.elements.length;
 
     var fields = Array.prototype.slice.call(form.elements)
+    var focusedButton = form.querySelector('button:focus')
+    if(focusedButton) obj[focusedButton.name] = focusedButton.value
 
     fields.map(field => {
       // ignore undesirable form elements
@@ -102,16 +106,25 @@ Ajax.setListeners = function() {
     var method = thisFocus.getAttribute('formmethod') || thisForm.getAttribute('method')
     var action = thisFocus.getAttribute('formaction') || thisForm.action
     var reaction = thisFocus.dataset.response || thisForm.dataset.response
-    // proprietary form handler!
-    return Ajax.fetch({
-      method: method, // supports PUT PATCH DELETE POST
-      url: action,
-      headers:{ // allow the form to suggest ways of receiving the data
-        modal: true,
-        Accept: /json/gi.test(thisForm.dataset.response) ? 'application/json' : undefined,
-      },
-      body:thisForm
+
+    return Promise.try(() => {
+      if(thisForm.enctype == "multipart/form-data") {
+        return Ajax.serializeMultipart(thisForm)
+      }
+      return Ajax.serialize(thisForm)
     })
+    .then( body => {
+      return Ajax.fetch({
+        method: method, // supports PUT PATCH DELETE POST
+        url: action,
+        headers:{ // allow the form to suggest ways of receiving the data
+          modal: true,
+          Accept: /json/gi.test(thisForm.dataset.response) ? 'application/json' : undefined,
+        },
+        body: body
+      })
+    })
+    // proprietary form handler!
     .then(xhr => {
       let redirect = xhr.getResponseHeader('X-Redirect')
       if(redirect) {
@@ -160,53 +173,45 @@ Ajax.setListeners = function() {
 }
 
 Ajax.fetch = Promise.method(function(args={}) {
-  return Promise.try(() => {
-    args = Object.assign({headers:{}, method:'GET'}, args)
-    if(!args.body) return null;
-    if(args.body.enctype === "multipart/form-data") {
-      // return the file uploader or convert data into multipart/form-data
-      // this needs to be async, since it needs to read the files
-      return Ajax.serializeMultipart(args.body)
-    }
-    args.headers['Content-Type'] = 'application/json'
-    return JSON.stringify(Ajax.serialize(args.body))
-  })
-  .then(data => {
-    // for ordinary form data, send the serialized, stingified form data as a string
-    let headers = {
-      'X-Requested-With': 'XMLHttpRequest'
-    };
 
+  // for ordinary form data, send the serialized, stingified form data as a string
+  let headers = {
+    'X-Requested-With': 'XMLHttpRequest'
+  };
 
-    return new Promise(function(resolve,reject) {
-      let xhr = new XMLHttpRequest()
+  return new Promise(function(resolve,reject) {
+    let xhr = new XMLHttpRequest()
 
-      Object.assign(headers, args.headers)
+    Object.assign(headers, args.headers)
 
-      // convert body to query string for get requests
-      if(args.method.toUpperCase() === 'GET' && data) {
+    let data = args.body;
+    // convert body to query string for get requests
+    if(typeof args.body === 'object') {
+      data = JSON.stringify(args.body);
+
+      if(args.method.toUpperCase() === 'GET') {
         args.url += Object.toQueryString(args.body)
-        console.log(data, args.body, args.url)
       }
+    
+    }
 
-      xhr.open(args.method.toUpperCase(), args.url)
+    xhr.open(args.method.toUpperCase(), args.url)
 
-      for(let key in headers) xhr.setRequestHeader(key, headers[key]);
+    for(let key in headers) xhr.setRequestHeader(key, headers[key]);
 
-      xhr.send(data)
+    xhr.send(data);
 
-      xhr.onreadystatechange = function() {
-        if(xhr.readyState == XMLHttpRequest.DONE) {
-          document.body.classList.remove('loading');
-          return resolve(xhr)
-        }
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState == XMLHttpRequest.DONE) {
+        document.body.classList.remove('loading');
+        return resolve(xhr)
       }
+    }
 
-      xhr.onerror = function(e) {
-        return reject(new Error('An error occurred with the XHR Request'))
-      }
+    xhr.onerror = function(e) {
+      return reject(new Error('An error occurred with the XHR Request'))
+    }
 
-    })
   })
 });
 

@@ -49,13 +49,17 @@ module.exports = function(sequelize, DataTypes) {
     freezeTableName: true,
     classMethods: {
       associate: function(models) {
-        Lore.belongsTo(models.User, {as:'owner'})
+        Lore.belongsTo(models.User, {as:'owner'});
+
+        Lore.addScope('defaultScope', {
+          sort: [['updatedAt','DESC']]
+        }, {override:true} )
+
       }
     }
   });
 
   Lore.Instance.prototype.ownedBy = function(user) {
-    console.log(user.id, this.ownerId);
     return user.id === this.ownerId
   }
 
