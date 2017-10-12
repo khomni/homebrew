@@ -1,94 +1,62 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-import Ajax from '../ajax';
+import {
+  BrowserRouter as Router,
+  Route,
+  Link
+} from 'react-router-dom';
+
 import Promise from 'bluebird';
 
-global.Ajax = Ajax;
 global.Promise = Promise;
 
-import Navbar from './components/navbar';
-import Draggable from './components/draggable';
-import CharStatus from './components/character/status';
-import Views from './views/index'
+/* ==============================
+ * Components
+ * ============================== */
+
+// import Navbar from './components/navbar'
+import Home from './views/home'
+import Dropdown from './components/dropdown'
+import Navlink from './components/navlink'
 
 export default class Root extends React.Component {
   constructor(props) {
     super(props);
-    this.loadView = this.loadView.bind(this);
 
-    this.state = {
-      initialized: false,
-      _user: null,
-      _campaign: null,
-      _character: null,
-      view: 'Home', // the keyed value of the homepage
-      locals: {},
-    }
-  }
-
-  // loads resources into local variables and changes the view
-  // can take any kind of request, and will load the component with the response as props
-  loadView(view, request) { 
-    if(!request) return this.setState({view:view})
-    return Ajax.json(request)
-    .then(response => {
-      this.setState({
-        view: view,
-        locals: response
-      })
-    })
-  
+    this.state = { }
   }
 
   componentDidMount() {
-    if(!this.state.user) {
-      return Ajax.json({url: '/?session'})
-      .then(data => {
-        this.setState({
-          initialized:true,
-          _user: data.user,
-          _character: data.character,
-          _campaign: data.campaign
-        });
-      })
-      .catch(err => console.error(err.stack))
-    }
+
   }
 
   render() {
-    let CurrentView = Views[this.state.view]
+    return (
+      <Router>
+        <div>
+          <nav className="navigation">
+            <Link to="/" className="navlink">Home</Link>
+            <Dropdown label="Account">
+              <Link to="/u" className="navlink">Account</Link>
+              <Link to="/u/inbox" className="navlink">Inbox</Link>
+            </Dropdown>
+            <Dropdown label="Character">
+              <Link to="/pc/new" className="navlink">New Character</Link>
+            </Dropdown>
+            <Dropdown label="Campaign">
+              <Link to="/c/" className="navlink">Find Campaigns</Link>
+            </Dropdown>
+          </nav>
 
-    return <div>
+          <div id="content-wrapper" className="marble">
 
-      <Navbar  
-        loadView={this.loadView}
-        user={this.state._user} 
-        campaign={this.state._campaign} 
-        character={this.state._character} />
-      <div id="content-wrapper" className="marble">
-      
-      {this.state.character && 
-        <Draggable>
-          <CharStatus character={this.state.character} />
-        </Draggable>
-      }
+            <Route exact path="/" component={Home}/>
 
-      {this.state.view && 
-        <div className="app-area">
-          <CurrentView 
-            user={this.state.user} 
-            character={this.state.character}
-            campaign={this.state.campaign}
-            {...this.state.locals}
-          /> 
+          </div>
         </div>
-      }
-
-      </div>
-      
-
-    </div>
+      </Router>
+    )
   }
 }
 

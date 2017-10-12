@@ -1,12 +1,16 @@
 import React from 'react';
 import { render } from 'react-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Link
+} from 'react-router-dom';
 
-export default class Home extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+const Home = ({match}) => (
+  <div>
+    <h1>Home</h1>
+  </div>
+)
 
-  render() {
-    return null;
-  }
-}
+export default Home
+

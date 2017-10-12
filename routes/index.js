@@ -16,12 +16,9 @@ router.get('/', (req, res, next) => {
       campaign: req.user && req.user.MainChar && req.user.MainChar.Campaign || null
     });
   }
-  if(!req.user) return res.render('index');
-  if(!req.user) return res.redirect('/login');
-
+  return res.render('react');
   return res.render('index');
 
-  // res.render('react');
 });
 
 router.get('/login',(req,res,next) => {
