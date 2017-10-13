@@ -3,7 +3,8 @@ import { render } from 'react-dom';
 import {
   BrowserRouter as Router,
   Route,
-  Link
+  Link,
+  Media,
 } from 'react-router-dom';
 
 const Home = ({match}) => (

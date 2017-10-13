@@ -1,12 +1,11 @@
 import React from 'react';
 
 import Dropdown from './dropdown'
-import Navlink from './navlink'
 
 import {
   BrowserRouter as Router,
-  Route,
-  Link
+  Route, Switch,
+  Link, NavLink
 } from 'react-router-dom';
 
 export default class Navbar extends React.Component {
@@ -21,18 +20,19 @@ export default class Navbar extends React.Component {
     return (
       <nav className="navigation">
         <Dropdown label="?" >
-          <Navlink> Account </Navlink>
-          <Navlink> Inbox </Navlink>
-          <Navlink> Log Out </Navlink>
+          <NavLink to="/account" className="navlink" activeClassName="active"> Account </NavLink>
+          <NavLink to="/messages" className="navlink" activeClassName="active"> Inbox </NavLink>
+          <NavLink to="/logout" className="navlink" activeClassName="active"> Log Out </NavLink>
         </Dropdown>
 
         <Dropdown label="Campaign">
-          <Navlink href="/c/new" > New Campaign </Navlink>
-          <Navlink href="/c/" view="Campaign" {...this.props}> Campaigns </Navlink>
+          <NavLink to="/c/" className="navlink" activeClassName="active"> Campaigns </NavLink>
+          <NavLink to="/c/new" className="navlink" activeClassName="active"> New Campaign </NavLink>
         </Dropdown>
 
         <Dropdown label="Character">
-          <Navlink disabled={!this.props.campaign} href="/pc/new">New Character</Navlink>
+          <NavLink to="/pc" className="navlink" disabled={!this.props.campaign} activeClassName="active">New Character</NavLink>
+          <NavLink to="/pc/new" className="navlink" disabled={!this.props.campaign} activeClassName="active">New Character</NavLink>
         </Dropdown>
 
       </nav>

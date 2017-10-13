@@ -4,7 +4,8 @@ import { render } from 'react-dom';
 import {
   BrowserRouter as Router,
   Route,
-  Link
+  Link, NavLink,
+  Media,
 } from 'react-router-dom';
 
 import Promise from 'bluebird';
@@ -17,8 +18,7 @@ global.Promise = Promise;
 
 // import Navbar from './components/navbar'
 import Home from './views/home'
-import Dropdown from './components/dropdown'
-import Navlink from './components/navlink'
+import Navbar from './components/navbar'
 
 export default class Root extends React.Component {
   constructor(props) {
@@ -33,33 +33,22 @@ export default class Root extends React.Component {
 
   render() {
     return (
-      <Router>
-        <div>
-          <nav className="navigation">
-            <Link to="/" className="navlink">Home</Link>
-            <Dropdown label="Account">
-              <Link to="/u" className="navlink">Account</Link>
-              <Link to="/u/inbox" className="navlink">Inbox</Link>
-            </Dropdown>
-            <Dropdown label="Character">
-              <Link to="/pc/new" className="navlink">New Character</Link>
-            </Dropdown>
-            <Dropdown label="Campaign">
-              <Link to="/c/" className="navlink">Find Campaigns</Link>
-            </Dropdown>
-          </nav>
+      <div>
+        <Navbar {...this.props}/>
+        <div id="content-wrapper" className="marble">
 
-          <div id="content-wrapper" className="marble">
+          <Route exact path="/" component={Home}/>
 
-            <Route exact path="/" component={Home}/>
-
-          </div>
         </div>
-      </Router>
+      </div>
     )
   }
 }
 
 let root = document.getElementById('root')
 
-render(<Root/>, root);
+render(
+  <Router>
+    <Root/>
+  </Router>
+  , root);
