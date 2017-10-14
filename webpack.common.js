@@ -3,14 +3,13 @@ require('dotenv').config();
 const webpack = require('webpack');
 const path = require('path');
 
-const APP_DIR = path.join(__dirname, '/build');
+const APP_DIR = path.join(__dirname, '/src');
 const BUILD_DIR = path.join(__dirname, '/public/javascripts');
 
 module.exports = {
   entry: {
-    main: ['babel-preset-env', APP_DIR + '/main.js'],
-    bundle: ['babel-preset-env', APP_DIR + '/react/index.jsx'],
-    widgets: ['babel-preset-env', APP_DIR + '/react/widgets.jsx'],
+    app: ['babel-preset-env', path.join(APP_DIR, '/index.jsx')],
+    // main: ['babel-preset-env', APP_DIR + '/build/main.js'],
   },
   output: {
     path: BUILD_DIR,

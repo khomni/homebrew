@@ -30,6 +30,4 @@ document.onreadystatechange = function(){
   require('./listeners');
   require('./dataemissions');
 
-  require('./react/widgets');
-
 }

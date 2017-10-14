@@ -9,7 +9,6 @@ import {
 } from 'react-router-dom';
 
 import Promise from 'bluebird';
-
 global.Promise = Promise;
 
 /* ==============================
