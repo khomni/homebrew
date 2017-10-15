@@ -10,6 +10,7 @@ import {
 const Home = ({match}) => (
   <div>
     <h1>Home</h1>
+    <pre>{JSON.stringify(match,null,'  ')}</pre>
   </div>
 )
 

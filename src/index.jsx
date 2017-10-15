@@ -1,12 +1,26 @@
+/* ============================== 
+ * React
+ * ============================== */
+
 import React from 'react';
 import { render } from 'react-dom';
 
-import {
-  BrowserRouter as Router,
-  Route,
-  Link, NavLink,
-  Media,
-} from 'react-router-dom';
+/* ============================== 
+ * Redux
+ * ============================== */
+
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
+import reducer from './reducers';
+
+/* ============================== 
+ * React/Redux
+ * ============================== */
+
+const store = createStore( reducer, applyMiddleware(thunk) );
+
+import { BrowserRouter as Router } from 'react-router-dom';
 
 import Promise from 'bluebird';
 global.Promise = Promise;
@@ -16,38 +30,14 @@ global.Promise = Promise;
  * ============================== */
 
 // import Navbar from './components/navbar'
-import Home from './views/home'
-import Navbar from './components/navbar'
-
-export default class Root extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { }
-  }
-
-  componentDidMount() {
-
-  }
-
-  render() {
-    return (
-      <div>
-        <Navbar {...this.props}/>
-        <div id="content-wrapper" className="marble">
-
-          <Route exact path="/" component={Home}/>
-
-        </div>
-      </div>
-    )
-  }
-}
+import App from './containers/App';
 
 let root = document.getElementById('root')
 
 render(
-  <Router>
-    <Root/>
-  </Router>
-  , root);
+  <Provider store={store}>
+    <Router>
+      <App/>
+    </Router>
+  </Provider>
+, root);

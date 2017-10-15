@@ -17,8 +17,6 @@ router.get('/', (req, res, next) => {
     });
   }
   return res.render('react');
-  return res.render('index');
-
 });
 
 router.get('/login',(req,res,next) => {
@@ -44,7 +42,7 @@ router.post('/login', (req,res,next) => {
 
 router.use('/logout',(req,res,next) => {
   req.logOut();
-  req.session.destroy(()=>{
+  req.session.destroy(() => {
     res.clearCookie('Session');
     return res.redirect('/');
   })

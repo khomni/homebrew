@@ -6,6 +6,15 @@ const _ = require('lodash');
 
 module.exports = morgan((tokens, req, res) => {
   let log = []
+
+  /* ==================== 
+   * Worker / Time
+   * ==================== */
+
+  let d = new Date();
+  log.push(`${d.toLocaleDateString()}|${d.toLocaleTimeString()}`)
+  // log.push(d.toISOString())
+
   if(CONFIG.process.threads > 1) log.push(colors.process(`${process.pid}:`))
 
   /* ==================== 

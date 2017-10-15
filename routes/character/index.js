@@ -88,7 +88,7 @@ router.use('/:id', (req,res,next) => {
     character.owned = (req.user && character.ownerId == req.user.id)
     res.locals.character = character
     if(character.Campaign) {
-      if(req.user.id == character.Campaign.ownerId) character.Campaign.owned = true
+      if(req.user && req.user.id === character.Campaign.ownerId) character.Campaign.owned = true
       res.locals.campaign = character.Campaign
       res.locals.activeSystem = character.Campaign.system
     }

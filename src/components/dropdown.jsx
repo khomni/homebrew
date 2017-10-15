@@ -5,10 +5,15 @@ export default class Dropdown extends React.Component {
     super(props);
     this.handleMouseEnter = this.handleMouseEnter.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    this.toggleDropdownState = this.toggleDropdownState.bind(this);
 
     this.state = {
       expanded: false
     }
+  }
+
+  toggleDropdownState(){
+    this.setState({expanded: !this.state.expanded});
   }
 
   handleMouseEnter(event){
@@ -21,7 +26,8 @@ export default class Dropdown extends React.Component {
 
   render() {
     return <div className={this.state.expanded ? "dropdown active" : "dropdown"}
-    onMouseEnter={this.handleMouseEnter}
+    onClick={this.toggleDropdownState}
+    onMouseEnter={false && this.handleMouseEnter}
     onMouseLeave={this.handleMouseLeave}>
       <label className="dropdown-label">{this.props.label}</label>
       { this.state.expanded && 
