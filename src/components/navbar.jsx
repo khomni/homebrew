@@ -22,11 +22,12 @@ export default class Navbar extends React.Component {
     return (
       <nav className="navigation">
         { user ? (
-        <Dropdown label={user && user.username || "?"} >
+          <Dropdown label={user && user.username || "?"} >
             <NavLink to={user.url} className="navlink" activeClassName="active"> Account </NavLink>
             <NavLink to="/messages" className="navlink" activeClassName="active">Inbox</NavLink>
             <NavLink to="/logout" className="navlink" activeClassName="active">Log Out</NavLink>
-        </Dropdown>
+            <NavLink to={user.url + '/pc'} className="navlink" activeClassName="active">My Characters</NavLink>
+          </Dropdown>
         ) : (
           <NavLink to="/signup" className="navlink" activeClassName="active">Signup</NavLink>
         )}

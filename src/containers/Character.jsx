@@ -1,47 +1,51 @@
 import React from 'react';
+import ReloadingView from '../utils/ReloadingView'
 import { withRouter, Route, Link, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
+
 import { connect } from 'react-redux';
+import { getResource } from '../actions';
 
-import Items from './Inventory';
+import Error from '../components/Error';
+import Items from './Items';
+import Journal from './Journal';
+import Knowledge from './Knowledge';
 
-class CharacterSheet extends React.Component {
+class CharacterSheet extends ReloadingView {
   constructor(props) {
     super(props);
+    this.onFetch = this.onFetch.bind(this);
 
-    this.state = { character: null }
+    this.state = { character: this.props.character }
   }
 
-  componentWillMount() {
-    let { match } = this.props
-
-    return fetch(match.url, {credentials: 'include', headers: {Accept: 'application/json'}})
-    .then(response => response.json())
-    .then(json => {
-      this.setState({character: json})
-    })
-
-    // dispatch actions on app start
+  onFetch(data) {
+    this.setState({character:data});
   }
 
   render() {
-    let {character} = this.state;
     let { match } = this.props;
+    let { error, character} = this.state
+
+    if(error) return (
+      <Error error={error}/>
+    )
+
     // TODO: before character is initialized, show a loading effect
     if(!character) return null;
 
     return (
-      <div>
+      <div key={match.url}>
         {character.Images.map(image => {
-          return <img src={image.path} alt={character.name}/>
+          return <img key={image.id} src={image.path} alt={character.name}/>
         })}
         <h1>{character.name}</h1>
-        <pre>{JSON.stringify(character,null,'  ')}</pre>
+        <label>{`As of ${this.lastFetch.toLocaleString()}`}</label>
 
         <Switch>
           <Route path={match.url + "/inventory"} component={Items}/>
+          <Route path={match.url + "/journal"} component={Journal}/>
         </Switch>
-
 
       </div>
     )
@@ -53,6 +57,7 @@ CharacterSheet.propTypes = {
 }
 
 const mapStatetoProps = (state, ownProps) => {
+  // let { character } = state.resources;
   return {}
 }
 

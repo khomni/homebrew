@@ -7,10 +7,11 @@ import {
   Media,
 } from 'react-router-dom';
 
+import Character from '../../containers/Character';
+
 const Home = ({match}) => (
   <div>
     <h1>Home</h1>
-    <pre>{JSON.stringify(match,null,'  ')}</pre>
   </div>
 )
 

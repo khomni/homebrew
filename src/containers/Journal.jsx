@@ -3,50 +3,55 @@ import { withRouter, Route, Link, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 
-class Items extends React.Component {
+class Journal extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { items: [] }
+    this.state = { journal: null }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     let { match } = this.props
+    let journal = this.props.journal || this.state.journal
+
+    if(journal) return;
 
     return fetch(match.url, {credentials: 'include', headers: {Accept: 'application/json'}})
     .then(response => response.json())
     .then(json => {
-      let {items, total} = json
-
-      this.setState({items, total})
+      this.setState({journal: json})
     })
 
     // dispatch actions on app start
   }
 
   render() {
-    let { items } = this.state;
     let { match } = this.props;
+    let { journal } = this.state;
     // TODO: before character is initialized, show a loading effect
 
     return (
       <div>
-        <h2> Inventory </h2>
-        {items.map(item => {
-          return <pre key={item.id}>{JSON.stringify(item, null, '  ')}</pre>
+        <h2> Journal </h2>
+        {journal && journal.map(entry => {
+          return <pre key={entry.id}>{JSON.stringify(entry, null, '  ')}</pre>
         })}
       </div>
     )
   }
 }
 
-Items.propTypes = {
-  dispatch: PropTypes.func.isRequired
+Journal.propTypes = {
+  // dispatch: PropTypes.func.isRequired
 }
 
+/*
 const mapStatetoProps = (state, ownProps) => {
   return {}
 }
 
 export default withRouter(connect(mapStatetoProps)(Items))
+*/
+export default Journal
+
 

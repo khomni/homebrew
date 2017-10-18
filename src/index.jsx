@@ -20,7 +20,7 @@ import reducer from './reducers';
 
 const store = createStore( reducer, applyMiddleware(thunk) );
 
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, browserHistory } from 'react-router-dom';
 
 import Promise from 'bluebird';
 global.Promise = Promise;
@@ -36,7 +36,7 @@ let root = document.getElementById('root')
 
 render(
   <Provider store={store}>
-    <Router>
+    <Router history={browserHistory}>
       <App/>
     </Router>
   </Provider>

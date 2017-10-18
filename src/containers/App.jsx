@@ -8,7 +8,7 @@ import { PropTypes } from 'prop-types';
 
 import Navbar from '../components/navbar.jsx'
 
-import { withRouter, Route, Link } from 'react-router-dom';
+import { withRouter, Route, Link, Redirect } from 'react-router-dom';
 
 /* ============================== 
  * React-Router Views
@@ -16,6 +16,7 @@ import { withRouter, Route, Link } from 'react-router-dom';
 
 import Campaign from '../components/views/campaign'
 import Character from '../components/views/characters.jsx'
+import CharacterSheet from './Character.jsx'
 import Home from '../components/views/home'
 import User from '../components/views/user'
 
@@ -40,6 +41,7 @@ class App extends React.Component {
   }
 
   render() {
+    let { user, character, campaign } = this.props.session;
     return (
       <div>
         <Navbar {...this.props}/>
@@ -63,7 +65,7 @@ App.propTypes = {
 
 // hook Redux state into app props
 const mapStatetoProps = (state, ownProps) => {
-  let {user, character, campaign} = state;
+  let {user, character, campaign} = state.session;
 
   return {
     session: {

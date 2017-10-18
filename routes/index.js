@@ -6,8 +6,6 @@ var router = express.Router();
 var passport = require('passport');
 
 // Home Page
-// if not logged in, render a splash page
-// TODO: Could be a React App if the user is logged in
 router.get('/', (req, res, next) => {
   if(req.json) {
     return res.json({
@@ -16,8 +14,18 @@ router.get('/', (req, res, next) => {
       campaign: req.user && req.user.MainChar && req.user.MainChar.Campaign || null
     });
   }
-  return res.render('react');
+  return next();
 });
+
+/* ==============================
+ * React: redirect all requests to the app to let the internal router handle it
+ *      TODO: remove all other rendering methods in favor of the react app
+ * ============================== */
+
+router.use('/', (req,res,next) => {
+  if(req.json) return next();
+  return res.render('react');
+})
 
 router.get('/login',(req,res,next) => {
   if(req.modal) return res.render('users/_login');

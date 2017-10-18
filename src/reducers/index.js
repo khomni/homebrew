@@ -9,14 +9,15 @@ import {
   SET_CAMPAIGN,
 } from '../constants/ActionTypes'
 
-// const reducers = combineReducers({ })
+import resources from './resources';
+
 const initialState = {
   user: null,
   character: null,
   campaign: null,
 }
 
-const reducers = (state = initialState, action) => {
+const session = (state = initialState, action) => {
   switch(action.type) {
     case SET_USER:
       return {...state, user: action.user}
@@ -28,6 +29,11 @@ const reducers = (state = initialState, action) => {
       return state
   }
 }
+
+const reducers = combineReducers({
+  resources,
+  session
+})
 
 export default reducers 
 

@@ -4,6 +4,13 @@ import {
   SET_CAMPAIGN,
 } from '../constants/ActionTypes';
 
+export * from './resources';
+
+const defaultOptions = {
+  headers: {Accept: 'application/json'},
+  credentials: 'include'
+}
+
 /* ============================== 
  * Sync Actions
  * ============================== */
@@ -27,13 +34,9 @@ export const setCampaign = campaign => ({
  * Thunks
  * ============================== */
 
-//
 export const getSession = () => (dispatch, getState) => {
 
-  return fetch('/', {
-    headers: {Accept: 'application/json'},
-    credentials: 'include'
-  })
+  return fetch(`/?session=${Date.now()}`, defaultOptions)
   .then(response => response.json())
   .then(json => {
 

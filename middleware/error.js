@@ -17,7 +17,7 @@ module.exports = (err, req, res, next) => {
 
 
   Promise.all(errorActions)
-  .catch(err => {console.error(err)})
+  .catch(err => console.error(err))
   .finally(()=>{
     // if(req.json) return res.status(err.status).send(err)
     if(req.modal) {
@@ -27,8 +27,9 @@ module.exports = (err, req, res, next) => {
 
     if(req.json) return res.status(err.status).json({
       message: err.message, 
+      status: err.status,
       error: err, 
-      stack: process.env.NODE_ENV!='production'?err.stack.split(/\n\s*/g):undefined
+      stack: process.env.NODE_ENV !== 'production' ? err.stack.split(/\n\s*/g) : undefined
     }) // when looking for a json response, render an error modal anyway
 
     return res.render('error', {message: err.message, error: err})

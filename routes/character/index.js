@@ -10,7 +10,7 @@ router.get('/', Common.middleware.requireUser, (req, res, next) => {
   }
 
   if('search' in req.query) {
-    query.where = {$name: {$like: '%' + req.query.search.toLowerCase() + '%'}}
+    query.where = {$name: {$iLike: '%' + req.query.search + '%'}}
   }
 
   return Promise.try(() => {
@@ -61,6 +61,7 @@ router.post('/select', Common.middleware.requireUser, (req, res, next) => {
 
   return req.user.getCharacters({where: isNaN(req.body.id) ? {url:req.body.id} : {id:req.body.id}})
   .then(characters => {
+    console.log(characters, req.user, req.body.id)
     let character = characters[0];
     if(!character) throw Common.error.authorization("You don't own that character")
     return req.user.setMainChar(character)
