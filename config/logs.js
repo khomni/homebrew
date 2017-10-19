@@ -12,7 +12,7 @@ module.exports = morgan((tokens, req, res) => {
    * ==================== */
 
   let d = new Date();
-  log.push(`${d.toLocaleDateString()}|${d.toLocaleTimeString()}`)
+  log.push(`${_.padStart(d.toLocaleDateString(),10,'0')}${colors.grey('|')}${_.padStart(d.toLocaleTimeString(), 11, '0')}`)
   // log.push(d.toISOString())
 
   if(CONFIG.process.threads > 1) log.push(colors.process(`${process.pid}:`))

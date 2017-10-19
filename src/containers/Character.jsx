@@ -9,9 +9,9 @@ import { getResource } from '../actions';
 import Error from '../components/Error';
 import Items from './Items';
 import Journal from './Journal';
-import Knowledge from './Knowledge';
+import LoreContainer from './Lore';
 
-class CharacterSheet extends ReloadingView {
+class Character extends ReloadingView {
   constructor(props) {
     super(props);
     this.onFetch = this.onFetch.bind(this);
@@ -34,6 +34,16 @@ class CharacterSheet extends ReloadingView {
     // TODO: before character is initialized, show a loading effect
     if(!character) return null;
 
+    // TODO: use the Character container to handle both characters and lists of characters
+    // TODO: more support for character routes with options based on context
+    if(Array.isArray(character)) return (
+      <div key={match.url}>
+        {character.map(character => {
+          return <Link key={character.id} to={character.url}>{character.name}</Link>
+        })}
+      </div>
+    )
+
     return (
       <div key={match.url}>
         {character.Images.map(image => {
@@ -45,6 +55,7 @@ class CharacterSheet extends ReloadingView {
         <Switch>
           <Route path={match.url + "/inventory"} component={Items}/>
           <Route path={match.url + "/journal"} component={Journal}/>
+          <Route path={match.url + "/knowledge"} component={LoreContainer}/>
         </Switch>
 
       </div>
@@ -52,7 +63,7 @@ class CharacterSheet extends ReloadingView {
   }
 }
 
-CharacterSheet.propTypes = {
+Character.propTypes = {
   dispatch: PropTypes.func.isRequired
 }
 
@@ -61,4 +72,4 @@ const mapStatetoProps = (state, ownProps) => {
   return {}
 }
 
-export default withRouter(connect(mapStatetoProps)(CharacterSheet))
+export default withRouter(connect(mapStatetoProps)(Character))
