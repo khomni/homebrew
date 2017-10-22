@@ -49,6 +49,7 @@ export default class Navbar extends React.Component {
         { user && campaign ? (
           <Dropdown label="Campaign">
             <NavLink to={campaign.url} className="navlink" activeClassName="active">{campaign.name}</NavLink>
+            <NavLink to={campaign.url + 'pc'} className="navlink" activeClassName="active">Characters</NavLink>
             <NavLink to={campaign.url + 'quests'} className="navlink" activeClassName="active">Quests</NavLink>
             <NavLink to={campaign.url + 'calendar'} className="navlink" activeClassName="active">Calendar</NavLink>
             <NavLink to={campaign.url + 'locations'} className="navlink" activeClassName="active">Locations</NavLink>

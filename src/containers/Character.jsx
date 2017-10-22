@@ -11,6 +11,8 @@ import Items from './Items';
 import Journal from './Journal';
 import LoreContainer from './Lore';
 
+import { CharacterSheet, CharacterCard, CharacterList } from '../components/characters';
+
 class Character extends ReloadingView {
   constructor(props) {
     super(props);
@@ -20,29 +22,22 @@ class Character extends ReloadingView {
   }
 
   onFetch(data) {
-    this.setState({character:data});
+    // determine if the data being returned is a character or list of characters
+    if(Array.isArray(data)) return this.setState({characters: data, character: null}) 
+    this.setState({character: data, charactes: null})
   }
 
   render() {
     let { match } = this.props;
-    let { error, character} = this.state
+    let { error, character, characters } = this.state
 
-    if(error) return (
-      <Error error={error}/>
-    )
-
-    // TODO: before character is initialized, show a loading effect
-    if(!character) return null;
+    if(error) return <Error error={error}/>
+    if(!character && !characters) return null;
 
     // TODO: use the Character container to handle both characters and lists of characters
     // TODO: more support for character routes with options based on context
-    if(Array.isArray(character)) return (
-      <div key={match.url}>
-        {character.map(character => {
-          return <Link key={character.id} to={character.url}>{character.name}</Link>
-        })}
-      </div>
-    )
+    console.log(this.state);
+    if(characters) return <CharacterList characters={characters}/>
 
     return (
       <div key={match.url}>
@@ -51,6 +46,8 @@ class Character extends ReloadingView {
         })}
         <h1>{character.name}</h1>
         <label>{`As of ${this.lastFetch.toLocaleString()}`}</label>
+
+        {match.isExact && <CharacterSheet character={character}/>}
 
         <Switch>
           <Route path={match.url + "/inventory"} component={Items}/>

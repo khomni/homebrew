@@ -14,7 +14,7 @@ import { Link, Switch, Redirect, Route, withRouter} from 'react-router-dom';
  * React-Router Views
  * ============================== */
 
-import Campaign from '../components/views/campaign'
+import Campaign from './Campaign'
 // import Character from '../components/views/characters.jsx'
 import Character from './Character.jsx'
 import Home from '../components/views/home'
@@ -49,10 +49,11 @@ class App extends React.Component {
 
           <Switch>
             <Route exact path="/" component={Home}/>
-            <Route path="/c/" component={Campaign}/>
+            <Route exact path="/c" component={Campaign}/>
+            <Route path="/c/:slug" component={Campaign}/>
             <Route exact path="/pc" component={Character}/>
             <Route path="/pc/:slug" component={Character}/>
-            <Route exact path="/u/" component={User}/>
+            <Route exact path="/u" component={User}/>
             <Route path="/u/:username" component={User}/>
           </Switch>
 

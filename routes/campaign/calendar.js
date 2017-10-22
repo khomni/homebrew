@@ -8,11 +8,11 @@ router.use((req, res, next) => {
   res.locals.breadcrumbs.push({name: "Calendar", url:req.baseUrl});
 
   return res.locals.campaign.getCalendar()
-  .then(calendar => {
-    return next();
-  })
-  .catch(next);
+  .finally(next)
+  .catch(next)
 })
+
+
 
 router.get('/edit', Common.middleware.requireGM, (req, res, next) => {
   return res.render('campaign/calendar/edit')
@@ -84,8 +84,9 @@ router.use('/event/:id', (req, res, next) => {
   return db.Event.findOne({where:{id:req.params.id}})
   .then(event => {
     event.time = res.locals.campaign.Calendar.dateFromTimestamp(event);
-    event.owned = req.user && (event.ownerId == req.user.id)
-    return res.locals.event = event
+    event.owned = req.user && (event.ownerId === req.user.id);
+    res.locals.event = event;
+    return;
   })
   .finally(next)
   .catch(next);
@@ -131,7 +132,10 @@ eventRouter.delete('/', Common.middleware.verifyOwner('event.owned'), (req, res,
 // the default calendar page, defaults to displaying the month around the present day, if possible
 router.get('/:year?/:month?', (req,res,next) => {
 
-  if(!res.locals.campaign.Calendar) return res.redirect(req.baseUrl + '/edit')
+  if(!res.locals.campaign.Calendar) {
+    if(req.json) return res.json(null);
+    return res.redirect(req.baseUrl + '/edit')
+  }
 
   let calendarRange
   let targetDate = res.locals.campaign.Calendar&&res.locals.campaign.Calendar.now || {year:1,monthIndex:0}
@@ -143,15 +147,15 @@ router.get('/:year?/:month?', (req,res,next) => {
 
     res.locals.navigation.previous = {
       anchor: req.baseUrl + '/' + [
-        (targetDate.monthIndex) == 0 ? targetDate.year-1 : targetDate.year,
-        Common.zeropad(targetDate.monthIndex == 0 ? res.locals.campaign.Calendar.months.length : ((targetDate.monthIndex-1) % res.locals.campaign.Calendar.months.length) + 1, 2)
+        (targetDate.monthIndex) === 0 ? targetDate.year-1 : targetDate.year,
+        Common.zeropad(targetDate.monthIndex === 0 ? res.locals.campaign.Calendar.months.length : ((targetDate.monthIndex-1) % res.locals.campaign.Calendar.months.length) + 1, 2)
       ].join('/'),
     }
 
     res.locals.navigation.next = {
       anchor: req.baseUrl + '/' + [
-        (targetDate.monthIndex+1) == res.locals.campaign.Calendar.months.length ? targetDate.year+1 : targetDate.year,
-        Common.zeropad(targetDate.monthIndex+1 == res.locals.campaign.Calendar.months.length ? 1 : ((targetDate.monthIndex+1) % res.locals.campaign.Calendar.months.length) + 1, 2)
+        (targetDate.monthIndex+1) === res.locals.campaign.Calendar.months.length ? targetDate.year+1 : targetDate.year,
+        Common.zeropad(targetDate.monthIndex+1 === res.locals.campaign.Calendar.months.length ? 1 : ((targetDate.monthIndex+1) % res.locals.campaign.Calendar.months.length) + 1, 2)
       ].join('/'),
     }
 
@@ -174,7 +178,7 @@ router.get('/:year?/:month?', (req,res,next) => {
 
   }
 
-  calendarRange = calendarRange ||[
+  calendarRange = calendarRange || [
     { 
       year: targetDate.year, 
       month: targetDate.monthIndex+1 },
@@ -234,7 +238,7 @@ router.get('/:year/:month/:day', (req, res, next) => {
   .then(events => {
     events = events.sort((a,b) => {return a.timestamp[0] - b.timestamp[0]})
     let day = res.locals.campaign.Calendar.dateFromTimestamp(start)
-    events.map(e => e.time = res.locals.campaign.Calendar.dateFromTimestamp(e))
+    events.map(e => {e.time = res.locals.campaign.Calendar.dateFromTimestamp(e)})
     if(req.json) return res.json({year: day.year, month: day.month, date: day.date, weekday: day.weekday, events: events})
     if(req.modal) return res.render('campaign/calendar/_day', {events: events, day: day})
     return next();
