@@ -1,15 +1,39 @@
 import { Component } from 'react';
 
+import { ITEMS_PER_PAGE } from '../constants'
+
 export default class ReloadingView extends Component {
   constructor(props) {
     super(props);
     this.loadData = this.loadData.bind(this);
+    this.setFilter = this.setFilter.bind(this);
+
+    let defaultFilter = Object.assign({
+      search: '',
+      layout: null,
+      key: 'updatedAt',
+      order: -1,
+      page: 0,
+      results: ITEMS_PER_PAGE,
+    }, this.props.filter || {})
 
     this.state = {
       initialized: false,
       mountedRoute: this.props.match.url,
+      filter: defaultFilter
     }
   }
+
+  setFilter(event) {
+    let { name, value } = event.target
+    let { filter } = this.state
+
+    value = !isNaN(value) && value !== '' ? Number(value) : value
+
+    this.setState({filter: {...filter, [name]: value}})
+    // this.setState({filter})
+  }
+  
 
   // TODO: use document.hasFocus() to only reload resources when the document has focus
   loadData(props) {
@@ -47,6 +71,7 @@ export default class ReloadingView extends Component {
       .then(() => this.setState({mountedRoute: match.url, initialized:true}))
     })
     .catch(err => {
+      console.error(err);
       err.status = 500
       err.stack = err.stack.split('\n')
 

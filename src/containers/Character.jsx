@@ -36,7 +36,6 @@ class Character extends ReloadingView {
 
     // TODO: use the Character container to handle both characters and lists of characters
     // TODO: more support for character routes with options based on context
-    console.log(this.state);
     if(characters) return <CharacterList characters={characters}/>
 
     return (

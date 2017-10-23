@@ -4,51 +4,35 @@ import { withRouter, Route, Link, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 
-import Lore from '../components/views/Lore';
+import Lore, { LoreList } from '../components/lore';
 
 class LoreContainer extends ReloadingView {
   constructor(props) {
     super(props);
     this.onFetch = this.onFetch.bind(this);
-    this.onFilterChange = this.onFilterChange.bind(this);
 
-    this.state = { 
-      lore: this.props.lore || [],
-      filter: '',
-    }
   }
 
   onFetch(lore) {
+    if(!Array.isArray(lore)) lore = [lore]
     this.setState({lore})
-  }
-
-  onFilterChange(e){
-    let filter = e.target.value;
-    try {
-      let regex = new RegExp(filter, 'mig');
-      this.setState({invalidFilter: false, filter, regex});
-    } catch(e) {
-      this.setState({invalidFilter: true, filter})
-    }
   }
 
   render() {
     let { match, name } = this.props
-    let { invalidFilter, error, lore, filter, regex} = this.state
-
-    name = name || 'Lore'
-
-    lore = lore ? lore.filter(l => !filter || l.content.match(regex) ) : []
+    let { invalidFilter, error, lore, filter } = this.state
 
     if(error) return ( <Error error={error}/> )
-
     if(!lore) return null;
+    console.log(LoreList);
+
+    name = name || 'Lore'
+    lore = lore.filter(l => !filter.search || l.content.match(new RegExp(filter.search, 'mig')) )
 
     return (
       <div>
-        <h2> Lore </h2>
-        <input className={'form-input' + (invalidFilter ? ' error' : '')} onChange={this.onFilterChange} value={filter} placeholder={`Search ${name}`}/>
-        {lore && lore.map(lore => <Lore key={lore.id} lore={lore}/>)}
+        <h2>Lore</h2>
+        <LoreList match={match} lore={lore} filter={filter} setFilter={this.setFilter}/>
       </div>
     )
   }

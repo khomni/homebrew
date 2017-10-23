@@ -4,42 +4,49 @@ import { withRouter, Route, Link, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 
+import { Items as ItemList, Item } from '../components/items';
+import { ITEMS_PER_PAGE } from '../constants';
+
 class Items extends ReloadingView {
   constructor(props) {
     super(props);
-
-    this.state = { item: null, sort: ['updatedAt', -1] }
   }
 
-  onFetch(item) {
-    this.setState({item});
+  onFetch(data) {
+    if(data.items) return this.setState({items: data.items, total: data.total, item: null}) 
+    this.setState({item: data, items: null, total: null})
   }
 
   render() {
     let { match } = this.props;
-    let { item, sort } = this.state;
-    // TODO: before character is initialized, show a loading effect
+    let { item, items, total, filter, error } = this.state;
 
-    if(!item) return null;
+    if(error) return <Error error={error}/>
 
-    if(item.items) {
-      let { items } = item
-      items = items ? items.sort((a,b) => a[sort[0]] - b[sort[0]] * sort[1]) : []
+    if(items) {
+      let {page, key, order, search, results} = filter
+      let start = page * results
+      let end = start + results
+      total.entries = items.length;
 
-      return (
-        <div key={match.url}>
-          {items.map(item => {
-            return <pre key={item.id}>{JSON.stringify(item, null, '  ')}</pre>
-          })}
-        </div>
-      )
+      items = items
+      .sort((a,b) => {
+        if(a[key] > b[key]) return order
+        if(a[key] < b[key]) return order * -1
+        return 0
+      })
+      .filter(item => !filter.search || item.name && item.name.match(new RegExp(filter.search, 'mig')))
+        .slice(start, end)
     }
 
+    if(item) return <Item item={item} match={match}/>
+
     return (
-      <div key={match.url}>
+      <div>
+        {items && <ItemList items={items} total={total} filter={filter} setFilter={this.setFilter} match={match}/>}
+        <Route path={match.url + '/:id'} component={Items}/>
       </div>
     )
-  
   }
 }
 
