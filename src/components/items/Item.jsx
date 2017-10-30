@@ -7,10 +7,9 @@ const Item = ({item}) => (
 )
 
 export const ItemTile = ({item, match}) => (
-  <Link className="item-tile flex vert center text-center no-link" to={match.url + '/' + item.id}>
+  <Link className="item-tile flex vert center text-center no-link" data-rarity={item.rarity} to={match.url + '/' + item.id}>
     <div>{item.name}</div>
     {item.quantity > 1 && <div>{`×${item.quantity}`}</div>}
-    {item.icon > 1 && <i className={`ra ra-3x ${item.icon}`}/>}
     <div>{Number(item.weight * item.quantity).toFixed(1)}</div>
     <div>{Number(item.value * item.quantity)}</div>
   </Link>

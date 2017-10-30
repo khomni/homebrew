@@ -24,6 +24,10 @@ export default class ReloadingView extends Component {
     }
   }
 
+  onFetch(data) {
+    this.setState({data});
+  }
+
   setFilter(event) {
     let { name, value } = event.target
     let { filter } = this.state

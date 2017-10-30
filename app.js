@@ -108,6 +108,12 @@ app.use('/', (req,res,next)=>{
     req.headers.accept = 'application/json';
     req.url = req.url.replace(/\.json(.*)?$/,'');
   }
+
+  if(/\.html(.*)?$/.test(req.url)) {
+    req.headers.accept = 'text/html';
+    req.url = req.url.replace(/\.html(.*)?$/,'');
+    req.html = true;
+  }
   return next();
 });
 

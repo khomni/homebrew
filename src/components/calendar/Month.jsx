@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 
 import Event from './Event';
 
-const Day = ({day}) => (
+export const Day = ({day}) => (
   <td className="day">
     {day && (
       <div>
@@ -16,25 +16,39 @@ const Day = ({day}) => (
   </td>
 )
 
-const Week = ({week}) => (
+export const Week = ({week}) => (
   <tr className="week">
-    {week.day.map(day => <Day key={day.date} day={day}/>)}
+    {week.map((day,i) => <Day key={i} day={day}/>)}
   </tr>
 )
 
-const Month = ({match, calendar, month}) => (
+export const Month = ({match, calendar, month}) => (
   <table className="calendar month">
     <thead>
+      <tr>
+        <th colSpan={calendar.weekdays.length}>{month.name}</th>
+      </tr>
       <tr>
         {calendar.weekdays.map(day => <th key={day}>{day}</th>)}
       </tr>
     </thead>
     <tbody>
-      {month.week.map((week,i) => <Week key={i} week={week}/>)}
+      {month.weeks.map((week,i) => <Week key={i} week={week}/>)}
     </tbody>
   </table>
 )
 
-export default Month
+export const Events =  ({calendar, years}) => (
+  <div>
+    { years.map(year => (
+      <div key={year.year}>
+        <h3>{year.year}</h3>
+        { year.months.map(month => <Month key={month.name} month={month} calendar={calendar} />)} 
+      </div>
+    ))}
+  </div>
+)
+
+export default Events
 
 

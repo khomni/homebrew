@@ -29,7 +29,7 @@ export default class Navbar extends React.Component {
             <NavLink to={user.url + '/pc'} className="navlink" activeClassName="active">My Characters</NavLink>
           </Dropdown>
         ) : (
-          <NavLink to="/signup" className="navlink" activeClassName="active">Signup</NavLink>
+          <NavLink to="/login" className="navlink" activeClassName="active">Login / Signup</NavLink>
         )}
 
         { user && character ? (

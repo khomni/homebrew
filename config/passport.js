@@ -4,24 +4,26 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 
 // Serialize Sessions
-passport.serializeUser(function(user, done){
-  done(null, user);
-});
+passport.serializeUser((user, done) => done(null, user) );
 
 //Deserialize Sessions
-passport.deserializeUser(function(user, done){
+passport.deserializeUser((user, done) => {
   return db.User.scope('session').find({ where: {id: user.id} })
-  .then(user => {
-    return done(null, user)
-  })
+  .then(user => done(null, user) )
   .catch(done)
 });
 
 // For Authentication Purposes
-passport.use(new LocalStrategy({usernameField: 'email', passwordField: 'password', passReqToCallback: true},
-  function(req, email, password, done){
-    var user = db.User.find({where: {$or: [{email: email}, {username: email}]}})
+passport.use(new LocalStrategy({usernameField: 'user', passwordField: 'password', passReqToCallback: true},
+  function(req, username, password, done){
+    console.log('passport local:', username, password);
+    return db.User.find({
+      where: {
+        $or: [{email: username}, {username: username}]
+      }
+    })
     .then(user => {
+      console.log('passport user:', user);
       if(!user) return done(null)
       let passwd = user ? user.password : ''
       return db.User.validPassword(password, passwd, user)

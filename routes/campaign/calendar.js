@@ -8,11 +8,16 @@ router.use((req, res, next) => {
   res.locals.breadcrumbs.push({name: "Calendar", url:req.baseUrl});
 
   return res.locals.campaign.getCalendar()
+  .then(calendar => { res.locals.campaign.Calendar = calendar })
   .finally(next)
   .catch(next)
 })
 
-
+/*
+router.get('/', (req,res,next) => {
+  return res.json(res.locals.campaign.Calendar)
+})
+*/
 
 router.get('/edit', Common.middleware.requireGM, (req, res, next) => {
   return res.render('campaign/calendar/edit')
@@ -20,6 +25,7 @@ router.get('/edit', Common.middleware.requireGM, (req, res, next) => {
 
 // set the campaign calendar
 router.post('/', Common.middleware.requireGM, Common.middleware.objectifyBody, (req, res, next) => {
+  console.log(req.body);
 
   return Promise.try(() => { // delete any existing calendar, and all events
     if(!res.locals.campaign.Calendar) return res.locals.campaign.createCalendar(req.body)
@@ -192,8 +198,9 @@ router.get('/:year?/:month?', (req,res,next) => {
 
   // console.log(res.locals.campaign.Calendar.now)
   return res.locals.campaign.Calendar.constructCalendar(calendarRange, {truncate: false})
-  .then(calendar => {
-    if(req.json) return res.json(calendar)
+  .then(constructed => {
+
+    if(req.json) return res.json({calendar: res.locals.campaign.Calendar, events: constructed})
     if(req.isTab) return res.render('campaign/calendar/_calendar', {calendar});
     if(req.modal) return res.render('campaign/calendar/$calendar', {calendar});
     return res.render('campaign/calendar', {calendar})

@@ -142,12 +142,12 @@ module.exports = function(sequelize, DataTypes) {
       let resourceType = resource.$modelOptions.name.singular
 
       if(resourceType === 'Character') { // assumes the character has the campaign populated
-        if(resource.ownerId == thisUser.id) return {owner:true, permission:true}
+        if(resource.ownerId === thisUser.id) return {owner:true, permission:true}
         if(resource.Campaign && resource.Campaign.ownerId == thisUser.id) return {owner:false, permission:true}
       }
 
       if(resourceType === 'Campaign') {
-        if(resource.ownerId == thisUser.id) return {owner:true, permission: true}
+        if(resource.ownerId === thisUser.id) return {owner:true, permission: true}
       }
     }
     return {owner:false, byDominion:false}

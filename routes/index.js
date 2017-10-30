@@ -23,7 +23,7 @@ router.get('/', (req, res, next) => {
  * ============================== */
 
 router.use('/', (req,res,next) => {
-  if(req.json) return next();
+  if(req.json || req.html || req.xhr) return next();
   return res.render('react');
 })
 
@@ -34,18 +34,22 @@ router.get('/login',(req,res,next) => {
 
 router.post('/login', (req,res,next) => {
   // var origin = req.headers.referer || '/';
+  console.log(req.body)
 
-  passport.authenticate('local', (err,user,info) => {
-    if (err) return next(err);
-    if (!user) return next(Common.error.request('Invalid Credentials')); 
+  passport.authenticate('local', (err, user, info) => {
+    console.log(err,user,info)
+    if(err) return next(err);
+    if(!user) return next(Common.error.request('Invalid Credentials')); 
 
     req.logIn(user, err => {
-      if (err) return next(err);
+      if(err) return next(err);
 
+      if(req.json) return res.json(user);
       if(req.xhr) return res.set('X-Redirect', '/').sendStatus(200);
       return res.redirect('/');
     })
   })(req, res, next)
+
 });
 
 router.use('/logout',(req,res,next) => {

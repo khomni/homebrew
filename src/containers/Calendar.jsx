@@ -7,11 +7,25 @@ import { connect } from 'react-redux';
 import { getResource } from '../actions';
 
 import { 
-  Edit as EditCalendar,
-  Month
+  Edit, 
+  Events
 } from '../components/calendar';
 
 import Error from '../components/Error';
+
+class MonthContainer extends ReloadingView {
+  onFetch({events}) {
+    this.setState({events})
+  }
+  render() {
+    const { calendar } = this.props
+    const { initialized, events } = this.state
+    if(!initialized) return null;
+    return (
+      <Events calendar={calendar} years={events}/>
+    )
+  }
+}
 
 class Calendar extends ReloadingView {
   constructor(props) {
@@ -21,39 +35,39 @@ class Calendar extends ReloadingView {
     this.state = { calendar: this.props.calendar }
   }
 
-  onFetch(data) {
-    this.setState({calendar:data});
+  onFetch({calendar, events}) {
+    this.setState({calendar});
   }
-
-    /*
-  onError(error) {
-    let { match, history } = this.props
-
-    return this.setState({error})
-  }
-  */
 
   render() {
     let { match } = this.props;
-    let { error, calendar} = this.state
+    let { error, calendar, initialized } = this.state
+
+    if(!initialized) return null;
 
     if(!calendar && match.isExact) {
       console.log("Calendar not initialized, redirecting to edit page");
       return <Redirect to={match.url + "/edit"}/>
     }
     if(error) return <Error error={error}/>
-    
+
+      // if(calendar && match.isExact) return <Redirect to={match.url + "/present"}/>
+
+    let EditCalendar = (props) => <Edit calendar={calendar} {...props} />
+    let ShowMonth = (props) => <MonthContainer calendar={calendar} {...props}/>
     // TODO: before Campaign is initialized, show a loading effect
-      // if(!calendar) return null;
+    // if(!calendar) return null;
 
     return (
       <div key={match.url}>
         <h1>Calendar</h1>
+        <Link to={match.url + "/edit"}>Edit</Link>
         <Switch>
-          <Route patch={match.url + "/edit"} component={EditCalendar}/>
-          <Route patch={match.url + "/:year?/:month?"} component={EditCalendar}/>
-          <Route patch={match.url + "/:year/:month"} component={EditCalendar}/>
-          <Route patch={match.url + "/:year/:month/:day"} component={EditCalendar}/>
+          <Route path={match.url} exact render={ShowMonth}/>
+          <Route path={match.url + "/edit"} render={EditCalendar}/>
+          <Route path={match.url + "/:year?/:month?"} component={ShowMonth}/>
+          <Route path={match.url + "/:year/:month"} component={ShowMonth}/>
+          <Route path={match.url + "/:year/:month/:day"} component={ShowMonth}/>
         </Switch>
 
       </div>
