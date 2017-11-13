@@ -23,7 +23,7 @@ export const Week = ({week}) => (
 )
 
 export const Month = ({match, calendar, month}) => (
-  <table className="calendar month">
+  <table className="calendar month fixed">
     <thead>
       <tr>
         <th colSpan={calendar.weekdays.length}>{month.name}</th>

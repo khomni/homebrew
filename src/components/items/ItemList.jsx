@@ -50,7 +50,7 @@ const TableFilter = ({children, filter, setFilter, name}) => (
   </th>
 )
 
-export const ItemTable = ({items, setFilter, filter, match, total}) => (
+export const ItemTable = ({items, setFilter, filter, match, total, subtotal}) => (
   <table className="monospace">
     <colgroup>
       <col className="small"/>
@@ -70,10 +70,10 @@ export const ItemTable = ({items, setFilter, filter, match, total}) => (
         <TableFilter name="quantity" filter={filter} setFilter={setFilter}>
           Quantity
         </TableFilter>
-        <TableFilter name="value" filter={filter} setFilter={setFilter}>
+        <TableFilter name="total_value" filter={filter} setFilter={setFilter}>
           Value
         </TableFilter>
-        <TableFilter name="weight" filter={filter} setFilter={setFilter}>
+        <TableFilter name="total_weight" filter={filter} setFilter={setFilter}>
           Weight
         </TableFilter>
       </tr>
@@ -94,9 +94,33 @@ export const ItemTable = ({items, setFilter, filter, match, total}) => (
       <tr>
         <td colSpan="2">
         </td>
-        <td>{total.total}</td>
-        <td>{total.value}</td>
-        <td>{total.weight}</td>
+        <td>
+          { subtotal.quantity !== total.quantity && 
+            <span>
+              <span>{subtotal.quantity}</span>
+              <span>/</span>
+            </span>
+          }
+          <span>{total.quantity}</span>
+        </td>
+        <td>
+          { subtotal.total_value !== total.total_value && 
+            <span>
+              <span>{subtotal.total_value}</span>
+              <span>/</span>
+            </span>
+          }
+          <span>{total.total_value}</span>
+        </td>
+        <td>
+          { subtotal.total_weight !== total.total_weight && 
+            <span>
+              <span>{subtotal.total_weight}</span>
+              <span>/</span>
+            </span>
+          }
+          <span>{total.total_weight}</span>
+        </td>
       </tr>
     </tfoot>
   </table>

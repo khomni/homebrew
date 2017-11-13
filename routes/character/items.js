@@ -45,11 +45,11 @@ router.get('/', Common.middleware.querify, (req, res, next) => {
 
     // gather meta data about the item collection
     var meta = items.reduce((a,b)=>{
-      a.total += b.quantity
-      a.value += Number(b.value) * b.quantity
-      a.weight += Number(b.weight) * b.quantity
+      a.quantity += b.quantity
+      a.total_value += Number(b.value) * b.quantity
+      a.total_weight += Number(b.weight) * b.quantity
       return a
-    },{value:0, weight:0, total:0})
+    }, {total_value: 0, total_weight: 0, quantity: 0})
 
     if(req.json) return res.json({items: items, total: meta})
     if(req.xhr) {

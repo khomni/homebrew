@@ -20,8 +20,8 @@ export const ItemRow = ({item, match}) => (
     <th>{item.id}</th>
     <td> <Link to={match.url + '/' + item.id}>{item.name}</Link> </td>
     <td>{item.quantity}</td>
-    <td>{item.value}</td>
-    <td>{item.weight}</td>
+    <td>{item.total_value}</td>
+    <td>{item.total_weight}</td>
   </tr>
 )
 

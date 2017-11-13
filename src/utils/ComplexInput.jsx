@@ -51,7 +51,6 @@ export default class ComplexInput extends Component {
 
     if(e.target) return handleChange({[name]: e.target.value})
     Object.assign(value, e)
-    console.log(name, value)
     return handleChange({[name]: value})
   }
 
@@ -86,8 +85,7 @@ export default class ComplexInput extends Component {
         {Object.keys(value).map((key,i) => (
           <ComplexInput name={key} key={key} value={value[key]} template={template[key]} handleChange={this.handleSubChange}/>
         ))}
-      </div>
-    )
+      </div>)
 
     // ComplexInput:: Default
     // template must contain accurate information to populate this element

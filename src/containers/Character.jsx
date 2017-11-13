@@ -1,6 +1,6 @@
 import React from 'react';
 import ReloadingView from '../utils/ReloadingView'
-import { withRouter, Route, Link, Switch } from 'react-router-dom';
+import { withRouter, Route, NavLink, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 
 import { connect } from 'react-redux';
@@ -12,6 +12,7 @@ import Journal from './Journal';
 import LoreContainer from './Lore';
 
 import { CharacterSheet, CharacterCard, CharacterList } from '../components/characters';
+import HeaderImage from '../components/HeaderImage';
 
 class Character extends ReloadingView {
   constructor(props) {
@@ -39,10 +40,13 @@ class Character extends ReloadingView {
     if(characters) return <CharacterList characters={characters}/>
 
     return (
-      <div key={match.url}>
-        {character.Images.map(image => {
-          return <img key={image.id} src={image.path} alt={character.name}/>
-        })}
+      <div>
+        <HeaderImage images={character.Images} alt={character.name}/>
+        <div className="tab-group">
+          <NavLink to={match.url + "/inventory"} className="tab" activeClassName="active">Inventory</NavLink>
+          <NavLink to={match.url + "/journal"} className="tab" activeClassName="active">Journal</NavLink>
+          <NavLink to={match.url + "/lore"} className="tab" activeClassName="active">Lore</NavLink>
+        </div>
         <h1>{character.name}</h1>
         <label>{`As of ${this.lastFetch.toLocaleString()}`}</label>
 

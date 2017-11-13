@@ -20,6 +20,8 @@ class Items extends ReloadingView {
   render() {
     let { match } = this.props;
     let { item, items, total, filter, error } = this.state;
+    let subtotal = {};
+
 
     if(error) return <Error error={error}/>
 
@@ -29,6 +31,7 @@ class Items extends ReloadingView {
       let end = start + results
       total.entries = items.length;
 
+
       items = items
       .sort((a,b) => {
         if(a[key] > b[key]) return order
@@ -36,14 +39,23 @@ class Items extends ReloadingView {
         return 0
       })
       .filter(item => !filter.search || item.name && item.name.match(new RegExp(filter.search, 'mig')))
-        .slice(start, end)
+      .slice(start, end)
+
+      items.map(item => {
+        Object.keys(total).map(key => {
+          subtotal[key] = subtotal[key] || 0;
+          subtotal[key] += item[key]
+        })
+      })
+
+      subtotal.entries = items.length;
     }
 
     if(item) return <Item item={item} match={match}/>
 
     return (
       <div>
-        {items && <ItemList items={items} total={total} filter={filter} setFilter={this.setFilter} match={match}/>}
+        {items && <ItemList items={items} total={total} subtotal={subtotal} filter={filter} setFilter={this.setFilter} match={match}/>}
         <Route path={match.url + '/:id'} component={Items}/>
       </div>
     )

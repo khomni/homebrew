@@ -21,8 +21,11 @@ module.exports = function(sequelize, DataTypes) {
     // value of the object in whichever currency the campaign setting is
     value: {
       type: DataTypes.DECIMAL,
-      set: function(v){
-        this.setDataValue('value',Number(v))
+      set(v) {
+        this.setDataValue('value', Number(v))
+      },
+      get(v) {
+        return Number(this.getDataValue('value')); 
       },
       validate: {
         min: 0,
@@ -31,6 +34,12 @@ module.exports = function(sequelize, DataTypes) {
     // weight of the object in lbs
     weight: {
       type: DataTypes.DECIMAL,
+      set(v) {
+        this.setDataValue('weight', Number(v))
+      },
+      get(v) {
+        return Number(this.getDataValue('weight'));
+      },
       validate: {
         min: 0,
       }
@@ -39,6 +48,18 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       validate: {
         min: 1,
+      }
+    },
+    total_weight: {
+      type: DataTypes.VIRTUAL,
+      get(){
+        return this.weight * this.quantity
+      }
+    },
+    total_value: {
+      type: DataTypes.VIRTUAL,
+      get(){
+        return this.value * this.quantity
       }
     },
     // quality of the item instance where 0 is mundane

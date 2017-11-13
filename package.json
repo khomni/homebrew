@@ -5,6 +5,7 @@
   "scripts": {
     "debug": "node debug ./bin/www",
     "build": "webpack --config webpack.prod.js",
+    "build-dev": "start webpack -dw --config webpack.dev.js",
     "dev": "start webpack -dw --config webpack.dev.js & nodemon",
     "start": "node ./bin/www",
     "test": "set \"NODE_ENV=test\" && mocha --recursive",
