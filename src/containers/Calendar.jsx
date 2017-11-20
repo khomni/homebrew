@@ -13,20 +13,6 @@ import {
 
 import Error from '../components/Error';
 
-class MonthContainer extends ReloadingView {
-  onFetch({events}) {
-    this.setState({events})
-  }
-  render() {
-    const { calendar } = this.props
-    const { initialized, events } = this.state
-    if(!initialized) return null;
-    return (
-      <Events calendar={calendar} years={events}/>
-    )
-  }
-}
-
 class Calendar extends ReloadingView {
   constructor(props) {
     super(props);
@@ -36,12 +22,13 @@ class Calendar extends ReloadingView {
   }
 
   onFetch({calendar, events}) {
-    this.setState({calendar});
+    const { match } = this.props;
+    this.setState({calendar, events});
   }
 
   render() {
     let { match } = this.props;
-    let { error, calendar, initialized } = this.state
+    let { error, calendar, events, initialized } = this.state
 
     if(!initialized) return null;
 
@@ -54,7 +41,7 @@ class Calendar extends ReloadingView {
       // if(calendar && match.isExact) return <Redirect to={match.url + "/present"}/>
 
     let EditCalendar = (props) => <Edit calendar={calendar} {...props} />
-    let ShowMonth = (props) => <MonthContainer calendar={calendar} {...props}/>
+    let ShowMonth = (props) => <Events calendar={calendar} years={events}/>
     // TODO: before Campaign is initialized, show a loading effect
     // if(!calendar) return null;
 
@@ -69,6 +56,7 @@ class Calendar extends ReloadingView {
           <Route path={match.url + "/:year/:month"} component={ShowMonth}/>
           <Route path={match.url + "/:year/:month/:day"} component={ShowMonth}/>
         </Switch>
+
 
       </div>
     )

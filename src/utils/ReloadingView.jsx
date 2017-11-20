@@ -10,7 +10,7 @@ export default class ReloadingView extends Component {
 
     let defaultFilter = Object.assign({
       search: '',
-      layout: null,
+      layout: props.layout || null,
       key: 'updatedAt',
       order: -1,
       page: 0,

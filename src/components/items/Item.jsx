@@ -1,9 +1,14 @@
 import React from 'react';
 
 import { withRouter, Route, Link, Switch } from 'react-router-dom';
+import Lore from '../lore';
 
 const Item = ({item}) => (
-  <pre className="shutter-down">{JSON.stringify(item, null, '  ')}</pre>
+  <div>
+    <h3 data-rarity={item.rarity}>{item.name}</h3>
+    {item.lore && item.lore.map(lore => <Lore lore={lore}/>)}
+    <pre className="shutter-down">{JSON.stringify(item, null, '  ')}</pre>
+  </div>
 )
 
 export const ItemTile = ({item, match}) => (
@@ -18,7 +23,7 @@ export const ItemTile = ({item, match}) => (
 export const ItemRow = ({item, match}) => (
   <tr>
     <th>{item.id}</th>
-    <td> <Link to={match.url + '/' + item.id}>{item.name}</Link> </td>
+    <td data-rarity={item.rarity}> <Link to={match.url + '/' + item.id}>{item.name}</Link> </td>
     <td>{item.quantity}</td>
     <td>{item.total_value}</td>
     <td>{item.total_weight}</td>

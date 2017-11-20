@@ -55,7 +55,7 @@ class Items extends ReloadingView {
 
     return (
       <div>
-        {items && <ItemList items={items} total={total} subtotal={subtotal} filter={filter} setFilter={this.setFilter} match={match}/>}
+        {items && <ItemList layout="table" items={items} total={total} subtotal={subtotal} filter={filter} setFilter={this.setFilter} match={match}/>}
         <Route path={match.url + '/:id'} component={Items}/>
       </div>
     )

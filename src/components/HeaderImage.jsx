@@ -26,7 +26,7 @@ class HeaderImage extends React.Component {
 
     return (
       <div className="header-image" onClick={this.cycleImage}>
-        <img key={image.id} src={image.path} alt={alt}/>
+        {image && <img key={image.id} src={image.path} alt={alt}/>}
       </div>
     )
   }

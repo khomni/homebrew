@@ -11,10 +11,10 @@ import {
 const Items = (props) => (
   <div>
     <h2>Inventory</h2>
-    <div className="flex">
-      <button className="as-link" name="layout" value="table" onClick={props.setFilter}>Table</button>
-      <button className="as-link" name="layout" value="list" onClick={props.setFilter}>List</button>
-      <button className="as-link" name="layout" value="grid" onClick={props.setFilter}>Grid</button>
+    <div className="tab-group">
+      <button className={`tab ${props.filter.layout === 'table' ? 'active' : ''}`} name="layout" value="table" onClick={props.setFilter}>Table</button>
+      <button className={`tab ${props.filter.layout === 'list' ? 'active' : ''}`} name="layout" value="list" onClick={props.setFilter}>List</button>
+      <button className={`tab ${props.filter.layout === 'grid' ? 'active' : ''}`} name="layout" value="grid" onClick={props.setFilter}>Grid</button>
     </div>
     <input value={props.filter.search} name="search" className="form-input" onChange={props.setFilter}/>
     { props.filter.layout === "list" && <ItemList {...props}/> ||
