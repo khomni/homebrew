@@ -57,3 +57,14 @@ Object.toQueryString = function(object){
   }
   return "?" + queryArray.join('&'); 
 }
+
+/* ==============================
+ * Require Extensions:
+ *      .gql
+ * ============================== */
+
+const fs = require('fs');
+
+require.extensions['.gql'] = function(module, filename) {
+  module.exports = fs.readFileSync(filename, 'utf-8');
+}

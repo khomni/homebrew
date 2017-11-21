@@ -1,22 +1,26 @@
 'use strict';
 
 require('dotenv').config();
-var path = require('path');
 // global.APPROOT = path.resolve(__dirname);
+
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const express = require('express');
+const favicon = require('serve-favicon');
+const path = require('path');
+const session = require('express-session');
+
+const sequelize = require('./config/database');
 require('./config/globals');
+const graphql = require('./graphql');
+const graphiql = require('apollo-server-express').graphiqlExpress;
+const db = require('./models/index');
+const routes = require('./routes');
+const requests = require('./middleware/requests');
 
-var express = require('express');
-
-var favicon = require('serve-favicon');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var session = require('express-session');
-
-var sequelize = require(APPROOT+'/config/database');
-var db = require(APPROOT+'/models/index');
 global.db = db;
 
-var app = express();
+const app = express();
 
 // var browserify = require('browserify-middleware');
 // app.use('/javascripts', browserify('./build'));
@@ -56,9 +60,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // pipes images from Amazon AWS s3 service to the result
 app.use('/i', require('./middleware/images'));
 
-app.use(require('./config/logs')); 
-// set up the vignettes for the header and homepage
-app.use(require('./middleware/vignette'));
+const logs = require('./config/logs')
+app.use(logs); 
 
 app.use((req,res,next) => {
   res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
@@ -71,11 +74,11 @@ app.use((req,res,next) => {
 
 // SESSION
 
-var SequelizeStore = require('connect-sequelize')(session);
+const SequelizeStore = require('connect-sequelize')(session);
 
 app.use(cookieParser());
 
-var sessionMiddleware = session({
+const sessionMiddleware = session({
   secret: 'brulesrules',
   store: new SequelizeStore(sequelize,{},'Session'),
   proxy:true,
@@ -85,7 +88,7 @@ var sessionMiddleware = session({
 
 app.use(sessionMiddleware);
 
-var passport = require('./config/passport');
+const passport = require('./config/passport');
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -101,7 +104,15 @@ app.use((req,res,next) => {
 });
 
 // set the user's main character if applicable
-app.use(require('./middleware/activeChar'));
+const activeChar = require('./middleware/activeChar')
+app.use(activeChar);
+
+app.use('/graphql', graphql);
+
+app.use('/graphiql', graphiql({
+  endpointURL: '/graphql',
+  query: require('./graphql/queries/introspection.gql')
+}));
 
 app.use('/', (req,res,next)=>{
   if(/\.json(.*)?$/.test(req.url)) {
@@ -117,10 +128,10 @@ app.use('/', (req,res,next)=>{
   return next();
 });
 
-app.use(require('./middleware/requests'));
+app.use(requests);
 
 // Main Router
-app.use('/', require('./routes/index'));
+app.use('/', routes);
 
 // Error Handlers
 

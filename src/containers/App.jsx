@@ -20,6 +20,11 @@ import Character from './Character.jsx'
 import Home from '../components/views/home'
 import User from '../components/views/user'
 
+import { 
+  graphql 
+} from 'react-apollo';
+import { SESSION } from '../../graphql/queries'
+
 /* ============================== 
  * Redux
  * ============================== */
@@ -34,14 +39,14 @@ class App extends React.Component {
 
   componentWillMount() {
     const { dispatch } = this.props;
-
-    dispatch(getSession());
-    // dispatch actions on app start
-
   }
 
   render() {
-    let { user, character, campaign } = this.props.session;
+    const { loading, session } = this.props;
+    if(loading) return null;
+    console.log(this.props.session);
+
+    // let { user, character, campaign } = this.props;
     return (
       <div>
         <Navbar {...this.props}/>
@@ -66,20 +71,19 @@ class App extends React.Component {
 }
 
 App.propTypes = {
-  dispatch: PropTypes.func.isRequired
+  dispatch: PropTypes.func.isRequired,
+  refetch: PropTypes.func.isRequired,
 }
 
-// hook Redux state into app props
-const mapStatetoProps = (state, ownProps) => {
-  let {user, character, campaign} = state.session;
+const gContainer = graphql(SESSION, {
+  props: ({ ownProps, data: { session, loading, refetch, error } }) => ({
+    loading, refetch, error, session
+  })
+})(App)
 
-  return {
-    session: {
-      user,
-      character,
-      campaign
-    }
-  }
+const mapStateToProps = state => {
+  console.log('mapStateToProps:', state);
+  return {}
 }
 
-export default withRouter(connect(mapStatetoProps)(App))
+export default withRouter(connect(mapStateToProps)(gContainer))

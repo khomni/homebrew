@@ -1,0 +1,10 @@
+{
+	session {
+		id
+		username
+		character {
+		  id
+		}
+	}
+}
+

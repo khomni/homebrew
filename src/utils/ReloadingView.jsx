@@ -2,6 +2,11 @@ import { Component } from 'react';
 
 import { ITEMS_PER_PAGE } from '../constants'
 
+import { graphql } from 'react-apollo';
+
+import { connect } from 'react-redux';
+import { getSession } from '../actions';
+
 export default class ReloadingView extends Component {
   constructor(props) {
     super(props);

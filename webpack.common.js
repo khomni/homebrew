@@ -19,9 +19,14 @@ module.exports = {
   module: {
     loaders: [
       {
-        test: /\.jsx?/,
+        test: /\.(js|jsx)?/,
         include: APP_DIR,
         loader: 'babel-loader',
+      },
+      {
+        test: /\.(graphql|gql)$/,
+        exclude: /node_modules/,
+        loader: 'graphql-tag/loader',
       },
     ]
   },

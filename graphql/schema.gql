@@ -1,0 +1,80 @@
+scalar DateTime
+
+type Query {
+	session: User
+	user(id: ID!): User
+
+	character(id: ID!): Character
+	campaign(id: ID!): Campaign
+}
+
+# type Mutation {
+# 
+# }
+
+interface Node {
+	id: ID!
+}
+
+type Image implements Node {
+	id: ID!
+	path: String
+	node: Node
+}
+
+type User implements Node {
+	id: ID!
+	username: String
+	email: String
+	character: Character
+	characters: [Character!]!
+}
+
+type Character  implements Node {
+	id: ID!
+	name: String
+	campaign: Campaign
+	images: [Image!]!
+	items: ItemCollection
+	journal: [Journal!]!
+	knowledge: [Lore!]!
+	lore: [Lore!]!
+}
+
+type Item implements Node {
+	id: ID!
+	name: String
+	value: Float
+	weight: Float
+	quantity: Int
+	lore: [Lore!]!
+	items: ItemCollection
+}
+
+# Meta item information
+type ItemCollection {
+	items: [Item!]!
+	quantity: Int
+	weight: Float
+	value: Float
+}
+
+type Lore implements Node {
+	id: ID!
+	topic: Node
+	owner: User
+	content: String
+}
+
+type Journal implements Node {
+	id: ID!
+	title: String
+	content: String
+}
+
+type Campaign implements Node {
+	id: ID!
+	name: String
+	characters: [Character!]!
+	lore: [Lore!]!
+}
