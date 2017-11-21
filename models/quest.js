@@ -35,6 +35,15 @@ module.exports = function(sequelize, DataTypes) {
           }
         });
 
+        Quest.addScope('nested', {
+          // where: {hierarchyLevel: 1},
+          include: [
+            {model: models.Quest, as: 'descendents', hierarchy: true},
+            {model: models.Quest, as: 'ancestors'},
+            {model: models.Comment, as: 'comments', attributes: ['id']}
+          ]
+        });
+
         // a character has lore in the form of their bio and backstory
         Quest.hasMany(models.Lore, {
           as: 'lore',

@@ -1,6 +1,7 @@
 const Campaign = {
-  id: campaign => campaign.id,
-  name: campaign => campaign.name,
+  quests: campaign => {
+    return campaign.Quests || campaign.getQuests({scope: 'nested', where: {hierarchyLevel: 1}});
+  }
 }
 
 module.exports = Campaign

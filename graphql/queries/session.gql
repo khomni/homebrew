@@ -1,9 +1,19 @@
 {
 	session {
-		id
-		username
+		user {
+			id
+			username
+			url
+		}
 		character {
-		  id
+			id
+			name
+			url
+		}
+		campaign {
+			id
+			name
+			url
 		}
 	}
 }

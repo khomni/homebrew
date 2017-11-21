@@ -3,7 +3,8 @@ import { render } from 'react-dom';
 
 import { Redirect, withRouter } from 'react-router';
 import { connect } from 'react-redux';
-import Form from '../../utils/form.jsx'
+import Form from '../../utils/form.jsx';
+import { withApollo } from 'react-apollo';
 
 import {
   BrowserRouter as Router,
@@ -37,6 +38,7 @@ const Home = ({match, user, character, campaign}) => (
 
 
 const mapStatetoProps = (state, ownProps) => {
+  console.log('home ownProps:', ownProps)
   let {user, character, campaign} = state.session;
 
   return {
@@ -46,4 +48,4 @@ const mapStatetoProps = (state, ownProps) => {
   }
 }
 
-export default withRouter(connect(mapStatetoProps)(Home))
+export default withApollo(withRouter(connect(mapStatetoProps)(Home)))

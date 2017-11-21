@@ -14,41 +14,44 @@ import LoreContainer from './Lore';
 import { CharacterSheet, CharacterCard, CharacterList } from '../components/characters';
 import HeaderImage from '../components/HeaderImage';
 
-class Character extends ReloadingView {
+/* ============================== 
+ * Apollo / GraphQL
+ * ============================== */
+
+import { graphql, withApollo } from 'react-apollo';
+import { CHARACTER } from '../../graphql/queries'
+
+class Character extends React.Component {
   constructor(props) {
     super(props);
-    this.onFetch = this.onFetch.bind(this);
-
-    this.state = { character: this.props.character }
-  }
-
-  onFetch(data) {
-    // determine if the data being returned is a character or list of characters
-    if(Array.isArray(data)) return this.setState({characters: data, character: null}) 
-    this.setState({character: data, charactes: null})
   }
 
   render() {
     let { match } = this.props;
-    let { error, character, characters } = this.state
+    let { loading, character, error } = this.props
+    let characters
 
+    if(loading) return null;
     if(error) return <Error error={error}/>
-    if(!character && !characters) return null;
+    if(!character) return null;
 
+    if(character.length > 1) characters = character;
     // TODO: use the Character container to handle both characters and lists of characters
     // TODO: more support for character routes with options based on context
     if(characters) return <CharacterList characters={characters}/>
+    character = character.pop();
+
+    console.log(character);
 
     return (
       <div>
-        <HeaderImage images={character.Images} alt={character.name}/>
+        <HeaderImage images={character.images} alt={character.name}/>
         <div className="tab-group">
           <NavLink to={match.url + "/inventory"} className="tab" activeClassName="active">Inventory</NavLink>
           <NavLink to={match.url + "/journal"} className="tab" activeClassName="active">Journal</NavLink>
           <NavLink to={match.url + "/lore"} className="tab" activeClassName="active">Lore</NavLink>
         </div>
         <h1>{character.name}</h1>
-        <label>{`As of ${this.lastFetch.toLocaleString()}`}</label>
 
         {match.isExact && <CharacterSheet character={character}/>}
 
@@ -67,9 +70,17 @@ Character.propTypes = {
   dispatch: PropTypes.func.isRequired
 }
 
-const mapStatetoProps = (state, ownProps) => {
-  // let { character } = state.resources;
-  return {}
-}
+const gContainer = graphql(CHARACTER, {
+  props: ({ ownProps: { dispatch }, data: { character, loading, refetch, error } }) => 
+    ({ loading, refetch, error, character }),
+  options: props => ({
+    variables: {
+      slug: props.match.params.slug,
+      detail: !!props.match.params.slug
+    }
+  })
+})(Character)
 
-export default withRouter(connect(mapStatetoProps)(Character))
+const mapStateToProps = ({session}) => session
+
+export default withApollo(withRouter(connect(mapStateToProps)(gContainer)))

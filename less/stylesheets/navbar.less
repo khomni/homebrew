@@ -68,7 +68,9 @@ nav.navigation {
     &:not(.active) {
       .dropdown-menu {
 	opacity: 0;
-	// .animation(fadeto 0.25s forwards reverse);
+	transform: translateY(-100%);
+	.filter(blur(2px));
+	//.animation(fadeto 0.25s forwards reverse);
 	pointer-events: none;
       }
     }
@@ -84,14 +86,16 @@ nav.navigation {
 
   .dropdown-label {
     .nav-item;
+    background: inherit;
   }
 
   .dropdown-menu {
     position: absolute;
-    z-index: 1;
+    z-index: -1;
     background:inherit;
     min-width: 100%;
     opacity: 1;
+    transition: 0.25s;
     // .animation(dropdown 0.25s forwards);
     // .animation(fadeto 0.25s forwards);
 

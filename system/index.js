@@ -10,7 +10,12 @@ System.prototype.toJSON = function(){
   return {
     name: this.name,
     publisher: this.publisher,
+    year: this.year
   }
+}
+
+System.prototype.toString = function() {
+  return this.name
 }
 
 // System prototype methods here

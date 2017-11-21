@@ -21,7 +21,7 @@ export default class Dropdown extends React.Component {
   }
 
   handleMouseLeave(event) {
-    this.setState({expanded:false});
+    // this.setState({expanded:false});
   }
 
   render() {
@@ -30,11 +30,9 @@ export default class Dropdown extends React.Component {
     onMouseEnter={false && this.handleMouseEnter}
     onMouseLeave={this.handleMouseLeave}>
       <label className="dropdown-label">{this.props.label}</label>
-      { this.state.expanded && 
-          <div className="dropdown-menu">
-            {this.props.children}
-          </div>
-      }
+      <div className={`dropdown-menu ${this.state.expanded ? 'active' : ''}`}>
+        {this.props.children}
+      </div>
     </div>
   }
 

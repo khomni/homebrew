@@ -20,9 +20,7 @@ import Character from './Character.jsx'
 import Home from '../components/views/home'
 import User from '../components/views/user'
 
-import { 
-  graphql 
-} from 'react-apollo';
+import { graphql } from 'react-apollo';
 import { SESSION } from '../../graphql/queries'
 
 /* ============================== 
@@ -30,7 +28,7 @@ import { SESSION } from '../../graphql/queries'
  * ============================== */
 
 import { connect } from 'react-redux';
-import { getSession } from '../actions';
+import { setUser, setCharacter, setCampaign } from '../actions';
 
 class App extends React.Component {
   constructor(props) {
@@ -41,10 +39,23 @@ class App extends React.Component {
     const { dispatch } = this.props;
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { dispatch } = this.props;
+    const { session } = nextProps
+    if(session) {
+      const { user, character, campaign } = session
+    
+      if(user) dispatch(setUser(user))
+      if(character) dispatch(setCharacter(character))
+      if(campaign) dispatch(setCampaign(campaign))
+    
+    }
+    
+  }
+
   render() {
     const { loading, session } = this.props;
     if(loading) return null;
-    console.log(this.props.session);
 
     // let { user, character, campaign } = this.props;
     return (
@@ -76,14 +87,13 @@ App.propTypes = {
 }
 
 const gContainer = graphql(SESSION, {
-  props: ({ ownProps, data: { session, loading, refetch, error } }) => ({
-    loading, refetch, error, session
-  })
+  props: ({ ownProps: { dispatch }, data: { session, loading, refetch, error } }) => 
+  ({ loading, refetch, error, session })
 })(App)
 
-const mapStateToProps = state => {
-  console.log('mapStateToProps:', state);
-  return {}
+const mapStateToProps = ({session}) => {
+  return session
+  // return {}
 }
 
 export default withRouter(connect(mapStateToProps)(gContainer))

@@ -24,5 +24,6 @@ module.exports = graphqlExpress(req => ({
   schema: jsSchema,
   context: {
     user: req.user,
+    campaign: req.user && req.user.MainChar && req.user.MainChar.Campaign || null,
   }
 }))

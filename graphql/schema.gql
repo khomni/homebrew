@@ -1,12 +1,20 @@
 scalar DateTime
 
+# ==============================
+# Queries
+# ==============================
+
 type Query {
-	session: User
+	session: Session
 	user(id: ID!): User
 
-	character(id: ID!): Character
-	campaign(id: ID!): Campaign
+	character(slug: String, campaign: ID, user: ID, search: String): [Character]
+	campaign(id: ID): [Campaign]
 }
+
+# ==============================
+# Mutations
+# ==============================
 
 # type Mutation {
 # 
@@ -16,6 +24,16 @@ interface Node {
 	id: ID!
 }
 
+type Session {
+	user: User
+	character: Character
+	campaign: Campaign
+}
+
+# ==============================
+# Types
+# ==============================
+
 type Image implements Node {
 	id: ID!
 	path: String
@@ -24,10 +42,11 @@ type Image implements Node {
 
 type User implements Node {
 	id: ID!
-	username: String
-	email: String
 	character: Character
 	characters: [Character!]!
+	email: String
+	url: String
+	username: String
 }
 
 type Character  implements Node {
@@ -39,6 +58,7 @@ type Character  implements Node {
 	journal: [Journal!]!
 	knowledge: [Lore!]!
 	lore: [Lore!]!
+	url: String
 }
 
 type Item implements Node {
@@ -46,17 +66,20 @@ type Item implements Node {
 	name: String
 	value: Float
 	weight: Float
+	total_value: Float
+	total_weight: Float
 	quantity: Int
 	lore: [Lore!]!
 	items: ItemCollection
+	url: String
 }
 
 # Meta item information
 type ItemCollection {
 	items: [Item!]!
-	quantity: Int
-	weight: Float
-	value: Float
+	total_quantity: Int
+	total_weight: Float
+	total_value: Float
 }
 
 type Lore implements Node {
@@ -64,17 +87,59 @@ type Lore implements Node {
 	topic: Node
 	owner: User
 	content: String
+	url: String
 }
 
 type Journal implements Node {
 	id: ID!
 	title: String
 	content: String
+	url: String
 }
 
 type Campaign implements Node {
 	id: ID!
 	name: String
+	system: System
 	characters: [Character!]!
 	lore: [Lore!]!
+	quests: [Quest!]!
+	url: String
+}
+
+enum QuestStatus {
+	complete
+	active
+	failed
+}
+
+type Quest implements Node {
+	id: ID!
+	name: String
+	description: String
+	status: QuestStatus
+	subquests: [Quest!]!
+	comments: CommentSection
+	# comments: [Comment!]!
+	url: String
+}
+
+type Comment implements Node {
+	id: ID!
+	createdAt: DateTime
+	body: String
+	archived: Boolean
+	character: Character
+	children: [Comment!]!
+}
+
+type CommentSection {
+	children: [Comment!]!
+	total: Int
+}
+
+type System {
+	name: String
+	publisher: String
+	year: Int
 }

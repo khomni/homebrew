@@ -5,7 +5,6 @@ var Pathfinder = new System({
   // name / publisher information
   name: "Pathfinder",
   publisher: "Paizo",
-  view: "system/pathfinder/views/", // folder where system/specific renders can be found
 
   // terms
   terms: require('./terms'),

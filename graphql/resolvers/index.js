@@ -5,6 +5,8 @@ const Character = require('./character');
 const { Item, ItemCollection } = require('./item');
 const Lore = require('./lore');
 const Campaign = require('./campaign');
+const { Comment, CommentSection }= require('./comment');
+const Quest = require('./quest');
 
 const Node = {
 
@@ -13,15 +15,21 @@ const Node = {
   }
 }
 
+const DateTime = require('graphql-date')
+
 const resolvers = {
   Campaign,
   Character,
+  Comment,
+  CommentSection,
+  DateTime,
   Item,
   ItemCollection,
   Lore,
   Node,
   User,
-  Query
+  Query,
+  Quest,
 };
 
 module.exports = resolvers

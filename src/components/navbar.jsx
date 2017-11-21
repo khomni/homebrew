@@ -17,7 +17,8 @@ export default class Navbar extends React.Component {
   // this also depends on a corresponding react component to display the resource
 
   render() {
-    const {user, character, campaign} = this.props.session;
+    const { session } = this.props;
+    const { user, character, campaign } = session
 
     return (
       <nav className="navigation">
@@ -32,7 +33,7 @@ export default class Navbar extends React.Component {
           <NavLink to="/login" className="navlink" activeClassName="active">Login / Signup</NavLink>
         )}
 
-        { user && character ? (
+        { character ? (
           <Dropdown label={character.name}>
             <NavLink to={character.url} className="navlink" activeClassName="active">Character Sheet</NavLink>
             <NavLink to={character.url + 'inventory'} className="navlink" activeClassName="active">Inventory</NavLink>
@@ -46,7 +47,7 @@ export default class Navbar extends React.Component {
           </Dropdown>
         )}
 
-        { user && campaign ? (
+        { campaign ? (
           <Dropdown label="Campaign">
             <NavLink to={campaign.url} className="navlink" activeClassName="active">{campaign.name}</NavLink>
             <NavLink to={campaign.url + 'pc'} className="navlink" activeClassName="active">Characters</NavLink>
