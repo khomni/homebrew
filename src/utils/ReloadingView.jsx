@@ -1,17 +1,101 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 
 import { ITEMS_PER_PAGE } from '../constants'
 
-import { graphql } from 'react-apollo';
-
+import { withRouter } from 'react-router-dom';
+import { graphql, withApollo } from 'react-apollo';
 import { connect } from 'react-redux';
 import { getSession } from '../actions';
 
-export default class ReloadingView extends Component {
+import Error from '../components/Error';
+import Loading from '../components/Loading';
+
+/* ==============================
+ * withResource / ReloadingView:
+ *      Abstraction HOC that automatically connects to the apolloclient and redux store to load server data
+ *      Goal: to simplify the amount of scaffolding required for a single resource view page using similar query logic and standardize
+ *              1. error display
+ *              2. result filtering controls
+ *              3. result layout controls
+ *
+ *      A regular resource container wrapped with this HOC should check for these propTypes, provided by this HOC:
+ *              dispatch: PropTypes.func.isRequired
+ *              match: PropTypes.object.isRequired
+ * ============================== */
+
+export default function withResource(WrappedComponent, {query, variables, alias}) {
+
+  // TODO: reimplement frontend filtering functionality
+  class Wrapper extends Component {
+    constructor(props) {
+      super(props);
+      this.setFilter = this.setFilter.bind(this)
+
+      let defaultFilter = Object.assign({
+        search: '',
+        layout: props.layout || null,
+        key: 'updatedAt',
+        order: -1,
+        page: 0,
+        results: ITEMS_PER_PAGE,
+      }, this.props.filter || {})
+
+      this.state = {
+        mountedRoute: this.props.match.url,
+        filter: defaultFilter
+      }
+    }
+
+    setFilter(event) {
+      let { name, value } = event.target
+      let { filter } = this.state
+
+      value = !isNaN(value) && value !== '' ? Number(value) : value
+
+      this.setState({filter: {...filter, [name]: value}})
+     }
+
+    render() {
+      const { error, loading, refresh, dispatch } = this.props;
+      const { filter } = this.state
+      if(error) return <Error error={error} />
+      if(loading) return <Loading/>
+      console.log('withResource', this.props)
+      return <WrappedComponent setFilter={this.setFilter} filter={filter} {...this.props} />
+    }
+  }
+
+  // Use the redux store to allow components to access the Session user / character / campaign.
+  // TODO: add to this function if this standardized resource fetching mechanism needs to use more of the redux store
+  // TODO: allow arguments to withResource to modify this mapping function?
+  const mapStateToProps = ({session}) => ({session})
+
+  // graphql container:
+  // takes the input query and 
+  // TODO: set polling interval (or subscription settings when applicable)
+  let gContainer =  graphql(query, {
+    // set the Wrappers props using the data returned by GraphQL endpoint and own props
+    // TODO: allow HOC to determine the props alias? Otheriwse, just use the data as a standard prop
+    props: ({ownProps, data}) => ({
+      loading: data.loading,
+      error: data.error,
+      refetch: data.refetch,
+      [alias || 'data']: alias ? data[alias] : data,
+      data,
+    }),
+    options: props => ({
+      variables: variables ? variables(props) : null
+    })
+  })(Wrapper)
+
+  return withRouter(withApollo(connect(mapStateToProps)(gContainer)))
+
+}
+
+  /*
+export class ReloadingView extends Component {
   constructor(props) {
     super(props);
-    this.loadData = this.loadData.bind(this);
-    this.setFilter = this.setFilter.bind(this);
 
     let defaultFilter = Object.assign({
       search: '',
@@ -29,10 +113,6 @@ export default class ReloadingView extends Component {
     }
   }
 
-  onFetch(data) {
-    this.setState({data});
-  }
-
   setFilter(event) {
     let { name, value } = event.target
     let { filter } = this.state
@@ -42,63 +122,6 @@ export default class ReloadingView extends Component {
     this.setState({filter: {...filter, [name]: value}})
     // this.setState({filter})
   }
-  
-
-  // TODO: use document.hasFocus() to only reload resources when the document has focus
-  loadData(props) {
-    let { match } = props || this.props;
-    let { initialized } = this.state
-    this.lastFetch = new Date();
-
-    clearTimeout(this.refreshInterval);
-
-    // if the document doesn't have focus, check again every second until it does
-    if(!document.hasFocus() && initialized) {
-      this.refreshInterval = setTimeout(() => this.loadData(), 1000)
-      return;
-    }
-
-    return fetch(match.url, {credentials: 'include', headers: {Accept: 'application/json'}})
-    .then(response => {
-      // if the response was redirected, change the location to reflect the new resource
-      if(response.redirected) return history.pushState({}, null, response.url);
-      this.refreshInterval = setTimeout(() => this.loadData(), 300000)
-      // handle non-200 errors
-      if(response.status !== 200) {
-        return response.json()
-        .then(error => {
-          if(this.onError) {
-            this.setState({mountedRoute: match.url, initialized:true})
-            return this.onError(error);
-          }
-          this.setState({error, mountedRoute: match.url, initialized:true})
-        })
-      }
-
-      return response.json()    
-      .then(data => this.onFetch(data))
-      .then(() => this.setState({mountedRoute: match.url, initialized:true}))
-    })
-    .catch(err => {
-      console.error(err);
-      err.status = 500
-      err.stack = err.stack.split('\n')
-
-      if(this.onError) return this.onError(err);
-      return this.setState({error: err})
-    })
-  }
-
-  componentDidMount() {
-    this.loadData();
-  }
-
-  /* ==============================
-   * Discriminatory Reloader:
-   *    if a ReloadingView component receives new props,
-   *    it's either loading a nested resource or loading
-   *    a different resource that uses the same container 
-   * ============================== */
 
   componentWillReceiveProps(nextProps){
     let { params } = this.props.match;
@@ -117,3 +140,4 @@ export default class ReloadingView extends Component {
   }
 
 }
+*/

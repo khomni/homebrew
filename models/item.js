@@ -109,13 +109,17 @@ module.exports = function(sequelize, DataTypes) {
             lorable: 'Item'
           }
         });
+
+        // Items as Containers
+        // TODO: change item ownership to be a polymorphic association so that items can solely belong to other items
+        Item.hasMany(models.Item)
       }
     }
   });
 
   // if an item is saved with 0 quantity, destroy the stack
   Item.hook('beforeSave', (item, options) => {
-    if(item.quantity == 0) return item.destroy()
+    if(item.quantity === 0) return item.destroy()
     return Promise.resolve(item)
   })
 
@@ -130,7 +134,7 @@ module.exports = function(sequelize, DataTypes) {
     var cloneStack = JSON.parse(JSON.stringify(thisItem))
     delete cloneStack.id
 
-    var cloneStack = Item.build(cloneStack)
+    cloneStack = Item.build(cloneStack)
     cloneStack.set('quantity',number)
 
     return cloneStack.save()
@@ -148,6 +152,7 @@ module.exports = function(sequelize, DataTypes) {
     })
   })
 
+  Item.isHierarchy({childrenAs: 'items'});
 
   return Item;
 };

@@ -82,7 +82,7 @@ export const ItemTable = ({items, setFilter, filter, match, total, subtotal}) =>
       {items.map(item => <ItemRow key={item.id} item={item} match={match}/>)}
     </tbody>
     <tfoot>
-      {total.entries > items.length > ITEMS_PER_PAGE &&
+      {total.total_quantity > items.length > ITEMS_PER_PAGE &&
         <tr>
           <td colSpan="5">
             <button className="as-link" name="results" value={ items.length + ITEMS_PER_PAGE } onClick={setFilter}>
@@ -95,13 +95,13 @@ export const ItemTable = ({items, setFilter, filter, match, total, subtotal}) =>
         <td colSpan="2">
         </td>
         <td>
-          { subtotal.quantity !== total.quantity && 
+          { subtotal.total_quantity !== total.total_quantity && 
             <span>
-              <span>{subtotal.quantity}</span>
+              <span>{subtotal.total_quantity}</span>
               <span>/</span>
             </span>
           }
-          <span>{total.quantity}</span>
+          <span>{total.total_quantity}</span>
         </td>
         <td>
           { subtotal.total_value !== total.total_value && 

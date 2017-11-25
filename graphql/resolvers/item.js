@@ -1,25 +1,39 @@
+const totalQuantity = (item) => {
+  if(Array.isArray(item)) return item.reduce((a, subitem) => a + totalQuantity(subitem), 0)
+  let subTotal = item.quantity
+  if(item.items) subTotal += item.items.reduce((a, subitem) => a + totalQuantity(subitem), 0)
+  return subTotal
+}
+
+const totalValue = (item) => {
+  if(Array.isArray(item)) return item.reduce((a, subitem) => a + totalValue(subitem), 0)
+  let subTotal = (item.value * item.quantity)
+  if(item.items) subTotal += item.items.reduce((a, subitem) => a + totalValue(subitem), 0)
+  return subTotal
+}
+
+const totalWeight = (item) => {
+  if(Array.isArray(item)) return item.reduce((a, subitem) => a + totalWeight(subitem), 0)
+  let subTotal = (item.weight * item.quantity)
+  if(item.items) subTotal += item.items.reduce((a, subitem) => a + totalWeight(subitem), 0)
+  return subTotal
+}
+
 const Item = {
   id: item => item.id,
   value: item => item.value,
   weight: item => item.weight,
   quantity: item => item.quantity,
-  total_weight: item => {
-    let thisWeight = (item.weight * item.quantity)
-    // TODO: total weight of all contained items
-    return thisWeight;
-  },
-  total_value: item => {
-    let thisValue = (item.value * item.quantity)
-    // total value of all contained items
-    return thisValue;
-  },
+  total_weight: totalWeight,
+  total_value: totalValue,
+  total_quantity: totalQuantity,
+
+  items: item => ({
+    items: item.items,
+    total_value: item.items.reduce((a,b) => a + totalValue(b), 0),
+    total_weight: item.items.reduce((a,b) => a + totalWeight(b), 0),
+    total_quantity: item.items.reduce((a,b) => a + totalQuantity(b), 0),
+  })
 }
 
-ItemCollection = {
-  items: array => array,
-  total_quantity: array => array.reduce((a,b) => a + b.quantity, 0),
-  total_value: array => array.reduce((a,b) => a + (b.quantity * b.quantity), 0),
-  total_weight: array => array.reduce((a,b) => a + (b.weight * b.quantity), 0),
-}
-
-module.exports = { Item, ItemCollection }
+module.exports = { Item, totalQuantity, totalValue, totalWeight }

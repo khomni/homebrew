@@ -1,12 +1,8 @@
 import React from 'react';
-import ReloadingView from '../utils/ReloadingView'
-import { withRouter, Route, NavLink, Switch } from 'react-router-dom';
+import withResource from '../utils/ReloadingView'
+import { Route, NavLink, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 
-import { connect } from 'react-redux';
-import { getResource } from '../actions';
-
-import Error from '../components/Error';
 import Items from './Items';
 import Journal from './Journal';
 import LoreContainer from './Lore';
@@ -18,7 +14,6 @@ import HeaderImage from '../components/HeaderImage';
  * Apollo / GraphQL
  * ============================== */
 
-import { graphql, withApollo } from 'react-apollo';
 import { CHARACTER } from '../../graphql/queries'
 
 class Character extends React.Component {
@@ -31,21 +26,13 @@ class Character extends React.Component {
     let { loading, character, error } = this.props
     let characters
 
-    if(loading) return null;
-    if(error) return <Error error={error}/>
-    if(!character) return null;
-
     if(character.length > 1) characters = character;
-    // TODO: use the Character container to handle both characters and lists of characters
-    // TODO: more support for character routes with options based on context
     if(characters) return <CharacterList characters={characters}/>
-    character = character.pop();
-
-    console.log(character);
+    character = character[0];
 
     return (
       <div>
-        <HeaderImage images={character.images} alt={character.name}/>
+        <HeaderImage images={character.images} alt={character.name} home={match.url}/>
         <div className="tab-group">
           <NavLink to={match.url + "/inventory"} className="tab" activeClassName="active">Inventory</NavLink>
           <NavLink to={match.url + "/journal"} className="tab" activeClassName="active">Journal</NavLink>
@@ -56,7 +43,7 @@ class Character extends React.Component {
         {match.isExact && <CharacterSheet character={character}/>}
 
         <Switch>
-          <Route path={match.url + "/inventory"} component={Items}/>
+          <Route path={match.url + "/inventory/:item?"} component={Items}/>
           <Route path={match.url + "/journal"} component={Journal}/>
           <Route path={match.url + "/knowledge"} component={LoreContainer}/>
         </Switch>
@@ -67,20 +54,17 @@ class Character extends React.Component {
 }
 
 Character.propTypes = {
-  dispatch: PropTypes.func.isRequired
+  client: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  match: PropTypes.object.isRequired,
+  layout: PropTypes.string,
 }
 
-const gContainer = graphql(CHARACTER, {
-  props: ({ ownProps: { dispatch }, data: { character, loading, refetch, error } }) => 
-    ({ loading, refetch, error, character }),
-  options: props => ({
-    variables: {
-      slug: props.match.params.slug,
-      detail: !!props.match.params.slug
-    }
+export default withResource(Character, {
+  query: CHARACTER,
+  alias: 'character',
+  variables: props => ({
+    slug: props.match.params.character,
+    detail: !!props.match.params.character
   })
-})(Character)
-
-const mapStateToProps = ({session}) => session
-
-export default withApollo(withRouter(connect(mapStateToProps)(gContainer)))
+})

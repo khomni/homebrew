@@ -53,8 +53,8 @@ router.get('/', Common.middleware.querify, (req, res, next) => {
 
     if(req.json) return res.json({items: items, total: meta})
     if(req.xhr) {
-      if(req.query.format=='table') return res.render('characters/inventory/_itemTable',{meta:meta})
-      if(req.query.format=='tiles') return res.render('characters/inventory/_itemTiles',{meta:meta})
+      if(req.query.format === 'table') return res.render('characters/inventory/_itemTable',{meta:meta})
+      if(req.query.format === 'tiles') return res.render('characters/inventory/_itemTiles',{meta:meta})
       if(req.query.nearby) return res.render('characters/inventory/_itemTiles',{meta:meta})
     }
     if(req.isTab) return res.render('characters/inventory/_index', {meta});

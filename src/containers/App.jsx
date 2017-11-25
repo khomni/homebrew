@@ -20,6 +20,10 @@ import Character from './Character.jsx'
 import Home from '../components/views/home'
 import User from '../components/views/user'
 
+/* ============================== 
+ * Apollo / GraphQL
+ * ============================== */
+
 import { graphql } from 'react-apollo';
 import { SESSION } from '../../graphql/queries'
 
@@ -68,9 +72,9 @@ class App extends React.Component {
             <Route exact path="/login" component={Home}/>
             <Route exact path="/signup" component={Home}/>
             <Route exact path="/c" component={Campaign}/>
-            <Route path="/c/:slug" component={Campaign}/>
+            <Route path="/c/:campaign" component={Campaign}/>
             <Route exact path="/pc" component={Character}/>
-            <Route path="/pc/:slug" component={Character}/>
+            <Route path="/pc/:character" component={Character}/>
             <Route exact path="/u" component={User}/>
             <Route path="/u/:username" component={User}/>
           </Switch>

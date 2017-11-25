@@ -9,7 +9,8 @@ type Query {
 	user(id: ID!): User
 
 	character(slug: String, campaign: ID, user: ID, search: String): [Character]
-	campaign(id: ID): [Campaign]
+	campaign(slug: String): [Campaign]
+	item(slug: String, character: ID, search: String): ItemCollection
 }
 
 # ==============================
@@ -66,9 +67,10 @@ type Item implements Node {
 	name: String
 	value: Float
 	weight: Float
+	quantity: Int
 	total_value: Float
 	total_weight: Float
-	quantity: Int
+	total_quantity: Int
 	lore: [Lore!]!
 	items: ItemCollection
 	url: String

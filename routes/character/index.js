@@ -1,5 +1,6 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const characterRouter = require('./character-router');
 
 router.get('/', Common.middleware.requireUser, (req, res, next) => {
 
@@ -85,8 +86,8 @@ router.use('/:id', (req,res,next) => {
   return db.Character.findOne({where: isNaN(req.params.id) ? {url:req.params.id} : {id:req.params.id}})
   .then(character => {
     if(!character) throw Common.error.notfound('Character')
-    character.active = (req.user && req.user.MainChar && character.id == req.user.MainChar.id)
-    character.owned = (req.user && character.ownerId == req.user.id)
+    character.active = (req.user && req.user.MainChar && character.id === req.user.MainChar.id)
+    character.owned = (req.user && character.ownerId === req.user.id)
     res.locals.character = character
     if(character.Campaign) {
       if(req.user && req.user.id === character.Campaign.ownerId) character.Campaign.owned = true
@@ -102,6 +103,6 @@ router.use('/:id', (req,res,next) => {
     // })
   })
   .catch(next)
-}, require('./character-router'));
+}, characterRouter);
 
 module.exports = router;

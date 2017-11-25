@@ -52,7 +52,7 @@ const logoutLink = onError((err) => {
 const client = new ApolloClient({ 
   cache,
   fragmentMatcher,
-  link: logoutLink.concat(link),
+  link: link // logoutLink.concat(link),
 });
 
 /* ==============================

@@ -1,12 +1,13 @@
 const Query = require('./query');
 // const Mutation = require('./mutation');
-const User = require('./user');
-const Character = require('./character');
-const { Item, ItemCollection } = require('./item');
-const Lore = require('./lore');
 const Campaign = require('./campaign');
+const Character = require('./character');
 const { Comment, CommentSection }= require('./comment');
+const { Item } = require('./item');
+const Lore = require('./lore');
 const Quest = require('./quest');
+// const Session = require('./session');
+const User = require('./user');
 
 const Node = {
 
@@ -24,7 +25,6 @@ const resolvers = {
   CommentSection,
   DateTime,
   Item,
-  ItemCollection,
   Lore,
   Node,
   User,

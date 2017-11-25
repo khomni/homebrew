@@ -1,0 +1,28 @@
+query($detail: Boolean!, $slug: String, $character: ID, $search: String) {
+	item(slug: $slug, character: $character, search: $search) {
+		total_weight
+		total_value
+		total_quantity
+		items {
+			id
+			name
+			value
+			total_value
+			weight
+			total_weight
+			quantity
+			total_quantity
+			items @include(if: $detail) {
+				total_quantity
+				total_weight
+				total_value
+				items {
+					id
+					name
+					value
+					quantity
+				}
+			}
+		}
+	}
+}
