@@ -8,6 +8,8 @@ type Query {
 	session: Session
 	user(id: ID!): User
 
+	# Calendar: query the calendar based on optional year, motnh, day arguments OR a start and end timestamp
+	calendar(campaign: ID! year: Int, month: Int, day: Int, start: Int, end: Int): Calendar
 	character(slug: String, campaign: ID, user: ID, search: String): [Character]
 	campaign(slug: String): [Campaign]
 	item(slug: String, character: ID, search: String): ItemCollection
@@ -17,9 +19,15 @@ type Query {
 # Mutations
 # ==============================
 
-# type Mutation {
-# 
-# }
+type Mutation {
+	campaign(campaign: CampaignInput): Campaign
+	character(character: CharacterInput): Character
+}
+
+
+# ==============================
+# Mutations
+# ==============================
 
 interface Node {
 	id: ID!
@@ -50,7 +58,7 @@ type User implements Node {
 	username: String
 }
 
-type Character  implements Node {
+type Character implements Node {
 	id: ID!
 	name: String
 	campaign: Campaign
@@ -59,6 +67,12 @@ type Character  implements Node {
 	journal: [Journal!]!
 	knowledge: [Lore!]!
 	lore: [Lore!]!
+	url: String
+}
+
+input CharacterInput {
+	id: ID
+	name: String
 	url: String
 }
 
@@ -107,6 +121,61 @@ type Campaign implements Node {
 	lore: [Lore!]!
 	quests: [Quest!]!
 	url: String
+	calendar: Calendar
+	privacy_level: String
+}
+
+input CampaignInput {
+	id: ID
+	url: String
+	name: String!
+	system: String
+	privacy_level: String
+}
+
+# ==============================
+# Calendar Types
+# 	- Calendar
+#	- CalendarConnection
+#	- Event
+# ==============================
+
+type Calendar {
+	year_length: Int
+	weekdays: [String]
+	months: [String]
+	events: EventConnection
+}
+
+type EventConnection {
+	years: [Year!]!
+}
+
+type Year {
+	year: Int!
+	months: [Month!]!
+
+}
+
+type Month {
+	name: String
+	weeks: [Week!]!
+}
+
+type Week {
+	days: [Day]!
+}
+
+type Day {
+	is_present: Boolean
+	events: [Event]
+}
+
+type Event {
+	timestamp: Int
+	time: String
+	name: String
+
 }
 
 enum QuestStatus {

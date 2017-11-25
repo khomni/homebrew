@@ -40,19 +40,29 @@ const fragmentMatcher = new IntrospectionFragmentMatcher({ introspectionQueryRes
 
 const cache = new InMemoryCache({fragmentMatcher})
 
+/*
 const link = createHttpLink({
   uri: '/graphql',
   credentials: 'same-origin'
 })
+*/
 
-const logoutLink = onError((err) => {
-  console.error(err)
+const link = new HttpLink({
+  uri: '/graphql',
+  credentials: 'same-origin',
+  fetch
 })
+
+const logoutLink = onError((err, ...rest) => {
+  console.log(err, rest)
+})
+
+console.log(link);
 
 const client = new ApolloClient({ 
   cache,
   fragmentMatcher,
-  link: link // logoutLink.concat(link),
+  link: logoutLink.concat(link),
 });
 
 /* ==============================

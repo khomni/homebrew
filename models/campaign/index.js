@@ -27,7 +27,7 @@ module.exports = function(sequelize, DataTypes) {
         this.setDataValue('url',val)
       },
       get: function() {
-        return '/c/' + (this.getDataValue('url') || this.id) + '/'
+        return '/c/' + (this.getDataValue('url') || this.id)
       }
     },
     owned: {

@@ -55,12 +55,17 @@ export default function withResource(WrappedComponent, {query, variables, alias}
       this.setState({filter: {...filter, [name]: value}})
      }
 
+    componentDidMount() {
+      console.log('withResource', this.props.data)
+    }
+
     render() {
       const { error, loading, refresh, dispatch } = this.props;
       const { filter } = this.state
-      if(error) return <Error error={error} />
+      if(error) {
+        return <Error error={error} />
+      }
       if(loading) return <Loading/>
-      console.log('withResource', this.props)
       return <WrappedComponent setFilter={this.setFilter} filter={filter} {...this.props} />
     }
   }
@@ -76,19 +81,66 @@ export default function withResource(WrappedComponent, {query, variables, alias}
   let gContainer =  graphql(query, {
     // set the Wrappers props using the data returned by GraphQL endpoint and own props
     // TODO: allow HOC to determine the props alias? Otheriwse, just use the data as a standard prop
-    props: ({ownProps, data}) => ({
-      loading: data.loading,
-      error: data.error,
-      refetch: data.refetch,
-      [alias || 'data']: alias ? data[alias] : data,
-      data,
-    }),
+    props: ({ownProps, data}) => {
+      if(!data.loading) console.log('withResource:', data)
+      return {
+        loading: data.loading,
+        error: data.error,
+        refetch: data.refetch,
+        updateQuery: data.updateQuery,
+        [alias || 'data']: alias ? data[alias] : data,
+        data,
+      }
+    },
     options: props => ({
       variables: variables ? variables(props) : null
     })
   })(Wrapper)
 
   return withRouter(withApollo(connect(mapStateToProps)(gContainer)))
+}
+
+/* ==============================
+ * resourceForm:
+ *      HOC that wraps a component with everything required to update the 
+ * ============================== */
+
+export function resourceForm(WrappedComponent, {query, variables, alias}) {
+
+  class Wrapper extends Component {
+    constructor(props) {
+      super(props);
+      this.submit = this.submit.bind(this);
+
+      // form data should be stored in state until submitted
+      this.state = {}
+    }
+
+    submit() {
+      const { client } = this.props;
+
+      return client.mutate({
+        variables: {
+          ...variables,
+          [alias]: this.state,
+        }
+      })
+    
+    }
+
+    render() {
+      const { error, loading, refresh, dispatch } = this.props;
+      const { filter } = this.state
+      if(error) {
+        return <Error error={error} />
+      }
+      if(loading) return <Loading/>
+      return <WrappedComponent setFilter={this.setFilter} filter={filter} {...this.props} />
+    }
+  }
+
+  return withRouter(withApollo(connect(mapStateToProps)(Wrapper)))
+
 
 }
 

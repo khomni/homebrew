@@ -1,5 +1,6 @@
 const Comment = {
-  children: comment => {
+  children: (comment, args) => {
+
     return comment.comments || comment.getComments()
   },
   // createdAt: comment => Date(comment.createdAt),

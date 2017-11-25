@@ -1,0 +1,26 @@
+query($campaign: ID!, $year: Int, $month: Int, $day: Int, $start: Int, $end: Int) {
+	calendar(campaign: $campaign, year: $year, month: $month, day: $day, start: $start, end: $end) {
+		year_length
+		weekdays
+		months
+		events {
+			years {
+				year
+				months {
+					name
+					weeks {
+						days {
+							is_present
+							events {
+								name
+								time
+								timestamp
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+

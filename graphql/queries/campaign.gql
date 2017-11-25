@@ -1,0 +1,15 @@
+query($slug: String!) {
+	campaign(slug: $slug) {
+		id
+		name
+		system {
+			name
+		}
+
+
+		quests {
+			id
+			name
+		}
+	}
+}

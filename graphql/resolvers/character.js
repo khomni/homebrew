@@ -11,7 +11,7 @@ const Character = {
   },
 
   // ItemCollection
-  items: character => {
+  items: (character, args) => {
     return character.items || character.getItems();
   },
 

@@ -1,4 +1,6 @@
 export { default as INTROSPECTION } from './introspection.gql'
 export { default as SESSION } from './session.gql'
+export { default as CALENDAR } from './calendar.gql'
+export { default as CAMPAIGN } from './campaign.gql'
 export { default as CHARACTER } from './character.gql'
 export { default as ITEM } from './item.gql'

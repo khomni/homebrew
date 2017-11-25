@@ -81,7 +81,7 @@ router.use('/:id', (req,res,next) => {
     .then(permission => {
       if(permission&&permission.owner) campaign.owned = true;
       // if the campaign is hidden to the user, treat it as though it doesn't exist
-      if(!permission && campaign.privacy_level == 'hidden') throw Common.error.notfound('Campaign')
+      if(!permission && campaign.privacy_level === 'hidden') throw Common.error.notfound('Campaign')
       // otherwise return the campaign with attached permission info
       return campaign;
     })

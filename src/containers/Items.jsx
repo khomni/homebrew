@@ -32,15 +32,12 @@ class Items extends React.Component{
       total_weight: 0,
     }
 
-
     let {page, key, order, search, results} = filter
     let start = page * results
     let end = start + results
-    console.log(item.items);
 
     items = item.items
     .map(item => {
-      console.log(item, typeof item.id)
       item.id = Number(item.id);
       return item;
     })
@@ -59,11 +56,9 @@ class Items extends React.Component{
       })
     })
 
-    console.log(total, subtotal);
-
     return (
       <div>
-        <ItemList layout="table" total={total} subtotal={subtotal} items={items} filter={filter} setFilter={setFilter} match={match}/>;
+        <ItemList layout="table" total={total} subtotal={subtotal} items={items} filter={filter} setFilter={setFilter} match={match}/>
         <Route path={match.url + '/:slug'} component={Items}/>
       </div>
     )
@@ -80,6 +75,7 @@ export default withResource(Items, {
   alias: 'item',
   variables: props => ({
     slug: props.match.params.item,
+    character: props.character ? props.character.id : undefined,
     detail: !!props.match.params.item
   })
 })

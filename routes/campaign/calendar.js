@@ -144,7 +144,7 @@ router.get('/:year?/:month?', (req,res,next) => {
   }
 
   let calendarRange
-  let targetDate = res.locals.campaign.Calendar&&res.locals.campaign.Calendar.now || {year:1,monthIndex:0}
+  let targetDate = res.locals.campaign.Calendar && res.locals.campaign.Calendar.now || {year:1,monthIndex:0}
   res.locals.navigation = {}
 
   if(req.params.month || !req.params.year) {

@@ -5,7 +5,7 @@ import { PropTypes } from 'prop-types';
 
 import Items from './Items';
 import Journal from './Journal';
-import LoreContainer from './Lore';
+import Lore from './Lore';
 
 import { CharacterSheet, CharacterCard, CharacterList } from '../components/characters';
 import HeaderImage from '../components/HeaderImage';
@@ -43,9 +43,9 @@ class Character extends React.Component {
         {match.isExact && <CharacterSheet character={character}/>}
 
         <Switch>
-          <Route path={match.url + "/inventory/:item?"} component={Items}/>
-          <Route path={match.url + "/journal"} component={Journal}/>
-          <Route path={match.url + "/knowledge"} component={LoreContainer}/>
+          <Route path={match.path + "/inventory/:item?"} render={props => <Items character={character}/>}/>
+          <Route path={match.path + "/journal"} render={props => <Journal character={character}/>}/>
+          <Route path={match.path + "/knowledge"} render={props => <Lore character={character}/>}/>
         </Switch>
 
       </div>
@@ -65,6 +65,7 @@ export default withResource(Character, {
   alias: 'character',
   variables: props => ({
     slug: props.match.params.character,
+    campaign: props.campaign ? props.campaign.id : undefined,
     detail: !!props.match.params.character
   })
 })

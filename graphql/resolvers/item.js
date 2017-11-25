@@ -20,10 +20,12 @@ const totalWeight = (item) => {
 }
 
 const Item = {
-  id: item => item.id,
+  /*
+  id: (item, args, context) => item.id,
   value: item => item.value,
   weight: item => item.weight,
   quantity: item => item.quantity,
+  */
   total_weight: totalWeight,
   total_value: totalValue,
   total_quantity: totalQuantity,

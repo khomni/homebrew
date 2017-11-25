@@ -1,56 +1,39 @@
 import React from 'react';
-import ReloadingView from '../utils/ReloadingView'
-import { withRouter, Route, Link, Switch } from 'react-router-dom';
+import withResource from '../utils/ReloadingView'
+import { Route, Link, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
-
-import { connect } from 'react-redux';
-import { getResource } from '../actions';
 
 import Error from '../components/Error';
 import Character from './Character';
 import Calendar from './Calendar';
 
-class Campaign extends ReloadingView {
+import { CAMPAIGN } from '../../graphql/queries'
+
+class Campaign extends React.Component {
   constructor(props) {
     super(props);
-    this.onFetch = this.onFetch.bind(this);
-
-    this.state = { campaign: this.props.campaign }
-  }
-
-  onFetch(campaign) {
-    this.setState({campaign});
   }
 
   render() {
-    let { match } = this.props;
-    let { error, campaign} = this.state
+    let { campaign, match } = this.props;
+    let campaigns
 
-    if(error) return (
-      <Error error={error}/>
-    )
-
-    // TODO: before Campaign is initialized, show a loading effect
-    if(!campaign) return null;
-
-    // TODO: use the Campaign container to handle both Campaigns and lists of Campaigns
-    // TODO: more support for Campaign routes with options based on context
-    if(Array.isArray(campaign)) return (
+    if(campaign.length > 1) {
       <div key={match.url}>
         {campaign.map(c => {
           return <Link key={c.id} to={c.url}>{c.name}</Link>
         })}
       </div>
-    )
+    }
+    campaign = campaign.pop()
 
     return (
       <div key={match.url}>
         <h1>{campaign.name}</h1>
-        <label>{`As of ${this.lastFetch.toLocaleString()}`}</label>
 
         <Switch>
-          <Route path={match.url + "/pc"} component={Character}/>
-          <Route path={match.url + "/calendar"} component={Calendar}/>
+          <Route path={match.path + "/pc"} render={props => <Character campaign={campaign}/>}/>
+          <Route path={match.path + "/calendar"} render={props => <Calendar campaign={campaign}/>}/>
         </Switch>
 
       </div>
@@ -62,9 +45,11 @@ Campaign.propTypes = {
   dispatch: PropTypes.func.isRequired
 }
 
-const mapStatetoProps = (state, ownProps) => {
-  return {}
-}
-
-export default withRouter(connect(mapStatetoProps)(Campaign))
+export default withResource(Campaign, {
+  query: CAMPAIGN,
+  alias: 'campaign',
+  variables: props => ({
+    slug: props.match.params.campaign
+  })
+})
 

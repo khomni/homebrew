@@ -25,7 +25,7 @@ module.exports = (err, req, res, next) => {
       return res.render('modals/_error', {message: err.message, error: err})
     }
 
-    if(req.json) return res.status(err.status).json({
+    if(req.json) return res/*.status(err.status)*/.json({
       message: err.message, 
       status: err.status,
       error: err, 

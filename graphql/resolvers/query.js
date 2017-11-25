@@ -11,6 +11,22 @@ Query.session = (root, args, context) => {
   }
 }
 
+Query.campaign = (root, args, context) => {
+  const { slug } = args;
+  let query = {};
+  if(slug) query.url = slug
+
+  return db.Campaign.findAll({where: query})
+}
+
+Query.calendar = (root, args, context) => {
+  const { id } = args
+
+  let query = { id }
+
+  return db.Calendar.find({where: query})
+}
+
 Query.character = (root, args, context) => {
 
   const {slug, user, search, campaign} = args;
@@ -35,15 +51,15 @@ Query.item = (root, args, context) => {
     if(isNaN(slug)) query.url = slug
     else query.id = slug
   }
+  if(character) {
+    query.CharacterId = character
+  }
 
   // slave query
   let slaveQuery = {};
   if(search) slaveQuery.name = {$iLike: `%${search}%`}
 
   Object.assign(slaveQuery, query);
-
-  // TODO: include aggregation to get the total for the collection
-  // query the item collection using an aggregate for the master
 
   console.log(query);
 

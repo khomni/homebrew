@@ -1,44 +1,25 @@
 import React from 'react';
-import ReloadingView from '../utils/ReloadingView'
-import { withRouter, Route, Link, Switch, Redirect } from 'react-router-dom';
+import withResource from '../utils/ReloadingView'
+import { Route, Link, Switch, Redirect } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 
-import { connect } from 'react-redux';
-import { getResource } from '../actions';
+import { Edit, Events } from '../components/calendar';
 
-import { 
-  Edit, 
-  Events
-} from '../components/calendar';
+import { CALENDAR } from '../../graphql/queries'
 
-import Error from '../components/Error';
-
-class Calendar extends ReloadingView {
+class Calendar extends React.Component{
   constructor(props) {
     super(props);
-    this.onFetch = this.onFetch.bind(this);
-
-    this.state = { calendar: this.props.calendar }
   }
 
-  onFetch({calendar, events}) {
-    const { match } = this.props;
-    this.setState({calendar, events});
-  }
 
   render() {
-    let { match } = this.props;
-    let { error, calendar, events, initialized } = this.state
-
-    if(!initialized) return null;
+    let { match, calendar } = this.props;
 
     if(!calendar && match.isExact) {
       console.log("Calendar not initialized, redirecting to edit page");
       return <Redirect to={match.url + "/edit"}/>
     }
-    if(error) return <Error error={error}/>
-
-      // if(calendar && match.isExact) return <Redirect to={match.url + "/present"}/>
 
     let EditCalendar = (props) => <Edit calendar={calendar} {...props} />
     let ShowMonth = (props) => <Events calendar={calendar} years={events}/>
@@ -48,16 +29,14 @@ class Calendar extends ReloadingView {
     return (
       <div key={match.url}>
         <h1>Calendar</h1>
-        <Link to={match.url + "/edit"}>Edit</Link>
+        <Link to={match.path + "/edit"}>Edit</Link>
         <Switch>
-          <Route path={match.url} exact render={ShowMonth}/>
-          <Route path={match.url + "/edit"} render={EditCalendar}/>
-          <Route path={match.url + "/:year?/:month?"} component={ShowMonth}/>
-          <Route path={match.url + "/:year/:month"} component={ShowMonth}/>
-          <Route path={match.url + "/:year/:month/:day"} component={ShowMonth}/>
+          <Route path={match.path} exact render={ShowMonth}/>
+          <Route path={match.path + "/edit"} render={EditCalendar}/>
+          <Route path={match.path + "/:year?/:month?"} component={ShowMonth}/>
+          <Route path={match.path + "/:year/:month"} component={ShowMonth}/>
+          <Route path={match.path + "/:year/:month/:day"} component={ShowMonth}/>
         </Switch>
-
-
       </div>
     )
   }
@@ -67,10 +46,10 @@ Calendar.propTypes = {
   dispatch: PropTypes.func.isRequired
 }
 
-const mapStatetoProps = (state, ownProps) => {
-  return {}
-}
-
-export default withRouter(connect(mapStatetoProps)(Calendar))
-
-
+export default withResource(Calendar, {
+  query: CALENDAR,
+  alias: 'calendar',
+  variables: props => ({
+    campaign: props.campaign.id
+  })
+})
