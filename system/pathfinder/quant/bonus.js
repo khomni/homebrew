@@ -2,7 +2,7 @@ var Schema = require('js-schema');
 
 function Bonus(args) {
   var thisBonus = this
-  Object.assign(thisBonus,args)
+  Object.assign(thisBonus, args)
   if(!Bonus.schema(thisBonus)) throw new Error('Quantifiable does not match schema')
 }
 

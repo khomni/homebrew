@@ -21,12 +21,34 @@ var Item = require('../item');
 var Bonus = require('../quant').bonus;
 
 Creature.schema = Schema({
-  // '?hp': Number.min(0), // current HP, max HP is determined by class and attributes
+  '?type': [ 'aberration', 'animal', 'construct', 'dragon', 'fey', 'humanoid', 'magical beast', 'monstrous humanoid' ],
+  '?size': [ 'fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal' ],
+  '?alignment': Schema({
+    'ethical': ['lawful', 'neutral', 'chaotic'],
+    'moral': ['good','neutral','evil']
+  }),
+  '?hitDice' : [6, 8, 10, 12],
+  '?subtype': String,
   '?experience': Number.min(0),
   '?classes': Array.of(Class.schema),
-  '?race': String,
-  'bonuses': Array.of(Bonus.schema), // inherent bonuses
-  'attributes': Schema({
+  '?ac': Number,
+  '?hp': Number,
+  '?base_attack': Number,
+  // '?race': String,
+  '?bonuses': Array.of(Bonus.schema), // inherent bonuses
+  '?speed': Schema({
+    land: Number,
+    swim: Number,
+    fly: Number,
+    burrow: Number,
+    climb: Number
+  }),
+  '?saving_throw': Schema({
+    'fort': Number,
+    'ref': Number,
+    'will': Number,
+  }),
+  '?attributes': Schema({
     str: Number,
     dex: Number,
     'con?': Number,
@@ -60,9 +82,8 @@ Creature.prototype.addExp = function(int){
 }
 
 // given an Item document, finds the appropriate slot and equips it
-Creature.prototype.equip = function(item,options) {
+Creature.prototype.equip = function(item, options = {}) {
   var thisCreature = this
-  var options = options || {}
 
   if(!item || !item.id || !item.properties) throw new Error("Can't equip that")
   var slot = item.properties.slot || 'held'
@@ -70,16 +91,16 @@ Creature.prototype.equip = function(item,options) {
   if(['held','ring'].indexOf(slot) >= 0) {
 
     thisCreature.equipment[slot] = thisCreature.equipment[slot] || []
-    if(thisCreature.equipment[slot].reduce((a,b)=>{return a==b||b},false) === true) thisCreature.unequip(slot) // if the held item is two-handed, unequip it
+    if(thisCreature.equipment[slot].reduce((a,b) =>  a === b || b, false) === true) thisCreature.unequip(slot) // if the held item is two-handed, unequip it
 
     // if the equipped item is two-handed, ignore hand preference and equip it in two hands
-    if(item.properties.hands == 2) {
+    if(item.properties.hands === 2) {
       thisCreature.equipment[slot] = [item.id, item.id]
       return thisCreature
     }
 
-    if(options.hand == 'offhand') thisCreature.equipment[slot][1] = item.id // off-hand preference
-    else if(options.hand == 'primary' || !thisCreature.equipment[slot][0]) thisCreature.equipment[slot][0] = item.id // primary hand preference
+    if(options.hand === 'offhand') thisCreature.equipment[slot][1] = item.id // off-hand preference
+    else if(options.hand === 'primary' || !thisCreature.equipment[slot][0]) thisCreature.equipment[slot][0] = item.id // primary hand preference
     else { // no preference, push it into the primary slot and remove excess items
       thisCreature.equipment[slot].unshift(item.id)
       if(thisCreature.equipment[slot].length > 2) thisCreature.equipment[slot] = thisCreature.equipment[slot].slice(0,2)
@@ -92,9 +113,8 @@ Creature.prototype.equip = function(item,options) {
 }
 
 // removes a reference to an equipment slot
-Creature.prototype.unequip = function(slot,options) {
+Creature.prototype.unequip = function(slot, options = {}) {
   this.equipment = this.equipment || {}
-  var options = options || {}
 
   // the slot is not an array, or no hand was specified
   if(!Array.isArray(this.equipment[slot]) || !options.hand) {
@@ -103,8 +123,8 @@ Creature.prototype.unequip = function(slot,options) {
   }
 
   // the slot is an array and a hand was specified
-  if(options.hand == 'primary') delete this.equipment[slot][0]
-  if(options.hand == 'offhand') delete this.equipment[slot][1]
+  if(options.hand === 'primary') delete this.equipment[slot][0]
+  if(options.hand === 'offhand') delete this.equipment[slot][1]
   return this
 
 }

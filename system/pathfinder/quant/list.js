@@ -1,8 +1,11 @@
-var Quantifiable = require('./')
-
+var Quantifiable = require('./') 
 // a keyed object of all preconstructed metrics
 // this list is used to determine what things bonuses can be applied to
 var quantifiable = {
+  hp: {
+    current: {label: "HP"}, 
+    max: {label: "Max HP"}
+  },
   ac: {label: "Armor Class"},
   damage: {label: "Damage"},
   attack: {label: "Attack"},
@@ -47,11 +50,12 @@ function recursiveConvert(object,trace) {
     var thisTrace = trace + i
     if('label' in object[i]) {
       object[i] = new Quantifiable(object[i])
-      flatKeys.push(thisTrace)
+      // flatKeys.push(thisTrace)
+      flatKeys.push({key: thisTrace, label: object[i].label})
       return true
     }
 
-    if(typeof object[i] == 'object') return recursiveConvert(object[i],thisTrace)
+    if(typeof object[i] === 'object') return recursiveConvert(object[i],thisTrace)
   })
 }
 

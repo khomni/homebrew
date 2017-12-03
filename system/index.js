@@ -1,5 +1,4 @@
 'use strict';
-const pug = require('pug');
 
 function System(args) {
   Object.assign(this,args)
@@ -26,7 +25,6 @@ System.prototype.render = function(path,locals){
 }
 
 // export the system constructor so rulesets can access it
-module.exports.builder = System
 
 // all available rulesets
 var RuleSets = {
@@ -36,3 +34,4 @@ var RuleSets = {
 // export the rulesets object
 
 module.exports = RuleSets
+module.exports.constructor = System

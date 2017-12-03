@@ -1,4 +1,4 @@
-var Term = require(APPROOT+"/system/utilities/term")
+var Term = require('../../utilities/term')
 
 var terms = {
   CURRENCY: new Term({singular:'gold',abbreviation:'gp'}),

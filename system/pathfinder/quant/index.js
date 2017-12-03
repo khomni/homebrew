@@ -1,4 +1,5 @@
-var Schema = require('js-schema');
+const Schema = require('js-schema');
+const _ = require('lodash')
 
 function Quantifiable(args) {
   var thisQuant = this
@@ -15,6 +16,6 @@ module.exports = Quantifiable
 module.exports.list = require('./list')
 module.exports.bonus = require('./bonus')
 
-var getNested = require(APPROOT+'/system/utilities/accessor')
+var getNested = require('../../utilities/accessor')
 
-module.exports.list.get = Common.utilities.get.bind(module.exports.list)
+module.exports.list.get = _.get.bind(module.exports.list)

@@ -9,6 +9,22 @@ input {
 	&.form-input {}
 }
 
+input.inline {
+	background: none;
+	border: none;
+	border-bottom: 1px dashed fade(black, 25%);
+	display: inline;
+
+	&.right {
+		text-align: right;
+	}
+
+	&.focus {
+		outline: none;
+		border-bottom: 1px dashed fade(black, 50%);
+	}
+}
+
 .form-input {
 	background: white;
 	border: none;

@@ -57,8 +57,6 @@ const logoutLink = onError((err, ...rest) => {
   console.log(err, rest)
 })
 
-console.log(link);
-
 const client = new ApolloClient({ 
   cache,
   fragmentMatcher,

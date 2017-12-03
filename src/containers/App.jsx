@@ -6,13 +6,15 @@ import React from 'react';
 import { render } from 'react-dom';
 import { PropTypes } from 'prop-types';
 
-import Navbar from '../components/navbar.jsx'
 
 import { Link, Switch, Redirect, Route, withRouter} from 'react-router-dom';
 
 /* ============================== 
- * React-Router Views
+ * Components & React-Router Views
  * ============================== */
+
+import Navbar from '../components/navbar.jsx'
+import Initiative from './Initiative.jsx'
 
 import Campaign from './Campaign'
 // import Character from '../components/views/characters.jsx'
@@ -68,9 +70,12 @@ class App extends React.Component {
         <div className="app">
 
           <Switch>
+
             <Route exact path="/" component={Home}/>
             <Route exact path="/login" component={Home}/>
             <Route exact path="/signup" component={Home}/>
+            <Route exact path="/s/:system/initiative" component={Initiative}/>
+
             <Route exact path="/c" component={Campaign}/>
             <Route path="/c/:campaign" component={Campaign}/>
             <Route exact path="/pc" component={Character}/>

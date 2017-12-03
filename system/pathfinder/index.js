@@ -1,7 +1,7 @@
 // Pathfinder Ruleset
-var System = require('../').builder
+const System = require('../').constructor
 
-var Pathfinder = new System({
+const Pathfinder = new System({
   // name / publisher information
   name: "Pathfinder",
   publisher: "Paizo",
