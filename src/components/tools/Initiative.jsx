@@ -36,16 +36,16 @@ export const CreatureRow = ({highlighted, system, creature, removeCreature, upda
 
   switch (creature.faction) {
     case 'ally': 
-      rowClasses.push('secondary')
+      rowClasses.push('green')
       break;
     case 'neutral':
       rowClasses.push('gray')
       break;
     case 'friendly':
-      rowClasses.push('green')
+      rowClasses.push('blue')
       break;
     case 'hostile': 
-      rowClasses.push('primary')
+      rowClasses.push('red')
       break;
   }
 
@@ -54,10 +54,10 @@ export const CreatureRow = ({highlighted, system, creature, removeCreature, upda
       <td><button className="as-link close" value={creature.id} onClick={removeCreature}/></td>
       <td><label>{creature.id}</label></td>
       <td>
-        <input className="form-input" type="number" name="initiative" onChange={updateCreature} value={creature.initiative === -Infinity ? '' : creature.initiative} onChange={updateCreature}/>
+        <input className="form-input" type="number" name="initiative" value={creature.initiative === -Infinity ? '' : creature.initiative} onChange={updateCreature(creature.id)}/>
       </td>
       <td>
-        <select className="form-input" name="faction" onChange={updateCreature} value={creature.faction}>
+        <select className="form-input" name="faction" onChange={updateCreature(creature.id)} value={creature.faction}>
           <option>neutral</option>
           <option>ally</option>
           <option>hostile</option>
@@ -65,13 +65,14 @@ export const CreatureRow = ({highlighted, system, creature, removeCreature, upda
         </select>
       </td>
       <td>
-        <input className="form-input" name="label" value={creature.label} onChange={updateCreature}/>
+        <input className="form-input" name="label" value={creature.label} onChange={updateCreature(creature.id)}/>
       </td>
       <td>
         <div className="flex vert"> 
           <div className="flex row center">
-            <input className="inline right" name="hp.current" value={creature.hp.current} onChange={updateCreature}/>
-            <div>/{creature.hp.max}</div>
+            <input className="inline right" type="number" name="hp.current" value={creature.hp.current} onChange={updateCreature(creature.id)}/>
+            <div>/</div>
+            <input className="inline right" type="number" name="hp.max" value={creature.hp.max} onChange={updateCreature(creature.id)}/>
           </div>
           <div className="bar">
             <div className="data-bar red">

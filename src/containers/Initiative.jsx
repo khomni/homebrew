@@ -14,6 +14,8 @@ import Systems, { constructor as SystemConstructor } from '../../system'
 import ErrorPage from '../components/Error'
 import InitiativeTable, { CreatureRow } from '../components/tools/Initiative'
 
+import _ from 'lodash'
+
 var uid = 0;
 
 class CreatureContainer extends React.Component {
@@ -76,9 +78,7 @@ class Initiative extends React.Component {
     // exhausted is true if the entire creatures array can be reduce
     // an empty creatures array defaults to exhausted
     // any creature with an initiative lower than the cursor should make this false
-    let exhausted = creatures.reduce((a,b) => {
-      return a && !(b.initiative < cursor)
-    }, true)
+    let exhausted = creatures.reduce((a,b) => a && !(b.initiative < cursor), true)
 
     if(exhausted) {
       cursor = Math.max.apply(null, creatures.map(creature => creature.initiative));
@@ -102,7 +102,7 @@ class Initiative extends React.Component {
 
     creatures.push({
       id: ++uid,
-      label: (Math.random() * 10000).toString(32),
+      label: ''
       initiative: Math.floor(Math.random() * 20),
       // initiative: -Infinity,
       faction: factions[Math.floor(Math.random() * factions.length)],
@@ -131,10 +131,17 @@ class Initiative extends React.Component {
     this.updateCreatureList({creatures})
   }
 
-  updateCreature(event) {
-    let { creatures } = this.state
-    console.log('update creature:', event.target.name, event.target.value)
-    this.updateCreatureList({creatures})
+  updateCreature(id) {
+    return function(event) {
+      let { creatures } = this.state;
+      let { value, name } = event.target;
+      console.log('update creature:', name, value)
+      creatures.forEach(creature => {
+        if(creature.id === id) _.set(creature, name, value)
+      });
+
+      this.updateCreatureList({creatures})
+    }.bind(this)
   }
 
   // use this to set the state when creatures are changed
