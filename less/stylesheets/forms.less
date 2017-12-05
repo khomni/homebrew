@@ -9,11 +9,14 @@ input {
 	&.form-input {}
 }
 
-input.inline {
+input.inline,select.inline {
 	background: none;
+	color: inherit;
+	text-shadow: inherit;
 	border: none;
 	border-bottom: 1px dashed fade(black, 25%);
 	display: inline;
+	max-width: 100%;
 
 	&.right {
 		text-align: right;
@@ -23,6 +26,14 @@ input.inline {
 		outline: none;
 		border-bottom: 1px dashed fade(black, 50%);
 	}
+
+	&.fill {
+		width: 100%;
+	}
+}
+
+select.inline {
+
 }
 
 .form-input {
