@@ -195,7 +195,7 @@ class Initiative extends React.Component {
         if(creatures[a].faction >= creatures[b].faction) {
           if(creatures[a].faction !== creatures[b].faction) return 1;
           if(creatures[b].label) return creatures[a].label.toLowerCase() > creatures[b].label.toLowerCase()
-          if(creatures[b].id) return creatures[a].id - creatures[b].id
+          if(creatures[b].id) return creatures[a].id > creatures[b].id
         }
       }
       return -1 
