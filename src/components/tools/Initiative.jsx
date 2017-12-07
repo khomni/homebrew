@@ -162,6 +162,9 @@ export class CreatureRow extends React.Component {
         <td><label>{creature.id}</label></td>
         <td colSpan="6">
           { hpBar }
+          <pre>
+            {JSON.stringify(creature.creature, null, '  ')}
+          </pre>
         </td>
       </tr>
     )
