@@ -132,8 +132,8 @@ export class CreatureRow extends React.Component {
     // TODO: use logarithmic equations rather than linear
 
     let barColors = {
-      red: Math.floor( (100 - hpPercentage)/100 * RGB_MAX ),
-      green: Math.floor( hpPercentage/100 * RGB_MAX ),
+      red: Math.floor( Math.min(Math.log10( Math.max(1, (100 - hpPercentage)/ 10)) * RGB_MAX), RGB_MAX),
+      green: Math.floor( Math.min(RGB_MAX, Math.log10(Math.max(1, hpPercentage/10)) * RGB_MAX )),
       blue: 25,
     }
 
