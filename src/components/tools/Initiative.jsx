@@ -38,10 +38,36 @@ export class CreatureRow extends React.Component {
 
   constructor(props) {
     super(props);
-    this.toggleFocus = this.toggleFocus.bind(this)
-    this.updateCreature = props.updateCreature(props.creature.id)
+    this.toggleFocus = this.toggleFocus.bind(this);
+    this.updateCreature = props.updateCreature(props.creature.id);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
 
     this.state = { focused: false }
+  }
+
+  handleKeyDown(event) {
+    const { index, cloneCreature, removeCreature, changeFocus, creature: { id } } = this.props;
+    const { currentTarget: { name }, shiftKey, ctrlKey, keyCode } = event
+
+    if(ctrlKey) {
+      switch(keyCode) {
+        case 8:
+        case 46:
+          event.preventDefault();
+          return removeCreature(id);
+        case 13:
+          event.preventDefault();
+          return cloneCreature(id);
+      }
+    }
+
+    let direction = !shiftKey
+    if(event.keyCode === 13) {
+      event.preventDefault();
+
+
+      return changeFocus(id, direction, name)
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -62,9 +88,10 @@ export class CreatureRow extends React.Component {
 
 
   render() {
-    const {highlighted, system, creature, removeCreature, cloneCreature} = this.props;
+    const { index, highlighted, system, creature, removeCreature, cloneCreature} = this.props;
     const { focused } = this.state
     let rowClasses = []
+    let mapRef = this.props.mapRef(creature.id);
 
     if(highlighted) rowClasses.push('active')
     if(creature.initiative === -Infinity || creature.initiative === '') rowClasses.push('disabled')
@@ -88,29 +115,42 @@ export class CreatureRow extends React.Component {
     const controls = (
       <td>
         <div className="flex row pad">
-          <button className="as-link close" value={creature.id} onClick={removeCreature} alt="Remove"/>
+          <button className="as-link close" value={creature.id} onClick={() => removeCreature(creature.id)} alt="Remove"/>
           <button className="as-link close" value={creature.id} onClick={this.toggleFocus} alt="Focus">
             <i className={`fa fa-${focused ? 'minus' : 'plus'}-square`}/>
           </button>
-          <button className="as-link close" value={creature.id} onClick={cloneCreature} alt="Clone">
+          <button className="as-link close" value={creature.id} onClick={() => cloneCreature(creature.id)} alt="Clone">
             <i className="fa fa-clone"/>
           </button>
         </div>
       </td>
     )
 
+    let hpPercentage = (100 * (creature.hpCurrent / creature.hpMax || 0))
+    const RGB_MAX = 200
+
+    // TODO: use logarithmic equations rather than linear
+
+    let barColors = {
+      red: Math.floor( (100 - hpPercentage)/100 * RGB_MAX ),
+      green: Math.floor( hpPercentage/100 * RGB_MAX ),
+      blue: 25,
+    }
+
+    let backgroundColor = `rgb(${barColors.red},${barColors.green},${barColors.blue})`
+
     const hpBar = (
       <div className="bar">
         <div className="hilt" style={{width: '100px'}}>
           <div className="flex row center">
-            <input className="inline right" type="number" name="hpCurrent" value={creature.hpCurrent} onChange={this.updateCreature}/>
+            <input className="inline right" type="number" name="hpCurrent" value={creature.hpCurrent} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
             <div>/</div>
-            <input className="inline left" type="number" name="hpMax" value={creature.hpMax} onChange={this.updateCreature}/>
+            <input className="inline left" type="number" name="hpMax" value={creature.hpMax} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
           </div>
         </div>
-        <div className="data-bar red">
-          <div className="value" style={{width: `${100 * (creature.hpCurrent/creature.hpMax) || 0}%`}}>
-            <span>{creature.hpMax ? `${Math.floor(10000 * (creature.hpCurrent / creature.hpMax)) / 100}%` : '–'}</span>
+        <div className={`data-bar`}>
+          <div className="value" style={{backgroundColor, width: `${hpPercentage || 0}%`}}>
+            <span>{creature.hpMax ? `${Math.floor(10 * hpPercentage) / 10}%` : '–'}</span>
           </div>
         </div>
       </div>
@@ -134,11 +174,11 @@ export class CreatureRow extends React.Component {
         <td><label>{creature.id}</label></td>
 
         <td>
-          <input className="inline right" type="number" name="initiative" value={creature.initiative === -Infinity ? '' : creature.initiative} onChange={this.updateCreature}/>
+          <input className="inline right" type="number" name="initiative" value={creature.initiative === -Infinity ? '' : creature.initiative} ref={mapRef} onChange={this.updateCreature} onKeyDown={this.handleKeyDown}/>
         </td>
 
         <td>
-          <select className="inline right" name="faction" onChange={this.updateCreature} value={creature.faction}>
+          <select className="inline right" name="faction" onChange={this.updateCreature} value={creature.faction} ref={mapRef} onKeyDown={this.handleKeyDown}>
             <option>neutral</option>
             <option>ally</option>
             <option>hostile</option>
@@ -147,11 +187,11 @@ export class CreatureRow extends React.Component {
         </td>
 
         <td>
-          <input className="inline fill left" name="label" value={creature.label} onChange={this.updateCreature}/>
+          <input className="inline fill left" name="label" value={creature.label} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
         </td>
 
         <td>
-          <input className="inline right" type="number" name="ac" value={creature.ac} onChange={this.updateCreature}/>
+          <input className="inline right" type="number" name="ac" value={creature.ac} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
         </td>
 
         <td>{ hpBar }</td>

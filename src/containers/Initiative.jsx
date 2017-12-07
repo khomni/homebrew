@@ -28,13 +28,16 @@ class Initiative extends React.Component {
     this.incrementCursor = this.incrementCursor.bind(this);
     this.reset = this.reset.bind(this);
     this.getInitiativeOrder = this.getInitiativeOrder.bind(this);
+    this.changeFocus = this.changeFocus.bind(this);
+    this.mapRef = this.mapRef.bind(this);
 
     this.state = {
       round: 0,
       cursor: Infinity,
       system: null,
       creatures: {},
-      order: [] // ordered list of creature ids
+      order: [], // ordered list of creature ids
+      refMatrix: []
     }
   }
 
@@ -43,9 +46,7 @@ class Initiative extends React.Component {
     let creatures = _.cloneDeep(this.state.creatures)
 
     for( let id in creatures ) {
-      if(creatures[id]) {
-        creatures[id].initiative = -Infinity
-      }
+      if(creatures[id]) creatures[id].initiative = -Infinity
     }
 
     this.setState({
@@ -60,6 +61,43 @@ class Initiative extends React.Component {
     const System = Systems[system]
 
     this.setState({system: System})
+  }
+
+  // sets the ref of a particular row / column of the refMatrix
+  mapRef(id) {
+    const { refMatrix } = this.state;
+
+    return function(ref) {
+      if(!ref) return null;
+      if(!refMatrix[id]) refMatrix[id] = {}
+      refMatrix[id][ref.name] = ref;
+      this.setState({ refMatrix })
+    }.bind(this)
+  }
+
+  changeFocus(id, direction = true, name = 'initative') {
+    const { refMatrix, order } = this.state
+    let selectedRow
+
+    // return the id corresponding to the adjacent row, based on the current order
+    let ref = order.reduce((a,b) => {
+      // reduciton has returned a reference
+      if(a && a.focus) return a;
+
+      if(direction) {
+        if(a === id) return refMatrix[b][name]
+        return b
+      } else {
+        if(b === id) return refMatrix[a][name]
+        return b
+      }
+    })
+
+    console.log('ref:', ref);
+    if(!ref) return;
+
+    if(ref.focus) ref.focus();
+    if(ref.select) return ref.select();
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -129,9 +167,9 @@ class Initiative extends React.Component {
     })
   }
 
-  cloneCreature(event) {
+  cloneCreature(id) {
     let { creatures, system } = this.state
-    let id = event.currentTarget.value
+    // let id = event.currentTarget.value
 
     let uid;
     do {
@@ -140,8 +178,6 @@ class Initiative extends React.Component {
 
     let clonedCreature = Object.assign({}, creatures[id])
     clonedCreature.id = uid;
-
-    console.log(clonedCreature);
 
     this.setState({
       creatures: {
@@ -152,10 +188,11 @@ class Initiative extends React.Component {
   }
 
   // removes an entry from initiative
-  removeCreature(event) {
-    event.preventDefault();
+  removeCreature(id) {
     let { creatures, system } = this.state
-    let id = event.currentTarget.value
+    // let id = event.currentTarget.value
+
+    this.changeFocus(id)
 
     this.setState({
       creatures: {
@@ -173,8 +210,8 @@ class Initiative extends React.Component {
       let creature = Object.assign({}, creatures[id])
 
       if(creature) {
-        if(type === 'number') value = Number(value)
-        console.log('updateCreature:', `creature.${id}.${name}: ${_.get(creature, name)} -> ${value}`);
+        if(type === 'number' && value !== '') value = Number(value)
+        // console.log('updateCreature:', `creature.${id}.${name}: ${_.get(creature, name)} -> ${value}`);
         _.set(creature, name, value)
       }
 
@@ -250,19 +287,29 @@ class Initiative extends React.Component {
           </table>
         </div>
         <InitiativeTable system={System}>
-          {order.map(id => creatures[id] &&
-            <CreatureRow highlighted={cursor === creatures[id].initiative} key={id} system={System} creature={creatures[id]} removeCreature={this.removeCreature} updateCreature={this.updateCreature} cloneCreature={this.cloneCreature}/>
+          {order.map((id, i) => creatures[id] &&
+            <CreatureRow 
+              index={i} 
+              key={id} 
+              creature={creatures[id]} 
+              highlighted={cursor === creatures[id].initiative} 
+              system={System} 
+
+              mapRef={this.mapRef}
+              changeFocus={this.changeFocus}
+              cloneCreature={this.cloneCreature}
+              removeCreature={this.removeCreature} 
+              updateCreature={this.updateCreature} 
+
+            />
           )}
         </InitiativeTable>
       </div>
-
     )
-  
   }
 }
 
 Initiative.propTypes = { }
-
 
 const mapStateToProps = ({session}) => session
 

@@ -75,11 +75,11 @@ table {
 }
 
 tr.orange,tr.primary {
-    background: @color-primary;
+    background: fade(@color-primary, 50%);
 }
 
 tr.blue,tr.secondary {
-    background: @color-secondary;
+    background: fade(@color-secondary, 50%);
 }
 
 tr.red {
@@ -91,11 +91,11 @@ tr.green {
 }
 
 tr.gray {
-    background: #ccc;
+    background: fade(#ccc, 50%);
 }
 
 tr.disabled {
-    .filter(saturate(0.5));
+    .filter(saturate(0.5) brightness(0.5));
 }
 
 tr.active {
