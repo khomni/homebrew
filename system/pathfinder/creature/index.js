@@ -20,15 +20,13 @@ var Class = require('./class');
 var Item = require('../item');
 var Bonus = require('../quant').bonus;
 
-console.log(Item.schema);
-
 Creature.schema = Schema({
   '?type': [ 'aberration', 'animal', 'construct', 'dragon', 'fey', 'humanoid', 'magical beast', 'monstrous humanoid' ],
   '?subtype': String,
   '?size': [ 'fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal' ],
   '?hitDice' : [6, 8, 10, 12],
   '?experience': Number.min(0),
-  '?cr': Number.min(1/8),
+  '?cr': Number.min(0),
   '?alignment': Schema({
     'ethical': ['lawful', 'neutral', 'chaotic'],
     'moral': ['good','neutral','evil']

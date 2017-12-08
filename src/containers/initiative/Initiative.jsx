@@ -262,14 +262,14 @@ class Initiative extends React.Component {
     // const System = Systems[system]
     if(!System) error = new Error(`${system} is not a supported rules system`)
 
-    const Creature = System.Creature
-    const CreatureSchema = Creature.schema.toJSON()
 
     if(error) {
       error.status = error.status || 400
       return <ErrorPage error={error}/>
     }
 
+    const Creature = System.Creature
+    const CreatureSchema = Creature.schema.toJSON()
     // convert the creatures in state to the system's Creature object
     let { creatures, order } = this.state
     const { Quantifiable: {list: Quantifiable} } = System

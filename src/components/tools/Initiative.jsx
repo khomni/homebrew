@@ -96,7 +96,7 @@ export const SystemFields = ({row = false, baseName, baseObject, fields, childre
                   className="inline left" 
                   type={field.type === 'number' ? 'number' : 'text'} 
                   name={name} 
-                  value={_.get(baseObject, name)}
+                  value={_.get(baseObject, name) || ''}
 
                   min={field.minimum}
                   max={field.maximum}
