@@ -69,13 +69,14 @@ class Initiative extends React.Component {
   // sets the ref of a particular row / column of the refMatrix
   mapRef(id) {
     const { refMatrix } = this.state;
+    const _this = this;
 
     return function(ref) {
       if(!ref) return null;
       if(!refMatrix[id]) refMatrix[id] = {}
       refMatrix[id][ref.name] = ref;
-      this.setState({ refMatrix })
-    }.bind(this)
+      _this.setState({ refMatrix })
+    }
   }
 
   changeFocus(id, direction = true, name = 'initiative') {

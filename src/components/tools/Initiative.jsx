@@ -68,8 +68,7 @@ export const HealthBar = ({ current, max, children }) => {
 }
 
 export const SystemFields = ({row = false, baseName, baseObject, fields, children, ...props}) => {
-  console.log('systemFields render');
-  
+
   return (
     <div className={`flex vert pad border`}>
       { children }
