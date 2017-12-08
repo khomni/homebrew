@@ -9,14 +9,15 @@ import { PropTypes } from 'prop-types';
 import { Link, Switch, Redirect, Route, withRouter} from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import Systems, { constructor as SystemConstructor } from '../../system'
+import Systems, { constructor as SystemConstructor } from '../../../system'
 
-import ErrorPage from '../components/Error'
-import InitiativeTable, { CreatureRow } from '../components/tools/Initiative'
+import ErrorPage from '../../components/Error'
+import InitiativeTable from '../../components/tools/Initiative'
+import CreatureRow from './CreatureRow';
 
 import _ from 'lodash'
 
-import generateGuid from '../utils/guid'
+import generateGuid from '../../utils/guid'
 
 class Initiative extends React.Component {
   constructor(props) {
@@ -60,6 +61,8 @@ class Initiative extends React.Component {
     const { match: {params: {system} } } = this.props
     const System = Systems[system]
 
+    console.log(System);
+
     this.setState({system: System})
   }
 
@@ -75,29 +78,39 @@ class Initiative extends React.Component {
     }.bind(this)
   }
 
-  changeFocus(id, direction = true, name = 'initative') {
+  changeFocus(id, direction = true, name = 'initiative') {
     const { refMatrix, order } = this.state
     let selectedRow
 
+    // TODO: wrapping focus traversal
+    // if the result of the ref reducer is just an id, then the entire order was traversed without
+    // finding the desired row; 
+    // either firstmost node traversing up or last node traversing down:
+    //
     // return the id corresponding to the adjacent row, based on the current order
     let ref = order.reduce((a,b) => {
-      // reduciton has returned a reference
+      // if reduciton has returned a reference, return it
       if(a && a.focus) return a;
 
+
       if(direction) {
+        // if a matches the id, then b is the targeted id
         if(a === id) return refMatrix[b][name]
-        return b
       } else {
+        // traversing up from the first row: return the last entry
+        if(a === id) return refMatrix[order[order.length-1]][name]
+        // if a matches the id, then b is the targeted id
+        // if b matches the id, then a is the targeted id
         if(b === id) return refMatrix[a][name]
-        return b
       }
+      return b
     })
 
-    console.log('ref:', ref);
-    if(!ref) return;
+    if(!ref.focus) ref = refMatrix[order[0]][name]
 
-    if(ref.focus) ref.focus();
-    if(ref.select) return ref.select();
+    if(ref && ref.focus) ref.focus();
+    if(ref && ref.select) return ref.select();
+    return ref;
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -207,11 +220,10 @@ class Initiative extends React.Component {
     return function(event) {
       let { creatures } = this.state;
       let { value, name, type } = event.target;
-      let creature = Object.assign({}, creatures[id])
+      let creature = _.cloneDeep(creatures[id])
 
       if(creature) {
         if(type === 'number' && value !== '') value = Number(value)
-        // console.log('updateCreature:', `creature.${id}.${name}: ${_.get(creature, name)} -> ${value}`);
         _.set(creature, name, value)
       }
 

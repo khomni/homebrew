@@ -20,16 +20,19 @@ var Class = require('./class');
 var Item = require('../item');
 var Bonus = require('../quant').bonus;
 
+console.log(Item.schema);
+
 Creature.schema = Schema({
   '?type': [ 'aberration', 'animal', 'construct', 'dragon', 'fey', 'humanoid', 'magical beast', 'monstrous humanoid' ],
+  '?subtype': String,
   '?size': [ 'fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal' ],
+  '?hitDice' : [6, 8, 10, 12],
+  '?experience': Number.min(0),
+  '?cr': Number.min(1/8),
   '?alignment': Schema({
     'ethical': ['lawful', 'neutral', 'chaotic'],
     'moral': ['good','neutral','evil']
   }),
-  '?hitDice' : [6, 8, 10, 12],
-  '?subtype': String,
-  '?experience': Number.min(0),
   '?classes': Array.of(Class.schema),
   '?ac': Number,
   '?hp': Number,
@@ -51,26 +54,26 @@ Creature.schema = Schema({
   '?attributes': Schema({
     str: Number,
     dex: Number,
-    'con?': Number,
-    'int?': Number,
+    '?con': Number,
+    '?int': Number,
     wis: Number,
     cha: Number,
   }),
   '?equipment': Schema({ // Numbers here are references to item ids
-    '?held': Array.of(0,2,Number), // array of slots to represent each hand (primary, offhand)
-    '?head': Number,
-    '?headband': Number,
-    '?eyes': Number,
-    '?shoulders': Number,
-    '?neck': Number,
-    '?chest': Number,
-    '?body': Number,
-    '?armor': Number,
-    '?belt': Number,
-    '?writs': Number, // bracers
-    '?hands': Number, // gloves
-    '?ring': Array.of(0,2,Number), // array of slots to represent each hand(primary, offhand)
-    '?feet': Number,
+    '?held': Array.of(0,2, Item.schema), // array of slots to represent each hand (primary, offhand)
+    '?head': Item.schema,
+    '?headband': Item.schema,
+    '?eyes': Item.schema,
+    '?shoulders': Item.schema,
+    '?neck': Item.schema,
+    '?chest': Item.schema,
+    '?body': Item.schema,
+    '?armor': Item.schema,
+    '?belt': Item.schema,
+    '?writs': Item.schema, // bracers
+    '?hands': Item.schema, // gloves
+    '?ring': Array.of(0,2, Item.schema), // array of slots to represent each hand(primary, offhand)
+    '?feet': Item.schema,
   })
 })
 

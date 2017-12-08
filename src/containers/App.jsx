@@ -14,7 +14,7 @@ import { Link, Switch, Redirect, Route, withRouter} from 'react-router-dom';
  * ============================== */
 
 import Navbar from '../components/navbar.jsx'
-import Initiative from './Initiative.jsx'
+import Initiative from './initiative/Initiative.jsx'
 
 import Campaign from './Campaign'
 // import Character from '../components/views/characters.jsx'
