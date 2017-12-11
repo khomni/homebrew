@@ -13,6 +13,7 @@ const Initiative = ({system, children}) => (
         <col className="small"/>
         <col className="small"/>
         <col className="small"/>
+        <col className="small"/>
         <col className="large"/>
       </colgroup>
       <thead>
@@ -23,6 +24,7 @@ const Initiative = ({system, children}) => (
           <th>Faction</th>
           <th>Label</th>
           <th>AC</th>
+          <th>CR</th>
           <th>HP</th>
         </tr>
       </thead>
@@ -70,7 +72,7 @@ export const HealthBar = ({ current, max, children }) => {
 export const SystemFields = ({row = false, baseName, baseObject, fields, children, ...props}) => {
 
   return (
-    <div className={`flex vert pad border`}>
+    <div className={`flex vert`}>
       { children }
       <div className={`flex horz pad`}>
         { Object.keys(fields).map(key => {
@@ -84,7 +86,7 @@ export const SystemFields = ({row = false, baseName, baseObject, fields, childre
             </div>
           )
           return (
-            <div className="flex vert pad" key={key}>
+            <div className="flex vert" key={key}>
               <label>{key}</label>
               { 'enum' in field ? (
                 <select className="inline left" name={name} value={_.get(baseObject, name)} {...props}>

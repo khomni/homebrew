@@ -2,6 +2,8 @@
  * React
  * ============================== */
 
+import _ from 'lodash'
+
 import React from 'react';
 import { render } from 'react-dom';
 import { PropTypes } from 'prop-types';
@@ -15,7 +17,7 @@ import ErrorPage from '../../components/Error'
 import InitiativeTable from '../../components/tools/Initiative'
 import CreatureRow from './CreatureRow';
 
-import _ from 'lodash'
+import Experience from '../../../system/pathfinder/cr';
 
 import generateGuid from '../../utils/guid'
 
@@ -31,6 +33,8 @@ class Initiative extends React.Component {
     this.getInitiativeOrder = this.getInitiativeOrder.bind(this);
     this.changeFocus = this.changeFocus.bind(this);
     this.mapRef = this.mapRef.bind(this);
+    this.saveLocal = this.saveLocal.bind(this);
+    this.restoreLocal = this.restoreLocal.bind(this);
 
     this.state = {
       round: 0,
@@ -39,6 +43,29 @@ class Initiative extends React.Component {
       creatures: {},
       order: [], // ordered list of creature ids
       refMatrix: []
+    }
+  }
+
+  componentWillMount() {
+    const { match: {params: {system} } } = this.props
+    const System = Systems[system]
+
+    this.setState({system: System});
+    this.restoreLocal();
+
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    // determine if the order needs to be changed based on the initiative values
+    let { order } = this.state
+    let { creatures } = nextState
+
+    let newOrder = this.getInitiativeOrder(creatures)
+    // console.log(newOrder)
+    for(let i = 0; newOrder[i] || order[i]; i++) {
+      if(order[i] !== newOrder[i]) {
+        return this.setState({order: newOrder})
+      }
     }
   }
 
@@ -57,14 +84,21 @@ class Initiative extends React.Component {
     })
   }
 
-  componentWillMount() {
-    const { match: {params: {system} } } = this.props
-    const System = Systems[system]
+  saveLocal() {
+    const { creatures, order, round, cursor } = this.state;
 
-    console.log(System);
-
-    this.setState({system: System})
+    localStorage.setItem('initiative_state', JSON.stringify({creatures, order, round, cursor}))
   }
+
+  restoreLocal() {
+    const { creatures, order, round, cursor } = this.state;
+
+    let initiative_state = localStorage.getItem('initiative_state')
+    initiative_state = initiative_state ? JSON.parse(initiative_state) : {}
+
+    return this.setState({ ...initiative_state})
+  }
+
 
   // sets the ref of a particular row / column of the refMatrix
   mapRef(id) {
@@ -114,19 +148,6 @@ class Initiative extends React.Component {
     return ref;
   }
 
-  componentWillUpdate(nextProps, nextState) {
-    // determine if the order needs to be changed based on the initiative values
-    let { order } = this.state
-    let { creatures } = nextState
-
-    let newOrder = this.getInitiativeOrder(creatures)
-    // console.log(newOrder)
-    for(let i = 0; newOrder[i] || order[i]; i++) {
-      if(order[i] !== newOrder[i]) {
-        return this.setState({order: newOrder})
-      }
-    }
-  }
 
   // moves the cursor to the next initiative in order
   incrementCursor() {
@@ -166,10 +187,11 @@ class Initiative extends React.Component {
       // initiative: Math.floor(Math.random() * 20),
       initiative: -Infinity,
       faction: 'neutral',
+      /*
       ac: 0,
       cr: 1,
-      hpCurrent: 0,
-      hpMax: 0,
+      */
+      currentHP: 0,
       creature: new system.Creature()
     }
 
@@ -228,6 +250,8 @@ class Initiative extends React.Component {
         _.set(creature, name, value)
       }
 
+      console.log('name:', name, 'value:', value, creature);
+
       this.setState({
         creatures: {
           ...creatures,
@@ -275,30 +299,64 @@ class Initiative extends React.Component {
     const { Quantifiable: {list: Quantifiable} } = System
 
     // TODO: add system configuration for the particular fields accessible in Initiative tool
+    // TODO: summarize data
+
+    let experience = 0, allies = 0, cr
+    for(let id in creatures) {
+      let creature = creatures[id]
+      if(creature && ![-Infinity, '', null].includes(creature.initiative)) {
+        if(creature.faction === 'hostile') experience += Experience[creature.creature.cr] || 0
+        if(['ally', 'friendly'].includes(creature.faction)) allies++
+      }
+    }
+
+    Object.keys(Experience)
+    .sort((a,b) => Experience[a] - Experience[b])
+    .reduce((a,b) => {
+      if(cr) return;
+      if(experience <= Experience[b]) cr = b
+      return b
+    }, null)
+
+    let experiencePer = allies && Math.floor(experience/allies / 50) * 50
 
     return (
       <div>
-        <div className="flex row pad">
-          <button className='btn' onClick={this.addCreature}>Add Creature</button>
-          <button className='btn' onClick={this.incrementCursor}>Next</button>
-          <button className='btn' onClick={this.reset}>Reset</button>
-          <table className="fixed">
-            <thead>
-              <tr>
-                <td>Creatures</td>
-                <td>Initiative</td>
-                <td>Round</td>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{order.length}</td>
-                <td>{cursor}</td>
-                <td>{round}</td>
-              </tr>
-            </tbody>
-          </table>
+        <div className="flex row">
+          <div className="flex horz pad">
+            <button className='btn' onClick={this.addCreature}>Add Creature</button>
+            <button className='btn' onClick={this.incrementCursor}>Next</button>
+            <button className='btn' onClick={this.reset}>Reset</button>
+            <button className='btn' onClick={this.saveLocal}>Save</button>
+            <button className='btn' onClick={this.restoreLocal}>Load</button>
+          </div>
+          <div className="flex vert grow">
+            <table className="fixed">
+              <thead>
+                <tr>
+                  <td>Creatures</td>
+                  <td>Initiative</td>
+                  <td>Round</td>
+                  <td>CR</td>
+                  <td>EXP</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{order.length}</td>
+                  <td>{cursor}</td>
+                  <td>{round}</td>
+                  <td>{cr}</td>
+                  <td>
+                    <span>{experience}</span>
+                    { experiencePer && <span>{`(${experiencePer})`}</span> }
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+
         <InitiativeTable system={System}>
           {order.map((id, i) => creatures[id] &&
             <CreatureRow 

@@ -3,6 +3,9 @@ import _ from 'lodash';
 
 import { HealthBar, SystemFields } from '../../components/tools/Initiative';
 
+// TODO: modularize this based on system rules
+import Experience from '../../../system/pathfinder/cr';
+
 export default class CreatureRow extends React.Component {
 
   constructor(props) {
@@ -95,11 +98,11 @@ export default class CreatureRow extends React.Component {
     )
 
     const hpBar = (
-      <HealthBar current={creature.hpCurrent} max={creature.hpMax}>
+      <HealthBar current={creature.currentHP} max={creature.creature.hp || 0}>
         <div className="flex row center">
-          <input className="inline right" type="number" name="hpCurrent" value={creature.hpCurrent} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
+          <input className="inline right" type="number" name="currentHP" value={creature.currentHP || 0} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
           <div>/</div>
-          <input className="inline left" type="number" name="hpMax" value={creature.hpMax} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
+          <input className="inline left" type="number" name="creature.hp" value={creature.creature.hp || 0} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
         </div>
       </HealthBar>
     )
@@ -133,7 +136,7 @@ export default class CreatureRow extends React.Component {
         <td><label>{creature.id}</label></td>
 
         <td>
-          <input className="inline right" type="number" name="initiative" value={creature.initiative === -Infinity ? '' : creature.initiative} ref={mapRef} onChange={this.updateCreature} onKeyDown={this.handleKeyDown}/>
+          <input className="inline right" type="number" name="initiative" value={creature.initiative === -Infinity ? '' : creature.initiative || ''} ref={mapRef} onChange={this.updateCreature} onKeyDown={this.handleKeyDown}/>
         </td>
 
         <td>
@@ -150,7 +153,14 @@ export default class CreatureRow extends React.Component {
         </td>
 
         <td>
-          <input className="inline right" type="number" name="ac" value={creature.ac} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
+          <input className="inline right" type="number" name="creature.ac" value={creature.creature.ac || 0} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
+        </td>
+
+        <td>
+          <div className="flex row">
+            <input className="inline fill left" type="text" name="creature.cr" value={creature.creature.cr || ''} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
+            <label>{Experience[creature.creature.cr] ? Experience[creature.creature.cr].toLocaleString() : '—'}</label>
+          </div>
         </td>
 
         <td>{ hpBar }</td>
