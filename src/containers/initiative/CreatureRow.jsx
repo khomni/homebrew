@@ -12,7 +12,9 @@ export default class CreatureRow extends React.Component {
     super(props);
     this.toggleFocus = this.toggleFocus.bind(this);
     this.updateCreature = props.updateCreature(props.creature.id);
+    this.modifyCreature = props.updateCreature(props.creature.id, true)
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleModification = this.handleModification.bind(this);
 
     this.state = { focused: false }
   }
@@ -53,14 +55,23 @@ export default class CreatureRow extends React.Component {
 
   toggleFocus() {
     const { focused } = this.state
-
+    
     this.setState({focused: !focused})
+  }
+
+  handleModification(event) {
+    const { modifyCreature } = this;
+    const { currentTarget: { name, value }, keyCode } = event
+
+    // return pressed
+    if(keyCode === 13) return modifyCreature(event)
   }
 
 
   render() {
-    const { index, highlighted, system, creature, removeCreature, cloneCreature} = this.props;
+    const { index, highlighted, system, creature, removeCreature, cloneCreature } = this.props;
     const { focused } = this.state
+    const { updateCreature } = this
     let rowClasses = []
     let mapRef = this.props.mapRef(creature.id);
 
@@ -99,10 +110,12 @@ export default class CreatureRow extends React.Component {
 
     const hpBar = (
       <HealthBar current={creature.currentHP} max={creature.creature.hp || 0}>
+        <input className="inline center smallint" type="number" name="currentHP" onKeyDown={this.handleModification}/>
+        <label>►</label>
         <div className="flex row center">
-          <input className="inline right smallint" type="number" name="currentHP" value={creature.currentHP || 0} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
+          <input className="inline right smallint" type="number" name="currentHP" value={creature.currentHP || 0} onChange={updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
           <div>/</div>
-          <input className="inline left smallint" type="number" name="creature.hp" value={creature.creature.hp || 0} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
+          <input className="inline left smallint" type="number" name="creature.hp" value={creature.creature.hp || 0} onChange={updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
         </div>
       </HealthBar>
     )
@@ -120,7 +133,7 @@ export default class CreatureRow extends React.Component {
           <pre>
             {JSON.stringify(creature.creature, null, '  ')}
           </pre>
-            <SystemFields fields={fields} baseName='creature' baseObject={creature} onChange={this.updateCreature}/>
+            <SystemFields fields={fields} baseName='creature' baseObject={creature} onChange={updateCreature}/>
         </td>
       </tr>
     )
@@ -134,11 +147,11 @@ export default class CreatureRow extends React.Component {
         <td><label>{creature.id}</label></td>
 
         <td>
-          <input className="inline right smallint" type="number" name="initiative" value={[-Infinity, null].includes(creature.initiative) ? '' : creature.initiative} ref={mapRef} onChange={this.updateCreature} onKeyDown={this.handleKeyDown}/>
+          <input className="inline right smallint" type="number" name="initiative" value={[-Infinity, null].includes(creature.initiative) ? '' : creature.initiative} ref={mapRef} onChange={updateCreature} onKeyDown={this.handleKeyDown}/>
         </td>
 
         <td>
-          <select className="inline right" name="faction" onChange={this.updateCreature} value={creature.faction} ref={mapRef} onKeyDown={this.handleKeyDown}>
+          <select className="inline right" name="faction" onChange={updateCreature} value={creature.faction} ref={mapRef} onKeyDown={this.handleKeyDown}>
             <option>neutral</option>
             <option>ally</option>
             <option>hostile</option>
@@ -147,16 +160,16 @@ export default class CreatureRow extends React.Component {
         </td>
 
         <td>
-          <input className="inline fill left" name="label" value={creature.label} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
+          <input className="inline fill left" name="label" value={creature.label} onChange={updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
         </td>
 
         <td>
-          <input className="inline right smallint" type="number" name="creature.ac" value={creature.creature.ac || 0} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
+          <input className="inline right smallint" type="number" name="creature.ac" value={creature.creature.ac || 0} onChange={updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}/>
         </td>
 
         <td>
           <div className="flex row fill center">
-            <select className="inline left no-size smallint" name="creature.cr" value={creature.creature.cr} onChange={this.updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}> 
+            <select className="inline left no-size smallint" name="creature.cr" value={creature.creature.cr} onChange={updateCreature} ref={mapRef} onKeyDown={this.handleKeyDown}> 
               { Object.keys(Experience).sort((a,b) => Experience[a] - Experience[b]).map(key => <option key={key} value={key}>{key}</option>)}
             </select>
             <label className="grow">{Experience[creature.creature.cr] ? Experience[creature.creature.cr].toLocaleString() : '—'}</label>

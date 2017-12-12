@@ -239,18 +239,21 @@ class Initiative extends React.Component {
   }
 
 
-  updateCreature(id) {
+  updateCreature(id, modification = false) {
     return function(event) {
       let { creatures } = this.state;
       let { value, name, type } = event.target;
       let creature = _.cloneDeep(creatures[id])
 
       if(creature) {
-        if(type === 'number' && value !== '') value = Number(value)
-        _.set(creature, name, value)
+        if(type === 'number' && value !== '') {
+          value = Number(value)
+          if(modification) _.set(creature, name, _.get(creature, name) + value)
+        }
+        if(!modification) _.set(creature, name, value)
       }
 
-      console.log('name:', name, 'value:', value, creature);
+      if(modification) event.currentTarget.value = ''
 
       this.setState({
         creatures: {

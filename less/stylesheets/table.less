@@ -81,6 +81,7 @@ table {
 
 tr.orange,tr.primary {
     color: darken(@color-primary, 15%);
+    background: fade(@color-primary, 12.5%);
 
     &.active {
 	color: darken(@color-primary, 25%);
@@ -90,6 +91,7 @@ tr.orange,tr.primary {
 
 tr.blue,tr.secondary {
     color: darken(@color-secondary, 15%);
+    background: fade(@color-secondary, 12.5%);
 
     &.active {
 	color: darken(@color-secondary, 25%);
@@ -99,6 +101,7 @@ tr.blue,tr.secondary {
 
 tr.red {
     color: darken(@color-warning, 15%);
+    background: fade(@color-warning, 12.5%);
 
     &.active {
 	color: darken(@color-warning, 25%);
@@ -108,6 +111,7 @@ tr.red {
 
 tr.green {
     color: darken(@color-success, 15%);
+    background: fade(@color-success, 12.5%);
 
     &.active {
 	color: darken(@color-success, 25%);
@@ -124,8 +128,8 @@ tr.gray {
 }
 
 tr.disabled {
-    // .filter(saturate(0.5) brightness(0.5));
-    background: fade(black, 12.5%);
+    .filter(saturate(0.5) brightness(0.5));
+    //background: fade(black, 12.5%);
 }
 
 tr.active {
