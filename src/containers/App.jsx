@@ -67,7 +67,7 @@ class App extends React.Component {
     return (
       <div>
         <Navbar {...this.props}/>
-        <div className="app">
+        <div className="app flex vert">
 
           <Switch>
 

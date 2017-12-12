@@ -1,5 +1,6 @@
 // CR -> Experience
 export default {
+  '-': 0,
   '1/8': 50,
   '1/6': 65,
   '1/4': 100,

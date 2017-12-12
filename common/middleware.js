@@ -207,7 +207,7 @@ module.exports.querify = (req,res,next) => {
     if(input.toLowerCase() === 'true') return true
     if(input.toLowerCase() === 'false') return false
 
-    if(input==undefined || input=='') return undefined;
+    if(input === undefined || input === '') return undefined;
     if(!isNaN(Number(input))) return Number(input)
     return input
   }

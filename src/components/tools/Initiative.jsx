@@ -4,8 +4,9 @@ import _ from 'lodash';
 // TODO: construct table columns based on System configuration settings
 
 const Initiative = ({system, children}) => (
-  <div className="scroll x">
+  <div className="scroll x y">
     <table className="monospace fixed">
+      { false &&
       <colgroup>
         <col className="small"/>
         <col className="small"/>
@@ -13,12 +14,12 @@ const Initiative = ({system, children}) => (
         <col className="small"/>
         <col className="small"/>
         <col className="small"/>
-        <col className="small"/>
         <col className="large"/>
+        <col className="small"/>
       </colgroup>
+      }
       <thead>
         <tr>
-          <th/>
           <th>id</th>
           <th>Initiative</th>
           <th>Faction</th>
@@ -26,6 +27,7 @@ const Initiative = ({system, children}) => (
           <th>AC</th>
           <th>CR</th>
           <th>HP</th>
+          <th/>
         </tr>
       </thead>
       <tbody>
@@ -56,7 +58,7 @@ export const HealthBar = ({ current, max, children }) => {
   return (
     <div className="bar">
       { children && (
-        <div className="hilt" style={{width: '100px'}}>
+        <div className="hilt">
           { children }
         </div>
       )}

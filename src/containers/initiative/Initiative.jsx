@@ -321,8 +321,8 @@ class Initiative extends React.Component {
     let experiencePer = allies && Math.floor(experience/allies / 50) * 50
 
     return (
-      <div>
-        <div className="flex row">
+      <div className="flex vert fill grow">
+        <div className="flex horz no-size">
           <div className="flex horz pad">
             <button className='btn' onClick={this.addCreature}>Add Creature</button>
             <button className='btn' onClick={this.incrementCursor}>Next</button>
@@ -346,10 +346,10 @@ class Initiative extends React.Component {
                   <td>{order.length}</td>
                   <td>{cursor}</td>
                   <td>{round}</td>
-                  <td>{cr}</td>
-                  <td>
-                    <span>{experience}</span>
-                    { experiencePer && <span>{`(${experiencePer})`}</span> }
+                  <td>{cr || <i className='fa fa-exclamation-triangle'/>}</td>
+                  <td className='flex horz distribute'>
+                    <span>{experience ? experience.toLocaleString() : '—'}</span>
+                    { experiencePer ? <span>{`(${experiencePer})`}</span> : null}
                   </td>
                 </tr>
               </tbody>
