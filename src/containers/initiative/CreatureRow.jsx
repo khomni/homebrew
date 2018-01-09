@@ -20,22 +20,30 @@ export default class CreatureRow extends React.Component {
   }
 
   handleKeyDown(event) {
-    const { index, system, cloneCreature, removeCreature, changeFocus, creature: { id } } = this.props;
+    const { index, system, cloneCreature, removeCreature, changeFocus, incrementCursor, creature: { id } } = this.props;
     const { currentTarget: { name }, shiftKey, ctrlKey, keyCode } = event
 
     if(ctrlKey) {
       switch(keyCode) {
+        // CTRL-DEL / CTRL-Backspace: remove creature row
         case 8:
         case 46:
           event.preventDefault();
           return removeCreature(id);
+        // CTRL-Enter: increment cursor
         case 13:
+          event.preventDefault();
+          return incrementCursor();
+          //return cloneCreature(id);
+        case 32:
           event.preventDefault();
           return cloneCreature(id);
       }
     }
 
     let direction = !shiftKey
+    // Enter: change focus down
+    // SHIFT-Enter: change focus up
     if(event.keyCode === 13) {
       event.preventDefault();
       return changeFocus(id, direction, name)
@@ -77,7 +85,7 @@ export default class CreatureRow extends React.Component {
 
     if(highlighted) rowClasses.push('active')
     if(creature.initiative === -Infinity || creature.initiative === '') rowClasses.push('disabled')
-    if(creature.hpCurrent < 0) rowClasses.push('dying')
+    if(creature.currentHP < 0) rowClasses.push('disabled')
 
     switch (creature.faction) {
       case 'ally': 
@@ -124,10 +132,8 @@ export default class CreatureRow extends React.Component {
     let fields = system.Creature.schema.toJSON().properties
     // console.log(fields)
 
-
     if(focused) return (
       <tr className={rowClasses.join(' ')}>
-        { controls }
         <td colSpan="7">
           { hpBar }
           <pre>
@@ -135,6 +141,7 @@ export default class CreatureRow extends React.Component {
           </pre>
             <SystemFields fields={fields} baseName='creature' baseObject={creature} onChange={updateCreature}/>
         </td>
+        { controls }
       </tr>
     )
 

@@ -152,7 +152,13 @@ class Initiative extends React.Component {
   // moves the cursor to the next initiative in order
   incrementCursor() {
     let { creatures, order, cursor, round } = this.state
-    creatures = order.map(id => creatures[id])
+
+    // construct the list of valid participants:
+    //  1. map the 'order' array to the creatures object
+    //  2. filter out invalid actors (dying, etc)
+    creatures = order
+      .map(id => creatures[id])
+      .filter(creature => creature.currentHP >= 0)
 
     // exhausted is true if the entire creatures array can be reduce
     // an empty creatures array defaults to exhausted
@@ -371,6 +377,7 @@ class Initiative extends React.Component {
 
               mapRef={this.mapRef}
               changeFocus={this.changeFocus}
+              incrementCursor={this.incrementCursor}
               cloneCreature={this.cloneCreature}
               removeCreature={this.removeCreature} 
               updateCreature={this.updateCreature} 
