@@ -12,11 +12,6 @@ function Breadcrumbs(array) {
   }
 }
 
-var renderAsync = Promise.method(function(path,locals){
-  var jade = require('jade');
-  return jade.compileFile(path)(locals)
-});
-
 function dedupe(array) {
   if(!array) return array
   if(!Array.isArray(array)) return [array]
@@ -37,13 +32,13 @@ function dedupe(array) {
 function get(object, string) {
   // bind this function to a nested object so that `this` refers to the object being worked on
   var thisObject = string ? object : this
-  var string = string || object
-  if(typeof string != 'string') return string
+  string = string || object
+  if(typeof string !== 'string') return string
 
   if(!string && !object) return thisObject
   var args = string.split('.') // split the provided string into its component parts
 
-  if(args.length == 1) return thisObject[args.pop()]
+  if(args.length === 1) return thisObject[args.pop()]
 
   if(thisObject[args[0]]) {
     var reference = thisObject[args[0]]
@@ -57,7 +52,6 @@ function get(object, string) {
 
 module.exports = {
   Breadcrumbs,
-  renderAsync,
   get,
   dedupe,
 }

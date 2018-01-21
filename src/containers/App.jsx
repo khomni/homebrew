@@ -15,6 +15,7 @@ import { Link, Switch, Redirect, Route, withRouter} from 'react-router-dom';
 
 import Navbar from '../components/navbar.jsx'
 import Initiative from './initiative/Initiative.jsx'
+import Generators from './generators/Generators.jsx'
 
 import Campaign from './Campaign'
 // import Character from '../components/views/characters.jsx'
@@ -75,6 +76,7 @@ class App extends React.Component {
             <Route exact path="/login" component={Home}/>
             <Route exact path="/signup" component={Home}/>
             <Route exact path="/s/:system/initiative" component={Initiative}/>
+            <Route exact path="/s/:system/generators" component={Generators}/>
 
             <Route exact path="/c" component={Campaign}/>
             <Route path="/c/:campaign" component={Campaign}/>
