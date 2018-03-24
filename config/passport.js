@@ -16,14 +16,12 @@ passport.deserializeUser((user, done) => {
 // For Authentication Purposes
 passport.use(new LocalStrategy({usernameField: 'user', passwordField: 'password', passReqToCallback: true},
   function(req, username, password, done){
-    console.log('passport local:', username, password);
     return db.User.find({
       where: {
         $or: [{email: username}, {username: username}]
       }
     })
     .then(user => {
-      console.log('passport user:', user);
       if(!user) return done(null)
       let passwd = user ? user.password : ''
       return db.User.validPassword(password, passwd, user)

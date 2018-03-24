@@ -1,7 +1,6 @@
 'use strict';
 
 require('dotenv').config();
-// global.APPROOT = path.resolve(__dirname);
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');

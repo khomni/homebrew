@@ -1,9 +1,9 @@
 'use strict';
 
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-var passport = require('passport');
+const passport = require('passport');
 
 // Home Page
 router.get('/', (req, res, next) => {
@@ -113,6 +113,5 @@ router.use('/', require('./character/character-router'));
 router.use('/s', require('./system'));
 
 router.use('/settings',require('./settings'));
-
 
 module.exports = router;

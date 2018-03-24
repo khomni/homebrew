@@ -40,13 +40,6 @@ const fragmentMatcher = new IntrospectionFragmentMatcher({ introspectionQueryRes
 
 const cache = new InMemoryCache({fragmentMatcher})
 
-/*
-const link = createHttpLink({
-  uri: '/graphql',
-  credentials: 'same-origin'
-})
-*/
-
 const link = new HttpLink({
   uri: '/graphql',
   credentials: 'same-origin',
