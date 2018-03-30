@@ -1,15 +1,17 @@
-const Query = require('./query');
-const Mutation = require('./mutation');
 const Campaign = require('./campaign');
 const { Calendar, EventConnection, Year, Month, Week, Day, Event } = require('./calendar');
 const Character = require('./character');
 const { Comment, CommentSection }= require('./comment');
 const { Item } = require('./item');
+const Journal = require('./journal');
 const Lore = require('./lore');
 const Quest = require('./quest');
 // const Session = require('./session');
 const User = require('./user');
 
+const Mutation = require('./mutation');
+const Query = require('./query');
+const Subscription = require('./subscription');
 
 const Node = {
   __resolveType(obj, context, info) {
@@ -30,15 +32,18 @@ const resolvers = {
   Event,
   EventConnection,
   Item,
+  Journal,
   Lore,
   Month,
-  Mutation,
   Node,
   User,
-  Query,
   Quest,
   Week,
   Year,
+
+  Query,
+  Mutation,
+  Subscription,
 };
 
 module.exports = resolvers

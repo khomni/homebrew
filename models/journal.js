@@ -53,17 +53,20 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
 
+  /*
   Journal.hook('beforeSave', (journal,options) => {
     // search through any pieces of lore that might be referenced in the journal entry and reformat it to be a link
     var words = journal.body.replace(/[\.\!\?](?=\s)/,'').split(/\s+/)
     return db.Character.findAll({
       attributes: ['name'],
       where: {name: {$in: words}}
-    }).then(characters => {
+    })
+    .then(characters => {
       return;
     })
     // OR search for character names
   })
+  */
 
   return Journal;
 };

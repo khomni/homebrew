@@ -1,0 +1,7 @@
+query($slug: String, $character: ID, $search: String) {
+	journal(slug: $slug, character: $character, search: $search) {
+		id
+		title
+		content
+	}
+}

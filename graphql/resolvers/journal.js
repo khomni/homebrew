@@ -1,5 +1,5 @@
 const Journal = {
-  content: journal => console.log(journal) && journal.body
+  content: journal => journal.body
 }
 
 module.exports = Journal

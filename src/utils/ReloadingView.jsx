@@ -23,7 +23,7 @@ import Loading from '../components/Loading';
  *              match: PropTypes.object.isRequired
  * ============================== */
 
-export default function withResource(WrappedComponent, {query, variables, alias}) {
+export default function withResource(WrappedComponent, {query, variables, alias, subscription}) {
 
   // TODO: reimplement frontend filtering functionality
   class Wrapper extends Component {
@@ -59,12 +59,18 @@ export default function withResource(WrappedComponent, {query, variables, alias}
       // console.log('withResource', this.props.data)
     }
 
+    componentWillMount() {
+      // if the props include a subscribe method, call it as soon as the component is ready to mount
+      //        this will ensure that all reloading components will receive subscription events from the server
+      const { subscribe } = this.props;
+      if(subscribe) return subscribe();
+    }
+
     render() {
       const { error, loading, refresh, dispatch } = this.props;
-      const { filter } = this.state
-      if(error) {
-        return <Error error={error} />
-      }
+      const { filter } = this.state;
+
+      if(error) return <Error error={error} />
       if(loading) return <Loading/>
       return <WrappedComponent setFilter={this.setFilter} filter={filter} {...this.props} />
     }
@@ -79,18 +85,36 @@ export default function withResource(WrappedComponent, {query, variables, alias}
   // takes the input query and 
   // TODO: set polling interval (or subscription settings when applicable)
   let gContainer =  graphql(query, {
+
     // set the Wrappers props using the data returned by GraphQL endpoint and own props
-    // TODO: allow HOC to determine the props alias? Otheriwse, just use the data as a standard prop
     props: ({ownProps, data}) => {
-      // if(!data.loading) console.log('withResource:', data)
-      return {
+
+      let props = {
         loading: data.loading,
         error: data.error,
         refetch: data.refetch,
         updateQuery: data.updateQuery,
         [alias || 'data']: alias ? data[alias] : data,
         data,
-      }
+      };
+
+      // EXPERIMENTAL: allow reloading components to include a subscription query that 
+      //        automatically updates the cache when the server publishes it
+      if(subscription) props.subscribe = (params) => data.subscribeToMore({
+        document: subscription,
+        variables: variables ? variables(ownProps) : null,
+        updateQuery: (prev, {subscriptionData}) => { // returns a combination of the old data and the new data
+
+          if(!subscriptionData.data) return prev
+          // TODO: determine if this update is updating an existing object, or inserting an object into the current collection (if an array)
+          console.warn('Subscription updates have not been fully implemented in ReloadingView.jsx;', 'previous value:', prev, 'pushed update:' , subscriptionData);
+          return prev
+        }
+      })
+
+      console.log(ownProps.match.url, data[alias] || data)
+
+      return Object.assign({}, ownProps, props);
     },
     options: props => ({
       variables: variables ? variables(props) : null
@@ -143,53 +167,3 @@ export function resourceForm(WrappedComponent, {query, variables, alias}) {
 
 
 }
-
-  /*
-export class ReloadingView extends Component {
-  constructor(props) {
-    super(props);
-
-    let defaultFilter = Object.assign({
-      search: '',
-      layout: props.layout || null,
-      key: 'updatedAt',
-      order: -1,
-      page: 0,
-      results: ITEMS_PER_PAGE,
-    }, this.props.filter || {})
-
-    this.state = {
-      initialized: false,
-      mountedRoute: this.props.match.url,
-      filter: defaultFilter
-    }
-  }
-
-  setFilter(event) {
-    let { name, value } = event.target
-    let { filter } = this.state
-
-    value = !isNaN(value) && value !== '' ? Number(value) : value
-
-    this.setState({filter: {...filter, [name]: value}})
-    // this.setState({filter})
-  }
-
-  componentWillReceiveProps(nextProps){
-    let { params } = this.props.match;
-    let { mountedRoute } = this.state
-
-    if(!mountedRoute) return;
-
-    mountedRoute = this.state.mountedRoute.replace(/\/$/,'')
-    let nextRoute = nextProps.match.url.replace(/\/$/,'')
-
-    if(mountedRoute && mountedRoute !== nextRoute) return this.loadData(nextProps);
-  }
-
-  componentWillUnmount() {
-    clearTimeout(this.refreshInterval);
-  }
-
-}
-*/

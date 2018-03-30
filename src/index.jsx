@@ -44,7 +44,8 @@ const wsClient = new SubscriptionClient('ws://localhost:3000/', {
   reconnect: true,
   connectionParams: { 
     // initialization parameters; these will get sent to the onConnect function
-    credentials: 'same-origin',
+    userAgent: navigator.userAgent,
+    timezoneOffset: new Date().getTimezoneOffset()
   }
 });
 

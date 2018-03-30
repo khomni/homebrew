@@ -4,7 +4,6 @@ const Query = {}
 
 Query.session = (root, args, context) => {
 
-  console.log('onConnect session context:', context);
   // TODO: use the context from socket connection to restore a user's session
 
   return {
@@ -84,6 +83,35 @@ Query.item = (root, args, context) => {
     }))
   })
   .then(({items, aggregate: {total_weight, total_quantity, total_value}}) => ({items, total_weight, total_quantity, total_value}))
+}
+
+Query.journal = (root, args, context) => {
+  const { slug, character, search } = args
+
+  let query = {};
+  if(character) query.CharacterId = character
+  if(search) query.$or = [{title: {$iLike: `%${search}%`}}, {content: {$iLike: `%${search}%`}}]
+  if(slug) {
+    if(isNaN(slug)) query.url = slug
+    else query.id = slug
+  }
+
+  return db.Journal.findAll({ where: query })
+}
+
+Query.lore = (root, args, context) => {
+  const { slug, character, search } = args
+  let query = {}
+  if(character) query.CharacterId = character
+  if(search) query.$or = [{title: {$iLike: `%${search}%`}}, {content: {$iLike: `%${search}%`}}]
+
+  if(slug) {
+    if(isNaN(slug)) query.url = slug
+    else query.id = slug
+  }
+
+  return db.Lore.findAll({where: query })
+
 }
 
 module.exports = Query

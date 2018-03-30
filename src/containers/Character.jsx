@@ -9,6 +9,7 @@ import Lore from './Lore';
 
 import { CharacterSheet, CharacterCard, CharacterList } from '../components/characters';
 import HeaderImage from '../components/HeaderImage';
+import gql from 'graphql-tag';
 
 /* ============================== 
  * Apollo / GraphQL
@@ -36,16 +37,17 @@ class Character extends React.Component {
         <div className="tab-group">
           <NavLink to={match.url + "/inventory"} className="tab" activeClassName="active">Inventory</NavLink>
           <NavLink to={match.url + "/journal"} className="tab" activeClassName="active">Journal</NavLink>
-          <NavLink to={match.url + "/lore"} className="tab" activeClassName="active">Lore</NavLink>
+          <NavLink to={match.url + "/knowledge"} className="tab" activeClassName="active">Knowledge</NavLink>
         </div>
         <h1>{character.name}</h1>
 
         {match.isExact && <CharacterSheet character={character}/>}
 
         <Switch>
-          <Route path={match.path + "/inventory/:item?"} render={props => <Items character={character}/>}/>
-          <Route path={match.path + "/journal"} render={props => <Journal character={character}/>}/>
-          <Route path={match.path + "/knowledge"} render={props => <Lore character={character}/>}/>
+          <Route path={match.path + "/inventory/:item?"} render={props => <Items character={character} {...this.props}/>}/>
+          <Route path={match.path + "/journal/:slug?"} render={props => <Journal character={character} {...this.props}/>}/>
+          <Route path={match.path + "/knowledge"} render={props => <Lore character={character} {...this.props}/>}/>
+          <Route path={match.path + "/lore"} render={props => <Lore {...this.props}/>}/>
         </Switch>
 
       </div>
@@ -60,8 +62,19 @@ Character.propTypes = {
   layout: PropTypes.string,
 }
 
+const TEST_SUB = gql`
+subscription test {
+  test {
+    name
+    id
+  }
+}
+`
+
 export default withResource(Character, {
   query: CHARACTER,
+  // subscription: TEST_SUB,
+  // subscription: null, // add a subscription query to have the cache be updated automatically
   alias: 'character',
   variables: props => ({
     slug: props.match.params.character,

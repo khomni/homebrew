@@ -103,9 +103,7 @@ const gContainer = graphql(SESSION, {
 })(App)
 
 const mapStateToProps = ({session}) => {
-  console.log('mapping session to props:', session);
   return session
-  // return {}
 }
 
 export default withRouter(connect(mapStateToProps)(gContainer))

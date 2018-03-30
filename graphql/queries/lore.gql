@@ -1,0 +1,32 @@
+query($slug: String, $character: ID, $search: String) {
+	lore(slug: $slug, character: $character, search: $search) {
+		id
+		topic {
+			id
+			...on Character {
+				name
+				url
+				images {
+					path
+				}
+			}
+			...on Item {
+				name
+				url
+				owner {
+					name
+					url
+				}
+			
+			}
+		}
+		owner {
+			id
+			username
+			email
+		}
+		content
+		url
+	}
+}
+

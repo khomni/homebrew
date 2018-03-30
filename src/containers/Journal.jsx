@@ -3,39 +3,33 @@ import { withRouter, Route, Link, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 
+
+import { JOURNAL } from '../../graphql/queries';
+
+import { JournalList, JournalEntry } from '../components/journal';
+import withResource from '../utils/ReloadingView';
+
 class Journal extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = { journal: null }
-  }
-
-  componentDidMount() {
-    let { match } = this.props
-    let journal = this.props.journal || this.state.journal
-
-    if(journal) return;
-
-    return fetch(match.url, {credentials: 'include', headers: {Accept: 'application/json'}})
-    .then(response => response.json())
-    .then(json => {
-      this.setState({journal: json})
-    })
-
-    // dispatch actions on app start
   }
 
   render() {
-    let { match } = this.props;
-    let { journal } = this.state;
+    let { journal, match, setFilter, filter} = this.props;
     // TODO: before character is initialized, show a loading effect
+
+    if(filter.search) {
+      try {
+        let searchRegExp = new RegExp(filter.search, 'mig')
+        journal = journal.filter(entry => entry.title.match(searchRegExp) || entry.content.match(searchRegExp))
+      } catch(e) {
+        console.warn('Invalid search regex');
+      }
+    }
 
     return (
       <div>
-        <h2> Journal </h2>
-        {journal && journal.map(entry => {
-          return <pre key={entry.id}>{JSON.stringify(entry, null, '  ')}</pre>
-        })}
+        <JournalList journal={journal} setFilter={setFilter} />
       </div>
     )
   }
@@ -52,6 +46,16 @@ const mapStatetoProps = (state, ownProps) => {
 
 export default withRouter(connect(mapStatetoProps)(Items))
 */
-export default Journal
+
+export default withResource(Journal, {
+  query: JOURNAL,
+  alias: 'journal',
+  variables: props => ({
+    // TODO: reorganize to allow search UI to be outside of the container
+    // search: props.search,
+    slug: props.match.params.slug,
+    character: props.character ? props.character.id : undefined,
+  })
+})
 
 

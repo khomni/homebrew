@@ -1,30 +1,23 @@
 import React from 'react';
-import ReloadingView from '../utils/ReloadingView'
 import { withRouter, Route, Link, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 
 import Lore, { LoreList } from '../components/lore';
+import { LORE } from '../../graphql/queries';
 
-class LoreContainer extends ReloadingView {
+import withResource from '../utils/ReloadingView';
+
+class LoreContainer extends React.Component {
   constructor(props) {
     super(props);
-    this.onFetch = this.onFetch.bind(this);
-
-  }
-
-  onFetch(lore) {
-    if(!Array.isArray(lore)) lore = [lore]
-    this.setState({lore})
   }
 
   render() {
-    let { match, name } = this.props
-    let { invalidFilter, error, lore, filter } = this.state
+    let { lore, match, name, filter, setFilter } = this.props
+    // let { invalidFilter, error, lore, filter } = this.state
 
-    if(error) return ( <Error error={error}/> )
     if(!lore) return null;
-    console.log(LoreList);
 
     name = name || 'Lore'
     lore = lore.filter(l => !filter.search || l.content.match(new RegExp(filter.search, 'mig')) )
@@ -42,4 +35,11 @@ LoreContainer.propTypes = {
   // dispatch: PropTypes.func.isRequired
 }
 
-export default LoreContainer
+export default withResource(LoreContainer, {
+  query: LORE,
+  alias: 'lore',
+  variables: props => ({
+    slug: props.match.params.slug,
+    character: props.character ? props.character.id : undefined,
+  })
+})
