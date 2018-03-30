@@ -35,19 +35,25 @@ import { InMemoryCache,  IntrospectionFragmentMatcher  } from 'apollo-cache-inme
 import introspectionQueryResultData  from '../graphql/introspection.json';
 import { HttpLink, createHttpLink } from 'apollo-link-http';
 import { onError } from 'apollo-link-error';
+import { SubscriptionClient } from 'subscriptions-transport-ws';
+import { WebSocketLink } from "apollo-link-ws";
+
+
+// bullshit cuntfucking ass-garbage that doesn't work and has shitty / no documentation
+const wsClient = new SubscriptionClient('ws://localhost:3000/', {
+  reconnect: true,
+  connectionParams: { 
+    // initialization parameters; these will get sent to the onConnect function
+    credentials: 'same-origin',
+  }
+});
 
 const fragmentMatcher = new IntrospectionFragmentMatcher({ introspectionQueryResultData })
-
 const cache = new InMemoryCache({fragmentMatcher})
-
-const link = new HttpLink({
-  uri: '/graphql',
-  credentials: 'same-origin',
-  fetch
-})
+const link = new WebSocketLink(wsClient);
 
 const logoutLink = onError((err, ...rest) => {
-  console.log(err, rest)
+  console.error(err, rest)
 })
 
 const client = new ApolloClient({ 

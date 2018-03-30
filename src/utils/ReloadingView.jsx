@@ -56,7 +56,7 @@ export default function withResource(WrappedComponent, {query, variables, alias}
      }
 
     componentDidMount() {
-      console.log('withResource', this.props.data)
+      // console.log('withResource', this.props.data)
     }
 
     render() {
@@ -82,7 +82,7 @@ export default function withResource(WrappedComponent, {query, variables, alias}
     // set the Wrappers props using the data returned by GraphQL endpoint and own props
     // TODO: allow HOC to determine the props alias? Otheriwse, just use the data as a standard prop
     props: ({ownProps, data}) => {
-      if(!data.loading) console.log('withResource:', data)
+      // if(!data.loading) console.log('withResource:', data)
       return {
         loading: data.loading,
         error: data.error,

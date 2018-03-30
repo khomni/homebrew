@@ -1,14 +1,24 @@
 #!/usr/bin/env node
 
-// set up clustering
 require('../config/globals');
 
+// set up clustering
 const cluster = require('cluster');
-const COLORS = ['white', 'blue', 'cyan', 'green', 'yellow', 'red', 'magenta']
+const COLORS = ['white', 'blue', 'cyan', 'green', 'yellow', 'red', 'magenta'];
 let healthy = false;
+
+/* ==============================
+ * Master Process:
+ *      1: Authenticates database
+ *      2: forks workers based on configured threads
+ *      3: listens for shutdown events to kill workers
+ *      4: automatically self-terminates if clusters exit before any are listening
+ *      5: tracks number of listening workers, attempts to revive workers that crash
+ * ============================== */
 
 if(cluster.isMaster) {
 
+  const workers = {};
   let database = require('../config/database');
 
   // make sure the database is working before spawning children
@@ -24,6 +34,9 @@ if(cluster.isMaster) {
 
     cluster.on('listening', (worker, code, signal) => { 
       helathy = true;
+      if(worker.id in workers) return; // the cluster is already listening
+      workers[worker.id] = true;
+
       connectedWorkers++;
       if(process.stdout.isTTY) process.stdout.write(colors[COLORS[worker.id % 7]]('■'))
       if(connectedWorkers >= CONFIG.process.threads) {
@@ -40,6 +53,7 @@ if(cluster.isMaster) {
 
     cluster.on('exit', (worker, code, signal) => {
       if(!healthy) return process.exit(1);
+      delete workers[worker];
       connectedWorkers--;
       if(worker.exitedAfterDisconnect || code == 0) return console.log(`${connectedWorkers} workers listening`);
 
@@ -49,7 +63,7 @@ if(cluster.isMaster) {
 
     cluster.on('disconnect', (worker, code, signal) => {
       console.log(colors[COLORS[worker.id % 7]](`worker ${worker.process.pid} disconnected`))
-    })
+    });
 
   })
   .catch(err => {
@@ -57,6 +71,12 @@ if(cluster.isMaster) {
     process.exit(1)
   })
 
+/* ==============================
+ * Worker Process:
+ *      1: syncs to database
+ *      2: once synced, starts listening on configured port
+ *      3: when the server encounters an error, the worker kills itself
+ * ============================== */
 
 } else {
 
@@ -71,6 +91,7 @@ if(cluster.isMaster) {
   var db = require('../models');
 
   var server = http.createServer(app);
+  const { attachWebSockets } = require('../config/sockets');
 
   db._connection.on('error', err => {
     console.error(colors.process(`Worker ${process.pid} could not connect to the database:`, err.stack))
@@ -80,39 +101,27 @@ if(cluster.isMaster) {
   // wait until the process is connected to the database before listening to any requests
   db._connection.on('synced', () => {
     // console.log(`Worker ${process.pid} is connected`)
+
     server.listen(port);
+
     server.on('listening', () => {
       // child is listening
+
+      // set up websocket server using this server
+      // problem: the server instance is only available from this file, so the websocket setup needs to be here as well
+      // TODO: abstract away server setup and construction, and the underlaying configuration code for 
+      //        setting up websockets to utilize the same session information as regular HTTP requests
     });
 
-    server.on('error', (error) => {
+    server.on('error', err => {
       console.error(err.message)
       return process.exit(1);
-      // throw error;
+    });
 
-      /*
-      if (error.syscall !== 'listen') {
-        throw error;
-      }
+    // attaches GraphQL / Apollo websocket interface
+    attachWebSockets(server);
 
-      var bind = typeof port === 'string'
-        ? 'Pipe ' + port
-        : 'Port ' + port;
 
-      // handle specific listen errors with friendly messages
-      switch (error.code) {
-        case 'EACCES':
-          console.error(bind + ' requires elevated privileges');
-          process.exit(1);
-          break;
-        case 'EADDRINUSE':
-          console.error(bind + ' is already in use');
-          process.exit(1);
-          break;
-        default:
-          throw error;
-      }
-      */
-    })
   });
+
 }

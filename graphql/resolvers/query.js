@@ -4,6 +4,9 @@ const Query = {}
 
 Query.session = (root, args, context) => {
 
+  console.log('onConnect session context:', context);
+  // TODO: use the context from socket connection to restore a user's session
+
   return {
     campaign: context.user && context.user.MainChar && context.user.MainChar.Campaign || null, 
     character: context.user && context.user.MainChar || null,
@@ -60,8 +63,6 @@ Query.item = (root, args, context) => {
   if(search) slaveQuery.name = {$iLike: `%${search}%`}
 
   Object.assign(slaveQuery, query);
-
-  console.log(query);
 
   return Promise.props({
     items: db.Item.findAll({

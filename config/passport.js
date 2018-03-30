@@ -15,20 +15,15 @@ passport.deserializeUser((user, done) => {
 
 // For Authentication Purposes
 passport.use(new LocalStrategy({usernameField: 'user', passwordField: 'password', passReqToCallback: true},
-  function(req, username, password, done){
-    return db.User.find({
-      where: {
-        $or: [{email: username}, {username: username}]
-      }
-    })
+  (req, username, password, done) =>
+  // function(req, username, password, done) {
+    db.User.find({ where: { $or: [{email: username}, {username: username}] } })
     .then(user => {
       if(!user) return done(null)
       let passwd = user ? user.password : ''
       return db.User.validPassword(password, passwd, user)
       .then(isValid => done(null, isValid) )
-    })
-    .catch(done)
-  }
+    }).catch(done)
 ));
 
 module.exports = passport
