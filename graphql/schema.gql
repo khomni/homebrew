@@ -16,7 +16,7 @@ type Query {
 	journal(slug: String, character: ID, search: String): [Journal]
 
 	lore(slug: String, character: ID, search: String): [Lore]
-	knowledge(slug: String, character: ID, search: String): [Lore]
+	knowledge(slug: String, character: ID, search: String): [LoreGroups]
 }
 
 # ==============================
@@ -109,10 +109,21 @@ type ItemCollection {
 
 type Lore implements Node {
 	id: ID!
+	topic_type: String
 	topic: Node
 	owner: User
 	content: String
 	url: String
+}
+
+type LoreGroups {
+	topic_name: String
+	topics: [LoreList]
+}
+
+type LoreList {
+	topic: Node
+	lore: [Lore]
 }
 
 type Journal implements Node {

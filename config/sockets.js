@@ -1,4 +1,6 @@
 
+const _ = require('lodash');
+const crypto = require('crypto');
 const cookie = require('cookie');
 const passport = require('./passport');
 
@@ -10,6 +12,7 @@ const { makeExecutableSchema } = require('graphql-tools');
 const { graphqlExpress } = require('apollo-server-express');
 
 const typeDefs = require('../graphql/schema.gql');
+
 
 // compile the schema from the GraphQL schema language
 const jsSchema = makeExecutableSchema({
@@ -30,11 +33,23 @@ const jsSchema = makeExecutableSchema({
  *      - user authorization should also interface with the session storage so users don't have to log in across app-loads
  * ============================== */
 
+var counter = 0
+const COUNTER_MAX = 256
+
+function generateGUID() {
+  counter = ++counter % COUNTER_MAX
+  let counterString = _.padStart(String(counter), 3, '0');
+  let buffer = new Buffer(String(Date.now()) + '-' + counterString)
+  return buffer.toString('base64');
+}
+
 
 // TODO: find convenient way to authenticate the session information to send as context to the socket connection
 const obtainSession = Promise.method(connectSID => {
   return {connectSID}
-})
+});
+
+const connections = {};
 
 function attachWebSockets(server, options = {path: '/'}) {
   return SubscriptionServer.create({
@@ -42,17 +57,32 @@ function attachWebSockets(server, options = {path: '/'}) {
     execute,
     subscribe,
     onConnect: (connectionParams, webSocket, context) => {
+      let request = webSocket.upgradeReq
 
       // TODO: get session information from session-store to send to the context on connection
       // mannually get connect.sid from cookies to use the session store
       // man, what a pain in the ass
-      let cookies = cookie.parse(context.request.headers.cookie)
+      let cookies = cookie.parse(request.headers.cookie)
       let connectSID = cookies['connect.sid'];
 
-      if(!cookies['connect.sid']) return false;
+      let guid = generateGUID()
+      webSocket._guid = guid;
+      connections[guid] = webSocket;
 
-      return obtainSession(cookies['connect.sid'])
+      console.log(`${guid} connected (${Object.keys(connections).length})`);
+
+      let { remoteAddress } = request.connection
+      let connectionID = generateGUID()
+
+      if(!connectSID) return false;
+      return obtainSession(connectSID)
     },
+    onDisconnect: (connectionParams, webSocket, context) => {
+      const guid = webSocket.socket._guid
+      if(connections[guid]) console.log(`${guid} disconnected`);
+      delete connections[guid]
+      // console.log(`${request.connection.remoteAddress} disconnected`)
+    }
   }, {
     server: server,
     path: options.path
@@ -60,5 +90,6 @@ function attachWebSockets(server, options = {path: '/'}) {
 }
 
 module.exports = {
-  attachWebSockets
+  attachWebSockets,
+  connections
 }

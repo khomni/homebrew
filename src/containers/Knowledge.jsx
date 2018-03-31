@@ -3,43 +3,44 @@ import { withRouter, Route, Link, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 
-import Lore, { LoreList } from '../components/lore';
-import { LORE } from '../../graphql/queries';
+import Lore, { LoreList, Knowledge } from '../components/lore';
+
+import { KNOWLEDGE } from '../../graphql/queries';
 
 import withResource from '../utils/ReloadingView';
 
-class LoreContainer extends React.Component {
+class KnowledgeContainer extends React.Component {
   constructor(props) {
     super(props);
   }
 
   render() {
-    let { lore, match, name, filter, setFilter } = this.props
+    let { knowledge, match, name, filter, setFilter } = this.props
     // let { invalidFilter, error, lore, filter } = this.state
 
-    if(!lore) return null;
-
-    name = name || 'Lore'
-    lore = lore.filter(l => !filter.search || l.content.match(new RegExp(filter.search, 'mig')) )
+    if(!knowledge) return null;
 
     return (
       <div>
-        <h2>Lore</h2>
-        <LoreList match={match} lore={lore} filter={filter} setFilter={setFilter}/>
+        <h2>Knowledge</h2>
+        <Knowledge knowledge={knowledge} {...this.props}/>
       </div>
     )
   }
 }
 
-LoreContainer.propTypes = {
+// <LoreList match={match} lore={lore} filter={filter} setFilter={this.setFilter}/>
+
+KnowledgeContainer.propTypes = {
   // dispatch: PropTypes.func.isRequired
 }
 
-export default withResource(LoreContainer, {
-  query: LORE,
-  alias: 'lore',
+export default withResource(KnowledgeContainer, {
+  query: KNOWLEDGE,
+  alias: 'knowledge',
   variables: props => ({
     slug: props.slug || props.match.params.slug,
     character: props.character ? props.character.id : undefined,
   })
 })
+

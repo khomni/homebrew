@@ -4,7 +4,7 @@ const Character = require('./character');
 const { Comment, CommentSection }= require('./comment');
 const { Item } = require('./item');
 const Journal = require('./journal');
-const Lore = require('./lore');
+const { Lore, LoreList } = require('./lore');
 const Quest = require('./quest');
 // const Session = require('./session');
 const User = require('./user');
@@ -15,7 +15,8 @@ const Subscription = require('./subscription');
 
 const Node = {
   __resolveType(obj, context, info) {
-    return obj.$modelOptions.name.singular
+    let modelName = Object.get(obj, '$modelOptions.name.singular') || Object.get(obj, '__type')
+    return modelName || 'Node'
   }
 }
 
@@ -34,6 +35,7 @@ const resolvers = {
   Item,
   Journal,
   Lore,
+  LoreList,
   Month,
   Node,
   User,

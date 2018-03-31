@@ -21,6 +21,11 @@ query($detail: Boolean!, $slug: String, $character: ID, $search: String) {
 					name
 					value
 					quantity
+					lore {
+						id
+						content
+						url
+					}
 				}
 			}
 		}

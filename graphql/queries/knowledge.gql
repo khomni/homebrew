@@ -1,0 +1,31 @@
+query($slug: String, $character: ID, $search: String) {
+	knowledge(slug: $slug, character: $character, search: $search) {
+		topic_name
+		topics {
+			topic {
+				id
+				...on Character {
+					name
+					url
+					images {
+						path
+					}
+				}
+				...on Item {
+					name
+					url
+					owner {
+						name
+						url
+					}
+				
+				}
+			}
+			lore {
+				id
+				content
+				url
+			}
+		}
+	}
+}

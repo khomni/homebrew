@@ -82,7 +82,7 @@ export default function withResource(WrappedComponent, {query, variables, alias,
   const mapStateToProps = ({session}) => ({session})
 
   // graphql container:
-  // takes the input query and 
+  // uses the input query to retrieve data, and returns it to be attached to the props
   // TODO: set polling interval (or subscription settings when applicable)
   let gContainer =  graphql(query, {
 
@@ -98,6 +98,8 @@ export default function withResource(WrappedComponent, {query, variables, alias,
         data,
       };
 
+      console.log(alias, props);
+
       // EXPERIMENTAL: allow reloading components to include a subscription query that 
       //        automatically updates the cache when the server publishes it
       if(subscription) props.subscribe = (params) => data.subscribeToMore({
@@ -112,7 +114,7 @@ export default function withResource(WrappedComponent, {query, variables, alias,
         }
       })
 
-      console.log(ownProps.match.url, data[alias] || data)
+      // console.log(ownProps.match.url, data[alias] || data)
 
       return Object.assign({}, ownProps, props);
     },

@@ -12,16 +12,10 @@ import { render } from 'react-dom';
  * Redux
  * ============================== */
 
-import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import reducer from './reducers';
+import { PersistGate } from 'redux-persist/integration/react'
 
-/* ============================== 
- * React/Redux
- * ============================== */
-
-const store = createStore( reducer, applyMiddleware(thunk) );
+import { store, persistor } from './configureStore'
 
 import { BrowserRouter as Router, browserHistory } from 'react-router-dom';
 
@@ -42,10 +36,19 @@ import { WebSocketLink } from "apollo-link-ws";
 // bullshit cuntfucking ass-garbage that doesn't work and has shitty / no documentation
 const wsClient = new SubscriptionClient('ws://localhost:3000/', {
   reconnect: true,
-  connectionParams: { 
-    // initialization parameters; these will get sent to the onConnect function
-    userAgent: navigator.userAgent,
-    timezoneOffset: new Date().getTimezoneOffset()
+  connectionParams() {
+    // get persistent storage to include authorization details in
+    // TODO: app needs to set these auth credentials on sign in
+    let storeState = store.getState()
+    const { auth } = storeState;
+
+    console.log('auth:', auth);
+
+    return {
+      auth,
+      userAgent: navigator.userAgent,
+      timezoneOffset: new Date().getTimezoneOffset()
+    }
   }
 });
 
@@ -74,10 +77,12 @@ let root = document.getElementById('root')
 
 render(
   <Provider store={store}>
-    <ApolloProvider client={client} store={store}>
-      <Router history={browserHistory}>
-        <App/>
-      </Router>
-    </ApolloProvider>
+    <PersistGate loading={null} persistor={persistor}>
+      <ApolloProvider client={client} store={store}>
+        <Router history={browserHistory}>
+          <App/>
+        </Router>
+      </ApolloProvider>
+    </PersistGate>
   </Provider>
 , root);

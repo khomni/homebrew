@@ -99,7 +99,8 @@ Query.journal = (root, args, context) => {
   return db.Journal.findAll({ where: query })
 }
 
-Query.lore = (root, args, context) => {
+// knowledge query returns lore organized by topic
+Query.knowledge = (root, args, context) => {
   const { slug, character, search } = args
   let query = {}
   if(character) query.CharacterId = character
@@ -110,8 +111,58 @@ Query.lore = (root, args, context) => {
     else query.id = slug
   }
 
-  return db.Lore.findAll({where: query })
+  return db.Lore.findAll({ where: query })
+  .then(lore => { // reorganize the lore to be organized by lorable and id
+    const knowledge = {}; // aggregate all lore by topic_type::id
 
+    lore.map(entry => {
+      if(!knowledge[entry.lorable]) knowledge[entry.lorable] = {}
+      if(!knowledge[entry.lorable][entry.lorable_id]) knowledge[entry.lorable][entry.lorable_id] = []
+      knowledge[entry.lorable][entry.lorable_id].push(entry)
+    })
+
+    // TODO: this query needs to laboriously query each topic, since it's a polymorphic relationship
+    // OR: make a resolver that knows how to do this for us... hmmm
+
+    let formattedKnowledge = Object.keys(knowledge).map(key => {
+      return {
+        topic_name: key,
+        topics: Object.keys(knowledge[key]).map(id => ({ 
+          topic: { 
+            id,
+            __type: key
+          },
+          lore: knowledge[key][id]
+        }))
+      }
+    })
+
+    // console.log(JSON.stringify(formattedKnowledge,null,'  '))
+
+    return formattedKnowledge
+
+    // return knowledge
+    // return topics
+  })
+
+}
+
+Query.lore = (root, args, context) => {
+  const { slug, character, search } = args
+  let query = {}
+  // if(character) query.CharacterId = character
+  if(search) query.$or = [{title: {$iLike: `%${search}%`}}, {content: {$iLike: `%${search}%`}}]
+
+  // TODO: lore queries should group by topic_type and topic
+  // TODO: change the schema to organize lore results by topic
+
+  if(slug) {
+    if(isNaN(slug)) query.url = slug
+    else query.id = slug
+  }
+
+  // TODO: perform this query as some sort of aggregation
+  return db.Lore.findAll({where: query })
 }
 
 module.exports = Query

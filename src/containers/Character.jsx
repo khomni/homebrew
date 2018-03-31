@@ -6,6 +6,7 @@ import { PropTypes } from 'prop-types';
 import Items from './Items';
 import Journal from './Journal';
 import Lore from './Lore';
+import Knowledge from './Knowledge';
 
 import { CharacterSheet, CharacterCard, CharacterList } from '../components/characters';
 import HeaderImage from '../components/HeaderImage';
@@ -35,6 +36,7 @@ class Character extends React.Component {
       <div>
         <HeaderImage images={character.images} alt={character.name} home={match.url}/>
         <div className="tab-group">
+          <NavLink to={match.url + "/lore"} className="tab" activeClassName="active">About</NavLink>
           <NavLink to={match.url + "/inventory"} className="tab" activeClassName="active">Inventory</NavLink>
           <NavLink to={match.url + "/journal"} className="tab" activeClassName="active">Journal</NavLink>
           <NavLink to={match.url + "/knowledge"} className="tab" activeClassName="active">Knowledge</NavLink>
@@ -44,10 +46,10 @@ class Character extends React.Component {
         {match.isExact && <CharacterSheet character={character}/>}
 
         <Switch>
-          <Route path={match.path + "/inventory/:item?"} render={props => <Items character={character} {...this.props}/>}/>
-          <Route path={match.path + "/journal/:slug?"} render={props => <Journal character={character} {...this.props}/>}/>
-          <Route path={match.path + "/knowledge"} render={props => <Lore character={character} {...this.props}/>}/>
-          <Route path={match.path + "/lore"} render={props => <Lore {...this.props}/>}/>
+          <Route path={match.path + "/inventory/:item?"} render={props => <Items {...this.props}/>}/>
+          <Route path={match.path + "/journal/:slug?"} render={props => <Journal {...this.props}/>}/>
+          <Route path={match.path + "/knowledge"} render={props => <Knowledge {...this.props}/>}/>
+          <Route path={match.path + "/lore"} render={props => <Lore slug={character.id} {...this.props}/>}/>
         </Switch>
 
       </div>

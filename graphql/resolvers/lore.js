@@ -1,10 +1,13 @@
 const Lore = {
-  owner: lore => {
-    return lore.owner || lore.getOwner();
-  },
-  topic: lore => {
-    return db[lore.lorable].find({where: {id: lore.lorable_id}})
-  }
+  owner: lore => lore.owner || lore.getOwner(),
+  topic_type: lore => lore.lorable,
+  topic: lore => db[lore.lorable].find({where: {id: lore.lorable_id}}),
 }
 
-module.exports = Lore
+// populate the topic based on 
+// take THAT, polymorphic associations
+const LoreList = {
+  topic: ({topic: {id, __type}}) => db[__type].find({where: {id}})
+}
+
+module.exports = { Lore, LoreList }
