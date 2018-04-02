@@ -6,7 +6,7 @@ scalar DateTime
 
 type Query {
 	session: Session
-	user(id: ID!): User
+	user(slug: String): [User]
 
 	# Calendar: query the calendar based on optional year, motnh, day arguments OR a start and end timestamp
 	calendar(campaign: ID! year: Int, month: Int, day: Int, start: Int, end: Int): Calendar

@@ -29,7 +29,14 @@ export default class Dropdown extends React.Component {
     onClick={this.toggleDropdownState}
     onMouseEnter={false && this.handleMouseEnter}
     onMouseLeave={this.handleMouseLeave}>
-      <label className="dropdown-label">{this.props.label}</label>
+      <label className="dropdown-label">
+        { this.props.image && (
+          <div className="dropdown-image">
+            <img src={this.props.image} />
+          </div>
+        )}
+        {this.props.label}
+      </label>
       <div className={`dropdown-menu ${this.state.expanded ? 'active' : ''}`}>
         {this.props.children}
       </div>

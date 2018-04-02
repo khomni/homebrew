@@ -1,4 +1,5 @@
 import {
+  SET_SESSION,
   SET_JWT,
   SET_USER,
   SET_CHARACTER,
@@ -30,3 +31,9 @@ export const setCampaign = campaign => ({
   type: SET_CAMPAIGN,
   campaign
 })
+
+export const setSession = session => ({
+  type: SET_SESSION,
+  session
+})
+

@@ -10,6 +10,9 @@ mutation CreateSession($session: SessionInput!) {
 			id
 			name
 			url
+			images {
+				path
+			}
 		}
 		campaign {
 			id

@@ -21,13 +21,13 @@ import Campaign from './Campaign'
 // import Character from '../components/views/characters.jsx'
 import Character from './Character.jsx'
 import Home from '../components/views/home'
-import User from '../components/views/user'
+import User from './User.jsx'
 
 /* ============================== 
  * Apollo / GraphQL
  * ============================== */
 
-import { graphql } from 'react-apollo';
+import { graphql, withApollo } from 'react-apollo';
 import { SESSION } from '../../graphql/queries'
 
 /* ============================== 
@@ -46,21 +46,12 @@ class App extends React.Component {
     const { dispatch } = this.props;
   }
 
+  /*
   componentWillReceiveProps(nextProps) {
-    const { dispatch } = this.props;
-    const { session } = nextProps;
-
-    if(session && false) {
-      const { user, character, campaign } = session
-    
-      console.log('updating redux store with session information:', session);
-      if(user) dispatch(setUser(user))
-      if(character) dispatch(setCharacter(character))
-      if(campaign) dispatch(setCampaign(campaign))
-    
-    }
-    
+    const { dispatch, session } = this.props;
+    const { session: nextSession } = nextProps;
   }
+  */
 
   render() {
     const { loading, session } = this.props;
@@ -99,13 +90,21 @@ App.propTypes = {
   refetch: PropTypes.func.isRequired,
 }
 
+// the top level of the app uses the session query to get the session user's information, including
+//      1. the logged in account
+//      2. what their current main character is
+//      3. what campaign their character is under
+//
+// the session should be refreshed if the character is changed
+
 const gContainer = graphql(SESSION, {
   props: ({ ownProps: { dispatch }, data: { session, loading, refetch, error } }) => 
   ({ loading, refetch, error, session })
 })(App)
 
 const mapStateToProps = ({session}) => {
+  console.log('mapping session to props:', { session });
   return { session }
 }
 
-export default withRouter(connect(mapStateToProps)(gContainer))
+export default withRouter(withApollo(connect(mapStateToProps)(gContainer)))

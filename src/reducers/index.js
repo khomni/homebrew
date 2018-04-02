@@ -4,6 +4,7 @@
 
 import { combineReducers } from 'redux'
 import {
+  SET_SESSION, // sets all session information at once
   SET_JWT,
   SET_USER,
   SET_CHARACTER,
@@ -21,6 +22,8 @@ const initialState = {
 
 const session = (state = initialState, action) => {
   switch(action.type) {
+    case SET_SESSION:
+      return {...state, ...action.session}
     case SET_JWT:
       return {...state, jwt: action.jwt}
     case SET_USER:

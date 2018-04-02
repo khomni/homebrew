@@ -1,0 +1,18 @@
+query GetUser($detail: Boolean!, $slug: String) {
+	user(slug: $slug) {
+		id
+		username
+		url
+		email
+		characters @include(if: $detail) {
+			name
+			id
+			url
+			images {
+				path
+			}
+		
+		}
+	
+	}
+}

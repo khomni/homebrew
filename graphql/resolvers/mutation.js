@@ -3,7 +3,13 @@ const jwtInterface = require('../jwt');
 const Mutation = {};
 
 // User login
-Mutation.session = (root, { session: {alias, password} }, context) => {
+Mutation.session = (root, { session: {alias, password, destroy} }, context) => {
+
+  // logout: session mutation without any credentials
+  // if(destroy) {
+  if(!alias || !password) {
+    return { jwt: null }
+  }
 
   return jwtInterface.authenticateUser(alias, password)
   .then(user => { // guaranteed to return a user; throws error if invalid

@@ -10,6 +10,10 @@ query GetSession {
 			id
 			name
 			url
+			images {
+				path
+			}
+
 		}
 		campaign {
 			id

@@ -42,8 +42,6 @@ const wsClient = new SubscriptionClient('ws://localhost:3000/', {
     let storeState = store.getState()
     const { session: { jwt } } = storeState;
 
-    console.log('auth:', jwt);
-
     return {
       jwt,
       userAgent: navigator.userAgent,

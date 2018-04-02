@@ -26,7 +26,25 @@ Query.session = (root, args, { jwt }) => {
       // return all the goodies
       return { jwt, campaign, character, user }
     })
+  })
+}
 
+Query.user = (root, args, context) => {
+  const { campaign, slug } = args
+
+  let query = {};
+
+  if(slug) {
+    if(isNaN(slug)) query.username = slug
+    else query.id = slug
+  }
+
+  console.log(query)
+  return db.User.findAll({ where: query })
+  .then(user => {
+    console.log(user);
+    return user
+  
   })
 
 }

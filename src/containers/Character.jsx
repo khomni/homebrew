@@ -49,6 +49,7 @@ class Character extends React.Component {
           <Route path={match.path + "/inventory/:item?"} render={props => <Items character={character}/>}/>
           <Route path={match.path + "/journal/:slug?"} render={props => <Journal character={character}/>}/>
           <Route path={match.path + "/knowledge"} render={props => <Knowledge character={character}/>}/>
+          <Route path={match.path + "/lore"} render={props => <Lore slug={character.id}/>}/>
         </Switch>
 
       </div>
@@ -62,15 +63,6 @@ Character.propTypes = {
   match: PropTypes.object.isRequired,
   layout: PropTypes.string,
 }
-
-const TEST_SUB = gql`
-subscription test {
-  test {
-    name
-    id
-  }
-}
-`
 
 export default withResource(Character, {
   query: CHARACTER,

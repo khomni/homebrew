@@ -131,7 +131,7 @@ export default function withResource(WrappedComponent, {query, variables, alias,
  *      HOC that wraps a component with everything required to run mutations
  * ============================== */
 
-export function resourceForm(WrappedComponent, {mutation, variables, alias, formData, onUpdate}) {
+export function resourceForm(WrappedComponent, {mutation, variables, alias, formData, refetchQueries, onUpdate}) {
 
   class Wrapper extends Component {
     constructor(props) {
@@ -140,14 +140,11 @@ export function resourceForm(WrappedComponent, {mutation, variables, alias, form
       this.setFormData = this.setFormData.bind(this);
 
       // form data will be stored in state until submitted
-      this.state = {
-        formData: {
-          
-        }
-      }
+      this.state = { formData: { } }
     }
 
     componentWillMount() {
+      // set the starting formData state to the values provided on construction
       this.setState({formData})
     }
 
@@ -167,7 +164,8 @@ export function resourceForm(WrappedComponent, {mutation, variables, alias, form
           ...variables,
           [alias]: formData
         },
-        update: onUpdate(this.props)
+        update: onUpdate && onUpdate(this.props),
+        refetchQueries,
       })
 
     }

@@ -34,7 +34,7 @@ export default class Navbar extends React.Component {
         )}
 
         { character ? (
-          <Dropdown label={character.name}>
+          <Dropdown label={character.name} image={character.images[0].path}>
             <NavLink to={character.url} className="navlink" activeClassName="active">Character Sheet</NavLink>
             <NavLink to={character.url + '/inventory'} className="navlink" activeClassName="active">Inventory</NavLink>
             <NavLink to={character.url + '/journal'} className="navlink" activeClassName="active">Journal</NavLink>
