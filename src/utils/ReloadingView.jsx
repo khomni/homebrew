@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { ITEMS_PER_PAGE } from '../constants'
 
 import { withRouter } from 'react-router-dom';
-import { graphql, withApollo } from 'react-apollo';
+import { graphql, withApollo, Query, Mutate } from 'react-apollo';
 import { connect } from 'react-redux';
 import { getSession } from '../actions';
 
@@ -98,7 +98,7 @@ export default function withResource(WrappedComponent, {query, variables, alias,
         data,
       };
 
-      console.log(alias, props);
+      // console.log(alias, props);
 
       // EXPERIMENTAL: allow reloading components to include a subscription query that 
       //        automatically updates the cache when the server publishes it
@@ -128,44 +128,68 @@ export default function withResource(WrappedComponent, {query, variables, alias,
 
 /* ==============================
  * resourceForm:
- *      HOC that wraps a component with everything required to update the 
+ *      HOC that wraps a component with everything required to run mutations
  * ============================== */
 
-export function resourceForm(WrappedComponent, {query, variables, alias}) {
+export function resourceForm(WrappedComponent, {mutation, variables, alias, formData, onUpdate}) {
 
   class Wrapper extends Component {
     constructor(props) {
       super(props);
       this.submit = this.submit.bind(this);
+      this.setFormData = this.setFormData.bind(this);
 
-      // form data should be stored in state until submitted
-      this.state = {}
+      // form data will be stored in state until submitted
+      this.state = {
+        formData: {
+          
+        }
+      }
+    }
+
+    componentWillMount() {
+      this.setState({formData})
+    }
+
+    setFormData({ target: {name, value}}) {
+      let { formData } = this.state
+      value = !isNaN(value) && value !== '' ? Number(value) : value
+      this.setState({formData: {...formData, [name]: value}})
     }
 
     submit() {
-      const { client } = this.props;
+      const { client, dispatch } = this.props;
+      const { formData } = this.state;
 
       return client.mutate({
+        mutation,
         variables: {
           ...variables,
-          [alias]: this.state,
-        }
+          [alias]: formData
+        },
+        update: onUpdate(this.props)
       })
-    
+
     }
 
     render() {
       const { error, loading, refresh, dispatch } = this.props;
-      const { filter } = this.state
-      if(error) {
-        return <Error error={error} />
-      }
+      const { formData } = this.state
+      if(error) return <Error error={error}/>
       if(loading) return <Loading/>
-      return <WrappedComponent setFilter={this.setFilter} filter={filter} {...this.props} />
+
+      // the wrapped component is provided with the functions it needs to modify form data and submit it
+      //      submitMutation: calls the mutation query using the data 
+      //      formData: the current formData to be submitted is passed as a prop to the wrapped component so the fields can be updated manually
+      return (
+        <WrappedComponent {...this.props} submitMutation={this.submit} formData={formData} setFormData={this.setFormData}/>
+      )
+
     }
   }
 
-  return withRouter(withApollo(connect(mapStateToProps)(Wrapper)))
+  const mapStateToProps = ({session}) => ({session})
 
+  return withRouter(withApollo(connect(mapStateToProps)(Wrapper)))
 
 }

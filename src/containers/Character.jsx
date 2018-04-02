@@ -46,10 +46,9 @@ class Character extends React.Component {
         {match.isExact && <CharacterSheet character={character}/>}
 
         <Switch>
-          <Route path={match.path + "/inventory/:item?"} render={props => <Items {...this.props}/>}/>
-          <Route path={match.path + "/journal/:slug?"} render={props => <Journal {...this.props}/>}/>
-          <Route path={match.path + "/knowledge"} render={props => <Knowledge {...this.props}/>}/>
-          <Route path={match.path + "/lore"} render={props => <Lore slug={character.id} {...this.props}/>}/>
+          <Route path={match.path + "/inventory/:item?"} render={props => <Items character={character}/>}/>
+          <Route path={match.path + "/journal/:slug?"} render={props => <Journal character={character}/>}/>
+          <Route path={match.path + "/knowledge"} render={props => <Knowledge character={character}/>}/>
         </Switch>
 
       </div>

@@ -40,12 +40,12 @@ const wsClient = new SubscriptionClient('ws://localhost:3000/', {
     // get persistent storage to include authorization details in
     // TODO: app needs to set these auth credentials on sign in
     let storeState = store.getState()
-    const { auth } = storeState;
+    const { session: { jwt } } = storeState;
 
-    console.log('auth:', auth);
+    console.log('auth:', jwt);
 
     return {
-      auth,
+      jwt,
       userAgent: navigator.userAgent,
       timezoneOffset: new Date().getTimezoneOffset()
     }

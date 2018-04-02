@@ -1,5 +1,5 @@
-query GetSession {
-	session {
+mutation CreateSession($session: SessionInput!) {
+	session(session: $session) {
 		jwt
 		user {
 			id
@@ -18,4 +18,3 @@ query GetSession {
 		}
 	}
 }
-

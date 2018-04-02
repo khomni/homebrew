@@ -51,6 +51,8 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Lore.belongsTo(models.User, {as:'owner'});
 
+        Lore.belongsToMany(models.Character, {as: 'knowledge', through: models.Knowledge});
+
         Lore.addScope('defaultScope', {
           sort: [['updatedAt','DESC']]
         }, {override:true} )

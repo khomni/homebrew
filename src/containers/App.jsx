@@ -48,10 +48,12 @@ class App extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const { dispatch } = this.props;
-    const { session } = nextProps
-    if(session) {
+    const { session } = nextProps;
+
+    if(session && false) {
       const { user, character, campaign } = session
     
+      console.log('updating redux store with session information:', session);
       if(user) dispatch(setUser(user))
       if(character) dispatch(setCharacter(character))
       if(campaign) dispatch(setCampaign(campaign))
@@ -103,7 +105,7 @@ const gContainer = graphql(SESSION, {
 })(App)
 
 const mapStateToProps = ({session}) => {
-  return session
+  return { session }
 }
 
 export default withRouter(connect(mapStateToProps)(gContainer))

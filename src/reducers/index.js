@@ -4,6 +4,7 @@
 
 import { combineReducers } from 'redux'
 import {
+  SET_JWT,
   SET_USER,
   SET_CHARACTER,
   SET_CAMPAIGN,
@@ -12,6 +13,7 @@ import {
 import resources from './resources';
 
 const initialState = {
+  jwt: null,
   user: null,
   character: null,
   campaign: null,
@@ -19,6 +21,8 @@ const initialState = {
 
 const session = (state = initialState, action) => {
   switch(action.type) {
+    case SET_JWT:
+      return {...state, jwt: action.jwt}
     case SET_USER:
       return {...state, user: action.user}
     case SET_CHARACTER:

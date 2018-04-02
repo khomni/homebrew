@@ -43,12 +43,6 @@ function generateGUID() {
   return buffer.toString('base64');
 }
 
-
-// TODO: find convenient way to authenticate the session information to send as context to the socket connection
-const obtainSession = Promise.method(connectSID => {
-  return {connectSID}
-});
-
 const connections = {};
 
 function attachWebSockets(server, options = {path: '/'}) {
@@ -58,12 +52,8 @@ function attachWebSockets(server, options = {path: '/'}) {
     subscribe,
     onConnect: (connectionParams, webSocket, context) => {
       let request = webSocket.upgradeReq
-
-      // TODO: get session information from session-store to send to the context on connection
-      // mannually get connect.sid from cookies to use the session store
-      // man, what a pain in the ass
-      let cookies = cookie.parse(request.headers.cookie)
-      let connectSID = cookies['connect.sid'];
+      console.log(connectionParams);
+      const { jwt } = connectionParams;
 
       let guid = generateGUID()
       webSocket._guid = guid;
@@ -74,8 +64,7 @@ function attachWebSockets(server, options = {path: '/'}) {
       let { remoteAddress } = request.connection
       let connectionID = generateGUID()
 
-      if(!connectSID) return false;
-      return obtainSession(connectSID)
+      return { jwt, guid }
     },
     onDisconnect: (connectionParams, webSocket, context) => {
       const guid = webSocket.socket._guid

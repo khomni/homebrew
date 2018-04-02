@@ -24,8 +24,10 @@ type Query {
 # ==============================
 
 type Mutation {
-	campaign(campaign: CampaignInput): Campaign
-	character(character: CharacterInput): Character
+	user(user: UserInput): User # create / update user account
+	session(session: SessionInput): Session # log in
+	campaign(campaign: CampaignInput): Campaign # create / update campaign
+	character(character: CharacterInput): Character # create / update character
 }
 
 # ==============================
@@ -42,9 +44,15 @@ interface Node {
 }
 
 type Session {
+	jwt: String #jwt generated when the session is created, persistent login
 	user: User
 	character: Character
 	campaign: Campaign
+}
+
+input SessionInput {
+	alias: String! # username or email
+	password: String! # unhashed password
 }
 
 # ==============================
@@ -66,6 +74,13 @@ type User implements Node {
 	username: String
 }
 
+input UserInput {
+	id: ID
+	email: String
+	username: String
+	password: String
+}
+
 type Character implements Node {
 	id: ID!
 	name: String
@@ -81,7 +96,6 @@ type Character implements Node {
 input CharacterInput {
 	id: ID
 	name: String
-	url: String
 }
 
 type Item implements Node {

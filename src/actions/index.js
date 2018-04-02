@@ -1,4 +1,5 @@
 import {
+  SET_JWT,
   SET_USER,
   SET_CHARACTER,
   SET_CAMPAIGN,
@@ -9,6 +10,11 @@ export * from './resources';
 /* ============================== 
  * Sync Actions
  * ============================== */
+
+export const setJWT = jwt => ({
+  type: SET_JWT,
+  jwt
+})
 
 export const setUser = user => ({
   type: SET_USER,

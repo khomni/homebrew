@@ -1,16 +1,34 @@
+
+const jwtInterface = require('../jwt');
+
 const { totalQuantity, totalValue, totalWeight } = require('./item');
 
 const Query = {}
 
-Query.session = (root, args, context) => {
+Query.session = (root, args, { jwt }) => {
 
   // TODO: use the context from socket connection to restore a user's session
+  // TODO: querying the session
+  console.log('getting session information:', root, args, jwt);
 
-  return {
-    campaign: context.user && context.user.MainChar && context.user.MainChar.Campaign || null, 
-    character: context.user && context.user.MainChar || null,
-    user: context.user || null,
-  }
+  // with no existing token, the entire session should be returned blank
+  if(!jwt) return { jwt: null, user: null, character: null, campaign: null }
+
+  return jwtInterface.verify(jwt)
+  .then(({alias, password}) => {
+
+    return jwtInterface.authenticateUser(alias, password)
+    .then(user => {
+      let { MainChar: character } = user;
+      let campaign;
+      if(character) campaign = character.Campaign;
+    
+      // return all the goodies
+      return { jwt, campaign, character, user }
+    })
+
+  })
+
 }
 
 Query.campaign = (root, args, context) => {
@@ -103,13 +121,15 @@ Query.journal = (root, args, context) => {
 Query.knowledge = (root, args, context) => {
   const { slug, character, search } = args
   let query = {}
-  if(character) query.CharacterId = character
+  // if(character) query.CharacterId = character
   if(search) query.$or = [{title: {$iLike: `%${search}%`}}, {content: {$iLike: `%${search}%`}}]
 
   if(slug) {
     if(isNaN(slug)) query.url = slug
     else query.id = slug
   }
+
+  // Knowledge
 
   return db.Lore.findAll({ where: query })
   .then(lore => { // reorganize the lore to be organized by lorable and id
@@ -156,10 +176,7 @@ Query.lore = (root, args, context) => {
   // TODO: lore queries should group by topic_type and topic
   // TODO: change the schema to organize lore results by topic
 
-  if(slug) {
-    if(isNaN(slug)) query.url = slug
-    else query.id = slug
-  }
+  if(slug) query.id = slug
 
   // TODO: perform this query as some sort of aggregation
   return db.Lore.findAll({where: query })

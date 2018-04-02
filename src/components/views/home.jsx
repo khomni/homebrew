@@ -3,8 +3,12 @@ import { render } from 'react-dom';
 
 import { Redirect, withRouter } from 'react-router';
 import { connect } from 'react-redux';
-import Form from '../../utils/form.jsx';
 import { withApollo } from 'react-apollo';
+
+import { resourceForm } from '../../utils/ReloadingView'
+import { CREATE_SESSION } from '../../../graphql/mutations'
+
+import { setJWT, setUser, setCharacter, setCampaign } from '../../actions';
 
 import {
   BrowserRouter as Router,
@@ -14,31 +18,57 @@ import {
 } from 'react-router-dom';
 
 import Character from '../../containers/Character';
+/*
+<div>
+  <input placeholder="Username / Email Address" className="form-input" type="text" name="alias" value={formData.alias} onChange={setFormData}/>
+  <input placeholder="Password" className="form-input" type="password" name="password" value={formData.password} onChange={setFormData}/>
+  <button className="btn" onClick={submitMutation}>Log In</button>
+</div>
+*/
 
-const Home = ({match, user, character, campaign}) => (
+const LoginForm = ({render, submitMutation, setFormData, formData}) => (
   <div>
-    { character && <Redirect to={character.url}/> }
-    { user && <Redirect to={user.url}/> }
+    {render({submitMutation, setFormData, formData})}
+  </div>
+)
+
+const Login = resourceForm(LoginForm, {
+  mutation: CREATE_SESSION,
+  alias: 'session',
+  formData: { alias: '', password: '' },
+  onUpdate: ({dispatch}) => (proxy, { data: { session: { jwt, campaign, user, character }}}) => {
+    console.log('new session created:', jwt, user, character, campaign);
+
+    dispatch(setJWT(jwt))
+    dispatch(setUser(user))
+    dispatch(setCharacter(character))
+    dispatch(setCampaign(campaign))
+  }
+})
+
+const Home = ({match, user, character, campaign, session}) => (
+  <div>
+    { console.log('Home session:', session) }
+    {/* character && <Redirect to={character.url}/> */}
+    {/* user && <Redirect to={user.url}/> */}
     <h1>Home</h1>
+    { user && <pre>{JSON.stringify(user, null, '  ')}</pre>}
+    { character && <pre>{JSON.stringify(character, null, '  ')}</pre>}
 
-    <Form action="/login" method="post">
-      <input placeholder="Username / Email Address" className="form-input" type="text" name="user"/>
-      <input placeholder="Password" className="form-input" type="password" name="password"/>
-      <button className="btn" type="submit">Log In</button>
-    </Form>
-
-    <Form action="/login" method="post">
-      <input className="form-input" type="email" name="email"/>
-      <input className="form-input" type="password" name="password"/>
-      <button className="btn" type="submit">Log In</button>
-    </Form>
+    <Login render={({setFormData, formData, submitMutation}) => (
+      <div>
+        <pre>{JSON.stringify(formData, null, '  ')}</pre>
+        <input placeholder="Username / Email Address" className="form-input" type="text" name="alias" value={formData.alias} onChange={setFormData}/>
+        <input placeholder="Password" className="form-input" type="password" name="password" value={formData.password} onChange={setFormData}/>
+        <button className="btn" onClick={submitMutation}>Log In</button>
+      </div>
+    )}/>
 
   </div>
 )
 
 
 const mapStatetoProps = (state, ownProps) => {
-  console.log('home ownProps:', ownProps)
   let {user, character, campaign} = state.session;
 
   return {
