@@ -9,7 +9,6 @@ Query.session = (root, args, { jwt }) => {
 
   // TODO: use the context from socket connection to restore a user's session
   // TODO: querying the session
-  console.log('getting session information:', root, args, jwt);
 
   // with no existing token, the entire session should be returned blank
   if(!jwt) return { jwt: null, user: null, character: null, campaign: null }
@@ -39,10 +38,8 @@ Query.user = (root, args, context) => {
     else query.id = slug
   }
 
-  console.log(query)
   return db.User.findAll({ where: query })
   .then(user => {
-    console.log(user);
     return user
   
   })
