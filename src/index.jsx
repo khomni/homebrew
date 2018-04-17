@@ -1,5 +1,7 @@
-import Promise from 'bluebird';
-global.Promise = Promise;
+import Promise from 'bluebird'
+global.Promise = Promise
+import {RuleSets as SYSTEM} from '../system'
+global.SYSTEM = SYSTEM
 
 /* ============================== 
  * React
@@ -55,7 +57,7 @@ const cache = new InMemoryCache({fragmentMatcher})
 const link = new WebSocketLink(wsClient);
 
 const logoutLink = onError((err, ...rest) => {
-  console.error(err, rest)
+  console.error(err, rest);
 })
 
 const client = new ApolloClient({ 

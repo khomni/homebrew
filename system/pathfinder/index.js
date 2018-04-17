@@ -3,6 +3,7 @@ const System = require('../').constructor
 
 const Pathfinder = new System({
   // name / publisher information
+  key: "pathfinder",
   name: "Pathfinder",
   publisher: "Paizo",
 

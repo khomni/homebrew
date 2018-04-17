@@ -5,16 +5,16 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(module.filename);
 const env = process.env.NODE_ENV || 'development';
-const sequelize = require(APPROOT+'/config/database');
+const sequelize = require('../config/database');
 const EventEmitter = require('events')
 
 let db = {};
 
 fs.readdirSync(__dirname)
-.filter(function(file) {
+.filter(file => {
   return (file.indexOf('.') !== 0) && (file !== basename) && ((file.slice(-3) === '.js') || (file.indexOf('.') < 0));
 })
-.forEach(function(file) {
+.forEach(file => {
   let model = sequelize.import(path.join(__dirname, file));
   db[model.name] = model
 });
@@ -30,32 +30,22 @@ db._associate = function(){
 }
 
 // associates the models and syncs to the database
-db._sync = Promise.method(function(){
+db._sync = Promise.method(() =>{
 
   db._associate();
 
   return sequelize.sync({force:CONFIG.database.forcesync})
-  .catch(err => {
-    console.log(err)
-    return null;
-  })
+  .catch(err => console.log(err))
   .then(syncResults => {
     // individually check to make sure the model associations are valid
     return syncResults;
-    // Promise.map(Object.keys(syncResults.models), key => {
-    //   return syncResults.models[key].findOne({where:{}})
-    //   .catch(err => {
-    //     console.log('force resync:',key)
-    //     return syncResults.models[key].sync({force: true})
-    //   })
-    // })
   })
-})
+});
 
 db._methods = function(doc,regex) {
   let methods = []
-  for(let key in doc) if(typeof doc[key] == 'function') methods.push(key)
-  if(regex && regex instanceof RegExp) methods = methods.filter(method => {return regex.test(method)})
+  for(let key in doc) if(typeof doc[key] === 'function') methods.push(key)
+  if(regex && regex instanceof RegExp) methods = methods.filter(method => regex.test(method))
   process.stdout.write(methods.sort().join(', ').grey + '\n')
   return methods
 }

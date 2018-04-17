@@ -1,16 +1,7 @@
 'use strict';
 
+const _ = require('lodash');
 const flat = require('flat');
-
-function Breadcrumbs(array) {
-  this.url = ""
-  this.store = array || []
-  this.add = object => {
-    object.url = this.url +  object.url
-    this.store.push(object)
-    this.url = object.url
-  }
-}
 
 function dedupe(array) {
   if(!array) return array
@@ -50,8 +41,22 @@ function get(object, string) {
   return null
 }
 
+var counter = 0
+const COUNTER_MAX = 256
+
+// generates a base64 GUID of given length based on the current time
+// uses an 8 bit counter integer to ensure simultaneous entries get unique GUIDs
+function generateGUID() {
+
+  counter = ++counter % COUNTER_MAX
+  let counterString = _.padStart(String(counter), 3, '0');
+  let buffer = new Buffer(String(Date.now()) + '-' + counterString)
+  return buffer.toString('base64');
+
+}
+
 module.exports = {
-  Breadcrumbs,
+  generateGUID,
   get,
   dedupe,
 }

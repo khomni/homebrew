@@ -24,8 +24,7 @@ class Character extends React.Component {
   }
 
   render() {
-    let { match } = this.props;
-    let { loading, character, error } = this.props
+    let { loading, character, error, match } = this.props
     let characters
 
     if(character.length > 1) characters = character;

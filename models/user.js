@@ -5,10 +5,6 @@ Promise.promisifyAll(bcrypt)
 
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define("User", {
-    // identifier: {
-    //   type: DataTypes.STRING,
-    //   primaryKey: true
-    // },
     username: {
       type: DataTypes.STRING,
       unique: true,
@@ -79,8 +75,14 @@ module.exports = function(sequelize, DataTypes) {
           }
         });
 
+        // scope just for authenticating login information via JWT
+        // does not query relations
+        User.addScope('authenticate', {
+          attributes: ['id', 'username', 'email', 'password']
+        })
+
         User.addScope('session', {
-          attributes: ['id','username'],
+          attributes: ['id','username', 'MainCharId'],
           include: [{
             model: models.Character.scope('session'),
             as: 'MainChar'
@@ -96,7 +98,7 @@ module.exports = function(sequelize, DataTypes) {
   };
 
   function hashPassWord(user, options) {
-    return Promise.try(()=>{
+    return Promise.try(() => {
       if(user.password && !user.changed('password')) return user; // if password wasn't changed, skip the password hashing
 
       options.updatesOnDuplicate = options.updatesOnDuplicate || [];
@@ -110,6 +112,8 @@ module.exports = function(sequelize, DataTypes) {
       })
     })
   }
+
+  User.hook('beforeCreate', Common.guid.sequelizeCycleGuid.bind(User))
 
   User.hook('beforeSave', hashPassWord);
   User.hook('beforeCreate', hashPassWord);

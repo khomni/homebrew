@@ -6,8 +6,9 @@ import { withRouter } from 'react-router-dom';
 import { graphql, withApollo, Query, Mutate } from 'react-apollo';
 import { connect } from 'react-redux';
 import { getSession } from '../actions';
+import { PropTypes } from 'prop-types';
 
-import Error from '../components/Error';
+import ErrorView from '../components/Error';
 import Loading from '../components/Loading';
 
 /* ==============================
@@ -70,7 +71,7 @@ export default function withResource(WrappedComponent, {query, variables, alias,
       const { error, loading, refresh, dispatch } = this.props;
       const { filter } = this.state;
 
-      if(error) return <Error error={error} />
+      if(error) return <ErrorView error={error} />
       if(loading) return <Loading/>
       return <WrappedComponent setFilter={this.setFilter} filter={filter} {...this.props} />
     }
@@ -114,8 +115,6 @@ export default function withResource(WrappedComponent, {query, variables, alias,
         }
       })
 
-      // console.log(ownProps.match.url, data[alias] || data)
-
       return Object.assign({}, ownProps, props);
     },
     options: props => ({
@@ -126,13 +125,31 @@ export default function withResource(WrappedComponent, {query, variables, alias,
   return withRouter(withApollo(connect(mapStateToProps)(gContainer)))
 }
 
-/* ==============================
- * resourceForm:
- *      HOC that wraps a component with everything required to run mutations
- * ============================== */
+// improved resourceForm:
+// this function returns a component that can interface with a resource type via React-controlled forms
+// the returned component will have to have its contents rendered based on the dynamic content of the resource / form
+export function resourceForm({mutation, variables, alias, formData, refetchQueries, onUpdate}) {
 
-export function resourceForm(WrappedComponent, {mutation, variables, alias, formData, refetchQueries, onUpdate}) {
+  /* ==============================
+   * mutation: GQL query describing the resource manipulation
+   * variables: an object with variable values OR a function that converts props to variables
+   *    args: an object containing the received props
+   * alias: (string) the name of the resource being modified 
+   * formData: either a base object that describes the form's state, or a function that returns an object with the props
+   *    args: an object containing the received props
+   * onUpdate: a function that returns a function to perform after the mutation has been completed
+   *    args: an object containing the received props
+   * refetchQueries: an array of objects describing queries that should be rerun
+   * ============================== */
 
+  class FormError extends Error {
+    constructor(proto) {
+      super(proto);
+      this.time = Date.now(); // record the time of the error for display
+    }
+  }
+
+  // 1. create a new component class using the parameters handed to the function
   class Wrapper extends Component {
     constructor(props) {
       super(props);
@@ -140,12 +157,20 @@ export function resourceForm(WrappedComponent, {mutation, variables, alias, form
       this.setFormData = this.setFormData.bind(this);
 
       // form data will be stored in state until submitted
-      this.state = { formData: { } }
+      this.state = { 
+        formData: { },
+        errors: [],
+      }
     }
 
     componentWillMount() {
+      let data
+      if(typeof formData === 'function') data = formData(this.props);
+      else data = formData
+
       // set the starting formData state to the values provided on construction
-      this.setState({formData})
+      // the starting formData 
+      this.setState({formData: data});
     }
 
     setFormData({ target: {name, value}}) {
@@ -154,9 +179,14 @@ export function resourceForm(WrappedComponent, {mutation, variables, alias, form
       this.setState({formData: {...formData, [name]: value}})
     }
 
-    submit() {
-      const { client, dispatch } = this.props;
+    // dispatches the mutation query
+    // once the mutation is done, onUpdate will be called with the props passed to the component
+    submit({keyCode = null, shiftKey = false}) {
+      const { client } = this.props;
       const { formData } = this.state;
+
+      // capture submit events, unless created by any keystrokes except deliberate return
+      if(keyCode && (keyCode !== 13 || shiftKey)) return true;
 
       return client.mutate({
         mutation,
@@ -167,27 +197,54 @@ export function resourceForm(WrappedComponent, {mutation, variables, alias, form
         update: onUpdate && onUpdate(this.props),
         refetchQueries,
       })
+      .then(() => {
+        // successful mutation, clear errors
+        this.setState({errors:[]});
+      })
+      .catch(err => {
+        let errors = this.state.errors.slice()
 
+        console.log(FormError);
+        let error = new FormError(err);
+
+        errors.push(error)
+        // add this error to the components error list
+        // send the error back to the component
+        this.setState({errors})
+      })
     }
 
     render() {
-      const { error, loading, refresh, dispatch } = this.props;
-      const { formData } = this.state
-      if(error) return <Error error={error}/>
-      if(loading) return <Loading/>
+      const { render, error, loading, refresh, dispatch } = this.props;
+      const { formData, errors } = this.state
+      if(error) return <ErrorView error={error}/>;
+      if(loading) return <Loading/>;
 
-      // the wrapped component is provided with the functions it needs to modify form data and submit it
-      //      submitMutation: calls the mutation query using the data 
-      //      formData: the current formData to be submitted is passed as a prop to the wrapped component so the fields can be updated manually
+      const { submit, setFormData } = this
+
       return (
-        <WrappedComponent {...this.props} submitMutation={this.submit} formData={formData} setFormData={this.setFormData}/>
+        <div>
+          {errors.length && errors.map(err => (<pre className="error" key={err.id}>{err.stack}</pre>))}
+          {render({formData, submit, setFormData})}
+        </div>
       )
 
+      // call the render prop, passing the formData object, submit function, and form data setter
+      // return render({formData, submit, setFormData})
     }
+  }
+
+  Wrapper.propTypes = {
+    render: PropTypes.func.isRequired,
   }
 
   const mapStateToProps = ({session}) => ({session})
 
+  // Router: the React-Router provider gives the component access to route properties
+  //    {match: { params, url} }
+  // Apollo: give the component access to the apollo client connection properties
+  // Connect (Redux): assigns redux state to properties, allows redux actions to be dispatched
+  //    { dispatch }
   return withRouter(withApollo(connect(mapStateToProps)(Wrapper)))
-
 }
+

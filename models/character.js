@@ -174,6 +174,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   });
 
+  Character.hook('beforeCreate', Common.guid.sequelizeCycleGuid.bind(Character));
   Character.hook('beforeCreate', generateSlug);
   Character.hook('beforeUpdate', generateSlug);
   Character.hook('beforeSave', generateSlug);

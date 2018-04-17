@@ -12,6 +12,7 @@ const User = require('./user');
 const Mutation = require('./mutation');
 const Query = require('./query');
 const Subscription = require('./subscription');
+const System = require('./system');
 
 const Node = {
   __resolveType(obj, context, info) {
@@ -40,6 +41,7 @@ const resolvers = {
   Node,
   User,
   Quest,
+  System,
   Week,
   Year,
 

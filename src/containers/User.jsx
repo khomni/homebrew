@@ -36,7 +36,7 @@ class User extends React.Component {
   }
 }
 
-Character.propTypes = {
+User.propTypes = {
   client: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired,

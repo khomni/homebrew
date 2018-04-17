@@ -33,16 +33,6 @@ const jsSchema = makeExecutableSchema({
  *      - user authorization should also interface with the session storage so users don't have to log in across app-loads
  * ============================== */
 
-var counter = 0
-const COUNTER_MAX = 256
-
-function generateGUID() {
-  counter = ++counter % COUNTER_MAX
-  let counterString = _.padStart(String(counter), 3, '0');
-  let buffer = new Buffer(String(Date.now()) + '-' + counterString)
-  return buffer.toString('base64');
-}
-
 const connections = {};
 
 function attachWebSockets(server, options = {path: '/'}) {
@@ -52,25 +42,28 @@ function attachWebSockets(server, options = {path: '/'}) {
     subscribe,
     onConnect: (connectionParams, webSocket, context) => {
       let request = webSocket.upgradeReq
-      console.log(connectionParams);
       const { jwt } = connectionParams;
 
-      let guid = generateGUID()
-      webSocket._guid = guid;
-      connections[guid] = webSocket;
+      return Common.guid.generateGuid()
+      .then(guid => {
 
-      console.log(`${guid} connected (${Object.keys(connections).length})`);
+        webSocket._guid = guid;
+        connections[guid] = webSocket;
 
-      let { remoteAddress } = request.connection
-      let connectionID = generateGUID()
-
-      return { jwt, guid }
+        let { remoteAddress } = request.connection
+        return { jwt, guid }
+      })
+      // let guid = generateGUID()
     },
     onDisconnect: (connectionParams, webSocket, context) => {
       const guid = webSocket.socket._guid
-      if(connections[guid]) console.log(`${guid} disconnected`);
+      // if(connections[guid]) console.log(`${guid} disconnected`);
       delete connections[guid]
       // console.log(`${request.connection.remoteAddress} disconnected`)
+    },
+    onError: (err, ...rest) => {
+      console.error('Socket error:', err);
+      console.error(rest);
     }
   }, {
     server: server,

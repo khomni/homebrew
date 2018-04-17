@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 export const UserList = ({ user }) => (
   <div>
   </div>

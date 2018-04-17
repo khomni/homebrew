@@ -1,13 +1,41 @@
 import React from 'react';
-import withResource from '../utils/ReloadingView'
-import { Route, Link, Switch } from 'react-router-dom';
+import withResource, { resourceForm } from '../utils/ReloadingView'
 import { PropTypes } from 'prop-types';
 
-import Error from '../components/Error';
-import Character from './Character';
-import Calendar from './Calendar';
+import { Redirect } from 'react-router';
+
+import Error from '../components/Error'
+import Character from './Character'
+import Calendar from './Calendar'
 
 import { CAMPAIGN } from '../../graphql/queries'
+import { MODIFY_CAMPAIGN } from '../../graphql/mutations'
+
+import {
+  CampaignList,
+  CampaignPreview,
+  CampaignView,
+} from '../components/campaign';
+
+
+// use this HOC in component views to modify or create campaigns
+export const CampaignForm = resourceForm({
+  mutation: MODIFY_CAMPAIGN,
+  alias: 'campaign',
+  formData: ({campaign: {id, name, slug, system, privacy_level}}) => ({id, name, system: system.key, url: slug, privacy_level}),
+  onUpdate: ({dispatch}) => (store, { data: { campaign }}) => {
+    // insert the campaign, or change the campaign data in the store
+
+    console.log('store:', store);
+
+    let data = store.readQuery({ query: CAMPAIGN })
+
+    console.log('data:', data);
+
+    // store.writeQuery({query: CAMPAIGN, data})
+
+  }
+})
 
 class Campaign extends React.Component {
   constructor(props) {
@@ -15,29 +43,22 @@ class Campaign extends React.Component {
   }
 
   render() {
-    let { campaign, match } = this.props;
-    let campaigns
+    let { campaign, match, err } = this.props;
 
-    if(campaign.length > 1) {
-      <div key={match.url}>
-        {campaign.map(c => {
-          return <Link key={c.id} to={c.url}>{c.name}</Link>
-        })}
-      </div>
+    console.log(campaign);
+
+    if(campaign.length > 1) return <CampaignList key={match.url} campaigns={campaign}/>;
+    campaign = campaign.pop();
+
+    // TODO: 404 pages
+    if(!campaign) return <Redirect to="/c/"/>
+
+    if(match.params.campaign !== campaign.slug) {
+      console.log('Campaign url changed in cache:', match, campaign.url)
+      return <Redirect to={campaign.url}/>
     }
-    campaign = campaign.pop()
 
-    return (
-      <div key={match.url}>
-        <h1>{campaign.name}</h1>
-
-        <Switch>
-          <Route path={match.path + "/pc"} render={props => <Character campaign={campaign}/>}/>
-          <Route path={match.path + "/calendar"} render={props => <Calendar campaign={campaign}/>}/>
-        </Switch>
-
-      </div>
-    )
+    return <CampaignView key={match.url} {...this.props} campaign={campaign}/>
   }
 }
 
@@ -49,7 +70,9 @@ export default withResource(Campaign, {
   query: CAMPAIGN,
   alias: 'campaign',
   variables: props => ({
-    slug: props.match.params.campaign
+    // detail is true only if linking directly to a campaign
+    detail: !!props.match.params.campaign,
+    slug: props.match.params.campaign,
   })
 })
 

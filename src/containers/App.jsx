@@ -72,11 +72,13 @@ class App extends React.Component {
             <Route exact path="/s/:system/generators" component={Generators}/>
 
             <Route exact path="/c" component={Campaign}/>
-            <Route path="/c/:campaign" component={Campaign}/>
+            <Route path="/new-campaign" component={Campaign}/>
+            <Route path="/c/:campaign/:action?" component={Campaign}/>
             <Route exact path="/pc" component={Character}/>
             <Route path="/pc/:character" component={Character}/>
             <Route exact path="/u" component={User}/>
             <Route path="/u/:username" component={User}/>
+
           </Switch>
 
         </div>
@@ -103,7 +105,6 @@ const gContainer = graphql(SESSION, {
 })(App)
 
 const mapStateToProps = ({session}) => {
-  console.log('mapping session to props:', { session });
   return { session }
 }
 

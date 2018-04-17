@@ -1,15 +1,38 @@
-query($slug: String!) {
-	campaign(slug: $slug) {
+query($detail: Boolean!, $slug: String, $search: String) {
+	campaign(slug: $slug, search: $search) {
+		# Basic information
 		id
 		name
+		url
+		slug
+		privacy_level
 		system {
+			key
 			name
 		}
+		owner {
+			id
+			username
+			url
+		}
+		
+		# Summarizing information
+		total_characters @skip(if: $detail)
+		total_users @skip(if: $detail)
+		total_lore @skip(if: $detail)
+		total_quests @skip(if: $detail)
+		total_events @skip(if: $detail)
 
+		# Detailed Associations
 
-		quests {
+		# Top-level quests
+		quests @include(if: $detail) {
 			id
 			name
+			url
+			status
 		}
+
+
 	}
 }

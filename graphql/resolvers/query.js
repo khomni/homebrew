@@ -5,7 +5,8 @@ const { totalQuantity, totalValue, totalWeight } = require('./item');
 
 const Query = {}
 
-Query.session = (root, args, { jwt }) => {
+Query.session = (root, args, context) => {
+  const { jwt } = context
 
   // TODO: use the context from socket connection to restore a user's session
   // TODO: querying the session
@@ -16,14 +17,16 @@ Query.session = (root, args, { jwt }) => {
   return jwtInterface.verify(jwt)
   .then(({alias, password}) => {
 
-    return jwtInterface.authenticateUser(alias, password)
+    return db.User.scope('session').find({
+      where: { $or: [{email: alias}, {username: alias}] }
+    })
     .then(user => {
       let { MainChar: character } = user;
       let campaign;
       if(character) campaign = character.Campaign;
-    
-      // return all the goodies
-      return { jwt, campaign, character, user }
+      let session = { jwt, campaign, character, user }
+
+      return session;
     })
   })
 }
@@ -39,17 +42,16 @@ Query.user = (root, args, context) => {
   }
 
   return db.User.findAll({ where: query })
-  .then(user => {
-    return user
-  
-  })
 
 }
 
 Query.campaign = (root, args, context) => {
   const { slug } = args;
   let query = {};
-  if(slug) query.url = slug
+  if(slug) {
+    if(isNaN(slug)) query.username = slug
+    else query.id = slug
+  }
 
   return db.Campaign.findAll({where: query})
 }

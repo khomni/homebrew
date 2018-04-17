@@ -20,13 +20,7 @@ import {
 
 import Character from '../../containers/Character';
 
-const LoginForm = ({render, submitMutation, setFormData, formData}) => (
-  <div>
-    {render({submitMutation, setFormData, formData})}
-  </div>
-)
-
-const Login = resourceForm(LoginForm, {
+const Login = resourceForm({
   mutation: CREATE_SESSION,
   alias: 'session',
   formData: { alias: '', password: '' },
@@ -50,11 +44,11 @@ const Home = ({match, session}) => (
     { session.user && <pre>{JSON.stringify(session.user, null, '  ')}</pre>}
     { session.character && <pre>{JSON.stringify(session.character, null, '  ')}</pre>}
 
-    <Login render={({setFormData, formData, submitMutation}) => (
+    <Login render={({setFormData, formData, submit}) => (
       <div>
         <input placeholder="Username / Email Address" className="form-input" type="text" name="alias" value={formData.alias} onChange={setFormData}/>
         <input placeholder="Password" className="form-input" type="password" name="password" value={formData.password} onChange={setFormData}/>
-        <button className="btn" onClick={submitMutation}>Log In</button>
+        <button className="btn" onClick={submit}>Log In</button>
       </div>
     )}/>
 

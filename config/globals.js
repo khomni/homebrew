@@ -8,4 +8,4 @@ global.APPROOT = path.resolve()
 global.CONFIG = require('./');
 global.Common = require('../common');
 global.colors = require('colors')
-global.SYSTEM = require('../system')
+global.SYSTEM = require('../system').RuleSets

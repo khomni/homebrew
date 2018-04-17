@@ -39,7 +39,8 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       values: SYSTEM.names,
       get: function(){
-        return SYSTEM[this.getDataValue('system')]
+        let key = this.getDataValue('system')
+        return SYSTEM[key]
       }
     },
 
@@ -95,6 +96,8 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   });
+
+  Campaign.hook('beforeCreate', Common.guid.sequelizeCycleGuid.bind(Campaign));
 
   Campaign.hook('beforeSave', (campaign, options) => {
     return Promise.try(()=>{

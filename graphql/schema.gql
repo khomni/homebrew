@@ -11,7 +11,7 @@ type Query {
 	# Calendar: query the calendar based on optional year, motnh, day arguments OR a start and end timestamp
 	calendar(campaign: ID! year: Int, month: Int, day: Int, start: Int, end: Int): Calendar
 	character(slug: String, campaign: ID, user: ID, search: String): [Character]
-	campaign(slug: String): [Campaign]
+	campaign(slug: String, search: String): [Campaign]
 	item(slug: String, character: ID, search: String): ItemCollection
 	journal(slug: String, character: ID, search: String): [Journal]
 
@@ -151,12 +151,24 @@ type Campaign implements Node {
 	id: ID!
 	name: String
 	system: System
+	url: String
+	slug: String # The slug component of the url
+	privacy_level: String
+
+	# Associations
+	owner: User
 	characters: [Character!]!
 	lore: [Lore!]!
 	quests: [Quest!]!
-	url: String
 	calendar: Calendar
-	privacy_level: String
+
+	# Meta information
+	total_quests: Int
+	total_characters: Int
+	total_users: Int # may require tricky aggregations
+	total_lore: Int
+	total_quests: Int
+	total_events: Int
 }
 
 input CampaignInput {
@@ -165,6 +177,9 @@ input CampaignInput {
 	name: String!
 	system: String
 	privacy_level: String
+
+	# Campaign Destruction
+	destroy: Boolean
 }
 
 # ==============================
@@ -221,12 +236,13 @@ enum QuestStatus {
 type Quest implements Node {
 	id: ID!
 	name: String
+	url: String
 	description: String
 	status: QuestStatus
+
 	subquests: [Quest!]!
 	comments: CommentSection
 	# comments: [Comment!]!
-	url: String
 }
 
 type Comment implements Node {
@@ -244,6 +260,7 @@ type CommentSection {
 }
 
 type System {
+	key: String
 	name: String
 	publisher: String
 	year: Int

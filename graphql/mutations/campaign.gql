@@ -1,0 +1,14 @@
+mutation ModifyCampaign($campaign: CampaignInput!) {
+	campaign(campaign: $campaign) {
+		id
+		name
+		url
+		slug
+		privacy_level
+
+		system {
+			key
+			name
+		}
+	}
+}
