@@ -8,25 +8,34 @@ const Query = {}
 Query.session = (root, args, context) => {
   const { jwt } = context
 
+  const newSession = { jwt: null, user: null, character: null, campaign: null }
+
   // TODO: use the context from socket connection to restore a user's session
   // TODO: querying the session
 
   // with no existing token, the entire session should be returned blank
-  if(!jwt) return { jwt: null, user: null, character: null, campaign: null }
+  if(!jwt) return newSession
 
   return jwtInterface.verify(jwt)
   .then(({alias, password}) => {
 
     return db.User.scope('session').find({
-      where: { $or: [{email: alias}, {username: alias}] }
+      where: { $or: [{email: alias}, {name: alias}] }
     })
     .then(user => {
+      if(!user) return newSession; // something changed with the user account since the JWT was signed
       let { MainChar: character } = user;
       let campaign;
       if(character) campaign = character.Campaign;
       let session = { jwt, campaign, character, user }
 
       return session;
+    })
+    .catch(err => {
+      // any unforseen error in trying to retrieve session information should return an empty session
+      console.error('Error retrieving session information:', err);
+      
+      return newSession
     })
   })
 }
@@ -36,10 +45,7 @@ Query.user = (root, args, context) => {
 
   let query = {};
 
-  if(slug) {
-    if(isNaN(slug)) query.username = slug
-    else query.id = slug
-  }
+  if(slug) query.id = slug
 
   return db.User.findAll({ where: query })
 
@@ -48,10 +54,7 @@ Query.user = (root, args, context) => {
 Query.campaign = (root, args, context) => {
   const { slug } = args;
   let query = {};
-  if(slug) {
-    if(isNaN(slug)) query.username = slug
-    else query.id = slug
-  }
+  if(slug) query.url = slug
 
   return db.Campaign.findAll({where: query})
 }

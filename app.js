@@ -71,48 +71,6 @@ app.use((req,res,next) => {
   next();
 });
 
-// SESSION
-
-const SequelizeStore = require('connect-sequelize')(session);
-
-app.use(cookieParser());
-
-const sessionMiddleware = session({
-  secret: 'brulesrules',
-  store: new SequelizeStore(sequelize,{},'Session'),
-  proxy:true,
-  resave:false,
-  saveUninitialized: true,
-});
-
-app.use(sessionMiddleware);
-
-const passport = require('./config/passport');
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use((req,res,next) => {
-  // permission object passed between routers to determine the level of permission available to the user
-  // res.locals.permission = {write: false, read: false}
-  Object.seal(res.locals.permission);
-
-  res.locals.currentUser = req.user || false;
-  res.locals.THEME = req.session.theme || 'marble';
-  res.locals.breadcrumbs = [];
-  next();
-});
-
-// set the user's main character if applicable
-const activeChar = require('./middleware/activeChar')
-app.use(activeChar);
-
-app.use('/graphql', graphql);
-
-app.use('/graphiql', graphiql({
-  endpointURL: '/graphql',
-  query: require('./graphql/queries/introspection.gql')
-}));
-
 app.use('/', (req,res,next)=>{
   if(/\.json(.*)?$/.test(req.url)) {
     req.headers.accept = 'application/json';

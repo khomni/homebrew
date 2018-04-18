@@ -8,7 +8,7 @@ const env = process.env.NODE_ENV || 'development';
 const sequelize = require('../config/database');
 const EventEmitter = require('events')
 
-let db = {};
+const db = {};
 
 fs.readdirSync(__dirname)
 .filter(file => {

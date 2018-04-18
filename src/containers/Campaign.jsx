@@ -25,13 +25,7 @@ export const CampaignForm = resourceForm({
   formData: ({campaign: {id, name, slug, system, privacy_level}}) => ({id, name, system: system.key, url: slug, privacy_level}),
   onUpdate: ({dispatch}) => (store, { data: { campaign }}) => {
     // insert the campaign, or change the campaign data in the store
-
-    console.log('store:', store);
-
-    let data = store.readQuery({ query: CAMPAIGN })
-
-    console.log('data:', data);
-
+    // let data = store.readQuery({ query: CAMPAIGN })
     // store.writeQuery({query: CAMPAIGN, data})
 
   }

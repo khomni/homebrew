@@ -5,8 +5,51 @@ Promise.promisifyAll(crypto);
 
 const GUID_BYTES = 16
 
-function generateSlug(doc, options) {
+function generateSlug({model}) {
+  // ignore documents without a name
+  return function(doc, options) {
+    if(!doc.name || !doc.changed('name')) return doc;
 
+    let originalSlug = doc.slug;
+    let isUnique = false;
+    let iteration = 0;
+
+    let nameComponents = 1; // start with
+    let slugComponents = doc.name.split(/\s/).slice(0, nameComponents); // split the name by whitespace characters
+
+    let slug = slugComponents.join('-').toLowerCase().replace(/[^a-zA-Z0-9_-]/g,'');
+    doc.slug = slug;
+
+    // get an array of all slugs with the same base
+    return model.aggregate('*.slug', 'DISTINCT', {where: {slug: {$ilike: slug + '%', $not:originalSlug}}, plain:false})
+    .map(distinct => distinct.DISTINCT)
+    .then(existingSlugs => {
+
+      while(!isUnique) {
+        slug = slugComponents.join('-').toLowerCase().replace(/[^a-zA-Z0-9_-]/g,'');
+        doc.slug = slug;
+
+        if(!existingSlugs.includes(slug)) {
+          isUnique = true;
+          return;
+        }
+
+        if(nameComponents < doc.name.split(/\s/).length) {
+          // if there are more nameComponents, try using more of the name components before incrementing
+          nameComponents++;
+        } else {
+          // if all name components have been utilized, add a number to the end and repeat
+          nameComponents = 1;
+          iteration++;
+        }
+
+        slugComponents = doc.name.split(/\s/).slice(0, nameComponents);
+        if(iteration) slugComponents.push(iteration)
+      }
+    })
+    .then(() => doc);
+  
+  }
 }
 
 function generateGuid(bytes = GUID_BYTES) {

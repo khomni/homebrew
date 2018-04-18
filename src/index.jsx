@@ -44,6 +44,8 @@ const wsClient = new SubscriptionClient('ws://localhost:3000/', {
     let storeState = store.getState()
     const { session: { jwt } } = storeState;
 
+    console.log('Redux persistent storage:', storeState);
+
     return {
       jwt,
       userAgent: navigator.userAgent,

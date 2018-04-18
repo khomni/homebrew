@@ -100,11 +100,14 @@ App.propTypes = {
 // the session should be refreshed if the character is changed
 
 const gContainer = graphql(SESSION, {
-  props: ({ ownProps: { dispatch }, data: { session, loading, refetch, error } }) => 
-  ({ loading, refetch, error, session })
+  props: ({ ownProps: { dispatch }, data: { session, loading, refetch, error } }) => {
+    console.log('queried session:', session)
+    return ({ loading, refetch, error, session })
+  },
 })(App)
 
 const mapStateToProps = ({session}) => {
+  console.log('state session:', session)
   return { session }
 }
 

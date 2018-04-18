@@ -18,7 +18,7 @@ const TokenInterface = {
     let invalidCredentialsError = new Error('Invalid Login Credentials');
 
     return db.User.scope('authenticate').find({
-      where: { $or: [{email: alias}, {username: alias}] },
+      where: { $or: [{email: alias}, {name: alias}] },
     })
     .then(user => {
       // user with email or username does not exist

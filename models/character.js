@@ -5,38 +5,19 @@ module.exports = function(sequelize, DataTypes) {
     // optional URL field; defaults to the id route
     // should only be preceded by forward slashes
     url: {
-      type: DataTypes.STRING,
-      unique: true,
-      allowNull: true,
-      validate: {
-        len: [0,64]
-      },
-      get: function() {
-        return /* (this.Campaign&&this.Campaign.url||'')  + */ '/pc/' + (this.getDataValue('url') || this.id)
-      },
+      type: DataTypes.VIRTUAL,
+      get: function(){
+        `/pc/${this.slug || this.id}`
+      }
     },
     // character name is an array of strings
     // a character many have a name of any length
-    name: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
-      get: function() {
-        var nameArray = this.getDataValue('name') || [];
-        return nameArray.join(' ')
-      },
-      set: function(val) {
-        this.setDataValue('name',val.split(' '))
-      },
-      allowNull: false,
-    },
     race: {
       type: DataTypes.STRING,
       allowNull: true,
       validate: {
         len: [0,32]
       }
-    },
-    $name: { // searchable name
-      type: DataTypes.STRING,
     },
     sex: {
       type: DataTypes.ENUM,
