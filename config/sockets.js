@@ -35,6 +35,17 @@ const jsSchema = makeExecutableSchema({
 
 const connections = {};
 
+const formatError = error => {
+  // log the error
+  console.error(error);
+  return error
+}
+
+const formatResponse = (value) => ({
+  ...value,
+  errors: value.errors && value.errors.map(formatError)
+})
+
 function attachWebSockets(server, options = {path: '/'}) {
   return SubscriptionServer.create({
     schema: jsSchema,
@@ -64,10 +75,14 @@ function attachWebSockets(server, options = {path: '/'}) {
     onError: (err, ...rest) => {
       console.error('Socket error:', err);
       console.error(rest);
+    },
+    onOperation: (message, params, webSocket) => {
+      params.formatResponse = formatResponse
+      return params
     }
   }, {
     server: server,
-    path: options.path
+    path: options.path,
   })
 }
 

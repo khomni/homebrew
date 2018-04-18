@@ -40,7 +40,7 @@ const wsClient = new SubscriptionClient('ws://localhost:3000/', {
   reconnect: true,
   connectionParams() {
     // get persistent storage to include authorization details in
-    // TODO: app needs to set these auth credentials on sign in
+    // since the store session gets updated each time the query is run, this will contain the session information last known by the client
     let storeState = store.getState()
     const { session: { jwt } } = storeState;
 

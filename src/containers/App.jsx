@@ -35,7 +35,7 @@ import { SESSION } from '../../graphql/queries'
  * ============================== */
 
 import { connect } from 'react-redux';
-import { setUser, setCharacter, setCampaign } from '../actions';
+import { setUser, setCharacter, setCampaign, setSession } from '../actions';
 
 class App extends React.Component {
   constructor(props) {
@@ -46,16 +46,19 @@ class App extends React.Component {
     const { dispatch } = this.props;
   }
 
-  /*
   componentWillReceiveProps(nextProps) {
     const { dispatch, session } = this.props;
     const { session: nextSession } = nextProps;
+
+    // ensure that all props received from the graphql query are reflected in the store
+    dispatch(setSession(nextSession))
   }
-  */
 
   render() {
     const { loading, session } = this.props;
     if(loading) return null;
+
+    console.log('render session:', session);
 
     // let { user, character, campaign } = this.props;
     return (
@@ -101,14 +104,23 @@ App.propTypes = {
 
 const gContainer = graphql(SESSION, {
   props: ({ ownProps: { dispatch }, data: { session, loading, refetch, error } }) => {
-    console.log('queried session:', session)
-    return ({ loading, refetch, error, session })
+    let storeSession = {}
+    if(session) {
+      storeSession.jwt = session.jwt
+      storeSession.user = session.user
+      storeSession.character = session.character
+      storeSession.campaign = session.campaign
+      console.log('Session queried from graphQL:', storeSession)
+    }
+
+    return ({ loading, refetch, error, session: storeSession })
   },
 })(App)
 
-const mapStateToProps = ({session}) => {
-  console.log('state session:', session)
-  return { session }
+const mapStateToProps = ({session}, ownProps) => {
+  console.log('Mapping redux state to props:', session)
+  // return { session }
+  return {};
 }
 
 export default withRouter(withApollo(connect(mapStateToProps)(gContainer)))
