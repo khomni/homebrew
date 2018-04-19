@@ -21,6 +21,7 @@ import Campaign from './Campaign'
 // import Character from '../components/views/characters.jsx'
 import Character from './Character.jsx'
 import Home from '../components/views/home'
+import Session from './Session'
 import User from './User.jsx'
 
 /* ============================== 
@@ -50,15 +51,17 @@ class App extends React.Component {
     const { dispatch, session } = this.props;
     const { session: nextSession } = nextProps;
 
-    // ensure that all props received from the graphql query are reflected in the store
-    dispatch(setSession(nextSession))
+    for(let key in nextSession) {
+      if(nextSession[key] !== session[key]) {
+        console.log("App's inherited session values have changed; dispatching:", nextSession)
+        return dispatch(setSession(nextSession));
+      }
+    }
   }
 
   render() {
     const { loading, session } = this.props;
     if(loading) return null;
-
-    console.log('render session:', session);
 
     // let { user, character, campaign } = this.props;
     return (
@@ -68,9 +71,9 @@ class App extends React.Component {
 
           <Switch>
 
-            <Route exact path="/" component={Home}/>
-            <Route exact path="/login" component={Home}/>
-            <Route exact path="/signup" component={Home}/>
+            <Route exact path="/" component={Session}/>
+            <Route exact path="/login" component={Session}/>
+            <Route exact path="/signup" component={Session}/>
             <Route exact path="/s/:system/initiative" component={Initiative}/>
             <Route exact path="/s/:system/generators" component={Generators}/>
 
@@ -102,6 +105,33 @@ App.propTypes = {
 //
 // the session should be refreshed if the character is changed
 
+// redux store state will be passed to gContainer props
+const mapStateToProps = ({session}, ownProps) => {
+  // console.log('mstp:', session);
+  return ({session})
+  // return {}
+}
+
+import { CREATE_SESSION } from '../../graphql/mutations'
+
+const mapDispatchToProps = (dispatch, {client}) => ({ 
+  dispatch,
+  logOut() {
+    return client.mutate({
+      mutation: CREATE_SESSION,
+      variables: {destroy: true},
+      refetchQueries: [{query: SESSION}]
+    })
+    .then(({data: {session}}) => {
+      return dispatch(setSession(session));
+    })
+    .catch(err => {
+      console.error('could not log out:', err);
+    })
+  
+  }
+})
+
 const gContainer = graphql(SESSION, {
   props: ({ ownProps: { dispatch }, data: { session, loading, refetch, error } }) => {
     let storeSession = {}
@@ -110,17 +140,11 @@ const gContainer = graphql(SESSION, {
       storeSession.user = session.user
       storeSession.character = session.character
       storeSession.campaign = session.campaign
-      console.log('Session queried from graphQL:', storeSession)
     }
 
     return ({ loading, refetch, error, session: storeSession })
   },
 })(App)
 
-const mapStateToProps = ({session}, ownProps) => {
-  console.log('Mapping redux state to props:', session)
-  // return { session }
-  return {};
-}
 
-export default withRouter(withApollo(connect(mapStateToProps)(gContainer)))
+export default withRouter(withApollo(connect(mapStateToProps, mapDispatchToProps)(gContainer)))

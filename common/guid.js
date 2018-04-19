@@ -59,12 +59,12 @@ function generateGuid(bytes = GUID_BYTES) {
   // convert the random buffer to base64
   .then(buf => buf.toString('base64'))
   // replace the non-url-safe characters with appropriate substitutes
-  .then(string => string.replace(/\//gi,'-').replace(/\+/gi,'_').replace(/\=/gi,''))
+  .then(string => string.replace(/\=|^-|^_/gi,'').replace(/\//gi,'-').replace(/\+/gi,'_').slice(0,bytes))
 
 }
 
 // a function that can be attached to a model's pre-create validation hook that to ensure that its randomly assign GUID is actually unique 
-function sequelizeCycleGuid(doc,options){
+function sequelizeCycleGuid(doc, options){
   let model = this;
 
   console.log(`Generating GUID for model: ${model.name}`)
@@ -75,22 +75,22 @@ function sequelizeCycleGuid(doc,options){
   // in general, collisions are unlikely
   return Promise.while(() => notUnique, () => {
   
-    return generateGUID()
+    return generateGuid()
     .then(guid => {
       console.log(`GUID attempted: ${guid}`);
 
       return model.find({where: {id:guid}})
-      .then(doc => {
-        if(doc) return console.log('GUID collision, retrying'); // 
+      .then(dupedoc => {
+        if(dupedoc) return console.log('GUID collision, retrying'); // 
 
         notUnique = false;
 
         // verified unique
         doc.id = guid;
-
       })
     })
   })
+  .then(() => doc);
 }
 
 module.exports = {

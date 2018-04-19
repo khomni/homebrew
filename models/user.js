@@ -30,7 +30,14 @@ module.exports = ModelWrapper('User', DataTypes => ({
   },
   admin: {
     type: DataTypes.BOOLEAN
-  }
+  },
+  url: {
+    type: DataTypes.VIRTUAL,
+    get() {
+      return `/u/${this.name}`
+    }
+  },
+  slug: null,
 }), {
     indexes: [
       {

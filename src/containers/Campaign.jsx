@@ -22,13 +22,13 @@ import {
 export const CampaignForm = resourceForm({
   mutation: MODIFY_CAMPAIGN,
   alias: 'campaign',
-  formData: ({campaign: {id, name, slug, system, privacy_level}}) => ({id, name, system: system.key, url: slug, privacy_level}),
-  onUpdate: ({dispatch}) => (store, { data: { campaign }}) => {
-    // insert the campaign, or change the campaign data in the store
-    // let data = store.readQuery({ query: CAMPAIGN })
-    // store.writeQuery({query: CAMPAIGN, data})
-
-  }
+  formData: ({campaign: {id, name, slug, system, privacy_level}}) => ({
+    id,
+    name, 
+    system: system.key, 
+    url: slug, 
+    privacy_level
+  }),
 })
 
 class Campaign extends React.Component {
@@ -38,8 +38,6 @@ class Campaign extends React.Component {
 
   render() {
     let { campaign, match, err } = this.props;
-
-    console.log(campaign);
 
     if(campaign.length > 1) return <CampaignList key={match.url} campaigns={campaign}/>;
     campaign = campaign.pop();

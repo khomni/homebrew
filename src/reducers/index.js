@@ -23,7 +23,6 @@ const initialState = {
 const session = (state = initialState, action) => {
   switch(action.type) {
     case SET_SESSION:
-      console.log('SET_SESSION', action.session);
       // returns the entire session, without merging to existing state
       return action.session
       // return {...state, ...action.session}

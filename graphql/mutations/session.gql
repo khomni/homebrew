@@ -1,9 +1,9 @@
-mutation CreateSession($session: SessionInput!) {
-	session(session: $session) {
+mutation CreateSession($session: SessionInput, $destroy: Boolean) {
+	session(session: $session, destroy: $destroy) {
 		jwt
 		user {
 			id
-			username
+			name
 			url
 		}
 		character {

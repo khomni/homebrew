@@ -42,7 +42,8 @@ const wsClient = new SubscriptionClient('ws://localhost:3000/', {
     // get persistent storage to include authorization details in
     // since the store session gets updated each time the query is run, this will contain the session information last known by the client
     let storeState = store.getState()
-    const { session: { jwt } } = storeState;
+    let storeSession = storeState.session || { jwt: null, user: null, character: null, campaign: null }
+    let jwt = storeSession.jwt
 
     console.log('Redux persistent storage:', storeState);
 
@@ -58,8 +59,8 @@ const fragmentMatcher = new IntrospectionFragmentMatcher({ introspectionQueryRes
 const cache = new InMemoryCache({fragmentMatcher})
 const link = new WebSocketLink(wsClient);
 
-const logoutLink = onError((err, ...rest) => {
-  console.error(err, rest);
+const logoutLink = onError((err) => {
+  console.error(err);
 })
 
 const client = new ApolloClient({ 

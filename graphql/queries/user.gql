@@ -1,7 +1,7 @@
 query GetUser($detail: Boolean!, $slug: String) {
 	user(slug: $slug) {
 		id
-		username
+		name
 		url
 		email
 		characters @include(if: $detail) {

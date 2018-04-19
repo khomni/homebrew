@@ -19,6 +19,7 @@ import {
 } from 'react-router-dom';
 
 import Character from '../../containers/Character';
+import User, { UserForm } from '../../containers/User';
 
 const Login = resourceForm({
   mutation: CREATE_SESSION,
@@ -31,15 +32,10 @@ const Login = resourceForm({
     store.writeQuery({query: SESSION, data})
   },
   // refetchQueries: [{query: SESSION}]
-})
+});
 
-const Home = ({match, session}) => (
+export default ({match, session}) => (
   <div>
-    { session.character ? (
-      <Redirect to={session.character.url}/>
-    ) : session.user && (
-      <Redirect to={session.user.url}/>
-    )}
     <h1>Home</h1>
     { session.user && <pre>{JSON.stringify(session.user, null, '  ')}</pre>}
     { session.character && <pre>{JSON.stringify(session.character, null, '  ')}</pre>}
@@ -52,12 +48,39 @@ const Home = ({match, session}) => (
       </div>
     )}/>
 
+    <UserForm render={({setFormData, formData, submit}) => (
+      <div>
+        <input 
+          name="name" 
+          placeholder="Username" 
+          className="form-input" 
+          type="text" 
+          value={formData.name} 
+          onChange={setFormData} />
+        <input 
+          name="email" 
+          placeholder="Email" 
+          className="form-input" 
+          type="email" 
+          value={formData.email} 
+          onChange={setFormData} />
+        <input 
+          name="password" 
+          placeholder="Password" 
+          className="form-input" 
+          type="password" 
+          value={formData.password} 
+          onChange={setFormData}/>
+        <input 
+          name="password_confirm" 
+          placeholder="Password (Confirm)" 
+          className="form-input" 
+          type="password" 
+          value={formData.password_confirm} 
+          onChange={setFormData}/>
+        <button className="btn" onClick={submit}>Create Account</button>
+      </div>
+    )}/>
+
   </div>
 )
-
-
-const mapStatetoProps = ({session}, ownProps) => {
-  return { session }
-}
-
-export default withApollo(withRouter(connect(mapStatetoProps)(Home)))

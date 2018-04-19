@@ -11,6 +11,8 @@ import { PropTypes } from 'prop-types';
 import ErrorView from '../components/Error';
 import Loading from '../components/Loading';
 
+import { ErrorList } from '../containers/Error';
+
 /* ==============================
  * withResource / ReloadingView:
  *      Abstraction HOC that automatically connects to the apolloclient and redux store to load server data
@@ -56,9 +58,7 @@ export default function withResource(WrappedComponent, {query, variables, alias,
       this.setState({filter: {...filter, [name]: value}})
      }
 
-    componentDidMount() {
-      // console.log('withResource', this.props.data)
-    }
+    // componentDidMount() { }
 
     componentWillMount() {
       // if the props include a subscribe method, call it as soon as the component is ready to mount
@@ -108,7 +108,7 @@ export default function withResource(WrappedComponent, {query, variables, alias,
         variables: variables ? variables(ownProps) : null,
         updateQuery: (prev, {subscriptionData}) => { // returns a combination of the old data and the new data
 
-          if(!subscriptionData.data) return prev
+          if(!subscriptionData.data) return prevasdfasdfasdfasdfasdfasdf
           // TODO: determine if this update is updating an existing object, or inserting an object into the current collection (if an array)
           console.warn('Subscription updates have not been fully implemented in ReloadingView.jsx;', 'previous value:', prev, 'pushed update:' , subscriptionData);
           return prev
@@ -142,13 +142,6 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
    * refetchQueries: an array of objects describing queries that should be rerun
    * ============================== */
 
-  class FormError extends Error {
-    constructor(proto) {
-      super(proto);
-      this.time = Date.now(); // record the time of the error for display
-    }
-  }
-
   // 1. create a new component class using the parameters handed to the function
   class Wrapper extends Component {
     constructor(props) {
@@ -157,6 +150,7 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
       this.setFormData = this.setFormData.bind(this);
 
       // form data will be stored in state until submitted
+      // TODO: allow errors to be dismissed
       this.state = { 
         formData: { },
         errors: [],
@@ -165,17 +159,21 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
 
     componentWillMount() {
       let data
+      // if formData is a function, use the inherited props to get the initial form data
       if(typeof formData === 'function') data = formData(this.props);
+      // otherwise inherit it directly
       else data = formData
 
-      // set the starting formData state to the values provided on construction
-      // the starting formData 
-      this.setState({formData: data});
+      for(let key in data) {
+        data[key] = typeof data[key] === 'number' ? Number(data[key]) : data[key] || ''
+      }
+
+      this.setState({formData: data})
     }
 
     setFormData({ target: {name, value}}) {
       let { formData } = this.state
-      value = !isNaN(value) && value !== '' ? Number(value) : value
+      value =  typeof value === 'number' ? Number(value) : value || ''
       this.setState({formData: {...formData, [name]: value}})
     }
 
@@ -184,6 +182,7 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
     submit({keyCode = null, shiftKey = false}) {
       const { client } = this.props;
       const { formData } = this.state;
+      let variables = (typeof variables === 'function') ? variables(this.props) : variables
 
       // capture submit events, unless created by any keystrokes except deliberate return
       if(keyCode && (keyCode !== 13 || shiftKey)) return true;
@@ -203,11 +202,17 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
       })
       .catch(err => {
         let errors = this.state.errors.slice()
+        let minErrorsLength = 5;
 
-        console.log(FormError);
-        let error = new FormError(err);
+        // split error into component pieces if necessary
+        if('graphQLErrors' in err) {
+          minErrorsLength = Math.max(err.graphQLErrors.length, 5);
+          errors = errors.concat(err.graphQLErrors)
+        }
+        else errors.push(err)
 
-        errors.push(error)
+        errors = errors.slice(minErrorsLength * -1)
+
         // add this error to the components error list
         // send the error back to the component
         this.setState({errors})
@@ -224,7 +229,7 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
 
       return (
         <div>
-          {errors.length && errors.map(err => (<pre className="error" key={err.id}>{err.stack}</pre>))}
+          <ErrorList errors={errors} autoHide={5000}/>
           {render({formData, submit, setFormData})}
         </div>
       )

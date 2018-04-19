@@ -1,5 +1,4 @@
 const User = {
-  username: user => user.name,
   // Associations
   //
   character: user => {

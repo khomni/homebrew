@@ -1,7 +1,7 @@
-mutation ModifyUser($user: UserInput!) {
-	user(user: $user) {
+mutation ModifyUser($user: UserInput!, $id: ID) {
+	user(user: $user, id: $id) {
 		id
-		username
+		name
 		url
 		email
 	}

@@ -24,10 +24,10 @@ type Query {
 # ==============================
 
 type Mutation {
-	user(user: UserInput): User # create / update user account
-	session(session: SessionInput): Session # log in
-	campaign(campaign: CampaignInput): Campaign # create / update campaign
-	character(character: CharacterInput): Character # create / update character
+	user(user: UserInput, id: ID): User # create / update user account
+	campaign(campaign: CampaignInput, id: ID): Campaign # create / update campaign
+	character(character: CharacterInput, id: ID): Character # create / update character
+	session(session: SessionInput, destroy: Boolean): Session # log in
 }
 
 # ==============================
@@ -71,14 +71,15 @@ type User implements Node {
 	characters: [Character!]!
 	email: String
 	url: String
-	username: String
+	name: String
 }
 
 input UserInput {
 	id: ID
+	name: String
 	email: String
-	username: String
 	password: String
+	password_confirm: String
 }
 
 type Character implements Node {

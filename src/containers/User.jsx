@@ -1,21 +1,36 @@
 import React from 'react';
-import withResource from '../utils/ReloadingView'
-import { Route, NavLink, Switch } from 'react-router-dom';
+import withResource, { resourceForm } from '../utils/ReloadingView'
+// import { Route, NavLink, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 
+/* ==============================
+ * Queries
+ * ============================== */
+import { USER } from '../../graphql/queries'
+import { MODIFY_USER } from '../../graphql/mutations'
+
+/* ==============================
+ * Containers / Components
+ * ============================== */
+
 import Character from './Character';
-
-// import { CharacterSheet, CharacterCard, CharacterList } from '../components/characters';
-import HeaderImage from '../components/HeaderImage';
-import gql from 'graphql-tag';
-
 import { UserList, UserView } from '../components/user'
 
 /* ============================== 
  * Apollo / GraphQL
  * ============================== */
 
-import { USER } from '../../graphql/queries'
+export const UserForm = resourceForm({
+  mutation: MODIFY_USER,
+  alias: 'user',
+  variables: ({user: {id}}) => ({id}),
+  formData: ({user}) => ({
+    name: user && user.name,
+    email: user && user.email,
+    password: null,
+    password_confirm: null,
+  })
+})
 
 class User extends React.Component {
   constructor(props) {
@@ -26,8 +41,6 @@ class User extends React.Component {
     let { match } = this.props;
     let { loading, user, error } = this.props
     let users
-
-    console.log(loading, user)
 
     if(user.length > 1) <UserList users={user}/>
     user = user[0];

@@ -3,7 +3,7 @@ query GetSession {
 		jwt
 		user {
 			id
-			username
+			name
 			url
 		}
 		character {

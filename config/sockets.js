@@ -36,8 +36,11 @@ const jsSchema = makeExecutableSchema({
 const connections = {};
 
 const formatError = error => {
-  // log the error
-  console.error(error);
+  // add timestamp for ordering
+  error.timestamp = new Date();
+  // create a unique ID for this error so the client can track it
+  error.id = Common.utilities.generateGUID();
+  console.error(error)
   return error
 }
 

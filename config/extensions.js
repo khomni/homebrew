@@ -24,6 +24,7 @@ Promise.while = Promise.method(function(condition, action) {
 });
 
 Object.get = function get(object, string) {
+  if(!object) return object
   // bind this function to a nested object so that `this` refers to the object being worked on
   var thisObject = string ? object : this
   string = string || object

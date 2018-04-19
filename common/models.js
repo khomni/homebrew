@@ -18,7 +18,7 @@ const ModelWrapper = function(name, schema, options, fn){
     const baseSchema = {
       id: {
         type: DataTypes.STRING,
-        allowNull: false,
+        // allowNull: false,
         primaryKey: true,
         unique: true,
       },
@@ -41,6 +41,8 @@ const ModelWrapper = function(name, schema, options, fn){
 
     let combinedOptions = Object.assign({}, baseOptions, options)
 
+    for(let key in combinedSchema) if(!combinedSchema[key]) delete combinedSchema[key]
+
     const Model = sequelize.define(name, combinedSchema, combinedOptions)
 
     /* ==============================
@@ -50,12 +52,15 @@ const ModelWrapper = function(name, schema, options, fn){
      * ============================== */
 
     // add any universal hooks, instance methods or static methods here
-    let slugGenerationMethod = generateSlug({model: Model})
 
-    Model.hook('beforeCreate', sequelizeCycleGuid.bind(Model))
-    Model.hook('beforeCreate', slugGenerationMethod)
-    Model.hook('beforeUpdate', slugGenerationMethod)
-    Model.hook('beforeSave', slugGenerationMethod)
+    Model.hook('beforeCreate', sequelizeCycleGuid)
+
+    if(combinedSchema.slug) {
+      let slugGenerationMethod = generateSlug({model: Model})
+      Model.hook('beforeCreate', slugGenerationMethod)
+      Model.hook('beforeUpdate', slugGenerationMethod)
+      Model.hook('beforeSave', slugGenerationMethod)
+    }
 
     // blank association method
     Model.associate = function(){

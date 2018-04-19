@@ -17,16 +17,16 @@ export default class Navbar extends React.Component {
   // this also depends on a corresponding react component to display the resource
 
   render() {
-    const { session } = this.props;
+    const { session, dispatch, logOut } = this.props;
     const { user, character, campaign } = session
 
     return (
       <nav className="navigation">
         { user ? (
-          <Dropdown label={user && user.username || "?"} >
+          <Dropdown label={user && user.name || "?"} >
             <NavLink to={user.url} className="navlink" activeClassName="active"> Account </NavLink>
             <NavLink to="/messages" className="navlink" activeClassName="active">Inbox</NavLink>
-            <NavLink to="/logout" className="navlink" activeClassName="active">Log Out</NavLink>
+            <a className="navlink" onClick={logOut}>Log Out</a>
             <NavLink to={user.url + '/pc'} className="navlink" activeClassName="active">My Characters</NavLink>
           </Dropdown>
         ) : (

@@ -16,25 +16,29 @@
 
 @keyframes dropdown {
   0% {
-	   transform: translateY(-100%);
+	transform: translateY(-100%);
   }
   100% {
     transform: translateY(0%);
   }
 }
 
+.forge-anim {
+	.animation(forge 1s forwards~"," fadeDown 0.5s @bezier-bounce forwards);
+}
+
 @keyframes forge {
   0% {
     color: red;
-    background-color: @color-primary;
+    background-color: @color-warning;
     background-blend-mode: lighten;
-    .filter(brightness(2) blur(1px) saturate(1) drop-shadow(0px 0px 20px @color-primary));
+    .filter(brightness(2) blur(1px) saturate(1) drop-shadow(0px 0px 20px @color-warning));
   }
   100% {
     text-shadow: inherit;
     background-color: none;
     background-blend-mode: lighten;
-    .filter(brightness(1) blur(0px) saturate(1) drop-shadow(0px 0px 0px fade(#ff9d55, 0%)));
+    .filter(brightness(1) blur(0px) saturate(1) drop-shadow(0px 0px 0px fade(@color-warning, 0%)));
   }
 }
 

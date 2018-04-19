@@ -1,9 +1,16 @@
+const jwtInterface = require('../../jwt');
 
-module.exports = (root, { session: {alias, password, destroy} }, context) => {
+
+module.exports = (root, { destroy, session }, context) => {
+
+  const blankSession = { jwt: null }
+
+  if(destroy || !session ) return blankSession
+  const { alias, password } = session;
 
   // logout: session mutation without any credentials
   // if(destroy) {
-  if(!alias || !password) return { jwt: null }
+  if(!alias || !password) return blankSession
 
   return jwtInterface.authenticateUser(alias, password)
   .then(() => jwtInterface.sign({alias, password}))
