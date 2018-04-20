@@ -5,7 +5,7 @@ import { PropTypes } from 'prop-types';
 
 import { Redirect } from 'react-router';
 
-import Error from '../components/Error'
+import ErrorView from '../components/Error'
 import Character from './Character'
 import Calendar from './Calendar'
 
@@ -24,7 +24,7 @@ import {
 export const CampaignForm = resourceForm({
   mutation: MODIFY_CAMPAIGN,
   alias: 'campaign',
-  variables: ({campaign: {id}}) => ({id}),
+  variables: ({campaign}) => ({id: campaign && campaign.id}),
   formData: ({campaign}) => ({
     name: campaign && campaign.name || '', 
     system: campaign && campaign.system && campaign.system.key || '', 
@@ -39,7 +39,7 @@ class Campaign extends React.Component {
   }
 
   render() {
-    let { campaign, match, err } = this.props;
+    let { campaign, match, err, session: {user} } = this.props;
 
     if(match.url === '/new-campaign') return <CampaignEdit />
 
@@ -56,7 +56,10 @@ class Campaign extends React.Component {
 
     return (
       <Switch>
-        <Route path={`${match.path}/edit`} render={props => <CampaignEdit {...this.props} campaign={campaign}/>}/>
+        <Route path={`${match.path}/edit`} render={props => {
+          if(user.id !== campaign.owner.id) return <ErrorView error={new Error('You do not own this campaign')}/>
+          return <CampaignEdit {...this.props} campaign={campaign}/>
+        }}/>
         <Route exact path={match.path} render={props => <CampaignView {...this.props} campaign={campaign}/>}/>
       </Switch>
     )
@@ -74,6 +77,7 @@ export default withResource(Campaign, {
     // detail is true only if linking directly to a campaign
     detail: !!props.match.params.campaign,
     slug: props.match.params.campaign,
+    owner: props.owner && props.owner.id
   })
 })
 

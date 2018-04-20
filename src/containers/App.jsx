@@ -78,11 +78,11 @@ class App extends React.Component {
 
             <Route exact path="/c" component={Campaign}/>
             <Route path="/new-campaign" component={Campaign}/>
-            <Route path="/c/:campaign/:action?" component={Campaign}/>
-            <Route exact path="/pc" component={Character}/>
-            <Route path="/pc/:character" component={Character}/>
-            <Route exact path="/u" component={User}/>
-            <Route path="/u/:username" component={User}/>
+            <Route path="/c/:campaign?/:action?" component={Campaign}/>
+            {/*<Route exact path="/characters" component={Character}/>*/}
+            <Route path="/pc/:character?" component={Character}/>
+            {/*<Route exact path="/users" component={User}/>*/}
+            <Route path="/u/:username?" component={User}/>
 
           </Switch>
 
@@ -106,9 +106,9 @@ App.propTypes = {
 
 // redux store state will be passed to gContainer props
 const mapStateToProps = ({session}, ownProps) => {
-  // console.log('mstp:', session);
-  return ({session})
-  // return {}
+  console.log('mstp', session);
+  // return ({session})
+  return {}
 }
 
 import { CREATE_SESSION } from '../../graphql/mutations'
@@ -122,6 +122,7 @@ const mapDispatchToProps = (dispatch, {client}) => ({
       refetchQueries: [{query: SESSION}]
     })
     .then(({data: {session}}) => {
+      console.log('logging out; dispatch session:', session)
       return dispatch(setSession(session));
     })
     .catch(err => {

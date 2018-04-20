@@ -27,7 +27,6 @@ export default class Navbar extends React.Component {
             <NavLink to={user.url} className="navlink" activeClassName="active"> Account </NavLink>
             <NavLink to="/messages" className="navlink" activeClassName="active">Inbox</NavLink>
             <NavLink to="/" className="navlink" onClick={logOut}>Log Out</NavLink>
-            <NavLink to={user.url + '/pc'} className="navlink" activeClassName="active">My Characters</NavLink>
           </Dropdown>
         ) : (
           <NavLink to="/login" className="navlink" activeClassName="active">Login / Signup</NavLink>
@@ -42,11 +41,15 @@ export default class Navbar extends React.Component {
             <NavLink to={campaign.url + '/locations'} className="navlink" activeClassName="active">Locations</NavLink>
             <NavLink to={campaign.url + '/lore'} className="navlink" activeClassName="active">Lore</NavLink>
             <NavLink to={campaign.url + '/factions'} className="navlink" activeClassName="active">Factions</NavLink>
+            <hr className="dropdown-separator"/>
+            <NavLink to={user.url + '/c'} className="navlink" activeClassName="active">My Campaigns</NavLink>
           </Dropdown>
         ) : (
-          <Dropdown label="Campaign">
-            <NavLink to="/new-campaign" className="navlink" activeClassName="active">Start a Campaign</NavLink>
-            <NavLink to="/c" className="navlink" activeClassName="active">Browse Campaigns</NavLink>
+          <Dropdown label='Campaign'>
+            <NavLink to='/new-campaign' className="navlink" activeClassName="active">Start a Campaign</NavLink>
+            <NavLink to='/c/'className="navlink" activeClassName="active">Browse Campaigns</NavLink>
+            <hr className='dropdown-separator'/>
+            { user && <NavLink to={user.url + '/c/'} className="navlink" activeClassName="active">My Campaigns</NavLink> }
           </Dropdown>
         )}
 
@@ -56,10 +59,14 @@ export default class Navbar extends React.Component {
             <NavLink to={character.url + '/inventory'} className="navlink" activeClassName="active">Inventory</NavLink>
             <NavLink to={character.url + '/journal'} className="navlink" activeClassName="active">Journal</NavLink>
             <NavLink to={character.url + '/knowledge'} className="navlink" activeClassName="active">Knowledge</NavLink>
+            <hr className="dropdown-separator"/>
+            <NavLink to={user.url + '/pc'} className="navlink" activeClassName="active">My Characters</NavLink>
           </Dropdown>
         ) : (
           <Dropdown label="Character" disabled={!campaign}>
             <NavLink to="/pc" className="navlink" disabled={!campaign} activeClassName="active">New Character</NavLink>
+            <hr className="dropdown-separator"/>
+            { user && <NavLink to={user.url + '/pc'} className="navlink" activeClassName="active">My Characters</NavLink>}
           </Dropdown>
         )}
       </nav>

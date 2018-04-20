@@ -52,9 +52,10 @@ Query.user = (root, args, context) => {
 }
 
 Query.campaign = (root, args, context) => {
-  const { slug } = args;
+  const { slug, owner } = args;
   let query = {};
   if(slug) query.slug = slug
+  if(owner) query.ownerId = owner
 
   return db.Campaign.findAll({where: query})
 }

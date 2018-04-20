@@ -14,6 +14,7 @@ import { MODIFY_USER } from '../../graphql/mutations'
  * Containers / Components
  * ============================== */
 
+import Campaign from './Campaign';
 import Character from './Character';
 import { UserList, UserView } from '../components/user'
 
@@ -51,7 +52,8 @@ class User extends React.Component {
       <div>
         <Switch>
           <Route exact path={`${match.path}/`} render={props => <UserView {...this.props} user={user}/>}/>
-          <Route path={`${match.path}/pc`} render={props => <Character {...this.props} user={user}/>}/>
+          <Route path={`${match.path}/pc/:character?`} render={props => <Character {...this.props} user={user}/>}/>
+          <Route path={`${match.path}/c/:campaign?/:action?`} render={props => <Campaign {...this.props} owner={user}/>}/>
         </Switch>
       </div>
     

@@ -41,7 +41,7 @@ export default ({match, session}) => (
     <section>
       <h2>Log In</h2>
       <Login render={({setFormData, formData, submit}) => (
-        <div className="form-group flex pad border">
+        <div className="form-group">
           <input 
             placeholder="Username / Email Address" 
             className="form-input" 
@@ -66,7 +66,7 @@ export default ({match, session}) => (
     <section>
       <h2>Sign Up</h2>
       <UserForm render={({setFormData, formData, submit}) => (
-        <div className="form-group flex pad border">
+        <div className="form-group">
           <input 
             name="name" 
             placeholder="Username" 

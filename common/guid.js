@@ -8,27 +8,28 @@ const GUID_BYTES = 16
 function generateSlug({model}) {
   // ignore documents without a name
   return function(doc, options) {
-    if(!doc.name || !doc.changed('name')) return doc;
+    if(!doc.name || !doc.changed('name') || !doc.changed('slug')) return doc;
 
-    let originalSlug = doc.slug;
+    let originalSlug = !doc.changed('slug') && doc.slug || '';
     let isUnique = false;
     let iteration = 0;
 
     let nameComponents = 1; // start with
-    let slugComponents = doc.name.split(/\s/).slice(0, nameComponents); // split the name by whitespace characters
+    let originalSlugSource = doc.slug || doc.name
+    let slugComponents = originalSlugSource.split(/\s/).slice(0, nameComponents); // split the name by whitespace characters
 
-    let slug = doc.slug || slugComponents.join('-').toLowerCase().replace(/[^a-zA-Z0-9_-]/g,'');
+    let slug = slugComponents.join('-').toLowerCase().replace(/[^a-zA-Z0-9_-]/g,'');
     doc.slug = slug;
 
-    console.log(`Checking slugs for model: ${model.name} `)
+    console.log(`Checking slug '${slug}' for model: ${model.name} (original: ${originalSlug})`)
     // get an array of all slugs with the same base
     return model.aggregate('slug', 'DISTINCT', {where: {slug: {$ilike: slug + '%', $not:originalSlug}}, plain:false})
     .map(distinct => distinct.DISTINCT)
     .then(existingSlugs => {
-      console.log('existing slugs:', existingSlugs);
 
       while(!isUnique) {
         slug = slugComponents.join('-').toLowerCase().replace(/[^a-zA-Z0-9_-]/g,'');
+        console.log('trying slug:', slug, existingSlugs);
         doc.slug = slug;
 
         if(!existingSlugs.includes(slug)) {
@@ -45,7 +46,7 @@ function generateSlug({model}) {
           iteration++;
         }
 
-        slugComponents = doc.name.split(/\s/).slice(0, nameComponents);
+        slugComponents = originalSlugSource.split(/\s/).slice(0, nameComponents);
         if(iteration) slugComponents.push(iteration)
       }
     })
@@ -57,11 +58,11 @@ function generateSlug({model}) {
 function generateGuid(bytes = GUID_BYTES) {
 
   // get some random bytes
-  return crypto.randomBytesAsync(bytes)
+  return crypto.randomBytesAsync(bytes * 2)
   // convert the random buffer to base64
   .then(buf => buf.toString('base64'))
   // replace the non-url-safe characters with appropriate substitutes
-  .then(string => string.replace(/\=|^-|^_/gi,'').replace(/\//gi,'-').replace(/\+/gi,'_').slice(0,bytes))
+  .then(string => string.replace(/\=|^-|^_/gi,'').replace(/\//gi,'-').replace(/\+/gi,'_').slice(0, bytes))
 
 }
 

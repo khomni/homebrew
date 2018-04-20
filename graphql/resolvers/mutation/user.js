@@ -3,7 +3,6 @@ module.exports = (root, {user, id}, {jwt}) => {
 
   if(password !== password_confirm) throw new Error('Password mismatch')
 
-
   if(!id) {
     // verify passwords match
     console.log({name,email,password})

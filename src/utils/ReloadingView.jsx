@@ -71,6 +71,8 @@ export default function withResource(WrappedComponent, {query, variables, alias,
       const { error, loading, refresh, dispatch } = this.props;
       const { filter } = this.state;
 
+      // console.log(this.props[alias || 'data']);
+
       if(error) return <ErrorView error={error} />
       if(loading) return <Loading/>
       return <WrappedComponent setFilter={this.setFilter} filter={filter} {...this.props} />
@@ -196,10 +198,6 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
         update: onUpdate && onUpdate(this.props),
         refetchQueries,
       })
-      .then(() => {
-        // successful mutation, clear errors
-        this.setState({errors:[]});
-      })
       .catch(err => {
         let errors = this.state.errors.slice()
         let minErrorsLength = 5;
@@ -215,7 +213,7 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
 
         // add this error to the components error list
         // send the error back to the component
-        this.setState({errors})
+        return this.setState({errors})
       })
     }
 

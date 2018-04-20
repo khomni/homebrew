@@ -11,7 +11,7 @@ type Query {
 	# Calendar: query the calendar based on optional year, motnh, day arguments OR a start and end timestamp
 	calendar(campaign: ID! year: Int, month: Int, day: Int, start: Int, end: Int): Calendar
 	character(slug: String, campaign: ID, user: ID, search: String): [Character]
-	campaign(slug: String, search: String): [Campaign]
+	campaign(slug: String, search: String, owner: ID): [Campaign]
 	item(slug: String, character: ID, search: String): ItemCollection
 	journal(slug: String, character: ID, search: String): [Journal]
 

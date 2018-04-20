@@ -26,7 +26,7 @@ export const CampaignPreview = ({campaign}) => (
             { campaign.system ? (
               <Link to={`/s/${campaign.system.key}`}>{campaign.system.name}</Link>
             ) : (
-              <Link disabled={true}>Unknown</Link>
+              <a disabled={true}>Unknown</a>
             ) }
           </td>
         </tr>
@@ -62,7 +62,7 @@ export const CampaignList = ({campaigns}) => (
 
 export const CampaignEdit = ({campaign}) => (
   <CampaignForm campaign={campaign} render ={({setFormData, formData, submit}) => (
-    <div className="form-group flex pad border">
+    <div className="form-group">
       <input 
         name="name" 
         placeholder="Campaign Name"

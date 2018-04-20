@@ -1,5 +1,5 @@
-query($detail: Boolean!, $slug: String, $search: String) {
-	campaign(slug: $slug, search: $search) {
+query($detail: Boolean!, $slug: String, $search: String, $owner: ID) {
+	campaign(slug: $slug, search: $search, owner: $owner) {
 		# Basic information
 		id
 		name
