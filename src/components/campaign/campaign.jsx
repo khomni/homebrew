@@ -14,7 +14,7 @@ export const CampaignPreview = ({campaign}) => (
           <th>Owned By:</th>
           <td>
             { campaign.owner ? (
-              <Link to={campaign.owner.url}>{campaign.owner.username}</Link>
+              <Link to={campaign.owner.url}>{campaign.owner.name}</Link>
             ) : (
               <Link disabled={true}>Unknown</Link>
             ) }
@@ -60,25 +60,49 @@ export const CampaignList = ({campaigns}) => (
   </div>
 )
 
+export const CampaignEdit = ({campaign}) => (
+  <CampaignForm campaign={campaign} render ={({setFormData, formData, submit}) => (
+    <div className="form-group flex pad border">
+      <input 
+        name="name" 
+        placeholder="Campaign Name"
+        className="form-input" 
+        required
+        value={formData.name} 
+        onChange={setFormData} 
+        onKeyDown={submit}/>
+      <input 
+        name="slug"
+        placeholder={`Campaign URL`}
+        className="form-input"
+        value={formData.slug}
+        onChange={setFormData}
+        onKeyDown={submit}/>
+      <select 
+        name="system" 
+        className="form-input" 
+        value={formData.system} 
+        onChange={setFormData} 
+        onKeyDown={submit}>
+        <option>(No System Specified)</option>
+        { Object.keys(SYSTEM).map(key => (
+          <option key={key} value={key}>{`${SYSTEM[key].name} (${SYSTEM[key].publisher})`}</option>
+        ))}
+      </select>
+      <div className="flex horz pad">
+        { campaign && <Link to={campaign.url} className="btn">Cancel</Link>}
+        <button className="btn" onClick={submit}>Update</button>
+      </div>
+    </div>
+  )}/>
+)
+
 export const CampaignView = ({campaign, match}) => (
   <div>
     <h1>{campaign.name}</h1>
-    <Switch>
-      <Route path={match.path + "/pc"} render={props => <Character campaign={campaign}/>}/>
-      <Route path={match.path + "/calendar"} render={props => <Calendar campaign={campaign}/>}/>
-      <Route path={match.path + "/edit"} render={props => <CampaignForm campaign={campaign} render={({setFormData, formData, submit}) => (
-        <div>
-          <input className="form-input" name="name" value={formData.name} onChange={setFormData} onKeyDown={submit}/>
-          <input className="form-input" name="url" value={formData.url} onChange={setFormData} onKeyDown={submit}/>
-          <select className="form-input" name="system" value={formData.system} onChange={setFormData} onKeyDown={submit}>
-            { Object.keys(SYSTEM).map(key => (
-              <option key={key} value={key}>{`${SYSTEM[key].name} (${SYSTEM[key].publisher})`}</option>
-            ))}
-          </select>
-          {/* <input className="form-input" name="system" value={formData.system} onChange={setFormData} onKeyDown={submit}/> */}
-          <button className="btn" onClick={submit}>Update</button>
-        </div>
-      )}/>}/>
-    </Switch>
+    <pre>
+      {JSON.stringify(campaign, null, '  ')}
+    </pre>
+    <Link to={`${campaign.url}/edit`} className="btn">Edit</Link>
   </div>
 )

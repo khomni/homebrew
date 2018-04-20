@@ -17,13 +17,15 @@ function generateSlug({model}) {
     let nameComponents = 1; // start with
     let slugComponents = doc.name.split(/\s/).slice(0, nameComponents); // split the name by whitespace characters
 
-    let slug = slugComponents.join('-').toLowerCase().replace(/[^a-zA-Z0-9_-]/g,'');
+    let slug = doc.slug || slugComponents.join('-').toLowerCase().replace(/[^a-zA-Z0-9_-]/g,'');
     doc.slug = slug;
 
+    console.log(`Checking slugs for model: ${model.name} `)
     // get an array of all slugs with the same base
-    return model.aggregate('*.slug', 'DISTINCT', {where: {slug: {$ilike: slug + '%', $not:originalSlug}}, plain:false})
+    return model.aggregate('slug', 'DISTINCT', {where: {slug: {$ilike: slug + '%', $not:originalSlug}}, plain:false})
     .map(distinct => distinct.DISTINCT)
     .then(existingSlugs => {
+      console.log('existing slugs:', existingSlugs);
 
       while(!isUnique) {
         slug = slugComponents.join('-').toLowerCase().replace(/[^a-zA-Z0-9_-]/g,'');

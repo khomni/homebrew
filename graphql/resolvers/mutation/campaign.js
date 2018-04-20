@@ -1,6 +1,6 @@
 const jwtInterface = require('../../jwt');
 
-module.exports = jwtInterface.getUserFromJWT((root, args, {user}) => {
+module.exports = jwtInterface.getUserFromJWT((root, {campaign: campaignInput, id}, {user}) => {
 
   /* ==============================
    * Campign Mutation:
@@ -13,8 +13,8 @@ module.exports = jwtInterface.getUserFromJWT((root, args, {user}) => {
   if(!user) throw new Error('You must be logged in to create/modify a campaign')
 
   // new campaign: if no ID is provided, create a new campaign giving the current user full permissions
-  if(!('id' in args.campaign)) {
-    return user.createCampaign(args.campaign)
+  if(!id) {
+    return user.createCampaign(campaignInput)
     .then(campaign => {
       return user.addPermission(campaign, {owner: true, read:true, write:true})
       .then(() => campaign)
@@ -22,13 +22,12 @@ module.exports = jwtInterface.getUserFromJWT((root, args, {user}) => {
   }
 
   // modify campaign
-
-  return db.Campaign.findOne({where: {id: args.campaign.id}})
+  return db.Campaign.findOne({where: {id} })
   .then(campaign => {
     return user.checkPermission(campaign, {write: true})
     .then(permission => {
       if(!permission) throw Common.error.authorization('You do not have permission to modify this campaign')
-      return campaign.update(args.campaign)
+      return campaign.update(campaignInput)
     })
   })
 })

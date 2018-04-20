@@ -62,7 +62,6 @@ class App extends React.Component {
   render() {
     const { loading, session } = this.props;
     if(loading) return null;
-
     // let { user, character, campaign } = this.props;
     return (
       <div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import withResource, { resourceForm } from '../utils/ReloadingView'
+import { Route, NavLink, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 
 import { Redirect } from 'react-router';
@@ -14,6 +15,7 @@ import { MODIFY_CAMPAIGN } from '../../graphql/mutations'
 import {
   CampaignList,
   CampaignPreview,
+  CampaignEdit,
   CampaignView,
 } from '../components/campaign';
 
@@ -22,12 +24,12 @@ import {
 export const CampaignForm = resourceForm({
   mutation: MODIFY_CAMPAIGN,
   alias: 'campaign',
-  formData: ({campaign: {id, name, slug, system, privacy_level}}) => ({
-    id,
-    name, 
-    system: system.key, 
-    url: slug, 
-    privacy_level
+  variables: ({campaign: {id}}) => ({id}),
+  formData: ({campaign}) => ({
+    name: campaign && campaign.name || '', 
+    system: campaign && campaign.system && campaign.system.key || '', 
+    slug: campaign && campaign.slug || '', 
+    privacy_level: campaign && campaign.privacy_level || 'public'
   }),
 })
 
@@ -39,18 +41,25 @@ class Campaign extends React.Component {
   render() {
     let { campaign, match, err } = this.props;
 
+    if(match.url === '/new-campaign') return <CampaignEdit />
+
     if(campaign.length > 1) return <CampaignList key={match.url} campaigns={campaign}/>;
     campaign = campaign.pop();
 
     // TODO: 404 pages
-    if(!campaign) return <Redirect to="/c/"/>
+    if(!campaign) return <Redirect to="/new-campaign"/>
 
     if(match.params.campaign !== campaign.slug) {
-      console.log('Campaign url changed in cache:', match, campaign.url)
+      console.log('Campaign url changed in cache:', match, campaign.slug)
       return <Redirect to={campaign.url}/>
     }
 
-    return <CampaignView key={match.url} {...this.props} campaign={campaign}/>
+    return (
+      <Switch>
+        <Route path={`${match.path}/edit`} render={props => <CampaignEdit {...this.props} campaign={campaign}/>}/>
+        <Route exact path={match.path} render={props => <CampaignView {...this.props} campaign={campaign}/>}/>
+      </Switch>
+    )
   }
 }
 

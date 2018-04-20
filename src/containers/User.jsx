@@ -2,6 +2,7 @@ import React from 'react';
 import withResource, { resourceForm } from '../utils/ReloadingView'
 // import { Route, NavLink, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
+import { Link, Switch, Redirect, Route, withRouter} from 'react-router-dom';
 
 /* ==============================
  * Queries
@@ -42,10 +43,21 @@ class User extends React.Component {
     let { loading, user, error } = this.props
     let users
 
+
     if(user.length > 1) <UserList users={user}/>
     user = user[0];
 
-    return <UserView user={user} {...this.props}/>
+    return (
+      <div>
+        <Switch>
+          <Route exact path={`${match.path}/`} render={props => <UserView {...this.props} user={user}/>}/>
+          <Route path={`${match.path}/pc`} render={props => <Character {...this.props} user={user}/>}/>
+        </Switch>
+      </div>
+    
+    )
+
+    // return <UserView user={user} {...this.props}/>
   }
 }
 

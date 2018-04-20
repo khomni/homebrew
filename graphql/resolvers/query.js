@@ -45,7 +45,7 @@ Query.user = (root, args, context) => {
 
   let query = {};
 
-  if(slug) query.id = slug
+  if(slug) query.name = slug
 
   return db.User.findAll({ where: query })
 
@@ -54,7 +54,7 @@ Query.user = (root, args, context) => {
 Query.campaign = (root, args, context) => {
   const { slug } = args;
   let query = {};
-  if(slug) query.url = slug
+  if(slug) query.slug = slug
 
   return db.Campaign.findAll({where: query})
 }
@@ -73,11 +73,11 @@ Query.character = (root, args, context) => {
 
   let query = {};
   if(slug) {
-    if(isNaN(slug)) query.url = slug
+    if(isNaN(slug)) query.slug = slug
     else query.id = slug
   }
-  if(campaign) query.CampaignId = args.campaign
-  if(user) query.ownerId = args.user
+  if(campaign) query.CampaignId = campaign
+  if(user) query.ownerId = user
   if(search) query.$name = {$iLike: `%${search}%`}
   return db.Character.findAll({where: query})
 }
@@ -87,13 +87,8 @@ Query.item = (root, args, context) => {
 
   // master query
   let query = {};
-  if(slug) {
-    if(isNaN(slug)) query.url = slug
-    else query.id = slug
-  }
-  if(character) {
-    query.CharacterId = character
-  }
+  if(slug) query.slug = slug
+  if(character) query.CharacterId = character
 
   // slave query
   let slaveQuery = {};
@@ -177,12 +172,7 @@ Query.knowledge = (root, args, context) => {
       }
     })
 
-    // console.log(JSON.stringify(formattedKnowledge,null,'  '))
-
     return formattedKnowledge
-
-    // return knowledge
-    // return topics
   })
 
 }

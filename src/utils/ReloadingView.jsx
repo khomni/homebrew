@@ -180,17 +180,17 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
     // dispatches the mutation query
     // once the mutation is done, onUpdate will be called with the props passed to the component
     submit({keyCode = null, shiftKey = false}) {
+      if(keyCode && (keyCode !== 13 || shiftKey)) return true;
       const { client } = this.props;
       const { formData } = this.state;
-      let variables = (typeof variables === 'function') ? variables(this.props) : variables
+      let calcVariables = (typeof variables === 'function') ? variables(this.props) : variables
 
       // capture submit events, unless created by any keystrokes except deliberate return
-      if(keyCode && (keyCode !== 13 || shiftKey)) return true;
 
       return client.mutate({
         mutation,
         variables: {
-          ...variables,
+          ...calcVariables,
           [alias]: formData
         },
         update: onUpdate && onUpdate(this.props),
@@ -229,8 +229,8 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
 
       return (
         <div>
-          <ErrorList errors={errors} autoHide={5000}/>
           {render({formData, submit, setFormData})}
+          <ErrorList errors={errors} />
         </div>
       )
 

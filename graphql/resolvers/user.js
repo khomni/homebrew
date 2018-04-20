@@ -1,6 +1,5 @@
 const User = {
   // Associations
-  //
   character: user => {
     return user.MainChar || user.getMainChar();
   },

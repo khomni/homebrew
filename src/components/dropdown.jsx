@@ -13,10 +13,16 @@ export default class Dropdown extends React.Component {
   }
 
   toggleDropdownState(){
+    const { disabled } = this.props;
+    if(disabled) return false;
+
     this.setState({expanded: !this.state.expanded});
   }
 
   handleMouseEnter(event){
+    const { disabled } = this.props;
+    if(disabled) return false;
+
     this.setState({expanded:true});
   }
 
@@ -25,11 +31,13 @@ export default class Dropdown extends React.Component {
   }
 
   render() {
+    const { disabled } = this.props;
+
     return <div className={this.state.expanded ? "dropdown active" : "dropdown"}
     onClick={this.toggleDropdownState}
     onMouseEnter={false && this.handleMouseEnter}
     onMouseLeave={this.handleMouseLeave}>
-      <label className="dropdown-label">
+      <label className="dropdown-label" disabled={disabled}>
         { this.props.image && (
           <div className="dropdown-image">
             <img src={this.props.image} />

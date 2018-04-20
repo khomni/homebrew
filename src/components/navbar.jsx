@@ -26,25 +26,11 @@ export default class Navbar extends React.Component {
           <Dropdown label={user && user.name || "?"} >
             <NavLink to={user.url} className="navlink" activeClassName="active"> Account </NavLink>
             <NavLink to="/messages" className="navlink" activeClassName="active">Inbox</NavLink>
-            <a className="navlink" onClick={logOut}>Log Out</a>
+            <NavLink to="/" className="navlink" onClick={logOut}>Log Out</NavLink>
             <NavLink to={user.url + '/pc'} className="navlink" activeClassName="active">My Characters</NavLink>
           </Dropdown>
         ) : (
           <NavLink to="/login" className="navlink" activeClassName="active">Login / Signup</NavLink>
-        )}
-
-        { character ? (
-          <Dropdown label={character.name} image={character.images[0].path}>
-            <NavLink to={character.url} className="navlink" activeClassName="active">Character Sheet</NavLink>
-            <NavLink to={character.url + '/inventory'} className="navlink" activeClassName="active">Inventory</NavLink>
-            <NavLink to={character.url + '/journal'} className="navlink" activeClassName="active">Journal</NavLink>
-            <NavLink to={character.url + '/knowledge'} className="navlink" activeClassName="active">Knowledge</NavLink>
-          </Dropdown>
-        ) : (
-          <Dropdown label="Character">
-            <NavLink to="/pc" className="navlink" disabled={!this.props.campaign} activeClassName="active">New Character</NavLink>
-            <NavLink to="/pc/new" className="navlink" disabled={!this.props.campaign} activeClassName="active">New Character</NavLink>
-          </Dropdown>
         )}
 
         { campaign ? (
@@ -58,7 +44,23 @@ export default class Navbar extends React.Component {
             <NavLink to={campaign.url + '/factions'} className="navlink" activeClassName="active">Factions</NavLink>
           </Dropdown>
         ) : (
-          <div></div>
+          <Dropdown label="Campaign">
+            <NavLink to="/new-campaign" className="navlink" activeClassName="active">Start a Campaign</NavLink>
+            <NavLink to="/c" className="navlink" activeClassName="active">Browse Campaigns</NavLink>
+          </Dropdown>
+        )}
+
+        { character ? (
+          <Dropdown label={character.name} image={character.images[0].path}>
+            <NavLink to={character.url} className="navlink" activeClassName="active">Character Sheet</NavLink>
+            <NavLink to={character.url + '/inventory'} className="navlink" activeClassName="active">Inventory</NavLink>
+            <NavLink to={character.url + '/journal'} className="navlink" activeClassName="active">Journal</NavLink>
+            <NavLink to={character.url + '/knowledge'} className="navlink" activeClassName="active">Knowledge</NavLink>
+          </Dropdown>
+        ) : (
+          <Dropdown label="Character" disabled={!campaign}>
+            <NavLink to="/pc" className="navlink" disabled={!campaign} activeClassName="active">New Character</NavLink>
+          </Dropdown>
         )}
       </nav>
     )

@@ -22,7 +22,7 @@ query($slug: String, $character: ID, $search: String) {
 		}
 		owner {
 			id
-			username
+			name
 			email
 		}
 		content

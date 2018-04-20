@@ -1,5 +1,6 @@
 export { 
   CampaignList,
   CampaignPreview,
-  CampaignView
+  CampaignView,
+  CampaignEdit
 } from './campaign.jsx'

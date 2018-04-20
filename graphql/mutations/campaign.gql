@@ -1,5 +1,5 @@
-mutation ModifyCampaign($campaign: CampaignInput!) {
-	campaign(campaign: $campaign) {
+mutation ModifyCampaign($campaign: CampaignInput!, $id: ID) {
+	campaign(campaign: $campaign, id: $id) {
 		id
 		name
 		url

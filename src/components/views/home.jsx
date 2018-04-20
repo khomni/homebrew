@@ -37,50 +37,72 @@ const Login = resourceForm({
 export default ({match, session}) => (
   <div>
     <h1>Home</h1>
-    { session.user && <pre>{JSON.stringify(session.user, null, '  ')}</pre>}
-    { session.character && <pre>{JSON.stringify(session.character, null, '  ')}</pre>}
 
-    <Login render={({setFormData, formData, submit}) => (
-      <div>
-        <input placeholder="Username / Email Address" className="form-input" type="text" name="alias" value={formData.alias} onChange={setFormData}/>
-        <input placeholder="Password" className="form-input" type="password" name="password" value={formData.password} onChange={setFormData}/>
-        <button className="btn" onClick={submit}>Log In</button>
-      </div>
-    )}/>
+    <section>
+      <h2>Log In</h2>
+      <Login render={({setFormData, formData, submit}) => (
+        <div className="form-group flex pad border">
+          <input 
+            placeholder="Username / Email Address" 
+            className="form-input" 
+            type="text" 
+            name="alias" 
+            value={formData.alias} 
+            onKeyDown={submit}
+            onChange={setFormData}/>
+          <input 
+            placeholder="Password" 
+            className="form-input" 
+            type="password" 
+            name="password" 
+            value={formData.password} 
+            onKeyDown={submit}
+            onChange={setFormData}/>
+          <button className="btn" onClick={submit}>Log In</button>
+        </div>
+      )}/>
+    </section>
 
-    <UserForm render={({setFormData, formData, submit}) => (
-      <div>
-        <input 
-          name="name" 
-          placeholder="Username" 
-          className="form-input" 
-          type="text" 
-          value={formData.name} 
-          onChange={setFormData} />
-        <input 
-          name="email" 
-          placeholder="Email" 
-          className="form-input" 
-          type="email" 
-          value={formData.email} 
-          onChange={setFormData} />
-        <input 
-          name="password" 
-          placeholder="Password" 
-          className="form-input" 
-          type="password" 
-          value={formData.password} 
-          onChange={setFormData}/>
-        <input 
-          name="password_confirm" 
-          placeholder="Password (Confirm)" 
-          className="form-input" 
-          type="password" 
-          value={formData.password_confirm} 
-          onChange={setFormData}/>
-        <button className="btn" onClick={submit}>Create Account</button>
-      </div>
-    )}/>
+    <section>
+      <h2>Sign Up</h2>
+      <UserForm render={({setFormData, formData, submit}) => (
+        <div className="form-group flex pad border">
+          <input 
+            name="name" 
+            placeholder="Username" 
+            className="form-input" 
+            type="text" 
+            value={formData.name} 
+            onKeyDown={submit}
+            onChange={setFormData} />
+          <input 
+            name="email" 
+            placeholder="Email" 
+            className="form-input" 
+            type="email" 
+            value={formData.email} 
+            onKeyDown={submit}
+            onChange={setFormData} />
+          <input 
+            name="password" 
+            placeholder="Password" 
+            className="form-input" 
+            type="password" 
+            value={formData.password} 
+            onKeyDown={submit}
+            onChange={setFormData}/>
+          <input 
+            name="password_confirm" 
+            placeholder="Password (Confirm)" 
+            className="form-input" 
+            type="password" 
+            value={formData.password_confirm} 
+            onKeyDown={submit}
+            onChange={setFormData}/>
+          <button className="btn" onClick={submit}>Create Account</button>
+        </div>
+      )}/>
+    </section>
 
   </div>
 )

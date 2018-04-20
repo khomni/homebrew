@@ -48,15 +48,13 @@ class Session extends React.Component {
   
   }
 
-  componentWillMount(){}
-
   render() {
     const { session: {jwt, user, character, campaign} } = this.props
 
     // 3. user & character: character/campaign quick-select
-    if(user && character) <Home {...this.props}/>
+    if(user && character) return <Redirect to={character.url}/>
       // 2. user only: show campaign options
-    if(user) <Home {...this.props}/>
+    if(user) return <Redirect to={user.url}/>
       // 1. no user in this session: show signup/login page
     return <Home {...this.props}/>
   }

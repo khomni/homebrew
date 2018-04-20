@@ -25,8 +25,8 @@ type Query {
 
 type Mutation {
 	user(user: UserInput, id: ID): User # create / update user account
-	campaign(campaign: CampaignInput, id: ID): Campaign # create / update campaign
-	character(character: CharacterInput, id: ID): Character # create / update character
+	campaign(campaign: CampaignInput, id: ID, destroy: Boolean): Campaign # create / update campaign
+	character(character: CharacterInput, id: ID, destroy: Boolean): Character # create / update character
 	session(session: SessionInput, destroy: Boolean): Session # log in
 }
 
@@ -174,13 +174,10 @@ type Campaign implements Node {
 
 input CampaignInput {
 	id: ID
-	url: String
+	slug: String
 	name: String!
 	system: String
 	privacy_level: String
-
-	# Campaign Destruction
-	destroy: Boolean
 }
 
 # ==============================

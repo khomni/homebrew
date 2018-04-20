@@ -1,118 +1,87 @@
 "use strict";
 
+const { ModelWrapper } = Common.models;
+
 const bcrypt = require('bcrypt-nodejs');
 Promise.promisifyAll(bcrypt);
 
-module.exports = function(sequelize, DataTypes) {
-  var Campaign = sequelize.define("Campaign", {
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        len: [1,32]
-      }
-    },
-    url: {
-      type: DataTypes.STRING,
-      unique: true,
-      validate: {
-        len: [0,32]
-      },
-      set: function(val) {
-        val = val.replace(/[^a-zA-Z0-9_-\s]/gi,'').split(/\s+/).reduce((a,b)=>{ // make sure only complete words are encoded
-          var length = a.reduce((a,b) => {return a+b.length+1},0)
-          if(length + b.length < 32) a.push(b)
-          return a
-        },[]).join('-')
-        this.setDataValue('url',val)
-      },
-      get: function() {
-        return '/c/' + (this.getDataValue('url') || this.id)
-      }
-    },
-    owned: {
-      type: DataTypes.VIRTUAL
-    },
-    // string describing what rules system the campaign uses
-    // TODO: validate based on internal source files and build out system support
-    system: {
-      type: DataTypes.STRING,
-      values: SYSTEM.names,
-      get: function(){
-        let key = this.getDataValue('system')
-        return SYSTEM[key]
-      }
-    },
-
-    // privacy level determines what other users can see
-    // 'hidden' - Campaign is completely invisible to those who haven't been invited
-    // 'private' - Campaign can be found through searches and users can request access, but resources are hidden to public
-    // 'public' - all campaign resources are visible to public, but users still need to add characters 
-    privacy_level: {
-      type: DataTypes.STRING,
-      defaultValue: 'public',
-      values: ['hidden','private','public'],
-    },
-
-    // if a password is present, users need to provide it to gain access before adding characters
-    password: {
-      type: DataTypes.STRING
+module.exports = ModelWrapper('Campaign', DataTypes => ({
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      len: [1,32]
     }
-  }, {
-    classMethods: {
-      associate: function(models) {
-        Campaign.hasMany(models.Quest);
-        Campaign.hasMany(models.Location);
-        Campaign.hasMany(models.Faction, {constraints:false, onDelete:'cascade'});
-        Campaign.hasOne(models.Calendar, {onDelete:'cascade'});
-        Campaign.belongsTo(models.User, {as:'owner', onDelete:'cascade'});
-        Campaign.hasMany(models.Character, {constraints: false});
-
-        Campaign.belongsToMany(models.User, {
-          as: 'permission', 
-          foreignKey: 'permission_id',
-          through: {
-            model: models.Permission,
-            scope: {
-              permissionType: 'Campaign'
-            },
-            constraints: false,
-          },
-          constraints: false,
-        });
-
-        Campaign.addScope('defaultScope', {
-        }, {override:true} )
-
-        Campaign.addScope('calendar', {
-          include: [{model: models.Calendar}],
-          attributes: ['id','url','name'],
-          include: [],
-        })
-
-        Campaign.addScope('session', {
-          attributes: ['id','url','system','name']
-        }, {override:true} )
-      }
+  },
+  url: {
+    type: DataTypes.VIRTUAL,
+    get: function() {
+      return '/c/' + (this.slug || this.id)
     }
-  });
+  },
+  owned: {
+    type: DataTypes.VIRTUAL
+  },
+  // string describing what rules system the campaign uses
+  // TODO: validate based on internal source files and build out system support
+  system: {
+    type: DataTypes.STRING,
+    values: SYSTEM.names,
+    get: function(){
+      let key = this.getDataValue('system')
+      return SYSTEM[key]
+    }
+  },
 
-  Campaign.hook('beforeCreate', Common.guid.sequelizeCycleGuid.bind(Campaign));
+  // privacy level determines what other users can see
+  // 'hidden' - Campaign is completely invisible to those who haven't been invited
+  // 'private' - Campaign can be found through searches and users can request access, but resources are hidden to public
+  // 'public' - all campaign resources are visible to public, but users still need to add characters 
+  privacy_level: {
+    type: DataTypes.STRING,
+    defaultValue: 'public',
+    values: ['hidden','private','public'],
+  },
 
-  Campaign.hook('beforeSave', (campaign, options) => {
-    return Promise.try(()=>{
-      if(campaign.url) return;
-      campaign.url = campaign.name
-      .replace(/[^a-zA-Z0-9_-\s]/gi,'') // remove unsafe characters (except whitespace)
-      .split(/\s+/) //split by whitespace
-      .reduce((a,b)=>{ // make sure only complete words are encoded
-        var length = a.reduce((a,b) => {return a+b.length+1},0)
-        if(length + b.length < 32) a.push(b)
-        return a
-      },[]).join('-')
-      return;
+  // if a password is present, users need to provide it to gain access before adding characters
+  password: {
+    type: DataTypes.STRING
+  }
+}), {}, Campaign => {
+
+  Campaign.associate = function(models) {
+    Campaign.hasMany(models.Quest);
+    Campaign.hasMany(models.Location);
+    Campaign.hasMany(models.Faction, {constraints:false, onDelete:'cascade'});
+    Campaign.hasOne(models.Calendar, {onDelete:'cascade'});
+    Campaign.belongsTo(models.User, {as:'owner', onDelete:'cascade'});
+    Campaign.hasMany(models.Character, {constraints: false});
+
+    Campaign.belongsToMany(models.User, {
+      as: 'permission', 
+      foreignKey: 'permission_id',
+      through: {
+        model: models.Permission,
+        scope: {
+          permissionType: 'Campaign'
+        },
+        constraints: false,
+      },
+      constraints: false,
+    });
+
+    Campaign.addScope('defaultScope', {
+    }, {override:true} )
+
+    Campaign.addScope('calendar', {
+      include: [{model: models.Calendar}],
+      attributes: ['id','slug','name'],
     })
-  })
+
+    Campaign.addScope('session', {
+      attributes: ['id','slug','system','name']
+    }, {override:true} )
+  }
 
   return Campaign;
-};
+});
