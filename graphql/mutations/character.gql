@@ -1,0 +1,9 @@
+mutation ModifyCharacter($character: CharacterInput!, $id: ID, $campaign: ID) {
+	character(character: $character, id: $id, campaign: $campaign) {
+		id
+		name
+		url
+		slug
+	}
+}
+

@@ -1,0 +1,36 @@
+type Item implements Node {
+	id: ID!
+	name: String
+	value: Float
+	weight: Float
+	quantity: Int
+	total_value: Float
+	total_weight: Float
+	total_quantity: Int
+	lore: [Lore!]!
+	items: ItemCollection
+	url: String
+	owner: Character
+}
+
+# Meta item information
+type ItemCollection {
+	items: [Item!]!
+	total_quantity: Int
+	total_weight: Float
+	total_value: Float
+}
+
+
+type ItemInput {
+	id: ID
+	# Item creation fields go here
+}
+
+extend type Query {
+	item(slug: String, character: ID, search: String): ItemCollection
+}
+
+extend type Mutation {
+	# Item mutation goes here
+}

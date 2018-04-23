@@ -1,0 +1,10 @@
+type Journal implements Node {
+	id: ID!
+	title: String
+	content: String
+	url: String
+}
+
+extend type Query {
+	journal(slug: String, character: ID, search: String): [Journal]
+}

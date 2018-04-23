@@ -52,10 +52,12 @@ Query.user = (root, args, context) => {
 }
 
 Query.campaign = (root, args, context) => {
-  const { slug, owner } = args;
+  const { slug, owner, search } = args;
   let query = {};
+
   if(slug) query.slug = slug
   if(owner) query.ownerId = owner
+  if(search) query.name = {$ilike: `${search}%`}
 
   return db.Campaign.findAll({where: query})
 }

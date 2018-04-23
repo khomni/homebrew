@@ -1,0 +1,21 @@
+enum QuestStatus {
+	complete
+	active
+	failed
+}
+
+type Quest implements Node {
+	id: ID!
+	name: String
+	url: String
+	description: String
+	status: QuestStatus
+
+	subquests: [Quest!]!
+	comments: CommentSection
+	# comments: [Comment!]!
+}
+
+extend type Query {
+	quest(id:ID, campaign: ID): [Quest]
+}

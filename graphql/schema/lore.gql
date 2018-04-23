@@ -1,0 +1,23 @@
+type Lore implements Node {
+	id: ID!
+	topic_type: String
+	topic: Node
+	owner: User
+	content: String
+	url: String
+}
+
+type LoreGroups {
+	topic_name: String
+	topics: [LoreList]
+}
+
+type LoreList {
+	topic: Node
+	lore: [Lore]
+}
+
+extend type Query {
+	lore(slug: String, character: ID, search: String): [Lore]
+	knowledge(slug: String, character: ID, search: String): [LoreGroups]
+}

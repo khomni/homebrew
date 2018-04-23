@@ -7,7 +7,7 @@ module.exports = ModelWrapper('Character', DataTypes => ({
   // should only be preceded by forward slashes
   url: {
     type: DataTypes.VIRTUAL,
-    get: function(){
+    get(){
       return `/pc/${this.slug || this.id}`
     }
   },

@@ -1,0 +1,24 @@
+type User implements Node {
+	id: ID!
+	character: Character
+	characters: [Character!]!
+	email: String
+	url: String
+	name: String
+}
+
+input UserInput {
+	id: ID
+	name: String
+	email: String
+	password: String
+	password_confirm: String
+}
+
+extend type Query {
+	user(slug: String): [User]
+}
+
+extend type Mutation {
+	user(user: UserInput, id: ID): User # create / update user account
+}

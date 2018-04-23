@@ -48,9 +48,19 @@ export const CampaignPreview = ({campaign}) => (
   </section>
 )
 
-export const CampaignList = ({campaigns}) => (
+export const CampaignList = ({campaigns, updateVariables, variables}) => (
   <div>
     <h1>Campaign Directory</h1>
+    <div className="flex horz pad">
+      <input 
+        name="search"
+        value={variables.search}
+        placeholder="search"
+        className="form-input" 
+        onChange={updateVariables} 
+        onKeyDown={updateVariables}/>
+      <button type="submit" onClick={updateVariables} className="btn">Search</button>
+    </div>
     <hr/>
     <div>
       {campaigns.map(campaign => <CampaignPreview key={campaign.id} campaign={campaign}/>)}
@@ -60,49 +70,4 @@ export const CampaignList = ({campaigns}) => (
   </div>
 )
 
-export const CampaignEdit = ({campaign}) => (
-  <CampaignForm campaign={campaign} render ={({setFormData, formData, submit}) => (
-    <div className="form-group">
-      <input 
-        name="name" 
-        placeholder="Campaign Name"
-        className="form-input" 
-        required
-        value={formData.name} 
-        onChange={setFormData} 
-        onKeyDown={submit}/>
-      <input 
-        name="slug"
-        placeholder={`Campaign URL`}
-        className="form-input"
-        value={formData.slug}
-        onChange={setFormData}
-        onKeyDown={submit}/>
-      <select 
-        name="system" 
-        className="form-input" 
-        value={formData.system} 
-        onChange={setFormData} 
-        onKeyDown={submit}>
-        <option>(No System Specified)</option>
-        { Object.keys(SYSTEM).map(key => (
-          <option key={key} value={key}>{`${SYSTEM[key].name} (${SYSTEM[key].publisher})`}</option>
-        ))}
-      </select>
-      <div className="flex horz pad">
-        { campaign && <Link to={campaign.url} className="btn">Cancel</Link>}
-        <button className="btn" onClick={submit}>Update</button>
-      </div>
-    </div>
-  )}/>
-)
 
-export const CampaignView = ({campaign, match}) => (
-  <div>
-    <h1>{campaign.name}</h1>
-    <pre>
-      {JSON.stringify(campaign, null, '  ')}
-    </pre>
-    <Link to={`${campaign.url}/edit`} className="btn">Edit</Link>
-  </div>
-)

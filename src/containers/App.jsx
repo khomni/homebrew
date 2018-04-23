@@ -106,7 +106,6 @@ App.propTypes = {
 
 // redux store state will be passed to gContainer props
 const mapStateToProps = ({session}, ownProps) => {
-  console.log('mstp', session);
   // return ({session})
   return {}
 }

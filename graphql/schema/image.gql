@@ -1,0 +1,6 @@
+type Image implements Node {
+	id: ID!
+	path: String
+	node: Node
+}
+

@@ -13,6 +13,7 @@ import { CAMPAIGN } from '../../graphql/queries'
 import { MODIFY_CAMPAIGN } from '../../graphql/mutations'
 
 import {
+  CampaignNav,
   CampaignList,
   CampaignPreview,
   CampaignEdit,
@@ -20,18 +21,6 @@ import {
 } from '../components/campaign';
 
 
-// use this HOC in component views to modify or create campaigns
-export const CampaignForm = resourceForm({
-  mutation: MODIFY_CAMPAIGN,
-  alias: 'campaign',
-  variables: ({campaign}) => ({id: campaign && campaign.id}),
-  formData: ({campaign}) => ({
-    name: campaign && campaign.name || '', 
-    system: campaign && campaign.system && campaign.system.key || '', 
-    slug: campaign && campaign.slug || '', 
-    privacy_level: campaign && campaign.privacy_level || 'public'
-  }),
-})
 
 class Campaign extends React.Component {
   constructor(props) {
@@ -39,12 +28,30 @@ class Campaign extends React.Component {
   }
 
   render() {
-    let { campaign, match, err, session: {user} } = this.props;
+    let { 
+      campaign, 
+      match, 
+      session: {user, character},
+      updateVariables,
+      variables
+    } = this.props;
+
+    // apply any session-related transformations on the campaign data
+    campaign.forEach(campaign => {
+      campaign.owned = (user && user.id === campaign.owner.id );
+      campaign.active = (character && character.CampaignId === campaign.id );
+    })
 
     if(match.url === '/new-campaign') return <CampaignEdit />
 
-    if(campaign.length > 1) return <CampaignList key={match.url} campaigns={campaign}/>;
-    campaign = campaign.pop();
+    if(campaign.length > 1) {
+      return <CampaignList 
+        key={match.url} 
+        campaigns={campaign} 
+        updateVariables={updateVariables}
+        variables={variables}/>;
+    }
+    campaign = campaign[0];
 
     // TODO: 404 pages
     if(!campaign) return <Redirect to="/new-campaign"/>
@@ -54,14 +61,18 @@ class Campaign extends React.Component {
       return <Redirect to={campaign.url}/>
     }
 
+
     return (
-      <Switch>
-        <Route path={`${match.path}/edit`} render={props => {
-          if(user.id !== campaign.owner.id) return <ErrorView error={new Error('You do not own this campaign')}/>
-          return <CampaignEdit {...this.props} campaign={campaign}/>
-        }}/>
-        <Route exact path={match.path} render={props => <CampaignView {...this.props} campaign={campaign}/>}/>
-      </Switch>
+      <div>
+        <h1>{campaign.name}</h1>
+        <CampaignNav match={match} campaign={campaign} />
+        <Switch>
+          <Route path={`${campaign.url}/edit`} render={props => <CampaignEdit {...this.props} campaign={campaign}/>}/>
+          <Route path={`${campaign.url}/new-character`} render={props => <Character {...this.props} campaign={campaign}/>}/>
+          <Route path={`${campaign.url}/pc`} render={props => <Character {...this.props} campaign={campaign}/>}/>
+          <Route exact path={campaign.url} render={props => <CampaignView {...this.props} campaign={campaign}/>}/>
+        </Switch>
+      </div>
     )
   }
 }
@@ -74,6 +85,7 @@ export default withResource(Campaign, {
   query: CAMPAIGN,
   alias: 'campaign',
   variables: props => ({
+    search: '',
     // detail is true only if linking directly to a campaign
     detail: !!props.match.params.campaign,
     slug: props.match.params.campaign,

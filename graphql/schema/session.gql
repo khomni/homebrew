@@ -1,0 +1,23 @@
+type Session {
+	jwt: String #jwt generated when the session is created, persistent login
+	user: User
+	character: Character
+	campaign: Campaign
+}
+
+input SessionInput {
+	alias: String! # username or email
+	password: String! # unhashed password
+}
+
+extend type Query {
+	session: Session
+}
+
+extend type Mutation {
+	session(session: SessionInput, destroy: Boolean): Session # log in
+}
+
+extend type Subscription {
+	session: Session
+}

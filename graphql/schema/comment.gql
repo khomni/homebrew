@@ -1,0 +1,14 @@
+type Comment implements Node {
+	id: ID!
+	createdAt: DateTime
+	body: String
+	archived: Boolean
+	character: Character
+	children: [Comment!]!
+}
+
+type CommentSection {
+	children: [Comment!]!
+	total: Int
+}
+

@@ -1,0 +1,19 @@
+scalar DateTime
+
+type Query {
+	_: Boolean
+}
+
+type Mutation {
+	_: Boolean
+}
+
+type Subscription {
+	_: Boolean
+	test: [Character]
+}
+
+interface Node {
+	id: ID!
+}
+

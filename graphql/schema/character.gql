@@ -1,0 +1,24 @@
+type Character implements Node {
+	id: ID!
+	name: String
+	campaign: Campaign
+	images: [Image!]!
+	items: ItemCollection
+	journal: [Journal!]!
+	knowledge: [Lore!]!
+	lore: [Lore!]!
+	url: String
+}
+
+input CharacterInput {
+	id: ID
+	name: String
+}
+
+extend type Query {
+	character(slug: String, campaign: ID, user: ID, search: String): [Character]
+}
+
+extend type Mutation {
+	character(character: CharacterInput, id: ID, campaign: ID, destroy: Boolean): Character # create / update character
+}

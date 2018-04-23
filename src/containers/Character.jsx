@@ -24,12 +24,11 @@ class Character extends React.Component {
   }
 
   render() {
-    let { loading, character, error, match } = this.props
+    let { loading, character, campaign, error, match } = this.props
     let characters
 
     if(character.length > 1) characters = character;
-    console.log(character);
-    if(characters) return <CharacterList characters={characters}/>
+    if(characters || campaign) return <CharacterList characters={character} campaign={campaign}/>
     character = character[0];
 
     // TODO: 404

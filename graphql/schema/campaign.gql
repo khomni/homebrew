@@ -1,0 +1,48 @@
+type Campaign implements Node {
+	id: ID!
+	name: String
+	system: System
+	url: String
+	slug: String # The slug component of the url
+	privacy_level: String
+
+	# Associations
+	owner: User
+	characters: [Character!]!
+	lore: [Lore!]!
+	quests: [Quest!]!
+	calendar: Calendar
+
+	# Meta information
+	total_quests: Int
+	total_characters: Int
+	total_users: Int # may require tricky aggregations
+	total_lore: Int
+	total_quests: Int
+	total_events: Int
+}
+
+input CampaignInput {
+	id: ID
+	slug: String
+	name: String!
+	system: String
+	privacy_level: String
+}
+
+# The game system
+type System {
+	key: String
+	name: String
+	publisher: String
+	year: Int
+}
+
+extend type Query {
+	campaign(slug: String, search: String, owner: ID): [Campaign]
+}
+
+extend type Mutation {
+	campaign(campaign: CampaignInput, id: ID, destroy: Boolean): Campaign # create / update campaign
+}
+

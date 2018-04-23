@@ -33,6 +33,7 @@ export default function withResource(WrappedComponent, {query, variables, alias,
     constructor(props) {
       super(props);
       this.setFilter = this.setFilter.bind(this)
+      this.updateVariables = this.updateVariables.bind(this)
 
       let defaultFilter = Object.assign({
         search: '',
@@ -45,7 +46,8 @@ export default function withResource(WrappedComponent, {query, variables, alias,
 
       this.state = {
         mountedRoute: this.props.match.url,
-        filter: defaultFilter
+        filter: defaultFilter,
+        variables: typeof variables === 'function' ? variables(props) : variables
       }
     }
 
@@ -58,8 +60,6 @@ export default function withResource(WrappedComponent, {query, variables, alias,
       this.setState({filter: {...filter, [name]: value}})
      }
 
-    // componentDidMount() { }
-
     componentWillMount() {
       // if the props include a subscribe method, call it as soon as the component is ready to mount
       //        this will ensure that all reloading components will receive subscription events from the server
@@ -67,15 +67,26 @@ export default function withResource(WrappedComponent, {query, variables, alias,
       if(subscribe) return subscribe();
     }
 
+    updateVariables({target: {name, value, type}, keyCode = null, shiftKey}) {
+      const { refetch } = this.props;
+      const { variables } = this.state
+
+      if(type === 'submit' || keyCode && keyCode === 13) {
+        return refetch(variables);
+      }
+      value = typeof value === 'number' ? Number(value) : value || ''
+      this.setState({variables: {...variables, [name]: value}})
+    }
+
     render() {
       const { error, loading, refresh, dispatch } = this.props;
-      const { filter } = this.state;
+      const { filter, variables } = this.state;
 
       // console.log(this.props[alias || 'data']);
 
       if(error) return <ErrorView error={error} />
       if(loading) return <Loading/>
-      return <WrappedComponent setFilter={this.setFilter} filter={filter} {...this.props} />
+      return <WrappedComponent setFilter={this.setFilter} filter={filter} variables={variables} updateVariables={this.updateVariables} {...this.props}/>
     }
   }
 

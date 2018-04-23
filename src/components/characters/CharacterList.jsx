@@ -1,26 +1,15 @@
 import React from 'react';
+import { Route, Link, Switch } from 'react-router-dom';
 
 import CharacterCard from './CharacterCard';
 
-class CharacterList extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {}
-  }
-
-  render() {
-    let { characters } = this.props;
-
-
-    return (
-      <div>
-        <h2>Characters</h2>
-        {characters.map(c => <CharacterCard key={c.id} character={c}/>)}
-      </div>
-    )
-  }
-
-}
+const CharacterList = ({characters, campaign}) => (
+  <div>
+    <h2>Characters</h2>
+    {characters.map(character => <CharacterCard key={character.id} character={character}/>)}
+    { campaign && <Link to={`${campaign.url}/pc/new-character`}>New Character</Link>}
+  </div>
+)
 
 export default CharacterList
 

@@ -26,6 +26,7 @@ export default class Navbar extends React.Component {
           <Dropdown label={user && user.name || "?"} >
             <NavLink to={user.url} className="navlink" activeClassName="active"> Account </NavLink>
             <NavLink to="/messages" className="navlink" activeClassName="active">Inbox</NavLink>
+            <hr className="dropdown-separator"/>
             <NavLink to="/" className="navlink" onClick={logOut}>Log Out</NavLink>
           </Dropdown>
         ) : (
