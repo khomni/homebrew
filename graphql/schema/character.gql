@@ -8,11 +8,15 @@ type Character implements Node {
 	knowledge: [Lore!]!
 	lore: [Lore!]!
 	url: String
+
+	owner: User
+	permissions: Permissions
 }
 
 input CharacterInput {
-	id: ID
 	name: String
+
+	# TODO: extend CharacterInput with system fields to allow stats to be added
 }
 
 extend type Query {

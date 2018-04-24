@@ -26,6 +26,17 @@ const Character = {
   lore: character => {
     return character.lore || character.getLore();
   },
+
+  permissions: (character, args, context) => {
+    return character.getPermission({where:{id: {$not: null}}})
+    .then(([user]) => {
+      if(!user) return {read: false, write: false, own: false}
+      const permissions = user.Permission
+      // console.log(JSON.stringify(permissions));
+      return permissions
+    })
+  },
+  owner: character => character.getPermission({through: {owner: true}})
 }
 
 module.exports = Character

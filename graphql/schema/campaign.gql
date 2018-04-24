@@ -12,6 +12,7 @@ type Campaign implements Node {
 	lore: [Lore!]!
 	quests: [Quest!]!
 	calendar: Calendar
+	permissions: Permissions
 
 	# Meta information
 	total_quests: Int

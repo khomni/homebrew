@@ -1,5 +1,5 @@
 import React from 'react';
-import withResource from '../utils/ReloadingView'
+import withResource, { resourceForm } from '../utils/ReloadingView'
 import { Route, NavLink, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 
@@ -17,6 +17,20 @@ import gql from 'graphql-tag';
  * ============================== */
 
 import { CHARACTER } from '../../graphql/queries'
+import { MODIFY_CHARACTER } from '../../graphql/mutations'
+
+export const CharacterForm = resourceForm({
+  mutation: MODIFY_CHARACTER,
+  alias: 'character',
+  variables: ({character, campaign}) => ({
+    id: character && character.id,
+    campaign: campaign && campaign.id
+  }),
+  formData: ({character}) => ({
+    name: character && character.name,
+  }),
+  refetchQueries: [{query: CHARACTER, variables: {detail: false}}]
+})
 
 class Character extends React.Component {
   constructor(props) {
@@ -24,27 +38,35 @@ class Character extends React.Component {
   }
 
   render() {
-    let { loading, character, campaign, error, match } = this.props
+    let { loading, character, campaign, error, match, session: {user} } = this.props
     let characters
 
+    character.forEach(character => {
+      // compose URL from campaign
+      if(campaign) character.url = campaign.url + character.url
+    })
+
     if(character.length > 1) characters = character;
-    if(characters || campaign) return <CharacterList characters={character} campaign={campaign}/>
+    if(!match.params.character) return <CharacterList characters={character} campaign={campaign}/>
     character = character[0];
 
     // TODO: 404
     if(!character) return null;
 
+
     return (
       <div>
         <HeaderImage images={character.images} alt={character.name} home={match.url}/>
-        <div className="tab-group">
-          <NavLink exact to={match.url} className="tab" activeClassName="active">Character Sheet</NavLink>
-          <NavLink to={match.url + "/lore"} className="tab" activeClassName="active">About</NavLink>
-          <NavLink to={match.url + "/inventory"} className="tab" activeClassName="active">Inventory</NavLink>
-          <NavLink to={match.url + "/journal"} className="tab" activeClassName="active">Journal</NavLink>
-          <NavLink to={match.url + "/knowledge"} className="tab" activeClassName="active">Knowledge</NavLink>
-        </div>
+        {/* 
         <h1>{character.name}</h1>
+        */}
+        <div className="tab-group">
+          <NavLink exact to={character.url} className="tab main" activeClassName="active">{character.name}</NavLink>
+          <NavLink to={character.url + "/lore"} className="tab" activeClassName="active">About</NavLink>
+          <NavLink to={character.url + "/inventory"} className="tab" activeClassName="active">Inventory</NavLink>
+          <NavLink to={character.url + "/journal"} className="tab" activeClassName="active">Journal</NavLink>
+          <NavLink to={character.url + "/knowledge"} className="tab" activeClassName="active">Knowledge</NavLink>
+        </div>
 
         { /* match.isExact && <CharacterSheet character={character}/> */}
 

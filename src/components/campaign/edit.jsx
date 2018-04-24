@@ -1,6 +1,7 @@
 import React from 'react'
 import { resourceForm } from '../../utils/ReloadingView'
 import { MODIFY_CAMPAIGN } from '../../../graphql/mutations'
+import { CAMPAIGN } from '../../../graphql/queries'
 
 import { Route, Link, Switch } from 'react-router-dom';
 // use this HOC in component views to modify or create campaigns
@@ -15,6 +16,7 @@ export const CampaignForm = resourceForm({
     slug: campaign && campaign.slug || '', 
     privacy_level: campaign && campaign.privacy_level || 'public'
   }),
+  refetchQueries: [{query: CAMPAIGN}]
 })
 
 const CampaignEdit = ({campaign}) => (

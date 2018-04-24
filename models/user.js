@@ -48,12 +48,12 @@ module.exports = ModelWrapper('User', DataTypes => ({
 }, User => {
 
   User.associate = function(models) {
-    User.hasMany(models.Character, {as: 'characters', foreignKey: 'ownerId', constraints: false});
+    // User.hasMany(models.Character, {as: 'characters', foreignKey: 'ownerId', constraints: false});
     User.belongsTo(models.Character, {as: 'MainChar'});
-    User.hasMany(models.Campaign, {foreignKey:'ownerId'});
+    // User.hasMany(models.Campaign, {foreignKey:'ownerId'});
 
     User.belongsToMany(models.Campaign, {
-      as: 'permission', 
+      as: 'campaignPermission', 
       through: {
         model: models.Permission,
         scope: {
@@ -100,6 +100,7 @@ module.exports = ModelWrapper('User', DataTypes => ({
   User.hook('beforeCreate', hashPassWord);
   User.hook('beforeUpdate', hashPassWord);
 
+  /*
   User.Instance.prototype.checkPermission = function(instance, options) {
     let thisUser = this;
 
@@ -114,9 +115,11 @@ module.exports = ModelWrapper('User', DataTypes => ({
       return permission.Permission
     })
   }
+  */
 
   // returns true if a user owns a character owns the character or campaign
   // OR if the user owns the campaign that the character belongs to
+  /*
   User.Instance.prototype.controls = function(resource) {
     var thisUser = this
     if(thisUser.admin) return {owner:true, permission:true} // admins do whatever they want
@@ -134,6 +137,7 @@ module.exports = ModelWrapper('User', DataTypes => ({
     }
     return {owner:false, byDominion:false}
   };
+  */
 
   return User
 })

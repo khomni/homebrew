@@ -116,7 +116,7 @@ module.exports = ModelWrapper('Character', DataTypes => ({
     }, {override:true} )
 
     Character.addScope('session', {
-      attributes: ['id','name','slug','title', 'CampaignId', 'location', 'ownerId'],
+      attributes: ['id','name','slug','title', 'CampaignId', 'location'],
       include: [
         { model: models.Campaign.scope('session') }, 
         // { model: models.Image, order:[['order','ASC']] }
@@ -152,13 +152,24 @@ module.exports = ModelWrapper('Character', DataTypes => ({
     })
   }
 
+  // TODO: better calculation of whether character is an NPC or not
+  /*
   Character.hook('beforeUpdate', (character, options) => {
-    return character.getCampaign()
-    .then((campaign) => {
-      character.npc = campaign.ownerId === character.ownerId
-      return Promise.resolve(character);
+
+    return Promise.all([
+      character.getCampaign()
+      .then(campaign => campaign && campaign.getPermission({through: {owner:true}})),
+      character.getPermission({through: {owner:true}})
+    ])
+    .spread((campaignOwner, characterOwner) => {
+      console.log('campaignOwner:', campaignOwner)
+      console.log('characterOwner:', characterOwner)
+
+      character.npc = campaignOwner && campaignOwner.id === characterOwner.id
+      return character
     })
   })
+  */
   
   /* ==============================
    * Instance Methods

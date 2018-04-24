@@ -7,6 +7,7 @@ import { Redirect } from 'react-router';
 
 import ErrorView from '../components/Error'
 import Character from './Character'
+import CharacterForm from '../components/characters/edit';
 import Calendar from './Calendar'
 
 import { CAMPAIGN } from '../../graphql/queries'
@@ -19,8 +20,6 @@ import {
   CampaignEdit,
   CampaignView,
 } from '../components/campaign';
-
-
 
 class Campaign extends React.Component {
   constructor(props) {
@@ -35,6 +34,7 @@ class Campaign extends React.Component {
       updateVariables,
       variables
     } = this.props;
+
 
     // apply any session-related transformations on the campaign data
     campaign.forEach(campaign => {
@@ -61,15 +61,16 @@ class Campaign extends React.Component {
       return <Redirect to={campaign.url}/>
     }
 
-
     return (
       <div>
+        {/* 
         <h1>{campaign.name}</h1>
+        */}
         <CampaignNav match={match} campaign={campaign} />
         <Switch>
+          <Route path={`${campaign.url}/pc/:character?`} render={props => <Character {...this.props} campaign={campaign}/>}/>
           <Route path={`${campaign.url}/edit`} render={props => <CampaignEdit {...this.props} campaign={campaign}/>}/>
-          <Route path={`${campaign.url}/new-character`} render={props => <Character {...this.props} campaign={campaign}/>}/>
-          <Route path={`${campaign.url}/pc`} render={props => <Character {...this.props} campaign={campaign}/>}/>
+          <Route path={`${campaign.url}/new-character`} render={props => <CharacterForm {...this.props} campaign={campaign}/>}/>
           <Route exact path={campaign.url} render={props => <CampaignView {...this.props} campaign={campaign}/>}/>
         </Switch>
       </div>

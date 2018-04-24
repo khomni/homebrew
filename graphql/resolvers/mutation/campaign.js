@@ -10,24 +10,22 @@ module.exports = jwtInterface.getUserFromJWT((root, {campaign: campaignInput, id
    *    system: (String) the linked game system; corresponds to a key in the core systems module
    *    privacy_level: (String)
    * ============================== */
+
   if(!user) throw new Error('You must be logged in to create/modify a campaign')
 
-  // new campaign: if no ID is provided, create a new campaign giving the current user full permissions
-  if(!id) {
-    return user.createCampaign(campaignInput)
-    .then(campaign => {
-      return user.addPermission(campaign, {owner: true, read:true, write:true})
-      .then(() => campaign)
-    })
-  }
+  return db.sequelize.transaction(transaction => {
+    // new campaign: if no ID is provided, create a new campaign giving the current user full permissions
+    if(!id) return user.createCampaignPermission(campaignInput, {own: true, read: true, write: true}, {transaction})
 
-  // modify campaign
-  return db.Campaign.findOne({where: {id} })
-  .then(campaign => {
-    return user.checkPermission(campaign, {write: true})
-    .then(permission => {
-      if(!permission) throw Common.error.authorization('You do not have permission to modify this campaign')
-      return campaign.update(campaignInput)
+    // existing campaigns: get the user's permissions for this campaign
+    // if the 
+    return user.getCampaignPermission({where: {id}, through: {write: true}})
+    .then(([campaign]) => {
+      console.log('got campaign permission:', campaign.Permission.get({plain:true}));
+      if(!campaign || !campaign.Permission.write) throw Common.error.authorization('You do not have permission to modify this campaign')
+      return campaign.update(campaignInput, {transaction})
+    
     })
+  
   })
 })

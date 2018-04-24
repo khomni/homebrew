@@ -198,6 +198,8 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
       const { formData } = this.state;
       let calcVariables = (typeof variables === 'function') ? variables(this.props) : variables
 
+      console.log('calculated variables:', calcVariables);
+
       // capture submit events, unless created by any keystrokes except deliberate return
 
       return client.mutate({

@@ -5,7 +5,7 @@ const User = {
   },
 
   characters: (user, args, context) => {
-    return user.characters || user.getCharacters()
+    return user.characters || user.getCharacterPermission()
   },
 
 }

@@ -10,5 +10,10 @@ query($detail: Boolean!, $slug: String, $user: ID, $campaign: ID, $search: Strin
 			total_weight
 			total_value
 		}
+		permissions {
+			read
+			write
+			own
+		}
 	}
 }

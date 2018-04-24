@@ -42,11 +42,11 @@ db._sync = Promise.method(() =>{
   })
 });
 
-db._methods = function(doc,regex) {
+db._methods = function(doc, regex) {
   let methods = []
   for(let key in doc) if(typeof doc[key] === 'function') methods.push(key)
   if(regex && regex instanceof RegExp) methods = methods.filter(method => regex.test(method))
-  process.stdout.write(methods.sort().join(', ').grey + '\n')
+  console.log(doc.$modelOptions.name.singular, methods.sort().join(', ').grey)
   return methods
 }
 

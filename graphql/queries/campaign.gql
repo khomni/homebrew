@@ -33,6 +33,12 @@ query($detail: Boolean!, $slug: String, $search: String, $owner: ID) {
 			status
 		}
 
+		permissions {
+			read
+			write
+			own
+		}
+
 
 	}
 }

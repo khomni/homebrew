@@ -8,7 +8,8 @@ const GUID_BYTES = 16
 function generateSlug({model}) {
   // ignore documents without a name
   return function(doc, options) {
-    if(!doc.name || !doc.changed('name') || !doc.changed('slug')) return doc;
+    // if the document already has a slug, and neither the name or the slug was changed, skip slug generation
+    if(doc.slug && (!doc.name || !doc.changed('name') || !doc.changed('slug'))) return doc;
 
     let originalSlug = !doc.changed('slug') && doc.slug || '';
     let isUnique = false;
@@ -21,9 +22,9 @@ function generateSlug({model}) {
     let slug = slugComponents.join('-').toLowerCase().replace(/[^a-zA-Z0-9_-]/g,'');
     doc.slug = slug;
 
-    console.log(`Checking slug '${slug}' for model: ${model.name} (original: ${originalSlug})`)
+    console.log(`Checking slug '${slug}' for model: ${model.name} ${originalSlug ? `(original:${originalSlug})` : ''}`)
     // get an array of all slugs with the same base
-    return model.aggregate('slug', 'DISTINCT', {where: {slug: {$ilike: slug + '%', $not:originalSlug}}, plain:false})
+    return model.aggregate(`${model.name}.slug`, 'DISTINCT', {where: {slug: {$ilike: slug + '%', $not:originalSlug}}, plain:false})
     .map(distinct => distinct.DISTINCT)
     .then(existingSlugs => {
 

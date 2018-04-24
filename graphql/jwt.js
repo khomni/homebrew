@@ -42,6 +42,7 @@ const TokenInterface = {
 
     // returns a function that reads the context JWT, and attaches the corresponding user information to the context
     return (root, args, context ) => {
+      // TODO: jwt from context is unreliable
       const { jwt } = context
 
       return this.verify(jwt)

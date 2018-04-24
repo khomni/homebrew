@@ -1,14 +1,18 @@
+@keyframes tabGroup {
+  0% { max-height: 0}
+  100% { max-height: 2.25rem}
+}
+
 .tab-group {
   display: flex;
   flex-flow: row;
-  // background: url('/images/textures/marble.jpg'), #666;
-  // background: inherit;
-  // background-blend-mode: multiply;
   color:inherit;
   flex-shrink:0;
   user-select:none;
   overflow:hidden;
   overflow-x: auto;
+
+  .animation(tabGroup 0.25s @bezier-bounce forwards);
 
   &:empty {
     display: none;
@@ -50,7 +54,7 @@
       border-left: 1px solid fade(black,25%);
     }
 
-    &:not(.active):not(:active):not(.error):not([disabled]) {
+    &:not(.active):not(:active):not(.error):not([disabled]):not(.main) {
       background: fade(black,25%);
     }
 
@@ -87,7 +91,21 @@
     }
 
     &.last{
-      order:2;
+      order: 2;
+    }
+
+    // header tabs
+    &.main {
+      z-index: 3;
+      font-weight: 600;
+      background: @color-primary;
+      color: white;
+      text-shadow: 0px 1px 1px fade(black, 25%);
+
+      &:not(.active):not(:active):not(.error):not([disabled]) {
+        background: darken(@color-primary, 15%);
+      }
+    
     }
 
   }

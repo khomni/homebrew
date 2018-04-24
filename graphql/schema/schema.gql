@@ -17,3 +17,9 @@ interface Node {
 	id: ID!
 }
 
+# 
+type Permissions {
+	read: Boolean
+	write: Boolean
+	own: Boolean
+}

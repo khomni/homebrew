@@ -11,7 +11,7 @@ const resolvers = require('../graphql/resolvers');
 const { makeExecutableSchema } = require('graphql-tools');
 const { graphqlExpress } = require('apollo-server-express');
 
-const typeDefs = require('../graphql/schema.gql');
+const typeDefs = require('../graphql/schema');
 
 
 // compile the schema from the GraphQL schema language
