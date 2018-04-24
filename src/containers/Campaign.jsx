@@ -38,16 +38,20 @@ class Campaign extends React.Component {
 
     // apply any session-related transformations on the campaign data
     campaign.forEach(campaign => {
-      campaign.owned = (user && user.id === campaign.owner.id );
-      campaign.active = (character && character.CampaignId === campaign.id );
+      // campaign.owned = (user && user.id === campaign.owner.id );
+      // campaign.active = (character && character.CampaignId === campaign.id );
     })
 
-    if(match.url === '/new-campaign') return <CampaignEdit />
+    console.log(campaign);
+    
+    if(match.url === '/new-campaign') {
+      return <CampaignEdit />
+    }
 
-    if(campaign.length > 1) {
+    if(campaign.length !== 1) {
       return <CampaignList 
         key={match.url} 
-        campaigns={campaign} 
+        campaigns={campaign}
         updateVariables={updateVariables}
         variables={variables}/>;
     }

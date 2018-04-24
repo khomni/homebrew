@@ -22,7 +22,7 @@ function generateSlug({model}) {
     let slug = slugComponents.join('-').toLowerCase().replace(/[^a-zA-Z0-9_-]/g,'');
     doc.slug = slug;
 
-    console.log(`Checking slug '${slug}' for model: ${model.name} ${originalSlug ? `(original:${originalSlug})` : ''}`)
+    // console.log(`Checking slug '${slug}' for model: ${model.name} ${originalSlug ? `(original:${originalSlug})` : ''}`)
     // get an array of all slugs with the same base
     return model.aggregate(`${model.name}.slug`, 'DISTINCT', {where: {slug: {$ilike: slug + '%', $not:originalSlug}}, plain:false})
     .map(distinct => distinct.DISTINCT)
@@ -30,7 +30,7 @@ function generateSlug({model}) {
 
       while(!isUnique) {
         slug = slugComponents.join('-').toLowerCase().replace(/[^a-zA-Z0-9_-]/g,'');
-        console.log('trying slug:', slug, existingSlugs);
+        // console.log('trying slug:', slug, existingSlugs);
         doc.slug = slug;
 
         if(!existingSlugs.includes(slug)) {
@@ -71,7 +71,7 @@ function generateGuid(bytes = GUID_BYTES) {
 function sequelizeCycleGuid(doc, options){
   let model = this;
 
-  console.log(`Generating GUID for model: ${model.name}`)
+  // console.log(`Generating GUID for model: ${model.name}`)
 
   let notUnique = true
 
@@ -81,7 +81,7 @@ function sequelizeCycleGuid(doc, options){
   
     return generateGuid()
     .then(guid => {
-      console.log(`GUID attempted: ${guid}`);
+      // console.log(`GUID attempted: ${guid}`);
 
       return model.find({where: {id:guid}})
       .then(dupedoc => {

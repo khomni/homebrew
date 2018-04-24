@@ -184,9 +184,9 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
       this.setState({formData: data})
     }
 
-    setFormData({ target: {name, value}}) {
+    setFormData({ target: {name, value, type}}) {
       let { formData } = this.state
-      value =  typeof value === 'number' ? Number(value) : value || ''
+      value =  (type === 'number' || /[^\D]+/.test(value)) ? Number(value) : value || ''
       this.setState({formData: {...formData, [name]: value}})
     }
 

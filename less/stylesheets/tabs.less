@@ -1,6 +1,6 @@
 @keyframes tabGroup {
   0% { max-height: 0}
-  100% { max-height: 2.25rem}
+  100% { max-height: 2.5rem}
 }
 
 .tab-group {
@@ -11,6 +11,33 @@
   user-select:none;
   overflow:hidden;
   overflow-x: auto;
+
+  &::-webkit-scrollbar {
+      width: 2px;
+      height: 2px;
+      background: fade(black, 25%);
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    border-radius:2px;
+    background: transparent;
+    box-shadow: inset 0px 1px fade(black,25%);
+    // margin: 1px;
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+      // background: fade(#333,25%);
+      background: @color-primary;
+      border-radius: 2px;
+  }
+
+  /*
+  &::-webkit-scrollbar-thumb:window-inactive {
+    background: fade(@color-primary,25%);
+  }
+  */
 
   .animation(tabGroup 0.25s @bezier-bounce forwards);
 
@@ -43,6 +70,7 @@
     text-decoration:none;
     border: none;
     border-bottom: 1px solid fade(black,25%);
+    white-space: nowrap;
 
     transition: 0.25s;
 
@@ -99,11 +127,12 @@
       z-index: 3;
       font-weight: 600;
       background: @color-primary;
-      color: white;
+      color: @color-secondary;
       text-shadow: 0px 1px 1px fade(black, 25%);
 
       &:not(.active):not(:active):not(.error):not([disabled]) {
         background: darken(@color-primary, 15%);
+      color: darken(@color-secondary, 15%);
       }
     
     }

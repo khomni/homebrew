@@ -45,6 +45,7 @@ module.exports = function(sequelize, DataTypes) {
         });
 
         // a character has lore in the form of their bio and backstory
+        /*
         Quest.hasMany(models.Lore, {
           as: 'lore',
           foreignKey: 'lorable_id',
@@ -53,6 +54,7 @@ module.exports = function(sequelize, DataTypes) {
             lorable: 'Quest'
           }
         });
+        */
 
       }
     }

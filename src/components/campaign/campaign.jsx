@@ -16,7 +16,7 @@ export const CampaignPreview = ({campaign}) => (
             { campaign.owner ? (
               <Link to={campaign.owner.url}>{campaign.owner.name}</Link>
             ) : (
-              <Link disabled={true}>Unknown</Link>
+              <a disabled={true}>Unknown</a>
             ) }
           </td>
         </tr>
@@ -50,7 +50,6 @@ export const CampaignPreview = ({campaign}) => (
 
 export const CampaignList = ({campaigns, updateVariables, variables}) => (
   <div>
-    <h1>Campaign Directory</h1>
     <div className="flex horz pad">
       <input 
         name="search"

@@ -102,6 +102,7 @@ module.exports = function(sequelize, DataTypes) {
         // });
 
         // an item can have any number of lore items associated with it
+        /*
         Item.hasMany(models.Lore,{
           as: 'lore',
           foreignKey: 'lorable_id',
@@ -109,6 +110,7 @@ module.exports = function(sequelize, DataTypes) {
             lorable: 'Item'
           }
         });
+        */
 
         // Items as Containers
         // TODO: change item ownership to be a polymorphic association so that items can solely belong to other items

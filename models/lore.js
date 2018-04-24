@@ -1,5 +1,7 @@
 "use strict";
 
+const { ModelWrapper } = Common.models;
+
 const marked = require('marked');
 
 /* LORE
@@ -11,22 +13,14 @@ const marked = require('marked');
     Anything that is lorable should have a 'name' field that returns an appropriate label for the thing
 */
 
-module.exports = function(sequelize, DataTypes) {
-  var Lore = sequelize.define("Lore", {
+module.exports = ModelWrapper('Lore', DataTypes => ({
+// module.exports = function(sequelize, DataTypes) {
     // The body of the lore, this can be a body of text of any length
     lorable: {
       type: DataTypes.STRING
     },
     content: {
       type: DataTypes.TEXT,
-    },
-    $content: { // markup version of the body; automatically adds images in the footnotes
-      type: DataTypes.VIRTUAL,
-      get: function() {
-        if(!this.content) return null;
-        let processedContent = this.content
-        return marked(processedContent)
-      }
     },
     hidden: {type: DataTypes.VIRTUAL},
     new: {type: DataTypes.VIRTUAL},
@@ -38,32 +32,33 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
-    obscurity: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-      validate: {
-        min:0,
-      }
-    }
-  }, {
-    freezeTableName: true,
-    classMethods: {
-      associate: function(models) {
-        Lore.belongsTo(models.User, {as: 'owner'});
+    slug: null,
+    name: null,
+}), { 
+  freezeTableName: true,
+}, Lore => {
 
-        Lore.belongsToMany(models.Character, {as: 'knowledge', through: models.Knowledge});
+  Lore.associate = function(models) {
 
-        Lore.addScope('defaultScope', {
-          sort: [['updatedAt','DESC']]
-        }, {override:true} )
+    Lore.belongsToMany(models.Character, {as: 'knowledge', through: models.Knowledge});
 
-      }
-    }
-  });
+    Lore.belongsToMany(models.User, {
+      as: 'permission', 
+      foreignKey: 'permission_id',
+      through: {
+        model: models.Permission,
+        scope: {
+          permissionType: 'Lore'
+        },
+        constraints: false,
+      },
+      constraints: false,
+    })
 
-  Lore.Instance.prototype.ownedBy = function(user) {
-    return user.id === this.ownerId
+    Lore.addScope('defaultScope', {
+      sort: [['updatedAt','DESC']]
+    }, {override:true} )
+
   }
-
-  return Lore;
-};
+  return Lore
+});

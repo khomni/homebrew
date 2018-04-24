@@ -2,6 +2,11 @@
 
 const { ModelWrapper } = Common.models;
 
+const PRIVACY_PUBLIC = 0 // anyone can view and join the group without requesting invitation
+const PRIVACY_VISIBLE = 1 // all materials are visible, but permission must be granted to participate
+const PRIVACY_PRIVATE = 2 // group can be found in searches, but invitation must be requested to participate
+const PRIVACY_HIDDEN = 3 // invitation only; resources are completely hidden without granted read permissions
+
 const bcrypt = require('bcrypt-nodejs');
 Promise.promisifyAll(bcrypt);
 
@@ -38,9 +43,12 @@ module.exports = ModelWrapper('Campaign', DataTypes => ({
   // 'private' - Campaign can be found through searches and users can request access, but resources are hidden to public
   // 'public' - all campaign resources are visible to public, but users still need to add characters 
   privacy_level: {
-    type: DataTypes.STRING,
-    defaultValue: 'public',
-    values: ['hidden','private','public'],
+    type: DataTypes.INTEGER,
+    defaultValue: PRIVACY_PUBLIC,
+    validate: {
+      min: PRIVACY_PUBLIC,
+      max: PRIVACY_HIDDEN
+    }
   },
 
   // if a password is present, users need to provide it to gain access before adding characters

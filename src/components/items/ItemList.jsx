@@ -10,8 +10,8 @@ import {
 
 const Items = (props) => (
   <div>
-    <h2>Inventory</h2>
     <div className="tab-group">
+      <div className="tab main">Inventory</div>
       <button className={`tab ${props.filter.layout === 'table' ? 'active' : ''}`} name="layout" value="table" onClick={props.setFilter}>Table</button>
       <button className={`tab ${props.filter.layout === 'list' ? 'active' : ''}`} name="layout" value="list" onClick={props.setFilter}>List</button>
       <button className={`tab ${props.filter.layout === 'grid' ? 'active' : ''}`} name="layout" value="grid" onClick={props.setFilter}>Grid</button>

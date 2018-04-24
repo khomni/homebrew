@@ -21,6 +21,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         // a character has lore in the form of their bio and backstory
+        /*
         Location.hasMany(models.Lore, {
           as: 'lore',
           foreignKey: 'lorable_id',
@@ -28,6 +29,7 @@ module.exports = function(sequelize, DataTypes) {
             lorable: 'Location'
           }
         });
+        */
       }
     }
   });

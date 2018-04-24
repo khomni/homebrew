@@ -22,7 +22,7 @@ describe('User', ()=>{
 
   describe('Static Methods', () => {
 
-    let createData = {username:'test', password:'testpassword', email:'test@test.com'}
+    let createData = {name:'test', password:'testpassword', email:'test@test.com'}
     let user
 
     it('User.create()', () => {
@@ -47,7 +47,7 @@ describe('User', ()=>{
     })
 
     it('User.destroy()', () => {
-      return db.User.destroy({where:{id:user.id}})
+      return db.User.destroy({where:{id: user.id}})
     })
 
   })

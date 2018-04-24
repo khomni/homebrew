@@ -27,7 +27,7 @@ const Campaign = {
     campaign.getPermission({through: {owner: true}})
     .then(array => array[0]),
   permissions: campaign => {
-    return campaign.getPermission({where: {$not: null}})
+    return campaign.getPermission({where: {id: {$not: null}}})
     .then(([user]) => {
       if(!user) return {read: false, write: false, own: false}
       const permissions = user.Permission

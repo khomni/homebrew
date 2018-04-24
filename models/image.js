@@ -85,7 +85,7 @@ module.exports = function(sequelize, DataTypes) {
 
     let key = [];
     key.push(CONFIG.aws.directory);
-    key.push(image._directory);
+    if(image._directory) key.push(image._directory);
     key.push(filename);
 
     image.key = key.join('/');
@@ -149,7 +149,7 @@ module.exports = function(sequelize, DataTypes) {
     // TODO: amazon aws remove object
     return Image.findAll({select:['s3'], where: whereClause.where})
     .then(s3Values => {
-      if(!s3Values || s3Values.length == 0) return whereClause;
+      if(!s3Values || s3Values.length === 0) return whereClause;
 
       let startTime = Date.now();
       return s3.deleteObjectsAsync({
