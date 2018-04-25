@@ -33,7 +33,8 @@ class Permission extends React.Component {
       user, // a list of users the current user can grant permissions to
       permissable, // the thing permissions are being granted for
       updateVariables, 
-      variables
+      variables,
+      session: {user: me}
     } = this.props;
 
     const { permissions } = permissable
@@ -55,11 +56,12 @@ class Permission extends React.Component {
                   onChange={updateVariables}
                   onKeyDown={updateVariables}/>
                 {nodePermission && nodePermission.map(({user, permissions}) => (
-                  <label key={user.id} className="radio">
+                  <label key={user.id} className="radio" disabled={user.id === me.id} >
                     <input 
                       type="radio"
                       name="targetUser"
                       value={user.id}
+                      disabled={user.id === me.id}
                       checked={formData.targetUser === user.id}
                       onChange={event => {
                         let {read, write, own, banned} = permissions

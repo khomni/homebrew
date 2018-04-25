@@ -14,21 +14,21 @@ module.exports = ModelWrapper('Permission', DataTypes => ({
   },
   read: { // allows the user to view the resource and nested resources
     type: DataTypes.BOOLEAN,
-    default: false,
+    defaultValue: false,
     get() {
       return !this.banned && this.getDataValue('read') || this.owner
     }
   },
   write: { // allows users to modify the resource to some capacity (depends on resource)
     type: DataTypes.BOOLEAN,
-    default: false,
+    defaultValue: false,
     get() {
       return !this.banned && this.getDataValue('write') || this.owner
     }
   },
   banned: {
     type: DataTypes.BOOLEAN,
-    default: false
+    defaultValue: false
   },
   rights: { // all other arbitrary permissions may be stored here as keyed booleans
     type: DataTypes.JSONB,

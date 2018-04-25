@@ -106,9 +106,11 @@ const CampaignEdit = ({campaign, user}) => (
         </div>
       </section>
     )}/>
-    <section>
-      <GrantPermission permissable={campaign}/>
-    </section>
+    { campaign && (
+      <section>
+        <GrantPermission permissable={campaign}/>
+      </section>
+    ) }
   </div>
 )
 
