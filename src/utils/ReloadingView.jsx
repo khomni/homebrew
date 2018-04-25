@@ -184,9 +184,20 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
       this.setState({formData: data})
     }
 
-    setFormData({ target: {name, value, type}}) {
+    setFormData({data, target}) {
       let { formData } = this.state
-      value =  (type === 'number' || /[^\D]+/.test(value)) ? Number(value) : value || ''
+      // if formData provided directly, set the state without expecting event
+      if(data) return this.setState({formData: {...data}})
+      if(!target) return false;
+      let { name, value, type, checked } = target;
+
+      // cast to number values
+      if(type === 'checkbox') value = checked
+      else if(type === 'radio') value = value || null
+      else if(type === 'number' || /^[\d.]+$/.test(value)) value = Number(value)
+      else value = value || ''
+      console.log({formData: {...formData, [name]: value}})
+
       this.setState({formData: {...formData, [name]: value}})
     }
 
@@ -199,8 +210,6 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
       let calcVariables = (typeof variables === 'function') ? variables(this.props) : variables
 
       console.log('calculated variables:', calcVariables);
-
-      // capture submit events, unless created by any keystrokes except deliberate return
 
       return client.mutate({
         mutation,

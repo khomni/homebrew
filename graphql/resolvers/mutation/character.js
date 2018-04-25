@@ -16,11 +16,7 @@ module.exports = jwtInterface.getUserFromJWT((root, {character: characterInput, 
 
       // query an existing character, and confirm that the user has write access
       return user.getCharacterPermission({where: {id}})
-      .then(character => {
-        console.log('character permission:', character)
-        return character.update(characterInput, {transaction});
-
-      })
+      .then(character => character.update(characterInput, {transaction}));
     })
     .then(character => {
       // if the character is new or the campaign has not changed, skip campaign operations
@@ -30,28 +26,15 @@ module.exports = jwtInterface.getUserFromJWT((root, {character: characterInput, 
       // return db.Campaign.find({where: {id: campaign}})
       return user.getCampaignPermission({where: {id: campaign}})
       .then(([campaign]) => {
-        /*
-        console.log('campaign permission:', campaign)
-        db._methods(user, /permission|campaign|character/gi);
-        db._methods(character, /permission/gi);
-        db._methods(campaign, /permission/gi);
-        */
-
         if(!campaign || !campaign.Permission.read) throw Common.error.authorization('You do not have permission to add characters to this campaign')
 
-        // assign the character to the campaign
+        // assign the character to the campaign 
         return campaign.addCharacter(character)
         .then(() => character)
       })
     })
     // .then(character => user.addCharacterPermission(character, {write: true, read: true}, transaction))
-    .then(character => {
-      console.log('Character:', character);
-
-      return character.save()
-      // throw new Error('hold on')
-      // set the remaining fields
-    })
+    .then(character => character.save())
   
   })
 

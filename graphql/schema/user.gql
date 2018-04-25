@@ -16,7 +16,7 @@ input UserInput {
 }
 
 extend type Query {
-	user(slug: String): [User]
+	user(slug: String, search: String): [User]
 }
 
 extend type Mutation {

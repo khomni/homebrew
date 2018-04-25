@@ -24,6 +24,7 @@ Query.session = (root, args, context) => {
     })
     .then(user => {
       if(!user) return newSession; // something changed with the user account since the JWT was signed
+
       let { MainChar: character } = user;
       let campaign;
       if(character) campaign = character.Campaign;
@@ -41,25 +42,32 @@ Query.session = (root, args, context) => {
 }
 
 Query.user = (root, args, context) => {
-  const { campaign, slug } = args
+  const { campaign, slug, search } = args
 
   let query = {};
 
   if(slug) query.name = slug
+  if(search) query.$or = [{name: {$ilike: `${search}%`}}, {email: {$ilike: `${search}%`}}]
 
   return db.User.findAll({ where: query })
-
 }
 
 Query.campaign = (root, args, context) => {
   const { slug, owner, search } = args;
   let query = {};
+  let include
 
   if(slug) query.slug = slug
-  if(owner) query.ownerId = owner
   if(search) query.name = {$ilike: `${search}%`}
+  if(owner) include = [{
+    model: db.User,
+    as: 'permission',
+    through: {
+      model: db.Permission
+    }
+  }]
 
-  return db.Campaign.findAll({where: query})
+  return db.Campaign.findAll({where: query, include})
 }
 
 Query.calendar = (root, args, context) => {
@@ -193,6 +201,74 @@ Query.lore = (root, args, context) => {
 
   // TODO: perform this query as some sort of aggregation
   return db.Lore.findAll({where: query })
+}
+
+Query.nodePermission = (root, args, context) => {
+  const { permission_id, permissionType, search } = args
+
+  let query = {
+    include: [{
+      model: db.Permission,
+      where: {permission_id, permissionType},
+      required: false
+    }],
+    attributes: {include: ['Permissions.permission_id']},
+    where: { },
+  };
+
+  query.where.$or = [
+    // {'Permissions.permission_id': permission_id}
+  ]
+
+  // inculde non-permitted users if searched for
+  if(search) {
+    query.where.$or.push({name: {$ilike: `${search}%`}})
+    query.where.$or.push({email: {$ilike: `${search}%`}})
+  }
+
+  console.log(query)
+
+  return db.User.findAll(query)
+  .then(users => {
+    console.log('users:', users);
+    return users
+  })
+  .map(user => ({user, permissions: user.Permissions}))
+  .then(userPermissions => {
+    console.log('user permissions:', JSON.stringify(userPermissions, null, '  '))
+    return userPermissions
+  })
+  // find all permissions for this particular resource
+  // Alternatively, let the user search for users who do not have permission yet
+  /*
+  return db.Permission.scope('user').findAll({where: {permission_id, permissionType}})
+  .map(permissions => ({user: permissions.User, permissions}))
+  .then(permissions => {
+    if(!search) return permissions
+
+    let query = {$or: [{name: {$ilike: `${search}%`}}, {email: {$ilike: `${search}%`}}]}
+
+    return db.User.findAll({where: query})
+    .map(user => ({user, permissions: {read: false, write: false, own: false, ban: false}}))
+    .then(users => ({}))
+
+    // console.log('permissions (with users):', JSON.stringify(permissions, null, '  '))
+    // throw new Error('fin');
+  })
+  // .then(permissions => {})
+*/
+}
+
+
+Query.userPermission = (root, args, context) => {
+  const { user, permissionType, permission_id } = args
+  const query = {}
+
+  if(user) query.UserId = user
+  if(permissionType) query.permissionType = permissionType
+  if(permission_id) query.permission_id = permission_id
+
+  return db.Permission.find({where: query})
 }
 
 module.exports = Query

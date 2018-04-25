@@ -26,8 +26,11 @@ const Campaign = {
   owner: campaign => 
     campaign.getPermission({through: {owner: true}})
     .then(array => array[0]),
+
   permissions: campaign => {
-    return campaign.getPermission({where: {id: {$not: null}}})
+
+    // TODO: fix the way context is received on requests
+    return campaign.getPermission()
     .then(([user]) => {
       if(!user) return {read: false, write: false, own: false}
       const permissions = user.Permission

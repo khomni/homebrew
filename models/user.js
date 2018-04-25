@@ -51,6 +51,11 @@ module.exports = ModelWrapper('User', DataTypes => ({
     // User.hasMany(models.Character, {as: 'characters', foreignKey: 'ownerId', constraints: false});
     User.belongsTo(models.Character, {as: 'MainChar'});
     // User.hasMany(models.Campaign, {foreignKey:'ownerId'});
+    
+    User.hasMany(models.Permission, {
+      foreignKey: 'UserId',
+      constraints: false,
+    })
 
     User.belongsToMany(models.Campaign, {
       as: 'campaignPermission', 

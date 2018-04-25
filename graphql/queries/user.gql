@@ -1,5 +1,5 @@
-query GetUser($detail: Boolean!, $slug: String) {
-	user(slug: $slug) {
+query GetUser($detail: Boolean!, $slug: String, $search: String) {
+	user(slug: $slug, search: $search) {
 		id
 		name
 		url

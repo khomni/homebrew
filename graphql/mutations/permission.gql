@@ -1,0 +1,8 @@
+mutation GrantPermission($permission: PermissionInput, $user: ID, $permission_id: ID, $permissionType: String) {
+	permission(permission: $permission, user: $user, permission_id: $permission_id, permissionType: $permissionType) {
+		read
+		write
+		own
+		banned
+	}
+}

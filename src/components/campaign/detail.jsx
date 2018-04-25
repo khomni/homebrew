@@ -12,7 +12,6 @@ export default ({campaign, match, session}) => (
       { campaign.permissions.write &&
         <Link to={`${campaign.url}/edit`} className="btn">Edit</Link>
       }
-      <Link to={`${campaign.url}/c/new-character`} className="btn">Make a Character</Link>
     </div>
   </div>
 )

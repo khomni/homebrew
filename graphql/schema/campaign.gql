@@ -4,7 +4,7 @@ type Campaign implements Node {
 	system: System
 	url: String
 	slug: String # The slug component of the url
-	privacy_level: String
+	privacy_level: Int
 
 	# Associations
 	owner: User
@@ -28,7 +28,7 @@ input CampaignInput {
 	slug: String
 	name: String!
 	system: String
-	privacy_level: String
+	privacy_level: Int
 }
 
 # The game system

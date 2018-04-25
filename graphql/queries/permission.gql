@@ -1,0 +1,15 @@
+query GetPermissions($search: String, $permission_id: ID!, $permissionType: String!) {
+	nodePermission(search: $search, permission_id: $permission_id, permissionType: $permissionType) {
+		user {
+			id
+			name
+			email
+		}
+		permissions {
+			read
+			write
+			own
+			banned
+		}
+	}
+}

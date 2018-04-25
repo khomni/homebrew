@@ -1,0 +1,41 @@
+type Permissions {
+	read: Boolean
+	write: Boolean
+	own: Boolean
+	banned: Boolean
+}
+
+input PermissionInput {
+	read: Boolean
+	write: Boolean
+	own: Boolean
+	banned: Boolean
+	targetUser: ID
+}
+
+type UserPermissions {
+	user: User
+	permissions: Permissions
+}
+
+# If interface inheritence ever gets added
+# interface Permissable implements Node {
+# 	permissions: Permissions
+# }
+
+extend type Query {
+	# given a permissable node, get a list of all extant permissions for that resource
+	nodePermission(permission_id: ID!, permissionType: String!, search: String): [UserPermissions!]!
+
+	# given a user id, get a list of all permissable nodes they own
+	userPermission(user: ID!, permissionType: String, permission_id: ID): [Node!]!
+
+	# If interface inheritence ever gets added
+	# userPermission(user: ID): [Permissable]!
+
+}
+
+extend type Mutation {
+	# Grant your Permissions for a resource to another user
+	permission(permission: PermissionInput, user: ID, permission_id: ID, permissionType: String): Permissions
+}

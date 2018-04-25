@@ -1,4 +1,5 @@
 
+const colors = require('colors');
 const _ = require('lodash');
 const crypto = require('crypto');
 const cookie = require('cookie');
@@ -36,13 +37,40 @@ const jsSchema = makeExecutableSchema({
 const connections = {};
 
 const formatError = error => {
+  let { originalError } = error;
   // add timestamp for ordering
   error.timestamp = new Date();
   // create a unique ID for this error so the client can track it
   error.id = Common.utilities.generateGUID();
-  console.error(error)
+  let [location] = error.locations
+  if(error.path) console.error(colors.red(`Error: [${error.path.join(' > ')}] {${location.line},${location.column}}`))
+
+  // Special error formats for other originalError attributes
+  //    1. SQL errors: show the original query
+  if(originalError.sql) {
+
+    // multiple passes:
+    let formattedSQL = 
+      originalError.sql.split(/(?=SELECT|FROM|WHERE)/g).map(sql =>
+        sql.split(/(?=AND|OR)/g).join('\n\t\t')
+      ).join('\n\t')
+
+    // let formattedSQL = originalError.sql.replace(/(WHERE|FROM)/g, '\n\t$1 ')
+    // console.error(Object.keys(originalError.original));
+    console.error(colors.red(`${originalError.name}: ${originalError.message} (${originalError.original.routine})`))
+    console.error(colors.red(formattedSQL))
+  } else {
+    console.error(colors.red(originalError.stack))
+  }
+  // console.error(Object.keys(originalError))
   return error
 }
+
+/*
+const formatResponse = (value, ...rest) => {
+  return { ...value, errors: value.errors && value.errors.map(formatError) }
+}
+*/
 
 const formatResponse = (value) => ({
   ...value,

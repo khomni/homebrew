@@ -10,6 +10,7 @@ const lore = require('./lore.gql')
 const quest = require('./quest.gql')
 const events = require('./events.gql')
 const comment = require('./comment.gql')
+const permission = require('./permission.gql')
 
 // TODO: automatically load schema configuration files for any supported rule sets
 
@@ -25,6 +26,7 @@ module.exports = [
   lore,
   quest,
   events,
-  comment
+  comment,
+  permission
 ]
 

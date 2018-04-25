@@ -63,7 +63,7 @@ function generateGuid(bytes = GUID_BYTES) {
   // convert the random buffer to base64
   .then(buf => buf.toString('base64'))
   // replace the non-url-safe characters with appropriate substitutes
-  .then(string => string.replace(/\=|^-|^_/gi,'').replace(/\//gi,'-').replace(/\+/gi,'_').slice(0, bytes))
+  .then(string => string.replace(/\=|^[-_]*/gi,'').replace(/\//gi,'-').replace(/\+/gi,'_').slice(0, bytes))
 
 }
 
