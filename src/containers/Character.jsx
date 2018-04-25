@@ -8,7 +8,13 @@ import Journal from './Journal';
 import Lore from './Lore';
 import Knowledge from './Knowledge';
 
-import { CharacterSheet, CharacterCard, CharacterList } from '../components/characters';
+import { 
+  CharacterSheet, 
+  CharacterCard, 
+  CharacterList,
+  CharacterNav,
+  CharacterEdit,
+} from '../components/characters';
 import HeaderImage from '../components/HeaderImage';
 import gql from 'graphql-tag';
 
@@ -56,26 +62,16 @@ class Character extends React.Component {
 
     return (
       <div>
+        <CharacterNav match={match} character={character}/>
         <HeaderImage images={character.images} alt={character.name} home={match.url}/>
-        {/* 
-        <h1>{character.name}</h1>
-        */}
-        <div className="tab-group">
-          <NavLink exact to={character.url} className="tab main" activeClassName="active">{character.name}</NavLink>
-          <NavLink to={character.url + "/lore"} className="tab" activeClassName="active">About</NavLink>
-          <NavLink to={character.url + "/inventory"} className="tab" activeClassName="active">Inventory</NavLink>
-          <NavLink to={character.url + "/journal"} className="tab" activeClassName="active">Journal</NavLink>
-          <NavLink to={character.url + "/knowledge"} className="tab" activeClassName="active">Knowledge</NavLink>
-        </div>
-
-        { /* match.isExact && <CharacterSheet character={character}/> */}
-
         <Switch>
           <Route exact path={match.path} render={props => <CharacterSheet character={character}/>}/>
-          <Route path={match.path + "/inventory/:item?"} render={props => <Items character={character}/>}/>
-          <Route path={match.path + "/journal/:slug?"} render={props => <Journal character={character}/>}/>
-          <Route path={match.path + "/knowledge"} render={props => <Knowledge character={character}/>}/>
-          <Route path={match.path + "/lore"} render={props => <Lore slug={character.id}/>}/>
+          <Route path={character.url + "/edit"} render={props => <CharacterEdit character={character} campaign={campaign}/>}/>
+          <Route path={character.url + "/inventory/:item?"} render={props => <Items character={character}/>}/>
+          <Route path={character.url + "/inventory/:item?"} render={props => <Items character={character}/>}/>
+          <Route path={character.url + "/journal/:slug?"} render={props => <Journal character={character}/>}/>
+          <Route path={character.url + "/knowledge"} render={props => <Knowledge character={character}/>}/>
+          <Route path={character.url + "/lore"} render={props => <Lore slug={character.id}/>}/>
         </Switch>
 
       </div>

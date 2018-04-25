@@ -28,7 +28,7 @@ module.exports = jwtInterface.getUserFromJWT((root, {character: characterInput, 
       .then(([campaign]) => {
         if(!campaign || !campaign.Permission.read) throw Common.error.authorization('You do not have permission to add characters to this campaign')
 
-        // assign the character to the campaign 
+        // assign the character to the campaign
         return campaign.addCharacter(character)
         .then(() => character)
       })

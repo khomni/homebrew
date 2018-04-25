@@ -210,53 +210,19 @@ Query.nodePermission = (root, args, context) => {
     include: [{
       model: db.Permission,
       where: {permission_id, permissionType},
-      required: false
+      required: !search
     }],
-    attributes: {include: ['Permissions.permission_id']},
-    where: { },
   };
-
-  query.where.$or = [
-    // {'Permissions.permission_id': permission_id}
-  ]
 
   // inculde non-permitted users if searched for
   if(search) {
+    query.where = {$or: []}
     query.where.$or.push({name: {$ilike: `${search}%`}})
     query.where.$or.push({email: {$ilike: `${search}%`}})
   }
 
-  console.log(query)
-
   return db.User.findAll(query)
-  .then(users => {
-    console.log('users:', users);
-    return users
-  })
-  .map(user => ({user, permissions: user.Permissions}))
-  .then(userPermissions => {
-    console.log('user permissions:', JSON.stringify(userPermissions, null, '  '))
-    return userPermissions
-  })
-  // find all permissions for this particular resource
-  // Alternatively, let the user search for users who do not have permission yet
-  /*
-  return db.Permission.scope('user').findAll({where: {permission_id, permissionType}})
-  .map(permissions => ({user: permissions.User, permissions}))
-  .then(permissions => {
-    if(!search) return permissions
-
-    let query = {$or: [{name: {$ilike: `${search}%`}}, {email: {$ilike: `${search}%`}}]}
-
-    return db.User.findAll({where: query})
-    .map(user => ({user, permissions: {read: false, write: false, own: false, ban: false}}))
-    .then(users => ({}))
-
-    // console.log('permissions (with users):', JSON.stringify(permissions, null, '  '))
-    // throw new Error('fin');
-  })
-  // .then(permissions => {})
-*/
+  .map(user => ({user, permissions: user.Permissions[0] || {read: false, write: false, own: false, banned: false}}))
 }
 
 

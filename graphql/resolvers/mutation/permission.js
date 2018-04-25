@@ -52,7 +52,6 @@ module.exports = jwtInterface.getUserFromJWT((root, {permission: permissionInput
       .then(([permissionChanged]) => permissable.getPermission({where: {id: targetUser.id}}))
       .then(([user]) => {
         const { Permission } = user
-        console.log('granted permission:', JSON.stringify(Permission, null, '  '))
         // Duplicate
         return Permission
       })

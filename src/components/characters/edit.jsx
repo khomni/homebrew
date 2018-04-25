@@ -5,8 +5,12 @@ import { CharacterForm } from '../../containers/Character';
 
 const CharacterEdit = ({character, campaign}) => (
   <CharacterForm character={character} campaign={campaign} render={({setFormData, formData, submit}) => (
-    <div>
-      <h2>{`New Character in ${campaign.name}`}</h2>
+    <section>
+      { !character ? (
+        <h2>{`New Character in ${campaign.name}`}</h2>
+      ) : (
+        <h2>{character.name}</h2>
+      )}
       <div className="form-group">
         <input
           name="name"
@@ -18,7 +22,7 @@ const CharacterEdit = ({character, campaign}) => (
           onKeyDown={submit}
           />
       </div>
-    </div>
+    </section>
   )}/>
 )
 

@@ -62,8 +62,8 @@ class Permission extends React.Component {
                       value={user.id}
                       checked={formData.targetUser === user.id}
                       onChange={event => {
-                        console.log({data: {targetUser: user.id, ...permissions}})
-                        setFormData({data: {targetUser: user.id, ...permissions}});
+                        let {read, write, own, banned} = permissions
+                        setFormData({data: {targetUser: user.id, read, write, own, banned}});
                       }}/>
                     <span>{user.name}</span>
                   </label>
