@@ -6,7 +6,8 @@ module.exports = {
     directory: 'dev'
   },
   test: {
-    directory: 'test'
+    directory: 'test',
+    logs: false,
   },
   default: {
     directory: '',

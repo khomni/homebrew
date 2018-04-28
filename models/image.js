@@ -1,9 +1,15 @@
-"use strict";
-
 const AWS = require('aws-sdk');
 const crypto = require('crypto');
 const path = require('path');
-const gm = require('gm').subClass({imageMagick: true});;
+const gm = require('gm').subClass({imageMagick: true});
+
+const { ModelWrapper } = Common.models;
+
+const s3Log = new Common.logger({
+  name: 's3', 
+  color: 'magenta', 
+  enabled: CONFIG.aws.logs
+}).log
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -14,70 +20,67 @@ const s3 = new AWS.S3({
 
 Promise.promisifyAll(s3)
 
-module.exports = function(sequelize, DataTypes) {
-  var Image = sequelize.define("Image", {
+module.exports = ModelWrapper('Image', DataTypes => ({
     url: { // returns the complete link to the s3 resource
-      type: DataTypes.VIRTUAL,
-      get: function() {
-        return 'https://s3-' + this.s3.region + '.amazonaws.com/' + this.s3.bucket + '/' + this.s3.key
-      }
-    },
-    path: {
-      type: DataTypes.VIRTUAL,
-      get: function() {
-        return '/i' + this.getDataValue('key')
-      }
-    },
-    imageable: { // the model type of the image (used for joins)
-      type: DataTypes.STRING,
-    },
-
-    key: { // the routable path to the image (doubles as s3 key)
-      type: DataTypes.STRING,
-      allowNull: false,
-      index: true,
-      unique: true,
-    },
-
-    s3: { // amazon s3 components
-      type: DataTypes.JSONB,
-      validate: function(object){
-        if(!('region' in object)) throw new Error('Missing s3 region');
-        if(!('bucket' in object)) throw new Error('Missing s3 bucket');
-        if(!('key' in object)) throw new Error('Missing s3 key');
-      }
-    },
-    order: { // used to determine relative ordering
-      type: DataTypes.INTEGER
-    },
-    public: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true
-    },
-    vetted: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    attribution: {
-      type: DataTypes.STRING,
-    },
-    width: {
-      type: DataTypes.INTEGER,
-    },
-    height: {
-      type: DataTypes.INTEGER,
-    },
-
-    // these virtuals are used for the creation process only
-    _file: {type: DataTypes.VIRTUAL},
-    _directory: {type: DataTypes.VIRTUAL},
-  }, {
-    classMethods: {
-      associate: function(models) {
-
-      },
+    type: DataTypes.VIRTUAL,
+    get: function() {
+      return 'https://s3-' + this.s3.region + '.amazonaws.com/' + this.s3.bucket + '/' + this.s3.key
     }
-  });
+  },
+  path: {
+    type: DataTypes.VIRTUAL,
+    get: function() {
+      return '/i' + this.getDataValue('key')
+    }
+  },
+  imageable: { // the model type of the image (used for joins)
+    type: DataTypes.STRING,
+  },
+
+  key: { // the routable path to the image (doubles as s3 key)
+    type: DataTypes.STRING,
+    allowNull: false,
+    index: true,
+    unique: true,
+  },
+
+  s3: { // amazon s3 components
+    type: DataTypes.JSONB,
+    validate: function(object){
+      if(!('region' in object)) throw new Error('Missing s3 region');
+      if(!('bucket' in object)) throw new Error('Missing s3 bucket');
+      if(!('key' in object)) throw new Error('Missing s3 key');
+    }
+  },
+  order: { // used to determine relative ordering
+    type: DataTypes.INTEGER
+  },
+  public: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
+  },
+  vetted: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  attribution: {
+    type: DataTypes.STRING,
+  },
+  width: {
+    type: DataTypes.INTEGER,
+  },
+  height: {
+    type: DataTypes.INTEGER,
+  },
+
+  // these virtuals are used for the creation process only
+  _file: {type: DataTypes.VIRTUAL},
+  _directory: {type: DataTypes.VIRTUAL},
+}), {}, Image => {
+
+  Image.associate = function() {
+  
+  }
 
   Image.beforeValidate((image, options) => {
     if(!image._file) throw new Error('No file provided')
@@ -166,16 +169,4 @@ module.exports = function(sequelize, DataTypes) {
   })
 
   return Image;
-};
-
-function s3Log() {
-  let hasError = false
-  let args = Array.prototype.slice.call(arguments).map(function(arg){
-    if(!(typeof arg == 'error')) return arg;
-    hasError = true
-    return arg.message
-  })
-  args.unshift('[s3::'+CONFIG.aws.bucket+'/'+CONFIG.aws.directory+']')
-  if(hasError) return console.error(colors.red.apply(null, args))
-  if(CONFIG.aws.logs) return console.log(colors.magenta.apply(null, args))
-}
+});

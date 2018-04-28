@@ -62,7 +62,7 @@ module.exports = ModelWrapper('Campaign', DataTypes => ({
     Campaign.hasMany(models.Location);
     Campaign.hasMany(models.Faction, {constraints:false, onDelete:'cascade'});
     Campaign.hasOne(models.Calendar, {onDelete:'cascade'});
-    Campaign.belongsTo(models.User, {as:'owner', onDelete:'cascade'});
+    // Campaign.belongsTo(models.User, {as:'owner', onDelete:'cascade'});
     Campaign.hasMany(models.Character, {constraints: false});
 
     Campaign.belongsToMany(models.User, {

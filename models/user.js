@@ -54,7 +54,7 @@ module.exports = ModelWrapper('User', DataTypes => ({
     
     User.hasMany(models.Permission, {
       foreignKey: 'UserId',
-      constraints: false,
+      // constraints: false,
     })
 
     User.belongsToMany(models.Campaign, {
@@ -64,7 +64,8 @@ module.exports = ModelWrapper('User', DataTypes => ({
         scope: {
           permissionType: 'Campaign'
         }
-      }
+      },
+      constraints: false,
     });
 
     User.belongsToMany(models.Character, {
@@ -74,7 +75,8 @@ module.exports = ModelWrapper('User', DataTypes => ({
         scope: {
           permissionType: 'Character'
         }
-      }
+      },
+      constraints: false,
     });
 
     // scope just for authenticating login information via JWT
