@@ -3,6 +3,7 @@ query($detail: Boolean!, $slug: String, $user: ID, $campaign: ID, $search: Strin
 		id
 		name
 		url
+		slug
 		images {
 			path
 		}

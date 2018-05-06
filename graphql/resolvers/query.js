@@ -205,6 +205,7 @@ Query.lore = (root, args, context) => {
 
 Query.nodePermission = (root, args, context) => {
   const { permission_id, permissionType, search } = args
+  console.log(args)
 
   let query = {
     include: [{
@@ -221,8 +222,10 @@ Query.nodePermission = (root, args, context) => {
     query.where.$or.push({email: {$ilike: `${search}%`}})
   }
 
-  return db.User.findAll(query)
+
+  return db.User.findAll(query) 
   .map(user => ({user, permissions: user.Permissions[0] || {read: false, write: false, own: false, banned: false}}))
+  // .then(r => console.log(r.length) || r)
 }
 
 

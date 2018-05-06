@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const hash = crypto.createHash('sha1');
+const sequelize = require('sequelize');
 
 Promise.promisifyAll(crypto);
 
@@ -9,20 +10,20 @@ function generateSlug({model}) {
   // ignore documents without a name
   return function(doc, options) {
     // if the document already has a slug, and neither the name or the slug was changed, skip slug generation
-    if(doc.slug && (!doc.name || !doc.changed('name') || !doc.changed('slug'))) return doc;
+    if(doc.slug && (!doc.name || (!doc.changed('name') && !doc.changed('slug')))) return doc;
+    if(!doc.name) throw new sequelize.ValidationError('Name is required')
 
     let originalSlug = !doc.changed('slug') && doc.slug || '';
     let isUnique = false;
     let iteration = 0;
 
     let nameComponents = 1; // start with
-    let originalSlugSource = doc.slug || doc.name
+    let originalSlugSource = doc.changed('name') ? doc.name : (doc.slug || doc.name)
     let slugComponents = originalSlugSource.split(/\s/).slice(0, nameComponents); // split the name by whitespace characters
 
     let slug = slugComponents.join('-').toLowerCase().replace(/[^a-zA-Z0-9_-]/g,'');
     doc.slug = slug;
 
-    // console.log(`Checking slug '${slug}' for model: ${model.name} ${originalSlug ? `(original:${originalSlug})` : ''}`)
     // get an array of all slugs with the same base
     return model.aggregate(`${model.name}.slug`, 'DISTINCT', {where: {slug: {$ilike: slug + '%', $not:originalSlug}}, plain:false})
     .map(distinct => distinct.DISTINCT)

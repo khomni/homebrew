@@ -1,0 +1,6 @@
+mutation ImageUpload($image: ImageInput!, $imageableType: String, $imageable_id: ID) {
+	image(image: $image, imageableType: $imageableType, imageable_id: $imageable_id) {
+		id
+		path
+	}
+}

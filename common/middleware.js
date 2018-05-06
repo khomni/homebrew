@@ -8,15 +8,16 @@ const multer = require('multer');
 module.exports = {
   // given a req.body with a number of dot-delimited field names, converts the req.body into the corresponding object
   objectifyBody: (req,res,next) => {
+    let key
     // console.log("1:",req.body)
 
-    for(var key in req.body) {
+    for(key in req.body) {
       if(!req.body[key]) delete req.body[key]
       // if(!!Number(req.body[key])) req.body[key] = Number(req.body[key])
       if(!Array.isArray(req.body[key]) && /\.\$\./.test(key)) req.body[key] = [req.body[key]]
       
       if(Array.isArray(req.body[key])) {
-        req.body[key] = req.body[key].filter(i => {return i!=''})
+        req.body[key] = req.body[key].filter(i => {return i !== ''})
 
         if(/\.\$/.test(key)) {
           req.body[key].map((value,index) => {
@@ -28,7 +29,7 @@ module.exports = {
       }
     }
     //
-    for(var key in req.body) if(!!Number(req.body[key])) req.body[key] = Number(req.body[key])
+    for(key in req.body) if(Number(req.body[key])) req.body[key] = Number(req.body[key])
 
     // console.log("2:", req.body)
     req.body = flat.unflatten(req.body)
@@ -54,7 +55,7 @@ module.exports = {
     form.parse(req, (err, fields, files) => {
       req.body = fields
       req.files = files
-      return next()
+      return next(err)
     })
 
   },
@@ -75,13 +76,12 @@ module.exports = {
       }
       res.locals.action = req.originalUrl;
       res.locals.body = req.body;
+
       return res.render('modals/confirmDelete',{
         action: req.originalUrl,
         body: req.body,
         reaction: reaction
       })
-      // return res.redirect(req.headers.referer)
-      return next();
     }
   },
 
@@ -110,7 +110,7 @@ module.exports = {
     // reject if the user doesn't have an active character
     if(!req.user.MainChar) return next(Common.error.authorization("You need an active character to access this"));
 
-    if(res.locals.campaign && req.user.MainChar.CampaignId != res.locals.campaign.id) return next(Common.error.authorization("Your active character is not part of this campaign"))
+    if(res.locals.campaign && req.user.MainChar.CampaignId !== res.locals.campaign.id) return next(Common.error.authorization("Your active character is not part of this campaign"))
     // contine if they do
     return next()
   },
@@ -172,7 +172,7 @@ module.exports.objectify = (req,res,next) => {
     for(let key in req._body) {
       
       //  any keys that are empty strings should be undefined so mongoose can unset fields
-      if(req.body[key] == '') req.body[key] = undefined;
+      if(req.body[key] === '') req.body[key] = undefined;
       if(!Array.isArray(req.body[key]) && /\.\$\./.test(key)) req.body[key] = [req.body[key]]
 
       if(Array.isArray(req.body[key])) {
@@ -188,7 +188,7 @@ module.exports.objectify = (req,res,next) => {
         }
       }
     }
-    for(var key in req.body) if(!!Number(req.body[key])) req.body[key] = Number(req.body[key])
+    for(var key in req.body) if(Number(req.body[key])) req.body[key] = Number(req.body[key])
     req.body = flat.unflatten(req.body)
     return next();
   } catch(e) {

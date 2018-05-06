@@ -23,7 +23,7 @@ export const CampaignForm = resourceForm({
 
 const CampaignEdit = ({campaign, user}) => (
   <div>
-    <CampaignForm campaign={campaign} render ={({setFormData, formData, submit}) => (
+    <CampaignForm campaign={campaign} render={({setFormData, formData, submit}) => (
       <section>
         <div className="form-group">
           <input 
@@ -108,6 +108,7 @@ const CampaignEdit = ({campaign, user}) => (
     )}/>
     { campaign && (
       <section>
+        <pre>{JSON.stringify(campaign, null, '  ')}</pre>
         <GrantPermission permissable={campaign}/>
       </section>
     ) }

@@ -15,6 +15,7 @@ module.exports = {
     username: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     forcesync: true,
+    paranoid: false,
     options: {
       dialect: "postgres",
       host: "127.0.0.1",
@@ -26,6 +27,7 @@ module.exports = {
     username: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     forcesync: false,
+    paranoid: true,
     options: {
       dialect: "postgres",
       host: "127.0.0.1",

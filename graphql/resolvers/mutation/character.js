@@ -16,7 +16,10 @@ module.exports = jwtInterface.getUserFromJWT((root, {character: characterInput, 
 
       // query an existing character, and confirm that the user has write access
       return user.getCharacterPermission({where: {id}})
-      .then(character => character.update(characterInput, {transaction}));
+      .then(([character]) => {
+        // db._methods(character);
+        return character.update(characterInput, {transaction})
+      });
     })
     .then(character => {
       // if the character is new or the campaign has not changed, skip campaign operations

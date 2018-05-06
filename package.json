@@ -21,6 +21,8 @@
     "apollo-link-http": "^1.2.0",
     "apollo-link-ws": "^1.0.7",
     "apollo-server-express": "^1.2.0",
+    "apollo-upload-client": "^8.0.0",
+    "apollo-upload-server": "^5.0.0",
     "aws-sdk": "^2.22.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",

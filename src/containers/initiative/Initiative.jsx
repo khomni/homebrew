@@ -48,7 +48,7 @@ class Initiative extends React.Component {
 
   componentWillMount() {
     const { match: {params: {system} } } = this.props
-    const System = Systems[system]
+    const System = Systems.RuleSets[system]
 
     this.setState({system: System});
     this.restoreLocal();
@@ -292,9 +292,8 @@ class Initiative extends React.Component {
     const { match: {params: {system} } } = this.props
     const { cursor, round, system: System } = this.state
 
-    // const System = Systems[system]
+    // console.log(Systems, System, system)
     if(!System) error = new Error(`${system} is not a supported rules system`)
-
 
     if(error) {
       error.status = error.status || 400

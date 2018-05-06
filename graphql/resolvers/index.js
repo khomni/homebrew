@@ -8,6 +8,7 @@ const { Lore, LoreList } = require('./lore');
 const Quest = require('./quest');
 // const Session = require('./session');
 const User = require('./user');
+const { GraphQLUpload: Upload } = require('apollo-upload-server');
 
 const Mutation = require('./mutation');
 const Query = require('./query');
@@ -20,6 +21,7 @@ const Node = {
     return modelName || 'Node'
   }
 }
+
 
 const DateTime = require('graphql-date')
 
@@ -42,6 +44,7 @@ const resolvers = {
   User,
   Quest,
   System,
+  Upload,
   Week,
   Year,
 

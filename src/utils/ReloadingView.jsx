@@ -12,6 +12,7 @@ import ErrorView from '../components/Error';
 import Loading from '../components/Loading';
 
 import { ErrorList } from '../containers/Error';
+import SerializeMultipart from '../utils/serialize-multipart';
 
 /* ==============================
  * withResource / ReloadingView:
@@ -45,7 +46,7 @@ export default function withResource(WrappedComponent, {query, variables, alias,
       }, this.props.filter || {})
 
       this.state = {
-        mountedRoute: this.props.match.url,
+        // mountedRoute: this.props.match.url,
         filter: defaultFilter,
         variables: typeof variables === 'function' ? variables(props) : variables
       }
@@ -72,6 +73,7 @@ export default function withResource(WrappedComponent, {query, variables, alias,
       const { variables } = this.state
 
       if(type === 'submit' || keyCode && keyCode === 13) {
+        console.log('refetch:', variables);
         return refetch(variables);
       }
       value = typeof value === 'number' ? Number(value) : value || ''
@@ -82,7 +84,7 @@ export default function withResource(WrappedComponent, {query, variables, alias,
       const { error, loading, refresh, dispatch } = this.props;
       const { filter, variables } = this.state;
 
-      // console.log(this.props[alias || 'data']);
+      // console.log(alias || 'data', this.props[alias || 'data'], variables);
 
       if(error) return <ErrorView error={error} />
       if(loading) return <Loading/>
@@ -103,6 +105,8 @@ export default function withResource(WrappedComponent, {query, variables, alias,
     // set the Wrappers props using the data returned by GraphQL endpoint and own props
     props: ({ownProps, data}) => {
 
+      console.log(alias, data[alias || 'data'], data.variables)
+
       let props = {
         loading: data.loading,
         error: data.error,
@@ -121,7 +125,7 @@ export default function withResource(WrappedComponent, {query, variables, alias,
         variables: variables ? variables(ownProps) : null,
         updateQuery: (prev, {subscriptionData}) => { // returns a combination of the old data and the new data
 
-          if(!subscriptionData.data) return prevasdfasdfasdfasdfasdfasdf
+          if(!subscriptionData.data) return prev
           // TODO: determine if this update is updating an existing object, or inserting an object into the current collection (if an array)
           console.warn('Subscription updates have not been fully implemented in ReloadingView.jsx;', 'previous value:', prev, 'pushed update:' , subscriptionData);
           return prev
@@ -191,8 +195,18 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
       if(!target) return false;
       let { name, value, type, checked } = target;
 
+      if(!target.validity.valid) console.error('Invalid input! Do something!')
+
       // cast to number values
-      if(type === 'checkbox') value = checked
+      if(target.files) {
+        return SerializeMultipart(target.files[0])
+        .then(binaryString => {
+          console.log('binary string:', binaryString.length);
+        
+          value = binaryString
+        })
+      }
+      else if(type === 'checkbox') value = checked
       else if(type === 'radio') value = value || null
       else if(type === 'number' || /^[\d.]+$/.test(value)) value = Number(value)
       else value = value || ''

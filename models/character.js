@@ -131,10 +131,20 @@ module.exports = ModelWrapper('Character', DataTypes => ({
     Character.belongsToMany(models.Faction, {as: 'membership',through: models.Membership});
 
     // items tend to belong to characters, so they can have an owner in their record
-    Character.hasMany(models.Item);
+    Character.hasMany(models.Item, {onDelete: 'cascade'});
 
     // a acharacter owns their journal entries
     Character.hasMany(models.Journal);
+
+    Character.hook('afterDestroy', (character, options) => Promise.all([
+      // destroy associated images
+      models.Image.destroy({where: {imageable_id: character.id, imageableType: 'Character'}}),
+      // destroy owned items
+      models.Items.destroy({where: {CharacterId: character.id}}),
+      // destroy associated lore / Knowledge
+      models.Lore.destroy({where: {lorable_id: character.id, lorableType: 'Character'}}),
+      models.Knowledge.destroy({where: {CharacterId: character.id}}),
+    ]))
   
   }
 

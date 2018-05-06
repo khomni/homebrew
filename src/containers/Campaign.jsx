@@ -72,10 +72,19 @@ class Campaign extends React.Component {
         */}
         <CampaignNav match={match} campaign={campaign} />
         <Switch>
-          <Route path={`${campaign.url}/pc/:character?`} render={props => <Character {...this.props} campaign={campaign}/>}/>
-          <Route path={`${campaign.url}/edit`} render={props => <CampaignEdit {...this.props} campaign={campaign}/>}/>
-          <Route path={`${campaign.url}/new-character`} render={props => <CharacterForm {...this.props} campaign={campaign}/>}/>
+
+          {/* Campaign Routes */}
           <Route exact path={campaign.url} render={props => <CampaignView {...this.props} campaign={campaign}/>}/>
+          <Route path={`${campaign.url}/edit`} render={props => <CampaignEdit {...this.props} campaign={campaign}/>}/>
+
+          {/* Character Routes */}
+          <Route path={`${campaign.url}/new-character`} render={props => <CharacterForm {...this.props} campaign={campaign}/>}/>
+          <Route path={`${campaign.url}/pc/:character?`} render={props => <Character {...this.props} campaign={campaign}/>}/>
+
+          {/* Calendar / Event Routes */}
+          <Route path={`${campaign.url}/calendar`} render={props => <Calendar {...this.props} campaign={campaign}/>}/>
+          <Route path={`${campaign.url}/e`} render={props => <Calendar {...this.props} campaign={campaign}/>}/>
+
         </Switch>
       </div>
     )

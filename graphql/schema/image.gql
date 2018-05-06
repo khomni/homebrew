@@ -4,3 +4,10 @@ type Image implements Node {
 	node: Node
 }
 
+input ImageInput {
+	file: Upload
+}
+
+extend type Mutation {
+	image(image: ImageInput!, imageableType: String, imageable_id: ID): Image
+}

@@ -10,7 +10,7 @@ module.exports = ModelWrapper('User', DataTypes => ({
     unique: true,
     allowNull: false,
     validate: {
-      isAlphanumeric: true,
+      is: /^[a-z0-9_\-]+$/i,
       len: [2,16]
     }
   },
@@ -106,6 +106,7 @@ module.exports = ModelWrapper('User', DataTypes => ({
   User.hook('beforeSave', hashPassWord);
   User.hook('beforeCreate', hashPassWord);
   User.hook('beforeUpdate', hashPassWord);
+
 
   /*
   User.Instance.prototype.checkPermission = function(instance, options) {

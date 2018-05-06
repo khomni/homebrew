@@ -38,7 +38,6 @@ class Permission extends React.Component {
     } = this.props;
 
     const { permissions } = permissable
-    console.log(nodePermission);
 
     return (
       <div>

@@ -47,6 +47,7 @@ const formatError = error => {
 
   // Special error formats for other originalError attributes
   //    1. SQL errors: show the original query
+  if(!originalError) return error
   if(originalError.sql) {
 
     // multiple passes:
@@ -72,10 +73,17 @@ const formatResponse = (value, ...rest) => {
 }
 */
 
-const formatResponse = (value) => ({
-  ...value,
-  errors: value.errors && value.errors.map(formatError)
-})
+// given an object, recursively traverses its fields looking for multipart form data
+function recursiveMultipartConversion(obj) {
+
+}
+
+const formatResponse = (value) => {
+
+  // recursively examine the variables for multipart file data
+
+  return {...value, errors: value.errors && value.errors.map(formatError)}
+}
 
 function attachWebSockets(server, options = {path: '/'}) {
   return SubscriptionServer.create({

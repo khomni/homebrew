@@ -34,7 +34,7 @@ const ModelWrapper = function(name, schema, options, fn){
 
     const baseOptions = {
       timestamps: true,
-      paranoid: true,
+      paranoid: CONFIG.database.paranoid,
     }
     // the specified options overwrite the base schema, which contains universal field behaviors
     let combinedSchema = Object.assign({}, baseSchema, schema(DataTypes))

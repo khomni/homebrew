@@ -1,8 +1,9 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-import Form from '../../utils/form'
-import ComplexInput from '../../utils/ComplexInput.jsx'
+// import Form from '../../utils/form'
+// import ComplexInput from '../../utils/ComplexInput.jsx'
+import CalendarForm from '../../containers/Calendar'
 
 const template = {
   weekdays: {
@@ -28,6 +29,23 @@ const template = {
   }
 }
 
+const Edit = ({campaign, calendar}) => (
+  <div>
+    <CalendarForm campaign={campaign} calendar={calendar} render={({submit, formData, setFormData}) => (
+      <div>
+        <section>
+          <label>Weekdays</label>
+        </section>
+        <section>
+          <label>Months</label>
+        </section>
+        <button className="btn" onClick={submit}>Submit</button>
+      </div>
+    )}/>
+  </div>
+)
+
+  /*
 class Edit extends React.Component {
   constructor(props) {
     super(props);
@@ -75,5 +93,6 @@ class Edit extends React.Component {
     )
   }
 }
+*/
 
 export default Edit

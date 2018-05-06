@@ -13,8 +13,12 @@ let schemaTests = require('./fixtures/schema')
 
 before(done => {
   if(db._connection.synced) return done()
-  db._connection.on('synced',done)
+  db._connection.on('synced', done)
 })
+
+after(() => db.User.destroy({where:{}}))
+
+const {user: sampleUser } = require('./fixtures/sample-data')
 
 describe('User', ()=>{
 
@@ -26,7 +30,7 @@ describe('User', ()=>{
     let user
 
     it('User.create()', () => {
-      return db.User.create(createData)
+      return db.User.create(sampleUser())
       .then(u => {
         user = u
         expect(user).to.exist

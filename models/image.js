@@ -21,7 +21,7 @@ const s3 = new AWS.S3({
 Promise.promisifyAll(s3)
 
 module.exports = ModelWrapper('Image', DataTypes => ({
-    url: { // returns the complete link to the s3 resource
+  url: { // returns the complete link to the s3 resource
     type: DataTypes.VIRTUAL,
     get: function() {
       return 'https://s3-' + this.s3.region + '.amazonaws.com/' + this.s3.bucket + '/' + this.s3.key
@@ -72,6 +72,8 @@ module.exports = ModelWrapper('Image', DataTypes => ({
   height: {
     type: DataTypes.INTEGER,
   },
+  name: null,
+  slug: null,
 
   // these virtuals are used for the creation process only
   _file: {type: DataTypes.VIRTUAL},
