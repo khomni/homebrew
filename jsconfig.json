@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"testJs": true,
+		"target": "es6",
+		"jsx": "preserve",
+		"baseUrl": "."
+	},
+	"exclude": [
+		"node_modules"
+	]
+}

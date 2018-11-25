@@ -32,7 +32,6 @@ const Character = {
     .then(([user]) => {
       if(!user) return {read: false, write: false, own: false}
       const permissions = user.Permission
-      // console.log(JSON.stringify(permissions));
       return permissions
     })
   },

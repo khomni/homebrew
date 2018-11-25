@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(module.filename);
-const env = process.env.NODE_ENV || 'development';
 const sequelize = require('../config/database');
 const EventEmitter = require('events')
 
@@ -35,7 +34,7 @@ db._sync = Promise.method(() =>{
   db._associate();
 
   return sequelize.sync({force:CONFIG.database.forcesync})
-  .catch(err => console.log(err))
+  // .catch(err => console.log(err))
   .then(syncResults => {
     // individually check to make sure the model associations are valid
     return syncResults;

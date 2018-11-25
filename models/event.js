@@ -47,7 +47,7 @@ module.exports = ModelWrapper('Event', DataTypes => ({
       foreignKey: 'lorable_id',
       onDelete: 'cascade',
       scope: {
-        lorable: 'Event'
+        lorable: 'event'
       },
       constraints: false
     });
@@ -58,7 +58,7 @@ module.exports = ModelWrapper('Event', DataTypes => ({
       foreignKey: 'commentable_id',
       onDelete: 'cascade',
       scope: {
-        commentable: 'Quest'
+        commentable: 'quest'
       }
     });
 
@@ -73,7 +73,7 @@ module.exports = ModelWrapper('Event', DataTypes => ({
     }, {override: true});
 
     Event.addScope('present', {
-      attributes: {exclude: 'Calendar'}
+      attributes: {exclude: 'calendar'}
     });
 
   }

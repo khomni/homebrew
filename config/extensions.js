@@ -2,7 +2,7 @@ const flat = require('flat');
 global.Promise = require('bluebird');
 
 // given an array of object, maps all values of the provided key
-
+// eslint-disable-next-line no-extend-native
 Array.prototype.mapKey = function(key) {
   return this.map(elem => {
     return elem[key]
@@ -11,6 +11,7 @@ Array.prototype.mapKey = function(key) {
 
 // given a function that takes a single element as an argument
 // returns the first element in the array that satisfies the function
+// eslint-disable-next-line no-extend-native
 Array.prototype.find = function(func) {
   for(var i in this) {
     if(func(this[i])) return this[i]
@@ -36,7 +37,7 @@ Object.get = function get(object, string) {
   if(args.length === 1) return thisObject[args.pop()]
 
   if(thisObject[args[0]]) {
-    var reference = thisObject[args[0]]
+    // var reference = thisObject[args[0]]
     // bind the method to the next level
     var recurse = get.bind(thisObject[args[0]])
     return recurse(args.splice(1).join('.'))
@@ -49,7 +50,6 @@ Object.toQueryString = function(object){
   if(!object || typeof object !== 'object') return '';
   object = flat.flatten(object);
 
-  let queryString = "?"
   let queryArray = []
   for(let key in object) {
     if(![undefined,null].includes(object[key])) {
@@ -67,5 +67,6 @@ Object.toQueryString = function(object){
 const fs = require('fs');
 
 require.extensions['.gql'] = function(module, filename) {
+  // eslint-disable-next-line no-sync
   module.exports = fs.readFileSync(filename, 'utf-8');
 }

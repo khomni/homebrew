@@ -3,8 +3,8 @@
 const { ModelWrapper } = Common.models;
 
 const PRIVACY_PUBLIC = 0 // anyone can view and join the group without requesting invitation
-const PRIVACY_VISIBLE = 1 // all materials are visible, but permission must be granted to participate
-const PRIVACY_PRIVATE = 2 // group can be found in searches, but invitation must be requested to participate
+// const PRIVACY_VISIBLE = 1 // all materials are visible, but permission must be granted to participate
+// const PRIVACY_PRIVATE = 2 // group can be found in searches, but invitation must be requested to participate
 const PRIVACY_HIDDEN = 3 // invitation only; resources are completely hidden without granted read permissions
 
 const bcrypt = require('bcrypt-nodejs');

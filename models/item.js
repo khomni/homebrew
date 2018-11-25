@@ -3,7 +3,7 @@
 const icons = require('~/data/icons')
 
 module.exports = function(sequelize, DataTypes) {
-  var Item = sequelize.define("Item", {
+  var Item = sequelize.define('Item', {
     // identifier: {
     //   type: DataTypes.STRING,
     //   primaryKey: true
@@ -24,7 +24,7 @@ module.exports = function(sequelize, DataTypes) {
       set(v) {
         this.setDataValue('value', Number(v))
       },
-      get(v) {
+      get() {
         return Number(this.getDataValue('value')); 
       },
       validate: {
@@ -37,7 +37,7 @@ module.exports = function(sequelize, DataTypes) {
       set(v) {
         this.setDataValue('weight', Number(v))
       },
-      get(v) {
+      get() {
         return Number(this.getDataValue('weight'));
       },
       validate: {
@@ -106,7 +106,7 @@ module.exports = function(sequelize, DataTypes) {
           as: 'lore',
           foreignKey: 'lorable_id',
           scope: {
-            lorable: 'Item'
+            lorable: 'item'
           },
           constraints: false,
         });

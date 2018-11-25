@@ -45,8 +45,6 @@ module.exports = jwtInterface.getUserFromJWT((root, {permission: permissionInput
         if(permissionInput.read) protoPermissions.read = permissionInput.read
       }
 
-      console.log(protoPermissions);
-
       // add the target user permissions using the granter's permissions
       return permissable.addPermission(targetUser, protoPermissions, {transaction})
       .then(([permissionChanged]) => permissable.getPermission({where: {id: targetUser.id}}))

@@ -3,7 +3,7 @@
 const MILISECOND_DAYS = 86400000
 
 module.exports = function(sequelize, DataTypes) {
-  var Calendar = sequelize.define("Calendar", {
+  var Calendar = sequelize.define('Calendar', {
     year_length: {
       type: DataTypes.VIRTUAL,
       get: function() {
@@ -53,7 +53,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
-        Calendar.hasMany(models.Event,{onDelete:'cascade'});
+        Calendar.hasMany(models.Event, {onDelete: 'cascade'});
 
         // GM can mark a calendar's 'current' day using the event model
         Calendar.hasOne(models.Event, {
@@ -62,7 +62,7 @@ module.exports = function(sequelize, DataTypes) {
         });
 
         Calendar.addScope('defaultScope', {
-          include: [{model: models.Event, as: 'present', scope:'present'}]
+          include: [{model: models.Event, as: 'present', scope: 'present'}]
         }, {override:true} )
       }
     }

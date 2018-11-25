@@ -91,7 +91,7 @@ class Initiative extends React.Component {
   }
 
   restoreLocal() {
-    const { creatures, order, round, cursor } = this.state;
+    // const { creatures, order, round, cursor } = this.state;
 
     let initiative_state = localStorage.getItem('initiative_state')
     initiative_state = initiative_state ? JSON.parse(initiative_state) : {}
@@ -300,16 +300,19 @@ class Initiative extends React.Component {
       return <ErrorPage error={error}/>
     }
 
-    const Creature = System.Creature
-    const CreatureSchema = Creature.schema.toJSON()
+    // const Creature = System.Creature
+    // const CreatureSchema = Creature.schema.toJSON()
     // convert the creatures in state to the system's Creature object
     let { creatures, order } = this.state
-    const { Quantifiable: {list: Quantifiable} } = System
+    // const { Quantifiable: {list: Quantifiable} } = System
 
     // TODO: add system configuration for the particular fields accessible in Initiative tool
     // TODO: summarize data
 
-    let experience = 0, allies = 0, cr
+    let experience = 0
+    let allies = 0
+    let cr
+
     for(let id in creatures) {
       let creature = creatures[id]
       if(creature && ![-Infinity, '', null].includes(creature.initiative)) {
@@ -332,11 +335,11 @@ class Initiative extends React.Component {
       <div className="flex vert fill grow">
         <div className="flex horz no-size">
           <div className="flex horz pad">
-            <button className='btn' onClick={this.addCreature}>Add Creature</button>
-            <button className='btn' onClick={this.incrementCursor}>Next</button>
-            <button className='btn' onClick={this.reset}>Reset</button>
-            <button className='btn' onClick={this.saveLocal}>Save</button>
-            <button className='btn' onClick={this.restoreLocal}>Load</button>
+            <button className="btn" onClick={this.addCreature}>Add Creature</button>
+            <button className="btn" onClick={this.incrementCursor}>Next</button>
+            <button className="btn" onClick={this.reset}>Reset</button>
+            <button className="btn" onClick={this.saveLocal}>Save</button>
+            <button className="btn" onClick={this.restoreLocal}>Load</button>
           </div>
           <div className="flex vert grow">
             <table className="fixed">
@@ -354,8 +357,8 @@ class Initiative extends React.Component {
                   <td>{order.length}</td>
                   <td>{cursor}</td>
                   <td>{round}</td>
-                  <td>{cr || <i className='fa fa-exclamation-triangle'/>}</td>
-                  <td className='flex horz distribute'>
+                  <td>{cr || <i className="fa fa-exclamation-triangle"/>}</td>
+                  <td className="flex horz distribute">
                     <span>{experience ? experience.toLocaleString() : '—'}</span>
                     { experiencePer ? <span>{`(${experiencePer})`}</span> : null}
                   </td>
@@ -381,8 +384,7 @@ class Initiative extends React.Component {
               removeCreature={this.removeCreature} 
               updateCreature={this.updateCreature} 
 
-            />
-          )}
+            />)}
         </InitiativeTable>
       </div>
     )

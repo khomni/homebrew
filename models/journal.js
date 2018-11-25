@@ -15,7 +15,7 @@ const marked = require('marked');
 */
 
 module.exports = function(sequelize, DataTypes) {
-  var Journal = sequelize.define("Journal", {
+  var Journal = sequelize.define('Journal', {
     title: {
       type: DataTypes.STRING
     },

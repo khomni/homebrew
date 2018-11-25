@@ -73,7 +73,6 @@ export default function withResource(WrappedComponent, {query, variables, alias,
       const { variables } = this.state
 
       if(type === 'submit' || keyCode && keyCode === 13) {
-        console.log('refetch:', variables);
         return refetch(variables);
       }
       value = typeof value === 'number' ? Number(value) : value || ''
@@ -84,7 +83,6 @@ export default function withResource(WrappedComponent, {query, variables, alias,
       const { error, loading, refresh, dispatch } = this.props;
       const { filter, variables } = this.state;
 
-      // console.log(alias || 'data', this.props[alias || 'data'], variables);
 
       if(error) return <ErrorView error={error} />
       if(loading) return <Loading/>
@@ -104,9 +102,6 @@ export default function withResource(WrappedComponent, {query, variables, alias,
 
     // set the Wrappers props using the data returned by GraphQL endpoint and own props
     props: ({ownProps, data}) => {
-
-      console.log(alias, data[alias || 'data'], data.variables)
-
       let props = {
         loading: data.loading,
         error: data.error,
@@ -115,8 +110,6 @@ export default function withResource(WrappedComponent, {query, variables, alias,
         [alias || 'data']: alias ? data[alias] : data,
         data,
       };
-
-      // console.log(alias, props);
 
       // EXPERIMENTAL: allow reloading components to include a subscription query that 
       //        automatically updates the cache when the server publishes it
@@ -201,8 +194,6 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
       if(target.files) {
         return SerializeMultipart(target.files[0])
         .then(binaryString => {
-          console.log('binary string:', binaryString.length);
-        
           value = binaryString
         })
       }
@@ -210,7 +201,6 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
       else if(type === 'radio') value = value || null
       else if(type === 'number' || /^[\d.]+$/.test(value)) value = Number(value)
       else value = value || ''
-      console.log({formData: {...formData, [name]: value}})
 
       this.setState({formData: {...formData, [name]: value}})
     }
@@ -222,8 +212,6 @@ export function resourceForm({mutation, variables, alias, formData, refetchQueri
       const { client } = this.props;
       const { formData } = this.state;
       let calcVariables = (typeof variables === 'function') ? variables(this.props) : variables
-
-      console.log('calculated variables:', calcVariables);
 
       return client.mutate({
         mutation,

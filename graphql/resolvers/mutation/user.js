@@ -1,3 +1,5 @@
+const jwtInterface = require('../../jwt');
+
 module.exports = (root, {user, id}, {jwt}) => {
   const {name, email, password, password_confirm} = user
 
@@ -5,13 +7,7 @@ module.exports = (root, {user, id}, {jwt}) => {
 
   if(!id) {
     // verify passwords match
-    console.log({name,email,password})
     return db.User.create({name, email, password})
-    .catch(err => {
-      console.log(JSON.stringify(err,null,'  '));
-      throw err
-    
-    })
   }
 
   return db.User.find({where: {id}})

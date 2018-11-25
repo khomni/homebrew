@@ -1,1 +1,1 @@
-export { default, LoreList, Knowledge } from './lore'
+export { default, LoreList, Knowledge } from './Lore'

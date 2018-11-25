@@ -1,6 +1,4 @@
 module.exports = (root, args, context) => {
-  console.log('Image Mutation:', args);
-
   // 1. get the imageable resource (if it is valid)
   // 2. determine if the user currently has write permissions for this resource
   // 3. determine if the resource is imageable / is valid for image uploads

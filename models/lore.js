@@ -2,8 +2,6 @@
 
 const { ModelWrapper } = Common.models;
 
-const marked = require('marked');
-
 /* LORE
     The crux of the knowledge system for this platform.
     Each record in the lore table represents a single insular fact.

@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-  var Relationship = sequelize.define("Relationship", {
+  var Relationship = sequelize.define('Relationship', {
     // identifier: {
     //   type: DataTypes.STRING,
     //   primaryKey: true

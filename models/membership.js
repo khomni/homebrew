@@ -3,7 +3,7 @@
 // Joins Character and Faction
 
 module.exports = function(sequelize, DataTypes) {
-  var Membership = sequelize.define("Membership", {
+  var Membership = sequelize.define('Membership', {
     // User-readable name of the location
   }, {
     classMethods: {

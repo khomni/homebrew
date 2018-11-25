@@ -1,5 +1,7 @@
 "use strict";
 
+const { ModelWrapper } = Common.models;
+
 /* COMMENT
     Comments are any interaction to a commentable document:
       - Journals
@@ -7,8 +9,7 @@
       - Lore
 */
 
-module.exports = function(sequelize, DataTypes) {
-  var Comment = sequelize.define("Comment", {
+module.exports = ModelWrapper('Comment', DataTypes => ({ 
     commentable: { // the model being commented on
       type: DataTypes.STRING
     },
@@ -22,20 +23,20 @@ module.exports = function(sequelize, DataTypes) {
       type:DataTypes.BOOLEAN,
       defaultValue: false,
     }
-  }, {
-    defaultScope: {
-      order: [['createdAt','DESC']]
-    },
-    freezeTableName: true,
-    classMethods: {
-      associate: function(models) {
-        // all comments either have a speaking character or a speaking user
-        Comment.belongsTo(models.Character)
-        Comment.belongsTo(models.User)
-      }
-    }
+}), { 
+  defaultScope: {
+    order: [['createdAt','DESC']]
+  },
+  freezeTableName: true
+}, Comment => {
+  Comment.associate = function(models) {
+    // all comments either have a speaking character or a speaking user
+    Comment.belongsTo(models.Character)
+    Comment.belongsTo(models.User)
+  }
+  Comment.isHierarchy({
+    through: 'CommentAncestor',
+    childrenAs: 'comments'
   });
-  Comment.isHierarchy({childrenAs: 'comments'});
-
   return Comment;
-};
+})

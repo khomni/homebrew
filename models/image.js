@@ -18,7 +18,9 @@ const s3 = new AWS.S3({
   region: CONFIG.aws.region,
 })
 
-Promise.promisifyAll(s3)
+s3.deleteObjectAsync = Promise.promisify(s3.deleteObject)
+s3.deleteObjectsAsync = Promise.promisify(s3.deleteObjects)
+s3.putObjectAsync = Promise.promisify(s3.putObject)
 
 module.exports = ModelWrapper('Image', DataTypes => ({
   url: { // returns the complete link to the s3 resource

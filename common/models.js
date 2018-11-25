@@ -9,7 +9,7 @@ const { generateGuid, sequelizeCycleGuid, generateSlug } = require('./guid');
 
 
 // returns a function
-const ModelWrapper = function(name, schema, options, fn){
+const ModelWrapper = function(name, schema, options = {}, fn){
 
   // this function will be exported from the model module; used by sequelize to create the schema
   return function(sequelize, DataTypes) {
@@ -69,7 +69,7 @@ const ModelWrapper = function(name, schema, options, fn){
 
     // execute the provided handler with the model as the argument
     // ensure that the handler also returns the model
-    return fn(Model)
+    return fn && fn(Model)
   }
 }
 

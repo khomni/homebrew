@@ -3,6 +3,7 @@ import withResource, { resourceForm } from '../utils/ReloadingView'
 // import { Route, NavLink, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 import { Link, Switch, Redirect, Route, withRouter} from 'react-router-dom';
+import _ from 'lodash'
 
 /* ==============================
  * Queries
@@ -25,7 +26,7 @@ import { UserList, UserView } from '../components/user'
 export const UserForm = resourceForm({
   mutation: MODIFY_USER,
   alias: 'user',
-  variables: ({user: {id}}) => ({id}),
+  variables: ({user}) => ({id: _.get(user, 'id')}),
   formData: ({user}) => ({
     name: user && user.name,
     email: user && user.email,
@@ -35,10 +36,6 @@ export const UserForm = resourceForm({
 })
 
 class User extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     let { match } = this.props;
     let { loading, user, error } = this.props

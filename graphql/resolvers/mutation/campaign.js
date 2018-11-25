@@ -21,7 +21,6 @@ module.exports = jwtInterface.getUserFromJWT((root, {campaign: campaignInput, id
     // if the 
     return user.getCampaignPermission({where: {id}, through: {write: true}})
     .then(([campaign]) => {
-      console.log('got campaign permission:', campaign.Permission.get({plain:true}));
       if(!campaign || !campaign.Permission.write) throw Common.error.authorization('You do not have permission to modify this campaign')
       return campaign.update(campaignInput, {transaction})
     

@@ -61,7 +61,7 @@ module.exports = ModelWrapper('Character', DataTypes => ({
     // a character is part of a campaign, so it contains a reference to that campaign
     Character.belongsTo(models.Campaign, {constraints: false});
 
-    Character.belongsTo(models.Event,{
+    Character.belongsTo(models.Event, {
       as: 'birthday', 
       constraints:false,
       scope: {
