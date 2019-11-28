@@ -97,6 +97,6 @@ export default withResource(Character, {
     slug: props.match.params.character,
     user: props.user ? props.user.id : undefined,
     campaign: props.campaign ? props.campaign.id : undefined,
-    detail: !!props.match.params.character,
+    detail: Boolean(props.match.params.character),
   })
 })

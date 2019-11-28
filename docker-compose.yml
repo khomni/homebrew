@@ -1,0 +1,31 @@
+version: "3"
+networks:
+  api_server_default:
+    external: true
+
+services:
+
+  server:
+    networks:
+      - api_server_default
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    image: "node:10"
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=local
+    env_file:
+      - .env
+    volumes:
+      - ./server:/home/node/app
+    ports:
+      - 7001:7001
+    # command: "scripts/build"
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: pass
