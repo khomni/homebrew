@@ -15,7 +15,7 @@ query($detail: Boolean!, $slug: String, $search: String, $owner: ID) {
 			name
 			url
 		}
-		
+
 		# Summarizing information
 		total_characters @skip(if: $detail)
 		total_users @skip(if: $detail)

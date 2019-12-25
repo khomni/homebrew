@@ -1,0 +1,10 @@
+size,minimum_cr,maximum_cr,base_str,base_dex,base_con
+Fine,—,2,1,18,8
+Diminutive,—,4,1,16,8
+Tiny,—,6,2,14,8
+Small,—,—,6,12,8
+Medium,—,—,10,10,10
+Large,2,—,18,8,14
+Huge,4,—,26,6,18
+Gargantuan,6,—,34,6,22
+Colossal,8,—,42,6,26

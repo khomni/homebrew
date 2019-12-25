@@ -1,24 +1,10 @@
-const resolvers = require("./resolvers");
-const { makeExecutableSchema } = require("graphql-tools");
-const { graphqlExpress } = require("apollo-server-express");
+import resolvers from "./resolvers";
+import { ApolloServer } from "apollo-server-express";
 
-// const typeDefs = require('./schema.gql');
 const typeDefs = require("./schema/index");
 
 // compile the schema from the GraphQL schema language
-const jsSchema = makeExecutableSchema({
+export default new ApolloServer({
   typeDefs,
-  resolvers,
-  resolverValidationOptions: {
-    requireResolversForArgs: false
-  }
-})
-
-module.exports = graphqlExpress((req: any) => ({
-  schema: jsSchema,
-  context: {
-    user: req.user,
-    campaign:
-      (req.user && req.user.MainChar && req.user.MainChar.Campaign) || null
-  }
-}));
+  resolvers
+});

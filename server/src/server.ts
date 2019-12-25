@@ -1,13 +1,11 @@
 import express from 'express';
-
-import graphql from './graphql'
+import apolloServer from './graphql';
 
 export default function createServer() {
-  const server = express();
+  const app = express();
 
+  apolloServer.applyMiddleware({ app });
 
-
-  return server;
+  app.listen({ port: 4001 });
+  return app;
 }
-
-

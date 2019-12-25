@@ -1,29 +1,33 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const webpack = require('webpack');
-const path = require('path');
+const path = require("path");
 
-const APP_DIR = path.join(__dirname, '/src');
-const BUILD_DIR = path.join(__dirname, '/public/javascripts');
+const APP_DIR = path.join(__dirname, "/src");
 
 module.exports = {
   entry: "./src/index.ts",
-  devtool: 'inline-source-map',
+  target: "node",
+  devtool: "inline-source-map",
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
+        test: /\.ts$/,
+        use: "ts-loader",
         exclude: /node_modules/
+      },
+      {
+        test: /\.(graphql|gql)$/,
+        exclude: /node_modules/,
+        loader: "graphql-tag/loader"
       }
     ]
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ]
+    extensions: [".ts", ".js"]
   },
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, "dist"),
+    filename: "bundle.js"
   },
-  plugins: [ ],
-}
+  plugins: []
+};

@@ -1,5 +1,7 @@
-import createService from "./server";
-import http from "http";
+import 'reflect-metadata';
+import createService from './server';
+import graphql from './graphql';
+import http from 'http';
 
 const app = createService();
 
