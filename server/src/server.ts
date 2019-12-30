@@ -6,6 +6,10 @@ export default function createServer() {
 
   apolloServer.applyMiddleware({ app });
 
-  app.listen({ port: 4001 });
+  app.get('/', async (req, res, next) => {
+    return res.send('yay!');
+  });
+
+  app.listen({ port: 7001 });
   return app;
 }

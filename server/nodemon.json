@@ -1,0 +1,6 @@
+{
+  "verbose": true,
+  "exec": "node -r ./babel.register.js ./src/index.ts",
+  "ext": "js,ts,gql",
+  "watch": ["src", "nodemon.json"]
+}

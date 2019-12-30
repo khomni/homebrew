@@ -6,16 +6,23 @@ networks:
 services:
 
   server:
+    logging:
+      options:
+        max-size: "200k"
+        max-file: "10"
     networks:
       - api_server_default
     build: 
       context: ./server
-      dockerfile: Dockerfile
+      dockerfile: ./server/docker/dev/Dockerfile
     image: "node:12"
     user: "node"
     working_dir: /home/node/app
     environment:
       - NODE_ENV=local
+      - DATABASE_NAME=homebrew
+      - DATABASE_USER=homebrew
+      - DATABASE_PASSWORD=pass
     env_file:
       - .env
     volumes:
@@ -23,10 +30,19 @@ services:
     ports:
       - 7001:7001
     command: "npm run start:dev"
-    # command: "scripts/build"
 
   postgres:
-    image: postgres
+    logging:
+      options:
+        max-size: "200k"
+        max-file: "10"
+    networks:
+      - api_server_default
+    image: postgres:12.1
+    ports:
+      - 5433:5432
     restart: always
     environment:
-      POSTGRES_PASSWORD: pass
+      - POSTGRES_USER=homebrew
+      - POSTGRES_DB=homebrew
+      - POSTGRES_PASSWORD=pass

@@ -1,33 +1,37 @@
-require("dotenv").config();
+const webpack = require('webpack');
+require('dotenv').config();
 
-const path = require("path");
-
-const APP_DIR = path.join(__dirname, "/src");
+const path = require('path');
 
 module.exports = {
-  entry: "./src/index.ts",
-  target: "node",
-  devtool: "inline-source-map",
+  entry: './src/index.ts',
+  target: 'node',
+  devtool: 'source-map',
   module: {
     rules: [
       {
         test: /\.ts$/,
-        use: "ts-loader",
+        use: 'ts-loader',
         exclude: /node_modules/
       },
       {
         test: /\.(graphql|gql)$/,
         exclude: /node_modules/,
-        loader: "graphql-tag/loader"
+        loader: 'graphql-tag/loader'
+      },
+      {
+        test: /\.mjs$/,
+        include: /node_modules/,
+        type: 'javascript/auto'
       }
     ]
   },
   resolve: {
-    extensions: [".ts", ".js"]
+    extensions: ['.ts', '.js', '.mjs', '.gql']
   },
   output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "bundle.js"
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js'
   },
-  plugins: []
+  plugins: [new webpack.IgnorePlugin(/^pg-native$/)]
 };

@@ -19,7 +19,6 @@ type Campaign implements Node {
 	total_characters: Int
 	total_users: Int # may require tricky aggregations
 	total_lore: Int
-	total_quests: Int
 	total_events: Int
 }
 

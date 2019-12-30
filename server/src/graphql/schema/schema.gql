@@ -1,5 +1,4 @@
 scalar DateTime
-scalar Upload
 
 type Query {
 	_: Boolean
